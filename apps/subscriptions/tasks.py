@@ -53,7 +53,7 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
     )
 
     client = _ses_client()
-    client.send_email(
+    response = client.send_email(
         FromEmailAddress=settings.AWS_SES_FROM_EMAIL,
         Destination={"ToAddresses": [sub.email]},
         Content={
@@ -67,6 +67,7 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
         },
     )
     logger.info("Alert sent to %s for proposition %d", sub.email, proposition_id)
+    return response["MessageId"]
 
 
 @shared_task(bind=True, autoretry_for=(ClientError,), retry_backoff=True, max_retries=5)
@@ -93,7 +94,7 @@ def send_confirmation_email(self, subscription_id: int):
     )
 
     client = _ses_client()
-    client.send_email(
+    response = client.send_email(
         FromEmailAddress=settings.AWS_SES_FROM_EMAIL,
         Destination={"ToAddresses": [sub.email]},
         Content={
@@ -107,6 +108,7 @@ def send_confirmation_email(self, subscription_id: int):
         },
     )
     logger.info("Confirmation sent to %s", sub.email)
+    return response["MessageId"]
 
 
 @shared_task

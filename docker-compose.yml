@@ -90,6 +90,24 @@ services:
         condition: service_healthy
     command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
+  ministack:
+    image: nahuelnucera/ministack
+    container_name: elas-ministack
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      GATEWAY_PORT: 4566
+      PERSIST_STATE: 1
+      STATE_DIR: /data/ministack-state
+    volumes:
+      - ministackdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:4566/_localstack/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
   pgdata:
   redisdata:
+  ministackdata:
