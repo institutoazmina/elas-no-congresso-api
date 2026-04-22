@@ -1,0 +1,62 @@
+# VCS
+.git
+.gitignore
+.gitattributes
+
+# Python artifacts
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.egg-info
+.eggs
+dist
+build
+
+# Virtual environments
+.venv
+venv
+env
+
+# Environment files (keep .env.example as docs reference)
+.env
+.env.*
+!.env.example
+
+# Tests & QA
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Linting / type checking
+.ruff_cache/
+ruff.toml
+.mypy_cache/
+
+# Seed / fixture data — not needed in production
+fixtures/
+data/
+
+# Ops / infra scripts
+ops/
+
+# Dev tooling
+Makefile
+.python-version
+
+# Docs & planning
+*.md
+digest.txt
+
+# Local compose (image is consumed by compose, not the other way)
+docker-compose.yml
+docker-compose*.yml
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
