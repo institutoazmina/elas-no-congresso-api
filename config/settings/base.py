@@ -1,0 +1,223 @@
+from pathlib import Path
+
+from decouple import Csv, config
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-changeme-in-prod")
+
+DEBUG = config("DEBUG", default=True, cast=bool)
+
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=Csv())
+
+DJANGO_APPS = [
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.inlines",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.postgres",
+]
+
+WAGTAIL_APPS = [
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
+]
+
+THIRD_PARTY_APPS = [
+    "django_celery_beat",
+    "django_celery_results",
+]
+
+LOCAL_APPS = [
+    "apps.core",
+    "apps.legislatures",
+    "apps.propositions",
+    "apps.taxonomy",
+    "apps.committees",
+    "apps.activity",
+    "apps.norms",
+    "apps.subscriptions",
+    "apps.cms",
+]
+
+INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+]
+
+ROOT_URLCONF = "config.urls"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("POSTGRES_DB", default="elas"),
+        "USER": config("POSTGRES_USER", default="elas"),
+"PASSWORD": config("POSTGRES_PASSWORD", default="elas"),
+        "HOST": config("POSTGRES_HOST", default="localhost"),
+        "PORT": config("POSTGRES_PORT", default="5432"),
+        "CONN_MAX_AGE": 60,
+        "OPTIONS": {"connect_timeout": 10},
+    }
+}
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+LANGUAGE_CODE = "pt-br"
+TIME_ZONE = "America/Sao_Paulo"
+USE_I18N = True
+USE_TZ = True
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Cache (Redis)
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "TIMEOUT": 300,
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# Celery
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default=REDIS_URL)
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "default"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_COMPRESSION = "gzip"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# AWS SES
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="test")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="test")
+AWS_DEFAULT_REGION = config("AWS_DEFAULT_REGION", default="us-east-1")
+AWS_SES_ENDPOINT_URL = config("AWS_SES_ENDPOINT_URL", default=None)
+AWS_SES_FROM_EMAIL = config("AWS_SES_FROM_EMAIL", default="alertas@elasnocongresso.local")
+
+# Subscription confirmation token TTL (hours)
+SUBSCRIPTION_CONFIRM_TTL_HOURS = 48
+
+# Wagtail
+WAGTAIL_SITE_NAME = "Elas no Congresso CMS"
+WAGTAILADMIN_BASE_URL = config("WAGTAILADMIN_BASE_URL", default="http://localhost:8000")
+
+# django-unfold
+UNFOLD = {
+    "SITE_TITLE": "Elas no Congresso",
+    "SITE_HEADER": "Admin · Elas no Congresso",
+    "SITE_URL": "/",
+    "SITE_ICON": None,
+    "SITE_SYMBOL": "gavel",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "COLORS": {
+        "primary": {
+            "50": "236 253 245",
+            "100": "209 250 229",
+            "200": "167 243 208",
+            "300": "110 231 183",
+            "400": "52 211 153",
+            "500": "16 185 129",
+            "600": "5 150 105",
+            "700": "4 120 87",
+            "800": "6 95 70",
+            "900": "6 78 59",
+            "950": "2 44 34",
+        },
+    },
+    "TABS": [],
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [],
+    },
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {"format": "%(levelname)s %(asctime)s %(module)s %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+        "celery": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "apps": {"handlers": ["console"], "level": "INFO", "propagate": False},
+    },
+}
