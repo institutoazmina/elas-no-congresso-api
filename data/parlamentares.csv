@@ -1,0 +1,601 @@
+nome,numero,foto,genero,partido,cargo,estado,legislatura
+"Erika Hilton",220645,https://www.camara.leg.br/internet/deputado/bandep/220645.jpg,F,PSOL,Deputado,SP,57
+"Dr. Jaziel",204481,https://www.camara.leg.br/internet/deputado/bandep/204481.jpg,M,PL,Deputado,CE,56.57
+Shéridan,178961,https://www.camara.leg.br/internet/deputado/bandep/178961.jpg,F,PSDB,"Deputado fora de exercício",RR,56
+"Caroline de Toni",204369,https://www.camara.leg.br/internet/deputado/bandep/204369.jpg,F,PL,Deputado,SC,56.57
+"Bia Kicis",204374,https://www.camara.leg.br/internet/deputado/bandep/204374.jpg,F,PL,Deputado,DF,56.57
+"Célia Xakriabá",206018,https://www.camara.leg.br/internet/deputado/bandep/206018.jpg,F,PSOL,Deputado,MG,57
+"Abílio Santana",204554,https://www.camara.leg.br/internet/deputado/bandep/204554.jpg,M,PSC,"Deputado fora de exercício",BA,56
+"Adriana Ventura",204528,https://www.camara.leg.br/internet/deputado/bandep/204528.jpg,F,NOVO,Deputado,SP,56.57
+"Jandira Feghali",74848,https://www.camara.leg.br/internet/deputado/bandep/74848.jpg,F,PCdoB,Deputado,RJ,56.57
+"Erika Kokay",160575,https://www.camara.leg.br/internet/deputado/bandep/160575.jpg,F,PT,Deputado,DF,56.57
+"Alice Portugal",74057,https://www.camara.leg.br/internet/deputado/bandep/74057.jpg,F,PCdoB,Deputado,BA,56.57
+"Maria do Rosário",74398,https://www.camara.leg.br/internet/deputado/bandep/74398.jpg,F,PT,Deputado,RS,56.57
+"Luiza Erundina",74784,https://www.camara.leg.br/internet/deputado/bandep/74784.jpg,F,PSOL,Deputado,SP,56.57
+"Sâmia Bomfim",204535,https://www.camara.leg.br/internet/deputado/bandep/204535.jpg,F,PSOL,Deputado,SP,56.57
+"Fernanda Melchionna",204407,https://www.camara.leg.br/internet/deputado/bandep/204407.jpg,F,PSOL,Deputado,RS,56.57
+"Talíria Petrone",204464,https://www.camara.leg.br/internet/deputado/bandep/204464.jpg,F,PSOL,Deputado,RJ,56.57
+"Vivi Reis",215044,https://www.camara.leg.br/internet/deputado/bandep/215044.jpg,F,PSOL,"Deputado fora de exercício",PA,56
+"Natália Bonavides",204453,https://www.camara.leg.br/internet/deputado/bandep/204453.jpg,F,PT,Deputado,RN,56.57
+"Helder Salomão",178873,https://www.camara.leg.br/internet/deputado/bandep/178873.jpg,M,PT,Deputado,ES,56.57
+"Pastor Eurico",160642,https://www.camara.leg.br/internet/deputado/bandep/160642.jpg,M,PL,Deputado,PE,56.57
+"Delegado Paulo Bilynskyj",220654,https://www.camara.leg.br/internet/deputado/bandep/220654.jpg,M,PL,Deputado,SP,57
+"Julia Zanatta",220559,https://www.camara.leg.br/internet/deputado/bandep/220559.jpg,F,PL,Deputado,SC,57
+"Junio Amaral",204520,https://www.camara.leg.br/internet/deputado/bandep/204520.jpg,M,PL,Deputado,MG,57
+"Daniel Freitas",204367,https://www.camara.leg.br/internet/deputado/bandep/204367.jpg,M,PL,Deputado,SC,56.57
+"Abilio Brunini",220593,https://www.camara.leg.br/internet/deputado/bandep/220593.jpg,M,PL,Deputado,MT,57
+"Chris Tonietto",204462,https://www.camara.leg.br/internet/deputado/bandep/204462.jpg,F,PL,Deputado,RJ,56.57
+"Roberto Duarte",220588,https://www.camara.leg.br/internet/deputado/bandep/220588.jpg,M,REPUBLICANOS,Deputado,AC,57
+"André Fernandes",220657,https://www.camara.leg.br/internet/deputado/bandep/220657.jpg,M,PL,Deputado,CE,57
+"Nikolas Ferreira",209787,https://www.camara.leg.br/internet/deputado/bandep/209787.jpg,M,PL,Deputado,MG,57
+"Dayany Bittencourt",220659,https://www.camara.leg.br/internet/deputado/bandep/220659.jpg,F,UNIÃO,Deputado,CE,57
+"Altineu Côrtes",178937,https://www.camara.leg.br/internet/deputado/bandep/178937.jpg,M,PL,Deputado,RJ,56.57
+"Amália Barros",220596,https://www.camara.leg.br/internet/deputado/bandep/220596.jpg,F,PL,Deputado,MT,57
+"Bibo Nunes",204388,https://www.camara.leg.br/internet/deputado/bandep/204388.jpg,M,PL,Deputado,RS,56.57
+"Cabo Gilberto Silva",220574,https://www.camara.leg.br/internet/deputado/bandep/220574.jpg,M,PL,Deputado,PB,57
+"Capitão Alberto Neto",204572,https://www.camara.leg.br/internet/deputado/bandep/204572.jpg,M,PL,Deputado,AM,56.57
+"Carlos Jordy",204460,https://www.camara.leg.br/internet/deputado/bandep/204460.jpg,M,PL,Deputado,RJ,56.57
+"Clarissa Tércio",220665,https://www.camara.leg.br/internet/deputado/bandep/220665.jpg,F,PP,Deputado,PE,57
+"Coronel Assis",220594,https://www.camara.leg.br/internet/deputado/bandep/220594.jpg,M,UNIÃO,Deputado,MT,57
+"Coronel Chrisóstomo",204378,https://www.camara.leg.br/internet/deputado/bandep/204378.jpg,M,PL,Deputado,RO,56.57
+"Coronel Meira",220666,https://www.camara.leg.br/internet/deputado/bandep/220666.jpg,M,PL,Deputado,PE,57
+"Coronel Ulysses",220590,https://www.camara.leg.br/internet/deputado/bandep/220590.jpg,M,UNIÃO,Deputado,AC,57
+"Cristiane Lopes",220608,https://www.camara.leg.br/internet/deputado/bandep/220608.jpg,F,UNIÃO,Deputado,RO,57
+"Delegado Caveira",220673,https://www.camara.leg.br/internet/deputado/bandep/220673.jpg,M,PL,Deputado,PA,57
+"Delegado Palumbo",220652,https://www.camara.leg.br/internet/deputado/bandep/220652.jpg,M,MDB,Deputado,SP,57
+"Diego Garcia",178929,https://www.camara.leg.br/internet/deputado/bandep/178929.jpg,M,REPUBLICANOS,Deputado,PR,56.57
+"Dr. Frederico",204518,https://www.camara.leg.br/internet/deputado/bandep/204518.jpg,M,PATRIOTA,Deputado,MG,57
+"Eros Biondini",160640,https://www.camara.leg.br/internet/deputado/bandep/160640.jpg,M,PL,Deputado,MG,56.57
+"Evair Vieira de Melo",178871,https://www.camara.leg.br/internet/deputado/bandep/178871.jpg,M,PP,Deputado,ES,56.57
+"Filipe Barros",204411,https://www.camara.leg.br/internet/deputado/bandep/204411.jpg,M,PL,Deputado,PR,56.57
+"General Girão",204473,https://www.camara.leg.br/internet/deputado/bandep/204473.jpg,M,PL,Deputado,RN,56.57
+"Helio Lopes",204444,https://www.camara.leg.br/internet/deputado/bandep/204444.jpg,M,PL,Deputado,RJ,56.57
+"Márcio Correa",226410,https://www.camara.leg.br/internet/deputado/bandep/226410.jpg,M,MDB,Deputado,GO,57
+"Marcos Pollon",220547,https://www.camara.leg.br/internet/deputado/bandep/220547.jpg,M,PL,Deputado,MS,57
+"Mauricio Marcon",220550,https://www.camara.leg.br/internet/deputado/bandep/220550.jpg,M,PODEMOS,Deputado,RS,57
+"Messias Donato",220530,https://www.camara.leg.br/internet/deputado/bandep/220530.jpg,M,REPUBLICANOS,Deputado,ES,57
+Nicoletti,204479,https://www.camara.leg.br/internet/deputado/bandep/204479.jpg,M,UNIÃO,Deputado,RR,56.57
+"Pedro Lupion",204395,https://www.camara.leg.br/internet/deputado/bandep/204395.jpg,M,PP,Deputado,PR,56.57
+"Pr. Marco Feliciano",160601,https://www.camara.leg.br/internet/deputado/bandep/160601.jpg,M,PL,Deputado,SP,56.57
+"Prof. Paulo Fernando",89536,https://www.camara.leg.br/internet/deputado/bandep/89536.jpg,M,REPUBLICANOS,Deputado,DF,57
+"Reinhold Stephanes Junior",205865,https://www.camara.leg.br/internet/deputado/bandep/205865.jpg,M,PSD,"Deputado fora de exercício",PR,56
+"Rodolfo Nogueira",220546,https://www.camara.leg.br/internet/deputado/bandep/220546.jpg,M,PL,Deputado,MS,57
+"Sargento Fahur",204387,https://www.camara.leg.br/internet/deputado/bandep/204387.jpg,M,PSD,Deputado,PR,56.57
+"Sargento Gonçalves",220621,https://www.camara.leg.br/internet/deputado/bandep/220621.jpg,M,PL,Deputado,RN,57
+"Sargento Portugal",220618,https://www.camara.leg.br/internet/deputado/bandep/220618.jpg,M,PODEMOS,Deputado,RJ,57
+"Gustavo Gayer",220568,https://www.camara.leg.br/internet/deputado/bandep/220568.jpg,M,PL,Deputado,GO,57
+"Sóstenes Cavalcante",178947,https://www.camara.leg.br/internet/deputado/bandep/178947.jpg,M,PL,Deputado,RJ,56.57
+"Thiago Flores",220597,https://www.camara.leg.br/internet/deputado/bandep/220597.jpg,M,MDB,Deputado,RO,57
+"Tião Medeiros",220684,https://www.camara.leg.br/internet/deputado/bandep/220684.jpg,M,PP,Deputado,PR,57
+Vermelho,204396,https://www.camara.leg.br/internet/deputado/bandep/204396.jpg,M,PL,Deputado,PR,57
+"Gilberto Abramo",204491,https://www.camara.leg.br/internet/deputado/bandep/204491.jpg,M,REPUBLICANOS,Deputado,MG,56.57
+"Capitão Alden",220690,https://www.camara.leg.br/internet/deputado/bandep/220690.jpg,M,PL,Deputado,BA,57
+"Magno Malta",631,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador631.jpg,M,PL,Senador,ES,57.58
+"Damares Alves",6335,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6335.jpg,F,REPUBLICANOS,Senador,DF,57.58
+"Alan Rick",178836,https://www.camara.leg.br/internet/deputado/bandep/178836.jpg,M,UNIÃO,Senador,AC,"56,57,58"
+"Angelo Coronel",5967,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5967.jpg,M,PSD,Senador,BA,56.57
+"Astronauta Marcos Pontes",6009,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6009.jpg,M,PL,Senador,SP,57.58
+"Carlos Portinho",5936,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5936.jpg,M,PL,Senador,RJ,56.57
+"Carlos Viana",5990,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5990.jpg,M,PODEMOS,Senador,MG,56.57
+"Chico Rodrigues",470,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador470.jpg,M,PSB,Senador,RR,56.57
+"Ciro Nogueira",739,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador739.jpg,M,PP,Senador,PI,56.57
+Cleitinho,6337,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6337.jpg,M,REPUBLICANOS,Senador,MG,57.58
+"Confúcio Moura",475,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador475.jpg,M,MDB,Senador,RO,56.57
+"Dr. Hiran",5793,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5793.jpg,M,PP,Senador,RR,57.58
+"Eduardo Girão",5976,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5976.jpg,M,NOVO,Senador,CE,56.57
+"Eduardo Gomes",3777,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador3777.jpg,M,PL,Senador,TO,56.57
+"Efraim Filho",141422,https://www.camara.leg.br/internet/deputado/bandep/141422.jpg,M,UNIÃO,Senador,PB,"56,57,58"
+"Esperidião Amin",22,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador22.jpg,M,PP,Senador,SC,56.57
+"Fernando Dueire",5917,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5917.jpg,M,MDB,Senador,PE,56.57
+"Flávio Arns",345,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador345.jpg,M,PSB,Senador,PR,56.57
+"Flávio Bolsonaro",5894,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5894.jpg,M,PL,Senador,RJ,56.57
+"Hamilton Mourão",6341,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6341.jpg,M,REPUBLICANOS,Senador,RS,57.58
+"Izalci Lucas",4770,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4770.jpg,M,PSDB,Senador,DF,56.57
+"Jaime Bagattoli",6340,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6340.jpg,M,PL,Senador,RO,57.58
+"Jayme Campos",4531,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4531.jpg,M,UNIÃO,Senador,MT,56.57
+"Jorge Seif",6342,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6342.jpg,M,PL,Senador,SC,57.58
+"Laércio Oliveira",4811,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4811.jpg,M,PP,Senador,SE,57.58
+"Lucas Barreto",5926,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5926.jpg,M,PSD,Senador,AP,56.57
+"Luis Carlos Heinze",1186,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador1186.jpg,M,PP,Senador,RS,56.57
+"Marcio Bittar",285,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador285.jpg,M,UNIÃO,Senador,AC,56.57
+"Marcos do Val",5942,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5942.jpg,M,PODEMOS,Senador,ES,56.57
+"Marcos Rogério",5422,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5422.jpg,M,PL,Senador,RO,56.57
+"Mauro Carvalho Junior",6362,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6362.jpg,M,UNIÃO,Senador,MT,57.58
+"Mecias de Jesus",6027,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6027.jpg,M,REPUBLICANOS,Senador,RR,56.57
+"Nelsinho Trad",5985,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5985.jpg,M,PSD,Senador,MS,56.57
+"Plínio Valério",5502,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5502.jpg,M,PSDB,Senador,AM,56.57
+"Renan Calheiros",70,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador70.jpg,M,MDB,Senador,AL,56.57
+"Rodrigo Cunha",5905,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5905.jpg,M,PODEMOS,Senador,AL,56.57
+"Rogerio Marinho",4694,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4694.jpg,M,PL,Senador,RN,57.58
+"Sergio Moro",6331,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6331.jpg,M,UNIÃO,Senador,PR,57.58
+"Styvenson Valentim",5959,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5959.jpg,M,PODEMOS,Senador,RN,56.57
+"Vanderlan Cardoso",5899,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5899.jpg,M,PSD,Senador,GO,56.57
+"Wilder Morais",5070,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5070.jpg,M,PL,Senador,GO,57.58
+"Zequinha Marinho",3806,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador3806.jpg,M,PODEMOS,Senador,PA,56.57
+"Eliziane Gama",5718,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5718.jpg,F,PSD,Senador,MA,56.57
+"Margareth Buzetti",6304,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6304.jpg,F,PSD,Senador,MT,56.57
+"Professora Dorinha Seabra",5386,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5386.jpg,F,UNIÃO,Senador,TO,57.58
+"Tereza Cristina",178901,https://www.camara.leg.br/internet/deputado/bandep/178901.jpg,F,PP,Senador,MS,"56,57,58"
+"Dr. Luiz Ovando",204351,https://www.camara.leg.br/internet/deputado/bandep/204351.jpg,M,PP,Deputado,MS,56.57
+"Paulo Teixeira",141488,https://www.camara.leg.br/internet/deputado/bandep/141488.jpg,M,PT,Deputado,SP,56.57
+"Rafael Motta",178951,https://www.camara.leg.br/internet/deputado/bandep/178951.jpg,M,PSB,"Deputado fora de exercício",RN,56
+"Felipe Rigoni",204371,https://www.camara.leg.br/internet/deputado/bandep/204371.jpg,M,UNIÃO,"Deputado fora de exercício",ES,56
+"Alex Manente",178972,https://www.camara.leg.br/internet/deputado/bandep/178972.jpg,M,CIDADANIA,Deputado,SP,56.57
+"Daniel Coelho",178916,https://www.camara.leg.br/internet/deputado/bandep/178916.jpg,M,CIDADANIA,"Deputado fora de exercício",PE,56
+"Tiago Mitraud",204519,https://www.camara.leg.br/internet/deputado/bandep/204519.jpg,M,NOVO,"Deputado fora de exercício",MG,56
+"Missionária Michele Collins",229225,https://www.camara.leg.br/internet/deputado/bandep/229225.jpg,F,PP,Deputado,PE,57
+"Silas Câmara",74356,https://www.camara.leg.br/internet/deputado/bandep/74356.jpg,M,REPUBLICANOS,Deputado,AM,56.57
+"Allan Garcês",226708,https://www.camara.leg.br/internet/deputado/bandep/226708.jpg,M,PP,Deputado,MA,57
+"Otoni de Paula",204441,https://www.camara.leg.br/internet/deputado/bandep/204441.jpg,M,MDB,Deputado,RJ,56.57
+"Ronaldo Nogueira",163321,https://www.camara.leg.br/internet/deputado/bandep/163321.jpg,M,REPUBLICANOS,Deputado,RS,57
+"Filipe Martins",220545,https://www.camara.leg.br/internet/deputado/bandep/220545.jpg,M,PL,Deputado,TO,57
+"Pastor Gil",204570,https://www.camara.leg.br/internet/deputado/bandep/204570.jpg,M,PL,Deputado,MA,56.57
+"Jesus Sérgio",204435,https://www.camara.leg.br/internet/deputado/bandep/204435.jpg,M,PDT,"Deputado fora de exercício",AC,56
+"Carlos Fávaro",6295,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6295.jpg,M,PSD,Senador,MT,56.57
+"Antonio Anastasia",5529,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5529.jpg,M,PSD,"Senador fora de exercício",MG,55.56
+"Otto Alencar",5523,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5523.jpg,M,PSD,Senador,BA,"55,56,57,58"
+"Omar Aziz",5525,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5525.jpg,M,PSD,Senador,AM,"55,56,57,58"
+"Fabiano Contarato",5953,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5953.jpg,M,PT,Senador,ES,56.57
+"Marcelo Castro",742,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador742.jpg,M,MDB,Senador,PI,56.57
+"Paulo Paim",825,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador825.jpg,M,PT,Senador,RS,56.57
+Irajá,5385,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5385.jpg,M,PSD,Senador,TO,56.57
+"Sérgio Petecão",4560,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4560.jpg,M,PSD,Senador,AC,56.57
+"Paulo Rocha",374,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador374.jpg,M,PT,"Senador fora de exercício",PA,55.56
+"Jean-Paul Prates",5627,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5627.jpg,M,PT,"Senador fora de exercício",RN,55.56
+"Zenaide Maia",5783,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5783.jpg,F,PROS,Senador,RN,56.57
+"Jaques Wagner",581,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador581.jpg,M,PT,Senador,BA,56.57
+"Jorge Kajuru",5895,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5895.jpg,M,PODEMOS,Senador,GO,56.57
+"Alessandro Vieira",5982,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5982.jpg,M,MDB,Senador,SE,56.57
+"Augusta Brito",6350,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6350.jpg,F,PT,Senador,CE,57.58
+"Daniella Ribeiro",5998,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5998.jpg,F,PP,Senador,PB,56.57
+"Humberto Costa",5008,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5008.jpg,M,PT,Senador,PE,56.57
+"Ivete da Silveira",6010,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6010.jpg,F,MDB,Senador,SC,56.57
+"Jussara Lima",6369,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6369.jpg,F,PSD,Senador,PI,57.58
+"Leila Barros",5979,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5979.jpg,F,PDT,Senador,DF,56.57
+"Mara Gabrilli",5376,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5376.jpg,F,PSD,Senador,SP,56.57
+"Rogério Carvalho",5352,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5352.jpg,M,PT,Senador,SE,56.57
+Romário,5322,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5322.jpg,M,PL,Senador,RJ,"55,56,57,58"
+"Teresa Leitão",6338,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6338.jpg,F,PT,Senador,PE,57.58
+Weverton,5411,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5411.jpg,M,PDT,Senador,MA,56.57
+"Nilda Gondim",5281,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5281.jpg,F,MDB,"Senador fora de exercício",PB,55.56
+"Soraya Thronicke",5988,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5988.jpg,F,UNIÃO,Senador,MS,56.57
+"Simone Tebet",5527,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5527.jpg,F,MDB,"Senador fora de exercício",MS,55.56
+"Rose de Freitas",2331,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador2331.jpg,F,MDB,"Senador fora de exercício",MG,55.56
+"Mailza Gomes",5557,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5557.jpg,F,PP,"Senador fora de exercício",AC,55.56
+"Veneziano Vital do Rêgo",5748,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5748.jpg,M,PSB,Senador,PB,56.57
+"Luiz Carlos do Carmo",5585,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5585.jpg,M,PSC,"Senador fora de exercício",GO,55.56
+"Jorginho Mello",5350,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5350.jpg,M,PR,Senador,SC,56.57
+Reguffe,5236,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5236.jpg,M,UNIÃO,"Senador fora de exercício",DF,55.56
+"Randolfe Rodrigues",5012,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5012.jpg,M,REDE,Senador,AP,56.57
+"Ana Paula Lobato",6358,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6358.jpg,F,PDT,Senador,MA,57.58
+"Beto Faro",141335,https://www.camara.leg.br/internet/deputado/bandep/141335.jpg,M,PT,Senador,PA,"56,57,58"
+"Oriovisto Guimarães",5924,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5924.jpg,M,PODEMOS,Senador,PR,56.57
+"Lincoln Portela",74585,https://www.camara.leg.br/internet/deputado/bandep/74585.jpg,M,PR,Deputado,MG,56.57
+"Guilherme Uchoa",220664,https://www.camara.leg.br/internet/deputado/bandep/220664.jpg,M,PSB,Deputado,PE,57
+"Jonas Donizette",160548,https://www.camara.leg.br/internet/deputado/bandep/160548.jpg,M,PSB,Deputado,SP,57
+"Tabata Amaral",204534,https://www.camara.leg.br/internet/deputado/bandep/204534.jpg,F,PSB,Deputado,SP,56.57
+Zucco,220552,https://www.camara.leg.br/internet/deputado/bandep/220552.jpg,M,PL,Deputado,RS,57
+"Alexandre Frota",204544,https://www.camara.leg.br/internet/deputado/bandep/204544.jpg,M,PSDB,"Deputado fora de exercício",SP,56
+"Alexandre Guimarães",220542,https://www.camara.leg.br/internet/deputado/bandep/220542.jpg,M,MDB,Deputado,TO,57
+"Duarte Jr.",220686,https://www.camara.leg.br/internet/deputado/bandep/220686.jpg,M,PSB,Deputado,MA,57
+"Carla Dickson",213762,https://www.camara.leg.br/internet/deputado/bandep/213762.jpg,F,UNIÃO,Deputado,RN,56.57
+"Laura Carneiro",74856,https://www.camara.leg.br/internet/deputado/bandep/74856.jpg,F,PSD,Deputado,RJ,56.57
+"Renata Abreu",178989,https://www.camara.leg.br/internet/deputado/bandep/178989.jpg,F,PODEMOS,Deputado,SP,56.57
+"Rogéria Santos",220695,https://www.camara.leg.br/internet/deputado/bandep/220695.jpg,F,REPUBLICANOS,Deputado,BA,57
+"Romero Rodrigues",160629,https://www.camara.leg.br/internet/deputado/bandep/160629.jpg,M,PODEMOS,Deputado,PB,57
+"Fábio Macedo",220681,https://www.camara.leg.br/internet/deputado/bandep/220681.jpg,M,PODEMOS,Deputado,MA,57
+Josenildo,220578,https://www.camara.leg.br/internet/deputado/bandep/220578.jpg,M,PDT,Deputado,AP,57
+"Maria Arraes",220668,https://www.camara.leg.br/internet/deputado/bandep/220668.jpg,F,SOLIDARIEDADE,Deputado,PE,57
+"Adail Filho",220714,https://www.camara.leg.br/internet/deputado/bandep/220714.jpg,M,REPUBLICANOS,Deputado,AM,57
+"Julio Cesar Ribeiro",204372,https://www.camara.leg.br/internet/deputado/bandep/204372.jpg,M,REPUBLICANOS,Deputado,DF,56.57
+"Duda Salabert",220623,https://www.camara.leg.br/internet/deputado/bandep/220623.jpg,F,PDT,Deputado,MG,57
+"Silvye Alves",220569,https://www.camara.leg.br/internet/deputado/bandep/220569.jpg,F,UNIAO,Deputado,GO,57
+"Alexandre Lindenmeyer",220554,https://www.camara.leg.br/internet/deputado/bandep/220554.jpg,M,PT,Deputado,RS,57
+"Maria Rosas",204540,https://www.camara.leg.br/internet/deputado/bandep/204540.jpg,F,REPUBLICANOS,Deputado,SP,56.57
+"Eduardo Braga",4994,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4994.jpg,M,MDB,Senador,AM,56.57
+"Léo Moraes",204359,https://www.camara.leg.br/internet/deputado/bandep/204359.jpg,M,PODE,"Deputado fora de exercício",RO,56
+"Mara Rocha",204471,https://www.camara.leg.br/internet/deputado/bandep/204471.jpg,F,MDB,"Deputado fora de exercício",AC,56
+"Mauricio do Vôlei",220628,https://www.camara.leg.br/internet/deputado/bandep/220628.jpg,M,PL,Deputado,MG,57
+"Augusto Puppio",220577,https://www.camara.leg.br/internet/deputado/bandep/220577.jpg,M,MDB,Deputado,AP,57
+"Rubens Pereira Júnior",178887,https://www.camara.leg.br/internet/deputado/bandep/178887.jpg,M,PT,Deputado,MA,56.57
+"Fábio Teruel",220653,https://www.camara.leg.br/internet/deputado/bandep/220653.jpg,M,MDB,Deputado,SP,57
+"Clodoaldo Magalhães",88256,https://www.camara.leg.br/internet/deputado/bandep/88256.jpg,M,PV,Deputado,PE,57
+"Dagoberto Nogueira",141411,https://www.camara.leg.br/internet/deputado/bandep/141411.jpg,M,PSDB,Deputado,MS,56.57
+"Danilo Cabral",160528,https://www.camara.leg.br/internet/deputado/bandep/160528.jpg,M,PSB,"Deputado fora de exercício",PE,56
+"Felipe Saliba",227370,https://www.camara.leg.br/internet/deputado/bandep/227370.jpg,M,PRD,Deputado,MG,57
+"Delegado Bruno Lima",220642,https://www.camara.leg.br/internet/deputado/bandep/220642.jpg,M,PP,Deputado,SP,57
+"Ricardo Silva",213274,https://www.camara.leg.br/internet/deputado/bandep/213274.jpg,M,PSD,Deputado,SP,56.57
+"Rubens Otoni",74371,https://www.camara.leg.br/internet/deputado/bandep/74371.jpg,M,PT,Deputado,GO,56.57
+"Any Ortiz",220549,https://www.camara.leg.br/internet/deputado/bandep/220549.jpg,F,CIDADANIA,Deputado,RS,57
+"Juliana Cardoso",220640,https://www.camara.leg.br/internet/deputado/bandep/220640.jpg,F,PT,Deputado,SP,57
+"Carlos Henrique Gaguim",178993,https://www.camara.leg.br/internet/deputado/bandep/178993.jpg,M,DEM,Deputado,TO,56.57
+"Pedro Aihara",220630,https://www.camara.leg.br/internet/deputado/bandep/220630.jpg,M,PATRIOTA,Deputado,MG,57
+"Rodrigo Valadares",165470,https://www.camara.leg.br/internet/deputado/bandep/165470.jpg,M,UNIAO,Deputado,SE,57
+"Alex Santana",204571,https://www.camara.leg.br/internet/deputado/bandep/204571.jpg,M,REPUBLICANOS,Deputado,BA,56.57
+"David Soares",204511,https://www.camara.leg.br/internet/deputado/bandep/204511.jpg,M,UNIÃO,Deputado,SP,56.57
+"Maurício Carvalho",220609,https://www.camara.leg.br/internet/deputado/bandep/220609.jpg,M,UNIÃO,Deputado,RO,57
+"Antônia Lúcia",123756,https://www.camara.leg.br/internet/deputado/bandep/123756.jpg,F,REPUBLICANOS,Deputado,AC,56.57
+"José Nelto",204391,https://www.camara.leg.br/internet/deputado/bandep/204391.jpg,M,PP,Deputado,GO,56.57
+"Delegada Katarina",220561,https://www.camara.leg.br/internet/deputado/bandep/220561.jpg,F,PSD,Deputado,SE,57
+"Rosângela Moro",220644,https://www.camara.leg.br/internet/deputado/bandep/220644.jpg,F,UNIÃO,Deputado,SP,57
+"Denise Pessôa",220553,https://www.camara.leg.br/internet/deputado/bandep/220553.jpg,F,PT,Deputado,RS,57
+Albuquerque,220538,https://www.camara.leg.br/internet/deputado/bandep/220538.jpg,M,REPUBLICANOS,Deputado,RR,57
+"Marcelo Álvaro Antônio",179000,https://www.camara.leg.br/internet/deputado/bandep/179000.jpg,M,PL,Deputado,MG,56.57
+"Pompeo de Mattos",73486,https://www.camara.leg.br/internet/deputado/bandep/73486.jpg,M,PDT,Deputado,RS,56.57
+"Florentino Neto",220700,https://www.camara.leg.br/internet/deputado/bandep/220700.jpg,M,PT,Deputado,PI,57
+"Ossesio Silva",204422,https://www.camara.leg.br/internet/deputado/bandep/204422.jpg,M,REPUBLICANOS,Deputado,PE,56.57
+"Rosangela Gomes",178945,https://www.camara.leg.br/internet/deputado/bandep/178945.jpg,F,PRB,Deputado,RJ,56.57
+"Daniela do Waguinho",204459,https://www.camara.leg.br/internet/deputado/bandep/204459.jpg,F,UNIÃO,Deputado,RJ,56.57
+"Glaustin da Fokus",204419,https://www.camara.leg.br/internet/deputado/bandep/204419.jpg,M,PSC,Deputado,GO,56.57
+"Denis Bezerra",204542,https://www.camara.leg.br/internet/deputado/bandep/204542.jpg,M,PSB,"Deputado fora de exercício",CE,56
+"Padre João",160556,https://www.camara.leg.br/internet/deputado/bandep/160556.jpg,M,PT,Deputado,MG,56.57
+"Loester Trutis",204382,https://www.camara.leg.br/internet/deputado/bandep/204382.jpg,M,PL,"Deputado fora de exercício",MS,56
+"Alberto Fraga",73579,https://www.camara.leg.br/internet/deputado/bandep/73579.jpg,M,PL,Deputado,DF,57
+"Meire Serafim",220591,https://www.camara.leg.br/internet/deputado/bandep/220591.jpg,F,UNIAO,Deputado,AC,57
+"Ana Paula Lima",220556,https://www.camara.leg.br/internet/deputado/bandep/220556.jpg,F,PT,Deputado,SC,57
+"Silvia Waiãpi",220579,https://www.camara.leg.br/internet/deputado/bandep/220579.jpg,F,PL,Deputado,AP,57
+"Rose Modesto",204357,https://www.camara.leg.br/internet/deputado/bandep/204357.jpg,F,UNIÃO,"Deputado fora de exercício",MS,56
+"Margarete Coelho",204430,https://www.camara.leg.br/internet/deputado/bandep/204430.jpg,F,PP,"Deputado fora de exercício",PI,56
+"Gorete Pereira",129618,https://www.camara.leg.br/internet/deputado/bandep/129618.jpg,F,PR,"Deputado fora de exercício",CE,56
+"Tereza Nelma",204466,https://www.camara.leg.br/internet/deputado/bandep/204466.jpg,F,PSD,"Deputado fora de exercício",AL,56
+"Professora Dorinha Seabra Rezende",160639,https://www.camara.leg.br/internet/deputado/bandep/160639.jpg,F,DEM,"Deputado fora de exercício",TO,56
+"Soraya Santos",178946,https://www.camara.leg.br/internet/deputado/bandep/178946.jpg,F,PR,Deputado,RJ,56.57
+"Cezinha de Madureira",204504,https://www.camara.leg.br/internet/deputado/bandep/204504.jpg,M,PSD,Deputado,SP,56.57
+"Roseana Sarney",73806,https://www.camara.leg.br/internet/deputado/bandep/73806.jpg,F,MDB,Deputado,MA,57
+"Ricardo Ayres",220543,https://www.camara.leg.br/internet/deputado/bandep/220543.jpg,M,REPUBLICANOS,Deputado,TO,57
+"Luiz Gastão",220658,https://www.camara.leg.br/internet/deputado/bandep/220658.jpg,M,PSD,Deputado,CE,57
+"Fernanda Pessoa",220656,https://www.camara.leg.br/internet/deputado/bandep/220656.jpg,F,UNIAO,Deputado,CE,57
+"Luis Miranda",204381,https://www.camara.leg.br/internet/deputado/bandep/204381.jpg,M,REPUBLICANOS,"Deputado fora de exercício",DF,56
+"Marussa Boldrin",220572,https://www.camara.leg.br/internet/deputado/bandep/220572.jpg,F,MDB,Deputado,GO,57
+"Carlos Sampaio",74262,https://www.camara.leg.br/internet/deputado/bandep/74262.jpg,M,PSDB,Deputado,SP,56.57
+"Cleber Verde",141408,https://www.camara.leg.br/internet/deputado/bandep/141408.jpg,M,PRB,Deputado,MA,56.57
+"Jorge Goetten",214694,https://www.camara.leg.br/internet/deputado/bandep/214694.jpg,M,REPUBLICANOS,Deputado,SC,56.57
+"Nivaldo Albuquerque",194260,https://www.camara.leg.br/internet/deputado/bandep/194260.jpg,M,PTB,"Deputado fora de exercício",AL,56
+"Moses Rodrigues",178997,https://www.camara.leg.br/internet/deputado/bandep/178997.jpg,M,UNIÃO,Deputado,CE,56.57
+"Amom Mandel",220715,https://www.camara.leg.br/internet/deputado/bandep/220715.jpg,M,CIDADANIA,Deputado,AM,57
+"Lêda Borges",220566,https://www.camara.leg.br/internet/deputado/bandep/220566.jpg,F,PSDB,Deputado,GO,57
+"Ney Leprevost",204384,https://www.camara.leg.br/internet/deputado/bandep/204384.jpg,M,UNIÃO,"Deputado fora de exercício",PR,56
+"Raimundo Santos",74084,https://www.camara.leg.br/internet/deputado/bandep/74084.jpg,M,PSD,Deputado,PA,57
+"Guilherme Boulos",220639,https://www.camara.leg.br/internet/deputado/bandep/220639.jpg,M,PSOL,Deputado,SP,57
+"Ivan Valente",73531,https://www.camara.leg.br/internet/deputado/bandep/73531.jpg,M,PSOL,Deputado,SP,56.57
+"Pastor Henrique Vieira",220615,https://www.camara.leg.br/internet/deputado/bandep/220615.jpg,M,PSOL,Deputado,RJ,57
+"Professora Luciene Cavalcante",221338,https://www.camara.leg.br/internet/deputado/bandep/221338.jpg,F,PSOL,Deputado,SP,57
+"Tarcísio Motta",220598,https://www.camara.leg.br/internet/deputado/bandep/220598.jpg,M,PSOL,Deputado,RJ,57
+"Túlio Gadêlha",157130,https://www.camara.leg.br/internet/deputado/bandep/157130.jpg,M,REDE,Deputado,PE,56.57
+"Yury do Paredão",220660,https://www.camara.leg.br/internet/deputado/bandep/220660.jpg,M,MDB,Deputado,CE,57
+"Gustavo Fruet",73460,https://www.camara.leg.br/internet/deputado/bandep/73460.jpg,M,PDT,"Deputado fora de exercício",PR,56
+"Eduardo da Fonte",141421,https://www.camara.leg.br/internet/deputado/bandep/141421.jpg,M,PP,Deputado,PE,56.57
+"Wolney Queiroz",74439,https://www.camara.leg.br/internet/deputado/bandep/74439.jpg,M,PDT,"Deputado fora de exercício",PE,56
+"Dorinaldo Malafaia",220573,https://www.camara.leg.br/internet/deputado/bandep/220573.jpg,M,PDT,Deputado,AP,57
+"Hercílio Coelho Diniz",204539,https://www.camara.leg.br/internet/deputado/bandep/204539.jpg,M,MDB,Deputado,MG,56.57
+"Duda Ramos",220540,https://www.camara.leg.br/internet/deputado/bandep/220540.jpg,F,MDB,Deputado,RR,57
+"Flávia Morais",160598,https://www.camara.leg.br/internet/deputado/bandep/160598.jpg,F,PDT,Deputado,GO,56.57
+"José Medeiros",204472,https://www.camara.leg.br/internet/deputado/bandep/204472.jpg,M,PL,Deputado,MT,56.57
+"Alexandre Padilha",204503,https://www.camara.leg.br/internet/deputado/bandep/204503.jpg,M,PT,Deputado,SP,56.57
+"Ana Paula Leão",107970,https://www.camara.leg.br/internet/deputado/bandep/107970.jpg,F,PP,Deputado,MG,57
+"Marcos Tavares",220604,https://www.camara.leg.br/internet/deputado/bandep/220604.jpg,M,PDT,Deputado,RJ,57
+"Renilce Nicodemos",153423,https://www.camara.leg.br/internet/deputado/bandep/153423.jpg,F,MDB,Deputado,PA,57
+"Delegado Waldir",164359,https://www.camara.leg.br/internet/deputado/bandep/164359.jpg,M,PSL,"Deputado fora de exercício",GO,56
+"Leonardo Gadelha",122195,https://www.camara.leg.br/internet/deputado/bandep/122195.jpg,M,PSC,Deputado,PB,56.57
+"Chiquinho Brazão",204476,https://www.camara.leg.br/internet/deputado/bandep/204476.jpg,M,UNIÃO,Deputado,RJ,56.57
+"Gilvan Maximo",220531,https://www.camara.leg.br/internet/deputado/bandep/220531.jpg,M,REPUBLICANOS,Deputado,DF,57
+"Iza Arruda",220670,https://www.camara.leg.br/internet/deputado/bandep/220670.jpg,F,MDB,Deputado,PE,57
+"Bruno Ganem",220635,https://www.camara.leg.br/internet/deputado/bandep/220635.jpg,M,PODEMOS,Deputado,SP,57
+"Edna Henrique",204421,https://www.camara.leg.br/internet/deputado/bandep/204421.jpg,F,REPUBLICANOS,"Deputado fora de exercício",PB,56
+"Professora Marcivania",160641,https://www.camara.leg.br/internet/deputado/bandep/160641.jpg,F,PCdoB,Deputado,AP,56.57
+"Norma Pereira",216198,https://www.camara.leg.br/internet/deputado/bandep/216198.jpg,F,PSDB,"Deputado fora de exercício",SC,56
+"Bia Cavassa",207176,https://www.camara.leg.br/internet/deputado/bandep/207176.jpg,F,PSDB,"Deputado fora de exercício",MS,56
+"Professora Rosa Neide",204467,https://www.camara.leg.br/internet/deputado/bandep/204467.jpg,F,PT,"Deputado fora de exercício",MT,56
+"Norma Ayub",66179,https://www.camara.leg.br/internet/deputado/bandep/66179.jpg,F,DEM,"Deputado fora de exercício",ES,56
+"Ivan Junior",230764,https://www.camara.leg.br/internet/deputado/bandep/230764.jpg,M,UNIAO,Deputado,MA,57
+"Marçal Filho",74124,https://www.camara.leg.br/internet/deputado/bandep/74124.jpg,M,MDB,"Deputado fora de exercício",MS,56
+"Alfredo Gaspar",220576,https://www.camara.leg.br/internet/deputado/bandep/220576.jpg,M,UNIÃO,Deputado,AL,57
+"Dra. Alessandra Haber",220674,https://www.camara.leg.br/internet/deputado/bandep/220674.jpg,F,MDB,Deputado,PA,57
+"Mário Heringer",74158,https://www.camara.leg.br/internet/deputado/bandep/74158.jpg,M,PDT,Deputado,MG,56.57
+"Luizianne Lins",178866,https://www.camara.leg.br/internet/deputado/bandep/178866.jpg,F,PT,Deputado,CE,56.57
+"Marx Beltrão",178843,https://www.camara.leg.br/internet/deputado/bandep/178843.jpg,M,PP,Deputado,AL,56.57
+"Fabio Schiochet",204368,https://www.camara.leg.br/internet/deputado/bandep/204368.jpg,M,UNIAO,Deputado,SC,56.57
+"Coronel Armando",204376,https://www.camara.leg.br/internet/deputado/bandep/204376.jpg,M,PL,Deputado,SC,56.57
+"Pedro Lucas Fernandes",122974,https://www.camara.leg.br/internet/deputado/bandep/122974.jpg,M,UNIÃO,Deputado,MA,56.57
+"Tia Eron",178862,https://www.camara.leg.br/internet/deputado/bandep/178862.jpg,F,PRB,"Deputado fora de exercício",BA,56
+"Célio Studart",204488,https://www.camara.leg.br/internet/deputado/bandep/204488.jpg,M,PSD,Deputado,CE,56.57
+"Geovania de Sá",178966,https://www.camara.leg.br/internet/deputado/bandep/178966.jpg,F,PSDB,Deputado,SC,56.57
+Marangoni,220648,https://www.camara.leg.br/internet/deputado/bandep/220648.jpg,M,UNIÃO,Deputado,SP,57
+"Gervásio Maia",204394,https://www.camara.leg.br/internet/deputado/bandep/204394.jpg,M,PSB,Deputado,PB,56.57
+"Capitão Derrite",204531,https://www.camara.leg.br/internet/deputado/bandep/204531.jpg,M,PL,"Deputado fora de exercício",SP,56
+"Helena Lima",220537,https://www.camara.leg.br/internet/deputado/bandep/220537.jpg,F,MDB,Deputado,RR,57
+"Pastor Sargento Isidório",204553,https://www.camara.leg.br/internet/deputado/bandep/204553.jpg,M,AVANTE,Deputado,BA,56.57
+"Benes Leocádio",109429,https://www.camara.leg.br/internet/deputado/bandep/109429.jpg,M,UNIÃO,Deputado,RN,56.57
+Bozzella,204502,https://www.camara.leg.br/internet/deputado/bandep/204502.jpg,M,UNIÃO,"Deputado fora de exercício",SP,56
+"Vinicius Carvalho",141555,https://www.camara.leg.br/internet/deputado/bandep/141555.jpg,M,REPUBLICANOS,Deputado,SP,56.57
+"Delegada Ione",220625,https://www.camara.leg.br/internet/deputado/bandep/220625.jpg,F,AVANTE,Deputado,MG,57
+"Roberto de Lucena",160653,https://www.camara.leg.br/internet/deputado/bandep/160653.jpg,M,PODE,"Deputado fora de exercício",SP,56
+"Lídice da Mata",139285,https://www.camara.leg.br/internet/deputado/bandep/139285.jpg,F,PSB,Deputado,BA,56.57
+"Pedro Vilela",178844,https://www.camara.leg.br/internet/deputado/bandep/178844.jpg,M,PSDB,"Deputado fora de exercício",AL,56
+"Dimas Fabiano",160599,https://www.camara.leg.br/internet/deputado/bandep/160599.jpg,M,PP,Deputado,MG,56.57
+"Ely Santos",218086,https://www.camara.leg.br/internet/deputado/bandep/218086.jpg,F,REPUBLICANOS,Deputado,SP,56.57
+"Lula da Fonte",220669,https://www.camara.leg.br/internet/deputado/bandep/220669.jpg,M,PP,Deputado,PE,57
+"José Guimarães",141470,https://www.camara.leg.br/internet/deputado/bandep/141470.jpg,M,PT,Deputado,CE,56.57
+"Carmen Zanotto",164360,https://www.camara.leg.br/internet/deputado/bandep/164360.jpg,F,CIDADANIA,Deputado,SC,56.57
+"Saullo Vianna",220713,https://www.camara.leg.br/internet/deputado/bandep/220713.jpg,M,UNIAO,Deputado,AM,57
+"Delegada Adriana Accorsi",220565,https://www.camara.leg.br/internet/deputado/bandep/220565.jpg,F,PT,Deputado,GO,57
+"Fábio Trad",160587,https://www.camara.leg.br/internet/deputado/bandep/160587.jpg,M,PSD,"Deputado fora de exercício",MS,56
+"David Miranda",205548,https://www.camara.leg.br/internet/deputado/bandep/205548.jpg,M,PDT,"Deputado fora de exercício",RJ,56
+"Janaína Farias",6351,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6351.jpg,F,PT,Senador,CE,57.58
+"Benedita da Silva",73701,https://www.camara.leg.br/internet/deputado/bandep/73701.jpg,F,PT,Deputado,RJ,56.57
+"Alencar Santana",204501,https://www.camara.leg.br/internet/deputado/bandep/204501.jpg,M,PT,Deputado,SP,56.57
+"Gleisi Hoffmann",107283,https://www.camara.leg.br/internet/deputado/bandep/107283.jpg,F,PT,Deputado,PR,56.57
+"Afonso Florence",160508,https://www.camara.leg.br/internet/deputado/bandep/160508.jpg,M,PT,Deputado,BA,56.57
+"Patrus Ananias",74160,https://www.camara.leg.br/internet/deputado/bandep/74160.jpg,M,PT,Deputado,MG,56.57
+"João Daniel",178970,https://www.camara.leg.br/internet/deputado/bandep/178970.jpg,M,PT,Deputado,SE,56.57
+"Elcione Barbalho",74075,https://www.camara.leg.br/internet/deputado/bandep/74075.jpg,F,MDB,Deputado,PA,56.57
+"Bohn Gass",160538,https://www.camara.leg.br/internet/deputado/bandep/160538.jpg,M,PT,Deputado,RS,56.57
+Marcon,160535,https://www.camara.leg.br/internet/deputado/bandep/160535.jpg,M,PT,Deputado,RS,56.57
+"Rogério Correia",204480,https://www.camara.leg.br/internet/deputado/bandep/204480.jpg,M,PT,Deputado,MG,56.57
+"Paulo Pimenta",74400,https://www.camara.leg.br/internet/deputado/bandep/74400.jpg,M,PT,Deputado,RS,56.57
+"Waldenor Pereira",160569,https://www.camara.leg.br/internet/deputado/bandep/160569.jpg,M,PT,Deputado,BA,56.57
+"Valmir Assunção",160610,https://www.camara.leg.br/internet/deputado/bandep/160610.jpg,M,PT,Deputado,BA,56.57
+"Nilto Tatto",178986,https://www.camara.leg.br/internet/deputado/bandep/178986.jpg,M,PT,Deputado,SP,56.57
+"Paulo Guedes",204492,https://www.camara.leg.br/internet/deputado/bandep/204492.jpg,M,PT,Deputado,MG,56.57
+"Vander Loubet",74376,https://www.camara.leg.br/internet/deputado/bandep/74376.jpg,M,PT,Deputado,MS,56.57
+"Célio Moura",204370,https://www.camara.leg.br/internet/deputado/bandep/204370.jpg,M,PT,"Deputado fora de exercício",TO,56
+Paulão,171617,https://www.camara.leg.br/internet/deputado/bandep/171617.jpg,M,PT,Deputado,AL,56.57
+"Leonardo Monteiro",74156,https://www.camara.leg.br/internet/deputado/bandep/74156.jpg,M,PT,Deputado,MG,56.57
+"Pedro Uczai",160604,https://www.camara.leg.br/internet/deputado/bandep/160604.jpg,M,PT,Deputado,SC,56.57
+"José Airton Félix Cirilo",141464,https://www.camara.leg.br/internet/deputado/bandep/141464.jpg,M,PT,Deputado,CE,56.57
+"Zeca Dirceu",160592,https://www.camara.leg.br/internet/deputado/bandep/160592.jpg,M,PT,Deputado,PR,56.57
+"José Ricardo",204555,https://www.camara.leg.br/internet/deputado/bandep/204555.jpg,M,PT,"Deputado fora de exercício",AM,56
+"Frei Anastacio Ribeiro",204393,https://www.camara.leg.br/internet/deputado/bandep/204393.jpg,M,PT,"Deputado fora de exercício",PB,56
+"Clarissa Garotinho",178939,https://www.camara.leg.br/internet/deputado/bandep/178939.jpg,F,PROS,"Deputado fora de exercício",RJ,56
+Vicentinho,74283,https://www.camara.leg.br/internet/deputado/bandep/74283.jpg,M,PT,Deputado,SP,56.57
+"Carlos Veras",204426,https://www.camara.leg.br/internet/deputado/bandep/204426.jpg,M,PT,Deputado,PE,56.57
+"Carlos Zarattini",141398,https://www.camara.leg.br/internet/deputado/bandep/141398.jpg,M,PT,Deputado,SP,56.57
+"Rejane Dias",178925,https://www.camara.leg.br/internet/deputado/bandep/178925.jpg,F,PT,"Deputado fora de exercício",PI,56
+"Marília Arraes",204428,https://www.camara.leg.br/internet/deputado/bandep/204428.jpg,F,SOLIDARIEDADE,"Deputado fora de exercício",PE,56
+"Nely Aquino",220622,https://www.camara.leg.br/internet/deputado/bandep/220622.jpg,F,PODEMOS,Deputado,MG,57
+"Marcelo Crivella",220599,https://www.camara.leg.br/internet/deputado/bandep/220599.jpg,M,REPUBLICANOS,Deputado,RJ,57
+"Bira do Pindaré",204561,https://www.camara.leg.br/internet/deputado/bandep/204561.jpg,M,PSB,"Deputado fora de exercício",MA,56
+"Luciano Ducci",178931,https://www.camara.leg.br/internet/deputado/bandep/178931.jpg,M,PSB,Deputado,PR,56.57
+"Rodrigo Gambale",220641,https://www.camara.leg.br/internet/deputado/bandep/220641.jpg,M,PODEMOS,Deputado,SP,57
+"Pastor Gil",204570,https://www.camara.leg.br/internet/deputado/bandep/204570.jpg,M,PL,Deputado,SP,56.57
+"Reginaldo Lopes",74161,https://www.camara.leg.br/internet/deputado/bandep/74161.jpg,M,PT,Deputado,MG,56.57
+"Leo de Brito",178825,https://www.camara.leg.br/internet/deputado/bandep/178825.jpg,M,PT,"Deputado fora de exercício",AC,56
+"Jorge Solla",178857,https://www.camara.leg.br/internet/deputado/bandep/178857.jpg,M,PT,Deputado,BA,56.57
+"Flávio Nogueira",191923,https://www.camara.leg.br/internet/deputado/bandep/191923.jpg,M,PT,Deputado,PI,57
+"Daniela Reinehr",220557,https://www.camara.leg.br/internet/deputado/bandep/220557.jpg,F,PL,Deputado,SC,57
+"Wilson Santiago",74044,https://www.camara.leg.br/internet/deputado/bandep/74044.jpg,M,REPUBLICANOS,Deputado,PB,56.57
+"Geraldo Mendes",220702,https://www.camara.leg.br/internet/deputado/bandep/220702.jpg,M,UNIAO,Deputado,PR,57
+"Celina Leão",204380,https://www.camara.leg.br/internet/deputado/bandep/204380.jpg,F,PP,"Deputado fora de exercício",DF,56
+"Sonize Barbosa",220575,https://www.camara.leg.br/internet/deputado/bandep/220575.jpg,F,PL,Deputado,AP,57
+"Guiga Peixoto",204513,https://www.camara.leg.br/internet/deputado/bandep/204513.jpg,M,PSC,"Deputado fora de exercício",SP,56
+"Greyce Elias",198197,https://www.camara.leg.br/internet/deputado/bandep/198197.jpg,F,AVANTE,Deputado,MG,56.57
+"Samuel Moreira",178990,https://www.camara.leg.br/internet/deputado/bandep/178990.jpg,M,PSDB,"Deputado fora de exercício",SP,56
+"Kim Kataguiri",204536,https://www.camara.leg.br/internet/deputado/bandep/204536.jpg,M,UNIÃO,Deputado,SP,56.57
+"Luisa Canziani",204410,https://www.camara.leg.br/internet/deputado/bandep/204410.jpg,F,PSD,Deputado,PR,56.57
+"Delegado Matheus Laiola",220701,https://www.camara.leg.br/internet/deputado/bandep/220701.jpg,M,UNIÃO,Deputado,PR,57
+"Fred Costa",204494,https://www.camara.leg.br/internet/deputado/bandep/204494.jpg,M,PATRIOTA,Deputado,MG,57
+"Paulo Eduardo Martins",193726,https://www.camara.leg.br/internet/deputado/bandep/193726.jpg,M,PL,"Deputado fora de exercício",PR,56
+"Lasier Martins",5533,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5533.jpg,M,PODEMOS,"Senador fora de exercício",RS,55.56
+"Alê Silva",204545,https://www.camara.leg.br/internet/deputado/bandep/204545.jpg,"Alê Silva",REPUBLICANOS,"Deputado fora de exercício",MG,56
+"Aline Sleutjes",204400,https://www.camara.leg.br/internet/deputado/bandep/204400.jpg,F,PROS,"Deputado fora de exercício",PR,56
+"Dra. Soraya Manato",81297,https://www.camara.leg.br/internet/deputado/bandep/81297.jpg,F,PTB,"Deputado fora de exercício",ES,56
+"Eliza Virgínia",220008,https://www.camara.leg.br/internet/deputado/bandep/220008.jpg,F,PP,Deputado,PB,56.57
+"Enrico Misasi",204537,https://www.camara.leg.br/internet/deputado/bandep/204537.jpg,M,MDB,"Deputado fora de exercício",SP,56
+"João Campos",74366,https://www.camara.leg.br/internet/deputado/bandep/74366.jpg,M,REPUBLICANOS,"Deputado fora de exercício",GO,56
+"Luiz Lima",204455,https://www.camara.leg.br/internet/deputado/bandep/204455.jpg,M,PL,Deputado,RJ,56.57
+"Nelho Bezerra",218879,https://www.camara.leg.br/internet/deputado/bandep/218879.jpg,M,UNIÃO,"Deputado fora de exercício",CE,56
+"Osmar Serraglio",73463,https://www.camara.leg.br/internet/deputado/bandep/73463.jpg,M,PP,"Deputado fora de exercício",PR,56
+"Valtenir Pereira",141552,https://www.camara.leg.br/internet/deputado/bandep/141552.jpg,M,MDB,"Deputado fora de exercício",MT,56
+"Paulinho Freire",220627,https://www.camara.leg.br/internet/deputado/bandep/220627.jpg,M,UNIAO,Deputado,RN,57
+"Jeferson Rodrigues",220567,https://www.camara.leg.br/internet/deputado/bandep/220567.jpg,M,REPUBLICANOS,Deputado,GO,57
+"Daiana Santos",220555,https://www.camara.leg.br/internet/deputado/bandep/220555.jpg,F,PCdoB,Deputado,RS,57
+"Dr. Zacharias Calil",204412,https://www.camara.leg.br/internet/deputado/bandep/204412.jpg,M,UNIAO,Deputado,GO,56.57
+"Giovani Feltes",178996,https://www.camara.leg.br/internet/deputado/bandep/178996.jpg,M,MDB,"Deputado fora de exercício",RS,56
+"Dimas Gadelha",220602,https://www.camara.leg.br/internet/deputado/bandep/220602.jpg,M,PT,Deputado,RJ,57
+Pinheirinho,204524,https://www.camara.leg.br/internet/deputado/bandep/204524.jpg,M,PP,Deputado,MG,56.57
+"Dilceu Sperafico",73768,https://www.camara.leg.br/internet/deputado/bandep/73768.jpg,M,PP,Deputado,PR,57
+"Júnior Ferrari",204497,https://www.camara.leg.br/internet/deputado/bandep/204497.jpg,M,PSD,Deputado,PA,56.57
+"Policial Katia Sastre",204529,https://www.camara.leg.br/internet/deputado/bandep/204529.jpg,F,PL,"Deputado fora de exercício",SP,56
+"Gabriel Mota",224117,https://www.camara.leg.br/internet/deputado/bandep/224117.jpg,M,REPUBLICANOS,Deputado,RR,57
+"Eduardo Bolsonaro",92346,https://www.camara.leg.br/internet/deputado/bandep/92346.jpg,M,PL,Deputado,SP,56.57
+"Capitão Augusto",178829,https://www.camara.leg.br/internet/deputado/bandep/178829.jpg,M,PL,Deputado,SP,56.57
+"Joceval Rodrigues",214865,https://www.camara.leg.br/internet/deputado/bandep/214865.jpg,M,CIDADANIA,"Deputado fora de exercício",BA,56
+"Delegado Éder Mauro",178908,https://www.camara.leg.br/internet/deputado/bandep/178908.jpg,M,PL,Deputado,PA,56.57
+"Cássio Andrade",204499,https://www.camara.leg.br/internet/deputado/bandep/204499.jpg,M,PSB,"Deputado fora de exercício",PA,56
+Ismael,98615,https://www.camara.leg.br/internet/deputado/bandep/98615.jpg,M,PSD,Deputado,SC,57
+"Enfermeira Ana Paula",225730,https://www.camara.leg.br/internet/deputado/bandep/225730.jpg,F,PDT,Deputado,CE,57
+"Jéssica Sales",178839,https://www.camara.leg.br/internet/deputado/bandep/178839.jpg,F,MDB,"Deputado fora de exercício",AC,56
+"Amaro Neto",204356,https://www.camara.leg.br/internet/deputado/bandep/204356.jpg,M,REPUBLICANOS,Deputado,ES,56.57
+"Aluisio Mendes",178881,https://www.camara.leg.br/internet/deputado/bandep/178881.jpg,M,PODE,Deputado,MA,56.57
+"Daniel Agrobom",220571,https://www.camara.leg.br/internet/deputado/bandep/220571.jpg,M,PL,Deputado,GO,57
+"Flávio Dino",4605,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador4605.jpg,M,PSB,Senador,MA,57.58
+"Felipe Carreras",72442,https://www.camara.leg.br/internet/deputado/bandep/72442.jpg,M,PSB,Deputado,PE,56.57
+"Eduardo Bismarck",204541,https://www.camara.leg.br/internet/deputado/bandep/204541.jpg,M,PDT,Deputado,CE,56.57
+Padovani,220706,https://www.camara.leg.br/internet/deputado/bandep/220706.jpg,M,UNIAO,Deputado,PR,57
+"Bosco Costa",74052,https://www.camara.leg.br/internet/deputado/bandep/74052.jpg,M,PROS,Deputado,SE,56.57
+"Marreca Filho",204566,https://www.camara.leg.br/internet/deputado/bandep/204566.jpg,M,PATRIOTA,Deputado,MA,56.57
+"Marcos Soares",178943,https://www.camara.leg.br/internet/deputado/bandep/178943.jpg,M,UNIAO,Deputado,RJ,56.57
+"Maria das Vitórias",5908,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5908.jpg,F,PSD,Senador,AC,56.57
+"Major Fabiana",204458,https://www.camara.leg.br/internet/deputado/bandep/204458.jpg,F,PL,"Deputado fora de exercício",RJ,56
+"Carla Zambelli",204507,https://www.camara.leg.br/internet/deputado/bandep/204507.jpg,F,PL,Deputado,SP,56.57
+"Camila Jara",220548,https://www.camara.leg.br/internet/deputado/bandep/220548.jpg,F,PT,Deputado,MS,57
+"Murilo Galdino",220584,https://www.camara.leg.br/internet/deputado/bandep/220584.jpg,M,REPUBLICANOS,Deputado,PB,57
+"Daniel Barbosa",220582,https://www.camara.leg.br/internet/deputado/bandep/220582.jpg,M,PP,Deputado,AL,57
+"Fred Linhares",220534,https://www.camara.leg.br/internet/deputado/bandep/220534.jpg,M,REPUBLICANOS,Deputado,DF,57
+"Aureo Ribeiro",160512,https://www.camara.leg.br/internet/deputado/bandep/160512.jpg,M,SOLIDARIEDADE,Deputado,RJ,57
+"Dr. Victor Linhalis",220528,https://www.camara.leg.br/internet/deputado/bandep/220528.jpg,M,PODEMOS,Deputado,ES,57
+"Ana Pimentel",220632,https://www.camara.leg.br/internet/deputado/bandep/220632.jpg,F,PT,Deputado,MG,57
+"Leonardo Picciani",74254,https://www.camara.leg.br/internet/deputado/bandep/74254.jpg,M,MDB,"Deputado fora de exercício",RJ,56
+"Yandra Moura",220564,https://www.camara.leg.br/internet/deputado/bandep/220564.jpg,F,UNIAO,Deputado,SE,57
+"Lafayette de Andrada",98057,https://www.camara.leg.br/internet/deputado/bandep/98057.jpg,M,REPUBLICANOS,Deputado,MG,56.57
+"Fausto Santos Jr.",220712,https://www.camara.leg.br/internet/deputado/bandep/220712.jpg,M,UNIÃO,Deputado,AM,57
+"Delegado Fabio Costa",220583,https://www.camara.leg.br/internet/deputado/bandep/220583.jpg,M,PP,Deputado,AL,57
+"Alberto Mourão",74696,https://www.camara.leg.br/internet/deputado/bandep/74696.jpg,M,MDB,Deputado,SP,57
+"Chico D'Angelo",141439,https://www.camara.leg.br/internet/deputado/bandep/141439.jpg,M,PDT,"Deputado fora de exercício",RJ,56
+"Coronel Fernanda",220595,https://www.camara.leg.br/internet/deputado/bandep/220595.jpg,F,PL,Deputado,MT,57
+"Charlles Evangelista",204490,https://www.camara.leg.br/internet/deputado/bandep/204490.jpg,M,PP,"Deputado fora de exercício",MG,56
+"Delegado Ramagem",220619,https://www.camara.leg.br/internet/deputado/bandep/220619.jpg,M,PL,Deputado,RJ,57
+"Daniel José",228941,https://www.camara.leg.br/internet/deputado/bandep/228941.jpg,M,PODEMOS,Deputado,SP,57
+"Herculano Passos",178981,https://www.camara.leg.br/internet/deputado/bandep/178981.jpg,M,REPUBLICANOS,"Deputado fora de exercício",SP,56
+"Gonzaga Patriota",74419,https://www.camara.leg.br/internet/deputado/bandep/74419.jpg,M,PSB,"Deputado fora de exercício",PE,56
+Cobalchini,98148,https://www.camara.leg.br/internet/deputado/bandep/98148.jpg,F,MDB,Deputado,SC,57
+"Joice Hasselmann",204546,https://www.camara.leg.br/internet/deputado/bandep/204546.jpg,F,PSDB,"Deputado fora de exercício",SP,56
+"Jaqueline Cassol",108338,https://www.camara.leg.br/internet/deputado/bandep/108338.jpg,F,PP,"Deputado fora de exercício",RO,56
+"Angela Amin",73696,https://www.camara.leg.br/internet/deputado/bandep/73696.jpg,F,PP,"Deputado fora de exercício",SC,56
+"Rosana Valle",204525,https://www.camara.leg.br/internet/deputado/bandep/204525.jpg,F,PL,Deputado,SP,56.57
+"Francisco Jr.",204392,https://www.camara.leg.br/internet/deputado/bandep/204392.jpg,M,PSD,"Deputado fora de exercício",GO,56
+"Henderson Pinto",220672,https://www.camara.leg.br/internet/deputado/bandep/220672.jpg,M,MDB,Deputado,PA,57
+"Domingos Neto",143632,https://www.camara.leg.br/internet/deputado/bandep/143632.jpg,M,PSD,Deputado,CE,56.57
+"Pedro Campos",220667,https://www.camara.leg.br/internet/deputado/bandep/220667.jpg,M,PSB,Deputado,PE,57
+"Rosana Martinelli",6363,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6363.jpg,F,PL,Senador,MT,57.58
+"Lucas Redecker",204404,https://www.camara.leg.br/internet/deputado/bandep/204404.jpg,M,PSDB,Deputado,RS,56.57
+"Jefferson Campos",74273,https://www.camara.leg.br/internet/deputado/bandep/74273.jpg,M,PL,Deputado,SP,56.57
+"Luiz Philippe de Orleans e Bragança",204526,https://www.camara.leg.br/internet/deputado/bandep/204526.jpg,M,PL,Deputado,SP,56.57
+"Mario Frias",220655,https://www.camara.leg.br/internet/deputado/bandep/220655.jpg,M,PL,Deputado,SP,57
+Nitinho,227660,https://www.camara.leg.br/internet/deputado/bandep/227660.jpg,M,PSD,Deputado,SE,57
+Pezenti,161440,https://www.camara.leg.br/internet/deputado/bandep/161440.jpg,M,MDB,Deputado,SC,57
+Bacelar,69871,https://www.camara.leg.br/internet/deputado/bandep/69871.jpg,M,PV,Deputado,BA,56.57
+"Camilo Capiberibe",204352,https://www.camara.leg.br/internet/deputado/bandep/204352.jpg,M,PSB,"Deputado fora de exercício",AP,56
+"Enio Verri",132504,https://www.camara.leg.br/internet/deputado/bandep/132504.jpg,M,PT,Deputado,PR,56.57
+"Joenia Wapichana",204468,https://www.camara.leg.br/internet/deputado/bandep/204468.jpg,F,REDE,"Deputado fora de exercício",RR,56
+"Paulo Foletto",160517,https://www.camara.leg.br/internet/deputado/bandep/160517.jpg,M,PSB,Deputado,ES,56.57
+"Renildo Calheiros",73801,https://www.camara.leg.br/internet/deputado/bandep/73801.jpg,M,PCdoB,Deputado,PE,56.57
+"Vilson da Fetaemg",204483,https://www.camara.leg.br/internet/deputado/bandep/204483.jpg,M,PSB,"Deputado fora de exercício",MG,56
+"Marcelo Queiroz",160161,https://www.camara.leg.br/internet/deputado/bandep/160161.jpg,M,PP,Deputado,RJ,57
+"Lázaro Botelho",141480,https://www.camara.leg.br/internet/deputado/bandep/141480.jpg,M,PP,Deputado,TO,56.57
+"Ulisses Guimarães",223398,https://www.camara.leg.br/internet/deputado/bandep/223398.jpg,M,MDB,Deputado,MG,57
+"Célio Silveira",178876,https://www.camara.leg.br/internet/deputado/bandep/178876.jpg,M,MDB,Deputado,GO,56.57
+"Samuel Viana",220631,https://www.camara.leg.br/internet/deputado/bandep/220631.jpg,M,PL,Deputado,MG,57
+"Neucimar Fraga",74165,https://www.camara.leg.br/internet/deputado/bandep/74165.jpg,M,PP,"Deputado fora de exercício",ES,56
+"Júnior Mano",204550,https://www.camara.leg.br/internet/deputado/bandep/204550.jpg,M,PSB,Deputado,CE,56.57
+"Guaracy Silveira",5639,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5639.jpg,M,PP,"Senador fora de exercício",TO,55.56
+"Luizão Goulart",204418,https://www.camara.leg.br/internet/deputado/bandep/204418.jpg,M,SOLIDARIEDADE,"Deputado fora de exercício",PR,56
+"Dra. Eudócia",5906,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5906.jpg,F,PL,Senador,AL,56.57
+"Carol Dartora",220704,https://www.camara.leg.br/internet/deputado/bandep/220704.jpg,F,PT,Deputado,PR,57
+Welter,224333,https://www.camara.leg.br/internet/deputado/bandep/224333.jpg,M,PT,Deputado,PR,57
+"Zé Vitor",204517,https://www.camara.leg.br/internet/deputado/bandep/204517.jpg,M,PL,Deputado,MG,56.57
+"Liziane Bayer",204405,https://www.camara.leg.br/internet/deputado/bandep/204405.jpg,F,REPUBLICANOS,"Deputado fora de exercício",RS,56
+"Áurea Carolina",204509,https://www.camara.leg.br/internet/deputado/bandep/204509.jpg,F,PSOL,"Deputado fora de exercício",MG,56
+"Gláucia Santiago",229333,https://www.camara.leg.br/internet/deputado/bandep/229333.jpg,F,PL,Deputado,MG,57
+"Nelson Barbudo",204449,https://www.camara.leg.br/internet/deputado/bandep/204449.jpg,M,PL,Deputado,MT,56.57
+"Amanda Gentil",220707,https://www.camara.leg.br/internet/deputado/bandep/220707.jpg,F,PP,Deputado,MA,57
+Dandara,220629,https://www.camara.leg.br/internet/deputado/bandep/220629.jpg,F,PT,Deputado,MG,57
+Leandre,178832,https://www.camara.leg.br/internet/deputado/bandep/178832.jpg,F,PSD,Deputado,PR,56.57
+"Professora Goreth",220580,https://www.camara.leg.br/internet/deputado/bandep/220580.jpg,F,PDT,Deputado,AP,57
+"Telmário Mota",5535,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5535.jpg,M,PROS,"Senador fora de exercício",RR,55.56
+"Milton Vieira",154178,https://www.camara.leg.br/internet/deputado/bandep/154178.jpg,M,REPUBLICANOS,Deputado,SP,56.57
+"Lucas Vergilio",178879,https://www.camara.leg.br/internet/deputado/bandep/178879.jpg,M,SOLIDARIEDADE,"Deputado fora de exercício",GO,56
+"Lindbergh Farias",74858,https://www.camara.leg.br/internet/deputado/bandep/74858.jpg,M,PT,Deputado,RJ,57
+"Paulo Bengtson",204538,https://www.camara.leg.br/internet/deputado/bandep/204538.jpg,M,PTB,"Deputado fora de exercício",PA,56
+"Marcelo Moraes",133810,https://www.camara.leg.br/internet/deputado/bandep/133810.jpg,M,PL,Deputado,RS,56.57
+"Carla Ayres",229106,https://www.camara.leg.br/internet/deputado/bandep/229106.jpg,F,PT,Deputado,SC,57
+Sanderson,204416,https://www.camara.leg.br/internet/deputado/bandep/204416.jpg,M,PL,Deputado,RS,57
+"Mariana Carvalho",178956,https://www.camara.leg.br/internet/deputado/bandep/178956.jpg,F,PSDB,Deputado,RO,56.57
+"Defensor Stélio Dener",220539,https://www.camara.leg.br/internet/deputado/bandep/220539.jpg,M,REPUBLICANOS,Deputado,RR,57
+"Juninho do Pneu",204457,https://www.camara.leg.br/internet/deputado/bandep/204457.jpg,M,UNIAO,Deputado,RJ,56.57
+"Geninho Zuliani",204527,https://www.camara.leg.br/internet/deputado/bandep/204527.jpg,M,UNIÃO,"Deputado fora de exercício",SP,56
+"Fernando Rodolfo",204427,https://www.camara.leg.br/internet/deputado/bandep/204427.jpg,M,PL,Deputado,PE,56.57
+"Júlio Oliveira",228797,https://www.camara.leg.br/internet/deputado/bandep/228797.jpg,M,PP,Deputado,TO,57
+"Luiz Nishimori",162332,https://www.camara.leg.br/internet/deputado/bandep/162332.jpg,M,PR,Deputado,PR,56.57
+"Lucyana Genésio",229082,https://www.camara.leg.br/internet/deputado/bandep/229082.jpg,F,PDT,Deputado,MA,57
+"Léo Prates",80815,https://www.camara.leg.br/internet/deputado/bandep/80815.jpg,M,PDT,Deputado,BA,57
+"Professora Dayane Pimentel",204565,https://www.camara.leg.br/internet/deputado/bandep/204565.jpg,F,UNIÃO,"Deputado fora de exercício",BA,56
+"Marina Santos",204432,https://www.camara.leg.br/internet/deputado/bandep/204432.jpg,F,REPUBLICANOS,"Deputado fora de exercício",PI,56
+"Eriberto Medeiros",220663,https://www.camara.leg.br/internet/deputado/bandep/220663.jpg,M,PSB,Deputado,PE,57
+"Juliana Kolankiewicz",228837,https://www.camara.leg.br/internet/deputado/bandep/228837.jpg,F,MDB,Deputado,MT,57
+"Ely Santos",218086,https://www.camara.leg.br/internet/deputado/bandep/218086.jpg,"Ely Santos",REPUBLICANOS,Deputado,SP,56.57
+"Paulo Ramos",133968,https://www.camara.leg.br/internet/deputado/bandep/133968.jpg,M,PDT,"Deputado fora de exercício",RJ,56
+"Haroldo Cathedral",204465,https://www.camara.leg.br/internet/deputado/bandep/204465.jpg,M,PSD,"Deputado fora de exercício",RR,56
+"Miguel Lombardi",178985,https://www.camara.leg.br/internet/deputado/bandep/178985.jpg,M,PL,Deputado,SP,56.57
+"Marcelo Lima",220634,https://www.camara.leg.br/internet/deputado/bandep/220634.jpg,M,PSB,Deputado,SP,57
+Alfredinho,221148,https://www.camara.leg.br/internet/deputado/bandep/221148.jpg,M,PT,Deputado,SP,56.57
+"Euclydes Pettersen",204482,https://www.camara.leg.br/internet/deputado/bandep/204482.jpg,M,REPUBLICANOS,Deputado,MG,56.57
+"Guilherme Mussi",160667,https://www.camara.leg.br/internet/deputado/bandep/160667.jpg,M,PSD,"Deputado fora de exercício",SP,56
+"Doutor Luizinho",204450,https://www.camara.leg.br/internet/deputado/bandep/204450.jpg,M,PP,Deputado,RJ,56.57
+"Boca Aberta",204397,https://www.camara.leg.br/internet/deputado/bandep/204397.jpg,M,PROS,"Deputado fora de exercício",PR,56
+"Dr. Fernando Máximo",220610,https://www.camara.leg.br/internet/deputado/bandep/220610.jpg,M,UNIAO,Deputado,RO,57
+Gurgel,204442,https://www.camara.leg.br/internet/deputado/bandep/204442.jpg,M,PL,"Deputado fora de exercício",RJ,56
+"Gerlen Diniz",220587,https://www.camara.leg.br/internet/deputado/bandep/220587.jpg,M,PP,Deputado,AC,57
+"Max Lemos",220607,https://www.camara.leg.br/internet/deputado/bandep/220607.jpg,M,PDT,Deputado,RJ,57
+"Aline Gurgel",204353,https://www.camara.leg.br/internet/deputado/bandep/204353.jpg,F,REPUBLICANOS,Deputado,AP,56.57
+Reimont,220606,https://www.camara.leg.br/internet/deputado/bandep/220606.jpg,M,PT,Deputado,RJ,57
+"Glauber Braga",152605,https://www.camara.leg.br/internet/deputado/bandep/152605.jpg,M,PSOL,Deputado,RJ,56.57
+"Damião Feliciano",74467,https://www.camara.leg.br/internet/deputado/bandep/74467.jpg,M,PDT,Deputado,PB,56.57
+"Teresa Leitão",6338,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador6338.jpg,F,PT,Senador,CE,57.58
+"Elisangela Araujo",229585,https://www.camara.leg.br/internet/deputado/bandep/229585.jpg,F,PT,Deputado,BA,57
+"Giovani Cherini",160673,https://www.camara.leg.br/internet/deputado/bandep/160673.jpg,M,PR,Deputado,RS,56.57
+"Wellington Fagundes",1173,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador1173.jpg,M,PL,Senador,MT,"55,56,57,58"
+"Ismael Alexandrino",220570,https://www.camara.leg.br/internet/deputado/bandep/220570.jpg,M,PSD,Deputado,GO,57
+"Rafael Brito",220586,https://www.camara.leg.br/internet/deputado/bandep/220586.jpg,M,MDB,Deputado,AL,57
+"Carlos Bezerra",141401,https://www.camara.leg.br/internet/deputado/bandep/141401.jpg,M,MDB,"Deputado fora de exercício",MT,56
+"Olival Marques",204498,https://www.camara.leg.br/internet/deputado/bandep/204498.jpg,"Olival Marques",MDB,Deputado,PA,56.57
+"Danrlei de Deus Hinterholz",160552,https://www.camara.leg.br/internet/deputado/bandep/160552.jpg,M,PSD,Deputado,RS,56.57
+"Alê Silva",204545,https://www.camara.leg.br/internet/deputado/bandep/204545.jpg,F,REPUBLICANOS,"Deputado fora de exercício",MG,56
+"Jader Barbalho",35,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador35.jpg,M,MDB,Senador,PA,56.57
+"Pedro Augusto Bezerra",90201,https://www.camara.leg.br/internet/deputado/bandep/90201.jpg,M,PDT,"Deputado fora de exercício",CE,56
+Bebeto,220612,https://www.camara.leg.br/internet/deputado/bandep/220612.jpg,M,PP,Deputado,RJ,57
+"Simone Marquetto",220651,https://www.camara.leg.br/internet/deputado/bandep/220651.jpg,F,MDB,Deputado,SP,57
+"Antonio Carlos Rodrigues",220638,https://www.camara.leg.br/internet/deputado/bandep/220638.jpg,M,PL,Deputado,SP,57
+"Subtenente Gonzaga",177282,https://www.camara.leg.br/internet/deputado/bandep/177282.jpg,M,PDT,"Deputado fora de exercício",MG,56
+Flavinha,225727,https://www.camara.leg.br/internet/deputado/bandep/225727.jpg,F,MDB,Deputado,MT,57
+"Priscila Costa",226075,https://www.camara.leg.br/internet/deputado/bandep/226075.jpg,F,PL,Deputado,CE,57
+"Luiz Carlos Hauly",73778,https://www.camara.leg.br/internet/deputado/bandep/73778.jpg,M,PODEMOS,Deputado,PR,57
+"Adriano do Baldy",121948,https://www.camara.leg.br/internet/deputado/bandep/121948.jpg,M,PP,Deputado,GO,57
+"Beto Richa",220683,https://www.camara.leg.br/internet/deputado/bandep/220683.jpg,M,PSDB,Deputado,PR,57
+Detinha,220689,https://www.camara.leg.br/internet/deputado/bandep/220689.jpg,F,PL,Deputado,MA,57
+"Beto Preto",220698,https://www.camara.leg.br/internet/deputado/bandep/220698.jpg,M,PSD,Deputado,PR,57
+"Fausto Pinato",66828,https://www.camara.leg.br/internet/deputado/bandep/66828.jpg,M,PP,Deputado,SP,56.57
+"Roberta Roma",220693,https://www.camara.leg.br/internet/deputado/bandep/220693.jpg,M,PL,Deputado,BA,57
+"Zé Trovão",220558,https://www.camara.leg.br/internet/deputado/bandep/220558.jpg,M,PL,Deputado,SP,57
+"Rafael Prudente",220532,https://www.camara.leg.br/internet/deputado/bandep/220532.jpg,M,MDB,Deputado,DF,57
+"Jack Rocha",220527,https://www.camara.leg.br/internet/deputado/bandep/220527.jpg,F,PT,Deputado,ES,57
+"Ivoneide Caetano",220696,https://www.camara.leg.br/internet/deputado/bandep/220696.jpg,F,PT,Deputado,BA,57
+"Gisela Simona",226179,https://www.camara.leg.br/internet/deputado/bandep/226179.jpg,F,UNIAO,Deputado,MT,57
+"Perpétua Almeida",73943,https://www.camara.leg.br/internet/deputado/bandep/73943.jpg,F,PCdoB,"Deputado fora de exercício",AC,56
+"Emanuel Pinheiro Neto",198783,https://www.camara.leg.br/internet/deputado/bandep/198783.jpg,M,MDB,Deputado,MT,56.57
+"João Marcelo Souza",112437,https://www.camara.leg.br/internet/deputado/bandep/112437.jpg,M,MDB,"Deputado fora de exercício",MA,56
+"Dilvanda Faro",220671,https://www.camara.leg.br/internet/deputado/bandep/220671.jpg,F,PT,Deputado,PA,57
+"Capitão Fábio Abreu",178924,https://www.camara.leg.br/internet/deputado/bandep/178924.jpg,M,PR,"Deputado fora de exercício",PI,56
+"Socorro Neri",104552,https://www.camara.leg.br/internet/deputado/bandep/104552.jpg,F,PP,Deputado,AC,57
+"Andreia Siqueira",220676,https://www.camara.leg.br/internet/deputado/bandep/220676.jpg,F,MDB,Deputado,PA,57
+"Fernando Bezerra Coelho",5540,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador5540.jpg,M,MDB,"Senador fora de exercício",PE,55.56
+"Sandro Alex",160621,https://www.camara.leg.br/internet/deputado/bandep/160621.jpg,M,PSD,Deputado,PR,56.57
+"Marcel van Hattem",156190,https://www.camara.leg.br/internet/deputado/bandep/156190.jpg,M,NOVO,Deputado,RS,56.57
+"Acácio Favacho",204379,https://www.camara.leg.br/internet/deputado/bandep/204379.jpg,M,MDB,Deputado,AP,56.57
+"Igor Kannário",204564,https://www.camara.leg.br/internet/deputado/bandep/204564.jpg,M,UNIÃO,"Deputado fora de exercício",BA,56
+"Vicentinho Júnior",137070,https://www.camara.leg.br/internet/deputado/bandep/137070.jpg,M,PP,Deputado,TO,56.57
+"Aguinaldo Ribeiro",160527,https://www.camara.leg.br/internet/deputado/bandep/160527.jpg,M,PP,Deputado,PB,56.57
+Lauriete,160534,https://www.camara.leg.br/internet/deputado/bandep/160534.jpg,F,PSC,"Deputado fora de exercício",ES,56
+"Ruy Carneiro",160635,https://www.camara.leg.br/internet/deputado/bandep/160635.jpg,M,PSC,Deputado,PB,56.57
+"Duda Ramos",220540,https://www.camara.leg.br/internet/deputado/bandep/220540.jpg,"Duda Ramos",MDB,Deputado,RR,57
+"Márcio Marinho",150418,https://www.camara.leg.br/internet/deputado/bandep/150418.jpg,M,REPUBLICANOS,Deputado,BA,56.57
+"Arlindo Chinaglia",73433,https://www.camara.leg.br/internet/deputado/bandep/73433.jpg,M,PT,Deputado,SP,56.57
+"Marco Brasil",219585,https://www.camara.leg.br/internet/deputado/bandep/219585.jpg,M,PP,Deputado,PR,56.57
+"Márcio Honaiser",220687,https://www.camara.leg.br/internet/deputado/bandep/220687.jpg,M,PDT,Deputado,MA,57
+"Eduardo Velloso",220589,https://www.camara.leg.br/internet/deputado/bandep/220589.jpg,M,UNIAO,Deputado,AC,57.56
+"Tadeu Veneri",220682,https://www.camara.leg.br/internet/deputado/bandep/220682.jpg,M,PT,Deputado,PR,57
+"Celso Sabino",204496,https://www.camara.leg.br/internet/deputado/bandep/204496.jpg,M,UNIÃO,Deputado,PA,56.57
+"Nereu Crispim",204415,https://www.camara.leg.br/internet/deputado/bandep/204415.jpg,M,PSD,"Deputado fora de exercício",RS,56
+"Adolfo Viana",204560,https://www.camara.leg.br/internet/deputado/bandep/204560.jpg,M,PSDB,Deputado,BA,56.57
+"Neto Carletto",220703,https://www.camara.leg.br/internet/deputado/bandep/220703.jpg,M,AVANTE,Deputado,BA,57
+"Delegado Antônio Furtado",204451,https://www.camara.leg.br/internet/deputado/bandep/204451.jpg,M,UNIÃO,"Deputado fora de exercício",RJ,56
+"Roberta Roma",220693,https://www.camara.leg.br/internet/deputado/bandep/220693.jpg,F,PL,Deputado,BA,57
+"General Peternelli",204484,https://www.camara.leg.br/internet/deputado/bandep/204484.jpg,M,UNIÃO,"Deputado fora de exercício",SP,56
+"Paula Belmonte",204377,https://www.camara.leg.br/internet/deputado/bandep/204377.jpg,F,CIDADANIA,"Deputado fora de exercício",DF,56
+"Zé Neto",204559,https://www.camara.leg.br/internet/deputado/bandep/204559.jpg,M,PT,Deputado,BA,56.57
+"Chico Alencar",74171,https://www.camara.leg.br/internet/deputado/bandep/74171.jpg,M,PSOL,Deputado,RJ,57
+"Luciano Galego",227323,https://www.camara.leg.br/internet/deputado/bandep/227323.jpg,M,PL,Deputado,MA,57
+"Átila Lira",74459,https://www.camara.leg.br/internet/deputado/bandep/74459.jpg,M,PP,Deputado,PI,56.57
+"Maria do Carmo Alves",1023,http://www.senado.leg.br/senadores/img/fotos-oficiais/senador1023.jpg,F,PP,"Senador fora de exercício",SE,55.56
+"Icaro de Valmir",220563,https://www.camara.leg.br/internet/deputado/bandep/220563.jpg,M,PL,Deputado,SE,57
+"Wolmer Araújo",182146,https://www.camara.leg.br/internet/deputado/bandep/182146.jpg,M,SOLIDARIEDADE,Deputado,MA,56.57
+"Dani Cunha",220603,https://www.camara.leg.br/internet/deputado/bandep/220603.jpg,F,UNIÃO,Deputado,RJ,57
+"Felipe Becari",220646,https://www.camara.leg.br/internet/deputado/bandep/220646.jpg,M,UNIÃO,Deputado,SP,57
+"Christino Aureo",204440,https://www.camara.leg.br/internet/deputado/bandep/204440.jpg,M,PP,"Deputado fora de exercício",RJ,56
+Roman,178930,https://www.camara.leg.br/internet/deputado/bandep/178930.jpg,M,PP,"Deputado fora de exercício",PR,56
+"Dulce Miranda",178994,https://www.camara.leg.br/internet/deputado/bandep/178994.jpg,F,MDB,"Deputado fora de exercício",TO,56
+"Marcelo Freixo",76874,https://www.camara.leg.br/internet/deputado/bandep/76874.jpg,M,PSB,"Deputado fora de exercício",RJ,56
+"Merlong Solano",188097,https://www.camara.leg.br/internet/deputado/bandep/188097.jpg,M,PT,Deputado,PI,56.57
+"Zé Carlos",178889,https://www.camara.leg.br/internet/deputado/bandep/178889.jpg,M,PT,"Deputado fora de exercício",MA,56
+"Airton Faleiro",204495,https://www.camara.leg.br/internet/deputado/bandep/204495.jpg,M,PT,Deputado,PA,57
+"Rui Falcão",73604,https://www.camara.leg.br/internet/deputado/bandep/73604.jpg,M,PT,Deputado,SP,56.57

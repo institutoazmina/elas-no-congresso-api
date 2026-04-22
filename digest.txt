@@ -1,0 +1,2424 @@
+Directory structure:
+└── institutoazmina-elasnocongressobot/
+    ├── README.md
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── LICENSE.txt
+    ├── renovate.json
+    ├── requirements.txt
+    ├── run.sh
+    ├── .env.sample
+    ├── dados/
+    │   └── .dummy
+    ├── logs/
+    │   └── .dummy
+    └── src/
+        ├── df_config.py
+        ├── rename_cols_camara.py
+        ├── rename_cols_senado.py
+        ├── run_models.py
+        ├── scrapy.cfg
+        ├── sync_spreadsheets.py
+        ├── utils_df_validation.py
+        ├── utils_ementa.py
+        ├── utils_inteiroteor.py
+        └── elasnocongresso/
+            ├── items.py
+            ├── middlewares.py
+            ├── pipelines.py
+            ├── settings.py
+            └── spiders/
+                ├── camara_spider.py
+                ├── senado_spider.py
+                └── theme_assert.py
+
+================================================
+FILE: README.md
+================================================
+# Elas no Congresso Bot
+
+O **Elas no Congresso Bot** é um robô de coleta automática de dados que integra o projeto [**Elas no Congresso**](https://elasnocongresso.com.br) da [Revista AzMina](https://azmina.com.br/). Ele foi desenvolvido para monitorar e organizar informações legislativas relevantes aos direitos das meninas, mulheres e comunidades LGBTQIAP+, e à igualdade de gênero no Brasil.
+
+Este robô é responsável por alimentar os dados que servem como base para a [**QuitérIA-IA-Feminista Elas no Congresso**](https://github.com/indgris/ia-feminista-elas-no-congresso), uma solução de inteligência artificial voltada para a classificação e análise automática de proposições legislativas com foco em gênero, feminismo e direitos das mulheres.
+
+---
+
+## 📌 Sumário
+
+- [📚 Sobre o Projeto Elas no Congresso](#-sobre-o-projeto-elas-no-congresso)
+- [⚙️ Funcionalidades](#-funcionalidades)
+- [🧠 Integração com a IA-Feminista](#-integração-com-a-ia-feminista)
+- [🚀 Requisitos de Instalação](#-requisitos-de-instalação)
+- [🛠️ Instalação](#-instalação)
+- [🤝 Contribuição](#-contribuição)
+- [📄 Licença](#-licença)
+
+---
+
+## 📚 Sobre o Projeto Elas no Congresso
+
+O projeto **Elas no Congresso** usa dados públicos para monitorar avanços e retrocessos nos direitos das meninas, mulheres e pessoas LGBTQIA+ no Congresso Nacional brasileiro. Em 2020, ele foi selecionado entre mais de 300 iniciativas pela **Google News Initiative**, programa de incentivo ao jornalismo na era digital.
+
+Criado pelo Instituto AzMina, o projeto nasceu diante do crescimento da disputa pelas pautas ligadas à mulher no Congresso, com o objetivo de tornar o monitoramento legislativo mais acessível para a sociedade, imprensa e organizações que advogam por esses temas.
+
+O projeto se desdobra em:
+
+- Este robô (scraper) de coleta automatizada de dados legislativos;
+- Um **ranking de parlamentares** baseado em sua atuação nas temáticas de gênero, inspirado no projeto "Ruralômetro" da ONG Repórter Brasil;
+- A **produção de conteúdos** no site da AzMina e em newsletters semanais de análise da movimentação legislativa do período sobre os temas de interesse.
+- A **QuitérIA**, um Large Language Model (LLM) em operação desde fevereiro de 2025, lançada oficialmente para o público em novembro de 2025. Essa ferramenta de inteligência artificial classifica proposições legislativas sobre direitos de gênero por temas e, em seguida, quão favoráveis elas são aos direitos das meninas, mulheres e pessoas LGBTQIA+ numa escala de 0 a 1, onde 0 é extremamente favorável e 1 extremamente desfavorável. 
+
+A primeira fase foi lançada em 8 de março de 2020, com a robô @elasnocongresso no Twitter, que permitia acompanhar as tramitações diárias de projetos sobre temas de gênero (descontinuada em junho de 2023 devido ao fechamento do acesso gratuito à API do Twitter).
+
+A segunda fase, em junho de 2020, foi o lançamento do site com a primeira edição do ranking de parlamentares segundo sua atuação em temáticas de gênero, com atualizações em novembro/2020, junho/2021, setembro/2022 e junho/2024, contemplando dados de projetos apresentados entre janeiro/2019 e dezembro/2023.
+
+Hoje, em meados de 2025, nos preparamos para lançar mais uma atualização do ranking Elas no Congresso com dados de 788 proposições legislativas sobre gênero apresentadas entre 1/1/2024 e 30/6/2025.
+
+---
+
+## ⚙️ Funcionalidades
+
+O scraper faz a busca por palavras-chave relacionadas a questões de gênero e mulheres nos portais da Câmara dos Deputados e do Senado Federal.  
+Ele extrai informações como título do projeto, autor, data de apresentação, status do projeto, última movimentação legislativa, entre outros.  
+Os dados coletados são organizados e salvos em arquivos no formato CSV para fácil análise.
+
+---
+
+## 🧠 Integração com a IA-Feminista
+
+Os dados coletados por este scraper são utilizados para treinar e alimentar os modelos da [**QuitérIA-IA-Feminista Elas no Congresso**](https://github.com/institutoazmina/ia-feminista-congresso). Essa IA analisa e rotula as proposições legislativas automaticamente, identificando seus temas e se são favoráveis ou desfavoráveis aos direitos das mulheres.
+
+Além disso:
+
+- **Modelos hospedados no Hugging Face** são usados para classificar a ementa dos projetos;
+- Uma **LLM open-source via API (Replicate)** classifica o inteiro teor das propostas.
+
+---
+
+## 🚀 Requisitos de Instalação
+
+- Docker  
+- Docker Compose
+
+---
+
+## 🛠️ Instalação
+
+1. Clone o repositório para o seu ambiente local:
+    ```
+    git clone https://github.com/institutoazmina/elasnocongressobot
+    ```
+2. Navegue até o diretório do projeto;
+3. Copie o arquivo de variável de ambientes e preencha-os:
+    ```
+    cp .env.sample .env
+    ```
+4. Execute o Docker Compose para criar e iniciar os contêineres:
+    ```
+    docker compose up -d --build
+    ```
+5. Execute o scraper:
+    ```
+    docker exec elasnacamera ./run.sh
+    ```
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são muito bem-vindas!  
+Se você tiver sugestões de melhorias, encontrar bugs ou quiser propor novas funcionalidades:
+
+- Abra uma [issue](https://github.com/institutoazmina/elasnocongressobot/issues)
+- Ou envie um [pull request](https://github.com/institutoazmina/elasnocongressobot/pulls)
+
+Vamos construir uma ferramenta mais poderosa para a defesa dos direitos das mulheres? 💜
+
+---
+
+## 📄 Licença
+
+Este projeto está licenciado sob a [Licença AGPL-3.0](https://github.com/institutoazmina/elasnocongressobot/blob/master/LICENSE.txt).
+
+
+
+================================================
+FILE: docker-compose.yml
+================================================
+services:
+  elasnacamera:
+    build: ./
+    container_name: elasnacamera
+    volumes:
+      - ./:/usr/src/app/
+    networks:
+      - elasnacamera_network
+    logging:
+      driver: "json-file"
+      options:
+        max-file: '100'
+        max-size: 1m
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - elasnacamera_network
+    restart: unless-stopped
+
+networks:
+    elasnacamera_network:
+      driver: bridge
+      name: elasnacamera_network
+
+
+
+================================================
+FILE: Dockerfile
+================================================
+FROM python:3.13-slim
+
+RUN useradd -m app
+USER app
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Ensure local bin is in PATH
+ENV PATH="/home/app/.local/bin:${PATH}"
+
+# Keep container running
+CMD ["sleep", "infinity"]
+
+
+
+================================================
+FILE: LICENSE.txt
+================================================
+                    GNU AFFERO GENERAL PUBLIC LICENSE
+                       Version 3, 19 November 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU Affero General Public License is a free, copyleft license for
+software and other kinds of works, specifically designed to ensure
+cooperation with the community in the case of network server software.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+our General Public Licenses are intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+  Developers that use our General Public Licenses protect your rights
+with two steps: (1) assert copyright on the software, and (2) offer
+you this License which gives you legal permission to copy, distribute
+and/or modify the software.
+
+  A secondary benefit of defending all users' freedom is that
+improvements made in alternate versions of the program, if they
+receive widespread use, become available for other developers to
+incorporate.  Many developers of free software are heartened and
+encouraged by the resulting cooperation.  However, in the case of
+software used on network servers, this result may fail to come about.
+The GNU General Public License permits making a modified version and
+letting the public access it on a server without ever releasing its
+source code to the public.
+
+  The GNU Affero General Public License is designed specifically to
+ensure that, in such cases, the modified source code becomes available
+to the community.  It requires the operator of a network server to
+provide the source code of the modified version running there to the
+users of that server.  Therefore, public use of a modified version, on
+a publicly accessible server, gives the public access to the source
+code of the modified version.
+
+  An older license, called the Affero General Public License and
+published by Affero, was designed to accomplish similar goals.  This is
+a different license, not a version of the Affero GPL, but Affero has
+released a new version of the Affero GPL which permits relicensing under
+this license.
+
+  The precise terms and conditions for copying, distribution and
+modification follow.
+
+                       TERMS AND CONDITIONS
+
+  0. Definitions.
+
+  "This License" refers to version 3 of the GNU Affero General Public License.
+
+  "Copyright" also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
+
+  "The Program" refers to any copyrightable work licensed under this
+License.  Each licensee is addressed as "you".  "Licensees" and
+"recipients" may be individuals or organizations.
+
+  To "modify" a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy.  The resulting work is called a "modified version" of the
+earlier work or a work "based on" the earlier work.
+
+  A "covered work" means either the unmodified Program or a work based
+on the Program.
+
+  To "propagate" a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy.  Propagation includes copying,
+distribution (with or without modification), making available to the
+public, and in some countries other activities as well.
+
+  To "convey" a work means any kind of propagation that enables other
+parties to make or receive copies.  Mere interaction with a user through
+a computer network, with no transfer of a copy, is not conveying.
+
+  An interactive user interface displays "Appropriate Legal Notices"
+to the extent that it includes a convenient and prominently visible
+feature that (1) displays an appropriate copyright notice, and (2)
+tells the user that there is no warranty for the work (except to the
+extent that warranties are provided), that licensees may convey the
+work under this License, and how to view a copy of this License.  If
+the interface presents a list of user commands or options, such as a
+menu, a prominent item in the list meets this criterion.
+
+  1. Source Code.
+
+  The "source code" for a work means the preferred form of the work
+for making modifications to it.  "Object code" means any non-source
+form of a work.
+
+  A "Standard Interface" means an interface that either is an official
+standard defined by a recognized standards body, or, in the case of
+interfaces specified for a particular programming language, one that
+is widely used among developers working in that language.
+
+  The "System Libraries" of an executable work include anything, other
+than the work as a whole, that (a) is included in the normal form of
+packaging a Major Component, but which is not part of that Major
+Component, and (b) serves only to enable use of the work with that
+Major Component, or to implement a Standard Interface for which an
+implementation is available to the public in source code form.  A
+"Major Component", in this context, means a major essential component
+(kernel, window system, and so on) of the specific operating system
+(if any) on which the executable work runs, or a compiler used to
+produce the work, or an object code interpreter used to run it.
+
+  The "Corresponding Source" for a work in object code form means all
+the source code needed to generate, install, and (for an executable
+work) run the object code and to modify the work, including scripts to
+control those activities.  However, it does not include the work's
+System Libraries, or general-purpose tools or generally available free
+programs which are used unmodified in performing those activities but
+which are not part of the work.  For example, Corresponding Source
+includes interface definition files associated with source files for
+the work, and the source code for shared libraries and dynamically
+linked subprograms that the work is specifically designed to require,
+such as by intimate data communication or control flow between those
+subprograms and other parts of the work.
+
+  The Corresponding Source need not include anything that users
+can regenerate automatically from other parts of the Corresponding
+Source.
+
+  The Corresponding Source for a work in source code form is that
+same work.
+
+  2. Basic Permissions.
+
+  All rights granted under this License are granted for the term of
+copyright on the Program, and are irrevocable provided the stated
+conditions are met.  This License explicitly affirms your unlimited
+permission to run the unmodified Program.  The output from running a
+covered work is covered by this License only if the output, given its
+content, constitutes a covered work.  This License acknowledges your
+rights of fair use or other equivalent, as provided by copyright law.
+
+  You may make, run and propagate covered works that you do not
+convey, without conditions so long as your license otherwise remains
+in force.  You may convey covered works to others for the sole purpose
+of having them make modifications exclusively for you, or provide you
+with facilities for running those works, provided that you comply with
+the terms of this License in conveying all material for which you do
+not control copyright.  Those thus making or running the covered works
+for you must do so exclusively on your behalf, under your direction
+and control, on terms that prohibit them from making any copies of
+your copyrighted material outside their relationship with you.
+
+  Conveying under any other circumstances is permitted solely under
+the conditions stated below.  Sublicensing is not allowed; section 10
+makes it unnecessary.
+
+  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+
+  No covered work shall be deemed part of an effective technological
+measure under any applicable law fulfilling obligations under article
+11 of the WIPO copyright treaty adopted on 20 December 1996, or
+similar laws prohibiting or restricting circumvention of such
+measures.
+
+  When you convey a covered work, you waive any legal power to forbid
+circumvention of technological measures to the extent such circumvention
+is effected by exercising rights under this License with respect to
+the covered work, and you disclaim any intention to limit operation or
+modification of the work as a means of enforcing, against the work's
+users, your or third parties' legal rights to forbid circumvention of
+technological measures.
+
+  4. Conveying Verbatim Copies.
+
+  You may convey verbatim copies of the Program's source code as you
+receive it, in any medium, provided that you conspicuously and
+appropriately publish on each copy an appropriate copyright notice;
+keep intact all notices stating that this License and any
+non-permissive terms added in accord with section 7 apply to the code;
+keep intact all notices of the absence of any warranty; and give all
+recipients a copy of this License along with the Program.
+
+  You may charge any price or no price for each copy that you convey,
+and you may offer support or warranty protection for a fee.
+
+  5. Conveying Modified Source Versions.
+
+  You may convey a work based on the Program, or the modifications to
+produce it from the Program, in the form of source code under the
+terms of section 4, provided that you also meet all of these conditions:
+
+    a) The work must carry prominent notices stating that you modified
+    it, and giving a relevant date.
+
+    b) The work must carry prominent notices stating that it is
+    released under this License and any conditions added under section
+    7.  This requirement modifies the requirement in section 4 to
+    "keep intact all notices".
+
+    c) You must license the entire work, as a whole, under this
+    License to anyone who comes into possession of a copy.  This
+    License will therefore apply, along with any applicable section 7
+    additional terms, to the whole of the work, and all its parts,
+    regardless of how they are packaged.  This License gives no
+    permission to license the work in any other way, but it does not
+    invalidate such permission if you have separately received it.
+
+    d) If the work has interactive user interfaces, each must display
+    Appropriate Legal Notices; however, if the Program has interactive
+    interfaces that do not display Appropriate Legal Notices, your
+    work need not make them do so.
+
+  A compilation of a covered work with other separate and independent
+works, which are not by their nature extensions of the covered work,
+and which are not combined with it such as to form a larger program,
+in or on a volume of a storage or distribution medium, is called an
+"aggregate" if the compilation and its resulting copyright are not
+used to limit the access or legal rights of the compilation's users
+beyond what the individual works permit.  Inclusion of a covered work
+in an aggregate does not cause this License to apply to the other
+parts of the aggregate.
+
+  6. Conveying Non-Source Forms.
+
+  You may convey a covered work in object code form under the terms
+of sections 4 and 5, provided that you also convey the
+machine-readable Corresponding Source under the terms of this License,
+in one of these ways:
+
+    a) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by the
+    Corresponding Source fixed on a durable physical medium
+    customarily used for software interchange.
+
+    b) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by a
+    written offer, valid for at least three years and valid for as
+    long as you offer spare parts or customer support for that product
+    model, to give anyone who possesses the object code either (1) a
+    copy of the Corresponding Source for all the software in the
+    product that is covered by this License, on a durable physical
+    medium customarily used for software interchange, for a price no
+    more than your reasonable cost of physically performing this
+    conveying of source, or (2) access to copy the
+    Corresponding Source from a network server at no charge.
+
+    c) Convey individual copies of the object code with a copy of the
+    written offer to provide the Corresponding Source.  This
+    alternative is allowed only occasionally and noncommercially, and
+    only if you received the object code with such an offer, in accord
+    with subsection 6b.
+
+    d) Convey the object code by offering access from a designated
+    place (gratis or for a charge), and offer equivalent access to the
+    Corresponding Source in the same way through the same place at no
+    further charge.  You need not require recipients to copy the
+    Corresponding Source along with the object code.  If the place to
+    copy the object code is a network server, the Corresponding Source
+    may be on a different server (operated by you or a third party)
+    that supports equivalent copying facilities, provided you maintain
+    clear directions next to the object code saying where to find the
+    Corresponding Source.  Regardless of what server hosts the
+    Corresponding Source, you remain obligated to ensure that it is
+    available for as long as needed to satisfy these requirements.
+
+    e) Convey the object code using peer-to-peer transmission, provided
+    you inform other peers where the object code and Corresponding
+    Source of the work are being offered to the general public at no
+    charge under subsection 6d.
+
+  A separable portion of the object code, whose source code is excluded
+from the Corresponding Source as a System Library, need not be
+included in conveying the object code work.
+
+  A "User Product" is either (1) a "consumer product", which means any
+tangible personal property which is normally used for personal, family,
+or household purposes, or (2) anything designed or sold for incorporation
+into a dwelling.  In determining whether a product is a consumer product,
+doubtful cases shall be resolved in favor of coverage.  For a particular
+product received by a particular user, "normally used" refers to a
+typical or common use of that class of product, regardless of the status
+of the particular user or of the way in which the particular user
+actually uses, or expects or is expected to use, the product.  A product
+is a consumer product regardless of whether the product has substantial
+commercial, industrial or non-consumer uses, unless such uses represent
+the only significant mode of use of the product.
+
+  "Installation Information" for a User Product means any methods,
+procedures, authorization keys, or other information required to install
+and execute modified versions of a covered work in that User Product from
+a modified version of its Corresponding Source.  The information must
+suffice to ensure that the continued functioning of the modified object
+code is in no case prevented or interfered with solely because
+modification has been made.
+
+  If you convey an object code work under this section in, or with, or
+specifically for use in, a User Product, and the conveying occurs as
+part of a transaction in which the right of possession and use of the
+User Product is transferred to the recipient in perpetuity or for a
+fixed term (regardless of how the transaction is characterized), the
+Corresponding Source conveyed under this section must be accompanied
+by the Installation Information.  But this requirement does not apply
+if neither you nor any third party retains the ability to install
+modified object code on the User Product (for example, the work has
+been installed in ROM).
+
+  The requirement to provide Installation Information does not include a
+requirement to continue to provide support service, warranty, or updates
+for a work that has been modified or installed by the recipient, or for
+the User Product in which it has been modified or installed.  Access to a
+network may be denied when the modification itself materially and
+adversely affects the operation of the network or violates the rules and
+protocols for communication across the network.
+
+  Corresponding Source conveyed, and Installation Information provided,
+in accord with this section must be in a format that is publicly
+documented (and with an implementation available to the public in
+source code form), and must require no special password or key for
+unpacking, reading or copying.
+
+  7. Additional Terms.
+
+  "Additional permissions" are terms that supplement the terms of this
+License by making exceptions from one or more of its conditions.
+Additional permissions that are applicable to the entire Program shall
+be treated as though they were included in this License, to the extent
+that they are valid under applicable law.  If additional permissions
+apply only to part of the Program, that part may be used separately
+under those permissions, but the entire Program remains governed by
+this License without regard to the additional permissions.
+
+  When you convey a copy of a covered work, you may at your option
+remove any additional permissions from that copy, or from any part of
+it.  (Additional permissions may be written to require their own
+removal in certain cases when you modify the work.)  You may place
+additional permissions on material, added by you to a covered work,
+for which you have or can give appropriate copyright permission.
+
+  Notwithstanding any other provision of this License, for material you
+add to a covered work, you may (if authorized by the copyright holders of
+that material) supplement the terms of this License with terms:
+
+    a) Disclaiming warranty or limiting liability differently from the
+    terms of sections 15 and 16 of this License; or
+
+    b) Requiring preservation of specified reasonable legal notices or
+    author attributions in that material or in the Appropriate Legal
+    Notices displayed by works containing it; or
+
+    c) Prohibiting misrepresentation of the origin of that material, or
+    requiring that modified versions of such material be marked in
+    reasonable ways as different from the original version; or
+
+    d) Limiting the use for publicity purposes of names of licensors or
+    authors of the material; or
+
+    e) Declining to grant rights under trademark law for use of some
+    trade names, trademarks, or service marks; or
+
+    f) Requiring indemnification of licensors and authors of that
+    material by anyone who conveys the material (or modified versions of
+    it) with contractual assumptions of liability to the recipient, for
+    any liability that these contractual assumptions directly impose on
+    those licensors and authors.
+
+  All other non-permissive additional terms are considered "further
+restrictions" within the meaning of section 10.  If the Program as you
+received it, or any part of it, contains a notice stating that it is
+governed by this License along with a term that is a further
+restriction, you may remove that term.  If a license document contains
+a further restriction but permits relicensing or conveying under this
+License, you may add to a covered work material governed by the terms
+of that license document, provided that the further restriction does
+not survive such relicensing or conveying.
+
+  If you add terms to a covered work in accord with this section, you
+must place, in the relevant source files, a statement of the
+additional terms that apply to those files, or a notice indicating
+where to find the applicable terms.
+
+  Additional terms, permissive or non-permissive, may be stated in the
+form of a separately written license, or stated as exceptions;
+the above requirements apply either way.
+
+  8. Termination.
+
+  You may not propagate or modify a covered work except as expressly
+provided under this License.  Any attempt otherwise to propagate or
+modify it is void, and will automatically terminate your rights under
+this License (including any patent licenses granted under the third
+paragraph of section 11).
+
+  However, if you cease all violation of this License, then your
+license from a particular copyright holder is reinstated (a)
+provisionally, unless and until the copyright holder explicitly and
+finally terminates your license, and (b) permanently, if the copyright
+holder fails to notify you of the violation by some reasonable means
+prior to 60 days after the cessation.
+
+  Moreover, your license from a particular copyright holder is
+reinstated permanently if the copyright holder notifies you of the
+violation by some reasonable means, this is the first time you have
+received notice of violation of this License (for any work) from that
+copyright holder, and you cure the violation prior to 30 days after
+your receipt of the notice.
+
+  Termination of your rights under this section does not terminate the
+licenses of parties who have received copies or rights from you under
+this License.  If your rights have been terminated and not permanently
+reinstated, you do not qualify to receive new licenses for the same
+material under section 10.
+
+  9. Acceptance Not Required for Having Copies.
+
+  You are not required to accept this License in order to receive or
+run a copy of the Program.  Ancillary propagation of a covered work
+occurring solely as a consequence of using peer-to-peer transmission
+to receive a copy likewise does not require acceptance.  However,
+nothing other than this License grants you permission to propagate or
+modify any covered work.  These actions infringe copyright if you do
+not accept this License.  Therefore, by modifying or propagating a
+covered work, you indicate your acceptance of this License to do so.
+
+  10. Automatic Licensing of Downstream Recipients.
+
+  Each time you convey a covered work, the recipient automatically
+receives a license from the original licensors, to run, modify and
+propagate that work, subject to this License.  You are not responsible
+for enforcing compliance by third parties with this License.
+
+  An "entity transaction" is a transaction transferring control of an
+organization, or substantially all assets of one, or subdividing an
+organization, or merging organizations.  If propagation of a covered
+work results from an entity transaction, each party to that
+transaction who receives a copy of the work also receives whatever
+licenses to the work the party's predecessor in interest had or could
+give under the previous paragraph, plus a right to possession of the
+Corresponding Source of the work from the predecessor in interest, if
+the predecessor has it or can get it with reasonable efforts.
+
+  You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License.  For example, you may
+not impose a license fee, royalty, or other charge for exercise of
+rights granted under this License, and you may not initiate litigation
+(including a cross-claim or counterclaim in a lawsuit) alleging that
+any patent claim is infringed by making, using, selling, offering for
+sale, or importing the Program or any portion of it.
+
+  11. Patents.
+
+  A "contributor" is a copyright holder who authorizes use under this
+License of the Program or a work on which the Program is based.  The
+work thus licensed is called the contributor's "contributor version".
+
+  A contributor's "essential patent claims" are all patent claims
+owned or controlled by the contributor, whether already acquired or
+hereafter acquired, that would be infringed by some manner, permitted
+by this License, of making, using, or selling its contributor version,
+but do not include claims that would be infringed only as a
+consequence of further modification of the contributor version.  For
+purposes of this definition, "control" includes the right to grant
+patent sublicenses in a manner consistent with the requirements of
+this License.
+
+  Each contributor grants you a non-exclusive, worldwide, royalty-free
+patent license under the contributor's essential patent claims, to
+make, use, sell, offer for sale, import and otherwise run, modify and
+propagate the contents of its contributor version.
+
+  In the following three paragraphs, a "patent license" is any express
+agreement or commitment, however denominated, not to enforce a patent
+(such as an express permission to practice a patent or covenant not to
+sue for patent infringement).  To "grant" such a patent license to a
+party means to make such an agreement or commitment not to enforce a
+patent against the party.
+
+  If you convey a covered work, knowingly relying on a patent license,
+and the Corresponding Source of the work is not available for anyone
+to copy, free of charge and under the terms of this License, through a
+publicly available network server or other readily accessible means,
+then you must either (1) cause the Corresponding Source to be so
+available, or (2) arrange to deprive yourself of the benefit of the
+patent license for this particular work, or (3) arrange, in a manner
+consistent with the requirements of this License, to extend the patent
+license to downstream recipients.  "Knowingly relying" means you have
+actual knowledge that, but for the patent license, your conveying the
+covered work in a country, or your recipient's use of the covered work
+in a country, would infringe one or more identifiable patents in that
+country that you have reason to believe are valid.
+
+  If, pursuant to or in connection with a single transaction or
+arrangement, you convey, or propagate by procuring conveyance of, a
+covered work, and grant a patent license to some of the parties
+receiving the covered work authorizing them to use, propagate, modify
+or convey a specific copy of the covered work, then the patent license
+you grant is automatically extended to all recipients of the covered
+work and works based on it.
+
+  A patent license is "discriminatory" if it does not include within
+the scope of its coverage, prohibits the exercise of, or is
+conditioned on the non-exercise of one or more of the rights that are
+specifically granted under this License.  You may not convey a covered
+work if you are a party to an arrangement with a third party that is
+in the business of distributing software, under which you make payment
+to the third party based on the extent of your activity of conveying
+the work, and under which the third party grants, to any of the
+parties who would receive the covered work from you, a discriminatory
+patent license (a) in connection with copies of the covered work
+conveyed by you (or copies made from those copies), or (b) primarily
+for and in connection with specific products or compilations that
+contain the covered work, unless you entered into that arrangement,
+or that patent license was granted, prior to 28 March 2007.
+
+  Nothing in this License shall be construed as excluding or limiting
+any implied license or other defenses to infringement that may
+otherwise be available to you under applicable patent law.
+
+  12. No Surrender of Others' Freedom.
+
+  If conditions are imposed on you (whether by court order, agreement or
+otherwise) that contradict the conditions of this License, they do not
+excuse you from the conditions of this License.  If you cannot convey a
+covered work so as to satisfy simultaneously your obligations under this
+License and any other pertinent obligations, then as a consequence you may
+not convey it at all.  For example, if you agree to terms that obligate you
+to collect a royalty for further conveying from those to whom you convey
+the Program, the only way you could satisfy both those terms and this
+License would be to refrain entirely from conveying the Program.
+
+  13. Remote Network Interaction; Use with the GNU General Public License.
+
+  Notwithstanding any other provision of this License, if you modify the
+Program, your modified version must prominently offer all users
+interacting with it remotely through a computer network (if your version
+supports such interaction) an opportunity to receive the Corresponding
+Source of your version by providing access to the Corresponding Source
+from a network server at no charge, through some standard or customary
+means of facilitating copying of software.  This Corresponding Source
+shall include the Corresponding Source for any work covered by version 3
+of the GNU General Public License that is incorporated pursuant to the
+following paragraph.
+
+  Notwithstanding any other provision of this License, you have
+permission to link or combine any covered work with a work licensed
+under version 3 of the GNU General Public License into a single
+combined work, and to convey the resulting work.  The terms of this
+License will continue to apply to the part which is the covered work,
+but the work with which it is combined will remain governed by version
+3 of the GNU General Public License.
+
+  14. Revised Versions of this License.
+
+  The Free Software Foundation may publish revised and/or new versions of
+the GNU Affero General Public License from time to time.  Such new versions
+will be similar in spirit to the present version, but may differ in detail to
+address new problems or concerns.
+
+  Each version is given a distinguishing version number.  If the
+Program specifies that a certain numbered version of the GNU Affero General
+Public License "or any later version" applies to it, you have the
+option of following the terms and conditions either of that numbered
+version or of any later version published by the Free Software
+Foundation.  If the Program does not specify a version number of the
+GNU Affero General Public License, you may choose any version ever published
+by the Free Software Foundation.
+
+  If the Program specifies that a proxy can decide which future
+versions of the GNU Affero General Public License can be used, that proxy's
+public statement of acceptance of a version permanently authorizes you
+to choose that version for the Program.
+
+  Later license versions may give you additional or different
+permissions.  However, no additional obligations are imposed on any
+author or copyright holder as a result of your choosing to follow a
+later version.
+
+  15. Disclaimer of Warranty.
+
+  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+  16. Limitation of Liability.
+
+  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
+
+  17. Interpretation of Sections 15 and 16.
+
+  If the disclaimer of warranty and limitation of liability provided
+above cannot be given local legal effect according to their terms,
+reviewing courts shall apply local law that most closely approximates
+an absolute waiver of all civil liability in connection with the
+Program, unless a warranty or assumption of liability accompanies a
+copy of the Program in return for a fee.
+
+                     END OF TERMS AND CONDITIONS
+
+            How to Apply These Terms to Your New Programs
+
+  If you develop a new program, and you want it to be of the greatest
+possible use to the public, the best way to achieve this is to make it
+free software which everyone can redistribute and change under these terms.
+
+  To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+state the exclusion of warranty; and each file should have at least
+the "copyright" line and a pointer to where the full notice is found.
+
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) <year>  <name of author>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Also add information on how to contact you by electronic and paper mail.
+
+  If your software can interact with users remotely through a computer
+network, you should also make sure that it provides a way for users to
+get its source.  For example, if your program is a web application, its
+interface could display a "Source" link that leads users to an archive
+of the code.  There are many ways you could offer source, and different
+solutions will be better for different programs; see section 13 for the
+specific requirements.
+
+  You should also get your employer (if you work as a programmer) or school,
+if any, to sign a "copyright disclaimer" for the program, if necessary.
+For more information on this, and how to apply and follow the GNU AGPL, see
+<https://www.gnu.org/licenses/>.
+
+
+================================================
+FILE: renovate.json
+================================================
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ]
+}
+
+
+
+================================================
+FILE: requirements.txt
+================================================
+gspread==6.1.4
+gspread_dataframe==4.0.0
+oauth2client==4.1.3
+pandas==2.2.3
+python-dotenv==1.0.1
+redis==5.2.1
+scrapy==2.12.0
+torch==2.6.0
+transformers==4.48.0
+requests==2.32.3
+replicate==1.0.4
+PyPDF2==3.0.1
+python-dotenv==1.0.1
+tenacity>=8.2.3
+
+
+
+================================================
+FILE: run.sh
+================================================
+#!/bin/bash
+
+date >> logs/docker.elasnocongresso.log
+cd src/
+python3 -m scrapy crawl camara 1>> ../logs/crawl_camara.log 2>> ../logs/crawl_camara.err.log;
+python3 -m scrapy crawl senado 1>> ../logs/crawl_senado.log 2>> ../logs/crawl_senado.err.log;
+python3 run_models.py
+python3 sync_spreadsheets.py
+
+
+
+
+================================================
+FILE: .env.sample
+================================================
+CONSUMER_KEY='XXXXXXXXXX'#keep the quotes, replace this with your consumer key
+CONSUMER_SECRET='XXXXXXXXXX'#keep the quotes, replace this with your consumer secret key
+ACCESS_KEY='XXXXXXXXXX'#keep the quotes, replace this with your access token
+ACCESS_SECRET='XXXXXXXXXX'#keep the quotes, replace this with your access token secret
+RANDOM_SLEEP_BETWEEN_TWEETS='' # vazio = nao dormir, qualquer outro valor=true: esperar 5min entre os envios dos tweets
+GOOGLE_JSON_KEY=''
+SPREADSHEET_NAME=''
+REPLICATE_KEY=''
+
+
+================================================
+FILE: dados/.dummy
+================================================
+[Empty file]
+
+
+================================================
+FILE: logs/.dummy
+================================================
+[Empty file]
+
+
+================================================
+FILE: src/df_config.py
+================================================
+COLUMNS = {
+    "camara": [
+        "id",
+        "urlTramitacao",
+        "dataDaTramitacao",
+        "horaDaTramitacao",
+        "nomeDoProjeto",
+        "autor",
+        "cargo",
+        "descricaoTipo",
+        "descricaoSituacao",
+        "descricaoTramitacao",
+        "despacho",
+        "ementa",
+        "codTipo",
+        "ementaDetalhada",
+        "keywords",
+        "uriPropPrincipal",
+        "uriPropAnterior",
+        "uriPropPosterior",
+        "urlInteiroTeor",
+        "urnFinal",
+        "justificativa",
+        "dataApresentacao",
+        "horaApresentacao",
+        "sequencia",
+        "siglaOrgao",
+        "uriOrgao",
+        "uriUltimoRelator",
+        "regime",
+        "uriOrgaoNumerador",
+        "codTipoTramitacao",
+        "uriAutores",
+        "codSituacao",
+        "despacho",
+        "url",
+        "ambito",
+        "apreciacao",
+        "temas",
+        "tema_1",
+        "tema_2",
+        "classification",
+        "probabilities",
+        "posicao_llm",
+        "classification_posicao_final"
+    ],
+    "senado": [
+        "id",
+        "UrlTramitacao",
+        "DataDaTramitação",
+        "HoraDaTramitação",
+        "NomedoProjeto",
+        "Autor",
+        "MovimentacaoDescricaoSituacao",
+        "MovimentacaoDescricao",
+        "Ementa",
+        "NumeroMateria",
+        "AnoMateria",
+        "IdentificacaoProcesso",
+        "IndicadorTramitando",
+        "DataApresentacao",
+        "SiglaCasaIdentificacaoMateria",
+        "NomeCasaIdentificacaoMateria",
+        "SiglaSubtipoMateria",
+        "temas",
+        "ApelidoMateria",
+        "CasaIniciadoraNoLegislativo",
+        "NumeroRepublicacaoMpv",
+        "IndicadorComplementar",
+        "DataAssinatura",
+        "AssuntoEspecificoCod",
+        "AssuntoEspecificoDesc",
+        "AssuntoGeralCod",
+        "AssuntoGeralDesc",
+        "tema_1",
+        "tema_2",
+        "classification",
+        "probabilities"
+    ]
+}
+
+
+
+================================================
+FILE: src/rename_cols_camara.py
+================================================
+import pandas as pd
+
+df = pd.read_csv("camara.csv")
+
+print("Before renaming:")
+print(df.columns)
+
+new_columns = {"dataHora": "dataDaTramitacao", "nome": "autor", "tipo": "cargo"}
+
+# Rename the column names
+df.rename(columns=new_columns, inplace=True)
+
+# Print the new column names
+print("\nAfter renaming:")
+print(df.columns)
+
+# Save the dataframe back to CSV
+df.to_csv("camara.csv", index=False)
+
+
+
+================================================
+FILE: src/rename_cols_senado.py
+================================================
+import pandas as pd
+
+df = pd.read_csv("senado.csv")
+
+print("Before renaming:")
+print(df.columns)
+
+new_columns = {
+    "DataUltimaAtualizacao": "DataDaTramitacao",
+    "DescricaoIdentificacaoMateria": "NomeDoProjeto",
+}
+
+# Rename the column names
+df.rename(columns=new_columns, inplace=True)
+
+# Print the new column names
+print("\nAfter renaming:")
+print(df.columns)
+
+# Save the dataframe back to CSV
+df.to_csv("senado.csv", index=False)
+
+
+
+================================================
+FILE: src/run_models.py
+================================================
+"""Script para classificação automática de proposições legislativas.
+
+Este script processa proposições legislativas da Câmara e do Senado,
+realizando duas classificações:
+
+1. Classificação temática: identifica até dois temas principais da proposição,
+   combinando regras baseadas em palavras-chave com modelos de ML.
+   
+2. Classificação de posição: determina se a proposição tem impacto
+   positivo ou negativo para questões de gênero e direitos das mulheres.
+
+3. Classificação de posição: baseado no inteiro teor (apenas para PLs da Câmara por ora), determina se a proposição tem impacto
+    positivo ou negativo para questões de gênero e direitos das mulheres.
+
+Os modelos utilizados são:
+- Tema: azmina/ia_feminista_tema
+- Posição: azmina/ia-feminista-bert-posicao
+
+Requisitos:
+- Python 3.7+
+- PyTorch
+- Transformers
+- Pandas
+- Arquivos CSV de entrada com coluna 'ementa' ou 'Ementa'
+
+Uso:
+    python run_models.py
+
+Os arquivos de entrada devem seguir o padrão:
+    senado_YYYYMMDD.csv
+    camara_YYYYMMDD.csv
+
+onde YYYYMMDD é a data atual.
+"""
+from torch import cuda  
+import torch  
+import pandas as pd  
+import time, os  
+import logging 
+import sys
+import replicate
+from tenacity import Retrying, wait_fixed, retry_if_exception_type, stop_after_attempt
+from pathlib import Path
+from transformers import AutoConfig
+
+# Custom functions
+from utils_inteiroteor import textfrompdf, inference 
+from utils_ementa import load_model_and_tokenizer, process_row_tema, process_row_posicao 
+from utils_df_validation import validate_columns
+
+# Configure logging
+log_directory = Path().absolute().parent / 'logs'
+log_directory.mkdir(exist_ok=True)
+
+current_date = time.strftime("%Y%m%d", time.localtime())
+log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# Remove any existing handlers
+logger.handlers = []
+
+# Console handler
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(log_formatter)
+logger.addHandler(console_handler)
+
+# File handler for general logs
+general_log_file = log_directory / f'model_processing_{current_date}.log'
+file_handler = logging.FileHandler(general_log_file)
+file_handler.setFormatter(log_formatter)
+file_handler.setLevel(logging.INFO)
+logger.addHandler(file_handler)
+
+# File handler for errors
+error_log_file = log_directory / f'model_errors_{current_date}.log'
+error_handler = logging.FileHandler(error_log_file)
+error_handler.setFormatter(log_formatter)
+error_handler.setLevel(logging.ERROR)
+logger.addHandler(error_handler)
+
+# Configuration
+DEVICE = 'cuda' if cuda.is_available() else 'cpu'
+MODEL_NAME_TEMA = "azmina/ia_feminista_tema"
+MODEL_NAME_POSICAO = "azmina/ia-feminista-bert-posicao"
+TOKENIZER_NAME = "neuralmind/bert-base-portuguese-cased"
+
+# Get env variables
+from dotenv import load_dotenv
+load_dotenv()
+API_TOKEN = os.getenv('REPLICATE_KEY') 
+MODEL = os.getenv('MODEL', 'meta/meta-llama-3-70b-instruct')
+
+# Rule-based classification
+THEMES = {
+        "Lei Maria da Penha": "maria da penha, lei nº 11.340, 11340",
+        "raça": "ação afirmativa, ações afirmativas, antirracista, antirracistas, cor da pele, cor de pele, etnia, etnias, étnica, étnicas, étnico, étnicos, \
+                interseccionalidade, interseccionalidades, microagressão, microagressões, negra, negras, negritude, parda, pardas, perfilamento racial, política afirmativa,\
+                políticas afirmativas, preta, pretas, quilombo, quilombola, quilombolas, quilombos, raça, raciais, racial, racismo, racista, racistas, reconhecimento facial",
+        "clima": "acordo de paris, ambientais, ambiental, meio ambiente, aquecimento global, biodiversidade, biodiversidades, carbono, clima, climas,\
+                 climática, climáticas, climático, climáticos, comunidades tradicionais, contribuições nacionalmente determinadas (ndcs), desastre natural, \
+                desastres naturais, efeito estufa, eficiência energética, emissão de gases, emissões de gases, enchente, energia renovável, energias renováveis, \
+                eventos extremos, floresta, florestal, florestas, infraestrutura urbana, plano de adaptação, planos de adaptação, planos de mitigação, poluição, \
+                populações vulneráveis, recursos hídricos, reflorestamento, sustentável, florestais"
+    }
+
+
+if __name__ == "__main__":
+    try:
+        # Load models, tokenizers, and configurations
+        logger.info("Loading models and tokenizers...")
+        model_tema, tokenizer_tema = load_model_and_tokenizer(MODEL_NAME_TEMA, TOKENIZER_NAME, DEVICE)
+        model_class, tokenizer_class = load_model_and_tokenizer(MODEL_NAME_POSICAO, TOKENIZER_NAME, DEVICE)
+        
+        config_tema = AutoConfig.from_pretrained(MODEL_NAME_TEMA)
+        config_class = AutoConfig.from_pretrained(MODEL_NAME_POSICAO)
+        class_mapping_tema = config_tema.id2label
+        class_mapping_class = config_class.id2label
+
+        # Define input files
+        files = [f"senado_{current_date}.csv", f"camara_{current_date}.csv"]
+
+        for file in files:
+            # Load input data
+            logger.info(f"Processing file: {file}")
+
+            # Skip processing if file doesn't exist
+            if not os.path.exists(file):
+                logger.warning(f"File {file} does not exist. Skipping...")
+                continue
+
+            # Skip processing if file is empty
+            if os.path.getsize(file) == 0:
+                logger.warning(f"File {file} is empty. Skipping...")
+                continue
+
+            df = pd.read_csv(file)
+            
+            # If it is the first file, then it's "camara", else it's "senado"
+            df = validate_columns(df, "camara" if file.startswith("camara") else "senado")
+
+            # Process for `tema` columns
+            logger.info("Processing tema classification")
+            df = df.apply(lambda row: process_row_tema(row, model_tema, tokenizer_tema, class_mapping_tema, DEVICE, themes=THEMES), axis=1)
+
+            # Process for `classification` columns
+            logger.info("Processing position classification")
+            df = df.apply(lambda row: process_row_posicao(row, model_class, tokenizer_class, class_mapping_class, DEVICE), axis=1)
+
+            # Check if file startwith camara and token exists
+            if file.startswith("camara") and API_TOKEN:
+                # Process for `classification` columns
+                logger.info("Getting text from PDF")
+                df["texto"] = df["urlInteiroTeor"].apply(textfrompdf)
+                logger.info("Classifying full text")
+                def safe_inference(text):
+                    # Check for invalid text returned by textfrompdf
+                    if not text or not isinstance(text, str) or text.startswith("Failed to download") or text.startswith("An error occurred") or text.startswith("URL is empty"):
+                        logger.warning(f"Skipping inference due to invalid or empty text.")
+                        return None # Return None to prevent error
+
+                    try:
+                        for attempt in Retrying(
+                            stop=stop_after_attempt(3),
+                            wait=wait_fixed(12),
+                            retry=retry_if_exception_type(replicate.exceptions.ReplicateError)
+                        ):
+                            with attempt:
+                                return inference(text, API_TOKEN, MODEL)
+                    except Exception as e:
+                        logger.error(f"Inference failed after all retries: {e}")
+                        return None # Return None if all retries fail
+                    
+                df["posicao_llm"] = df["texto"].apply(safe_inference)
+                # Drop full text
+                df.drop(columns=["texto"], inplace=True)
+                logger.info("Averaging the final score")
+                
+                # Convert 'posicao_llm' to numeric, coercing errors (like None) to NaN
+                df["posicao_llm"] = pd.to_numeric(df["posicao_llm"], errors='coerce')
+                
+                # The mean function will now correctly ignore NaN values
+                df["classification_posicao_final"] = df[["probabilities", "posicao_llm"]].mean(axis=1)
+
+            # Save the updated DataFrame back to the same file
+            df.to_csv(file, index=False)
+            logger.info(f"Successfully processed {len(df)} rows in {file}")
+
+    except Exception as e:
+        logger.error(f"Critical error during execution: {str(e)}")
+        raise
+    finally:
+        if DEVICE == 'cuda':
+            torch.cuda.empty_cache()
+            logger.info("CUDA cache cleared")
+
+
+================================================
+FILE: src/scrapy.cfg
+================================================
+# Automatically created by: scrapy startproject
+#
+# For more information about the [deploy] section see:
+# https://scrapyd.readthedocs.io/en/latest/deploy.html
+
+[settings]
+default = elasnocongresso.settings
+
+[deploy]
+#url = http://localhost:6800/
+project = elasnocongresso
+
+
+
+================================================
+FILE: src/sync_spreadsheets.py
+================================================
+import csv
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
+import pandas as pd
+from gspread_dataframe import set_with_dataframe
+import os
+from dotenv import load_dotenv
+import logging
+import sys
+from utils_df_validation import validate_columns
+from df_config import COLUMNS
+
+"""
+Script that syncs the spreadsheet maintained on the Google Drive
+with the spreadsheets generated by the spiders.
+"""
+
+"Dotenv is used to get the Google spreadsheets names and the Google API JSON key."
+load_dotenv()
+
+GOOGLE_TOKEN = os.getenv("GOOGLE_JSON_KEY")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+def read_csv(file_name):
+    "Read the CSV"
+    with open(file_name, newline="") as f:
+        return list(csv.reader(f))
+
+
+def write_csv(file_name, rows):
+    "Write data to the CSV"
+    with open(file_name, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(rows)
+
+
+def update_csv(input_file, existing_file):
+    """
+    This function reads the already existing result CSV
+    compares rows with the new output CSV and then removes duplicates
+    and, finally, writes the new result CSV.
+    """
+    input_rows = read_csv(input_file)
+    
+    # The input file may be empty
+    if os.path.getsize(input_file) == 0:
+        return
+
+    """"
+    The existing CSV may have not been created yet, so we need to check if it exists.
+    If it doesn't, we just write the input CSV to the existing file.
+    """
+    if not os.path.exists(existing_file):
+        write_csv(existing_file, input_rows)
+        return
+
+    input_df = pd.read_csv(input_file)
+
+    input_df = validate_columns(input_df, "camara" if input_file.startswith("camara") else "senado")
+
+    if not os.path.exists(existing_file):
+        input_df.to_csv(existing_file, index=False)
+        return
+
+    existing_df = pd.read_csv(existing_file)
+    existing_df = validate_columns(existing_df, "camara" if existing_file.startswith("camara") else "senado")
+
+    # Remove duplicates
+    existing_df = existing_df[~existing_df["id"].isin(input_df["id"])]
+    final_df = pd.concat([input_df, existing_df], ignore_index=True)
+    final_df.to_csv(existing_file, index=False)
+
+
+def update_sheet(sheet, file_name, columns):
+    """
+    This function gets the result CSV that was updated on the update_csv() func
+    and then syncs it with the Google spreadsheet.
+    """
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(file_name)
+
+    # Reindex columns to match predefined list, filling missing ones with None
+    df = df.reindex(columns=columns, fill_value=None)
+
+    # Clear the sheet
+    sheet.clear()
+
+    # Update the sheet with the DataFrame
+    set_with_dataframe(sheet, df)
+
+if __name__ == "__main__":
+    if not GOOGLE_TOKEN:
+        logger.error("Google API JSON key not found. Halting spreadsheet sync.")
+        sys.exit(1)
+
+    "Use creds to create a client to interact with the Google Drive API"
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(
+        GOOGLE_TOKEN, scope
+    )
+    client = gspread.authorize(creds)
+
+    """
+    Find a workbook by name and open the first and second sheet
+    Make sure you use the right names here.
+    """
+    "0 refers to first sheet"
+    sheet_camara = client.open(os.getenv("SPREADSHEET_NAME")).get_worksheet(0)
+    "1 refers to second sheet"
+    sheet_senado = client.open(os.getenv("SPREADSHEET_NAME")).get_worksheet(1)
+
+
+    # Generate the current date in YMD format
+    current_date = datetime.now().strftime("%Y%m%d")
+
+    update_csv(f"camara_{current_date}.csv", "camara.csv")
+    update_sheet(sheet_camara, "camara.csv", COLUMNS["camara"])
+
+    update_csv(f"senado_{current_date}.csv", "senado.csv")
+    update_sheet(sheet_senado, "senado.csv", COLUMNS["senado"])
+
+
+
+================================================
+FILE: src/utils_df_validation.py
+================================================
+import pandas as pd
+from df_config import COLUMNS
+
+def validate_columns(df: pd.DataFrame, dataset: str) -> pd.DataFrame:
+    """Ensure DataFrame matches predefined columns."""
+    expected_columns = COLUMNS[dataset]
+    # Add missing columns with NaN
+    for col in expected_columns:
+        if col not in df.columns:
+            df[col] = None
+    # Drop unexpected columns
+    df = df[expected_columns]
+    return df
+
+
+================================================
+FILE: src/utils_ementa.py
+================================================
+import torch
+import logging
+import pandas as pd
+from typing import Any, Dict, Tuple
+from pandas import Series
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+    PreTrainedModel
+)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+
+def load_model_and_tokenizer(
+    model_name: str,
+    tokenizer_name: str,
+    device: str
+) -> Tuple[PreTrainedModel, Any]:
+    """Load pre-trained model and tokenizer.
+    
+    Args:
+        model_name: HuggingFace model identifier
+        tokenizer_name: HuggingFace tokenizer identifier
+        device: Device to load the model to ('cuda' or 'cpu')
+    
+    Returns:
+        Tuple containing the loaded model and tokenizer
+    
+    Raises:
+        Exception: If model or tokenizer loading fails
+    """
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        model = AutoModelForSequenceClassification.from_pretrained(model_name)
+        model.to(device)
+        logger.info(f"Successfully loaded model {model_name}")
+        return model, tokenizer
+    except Exception as e:
+        logger.error(f"Failed to load model {model_name}: {str(e)}")
+        raise
+
+def process_row_tema(
+    row: Series,
+    model: PreTrainedModel,
+    tokenizer: Any,
+    class_mapping: Dict[int, str],
+    device: str,
+    themes: Dict[str, str]
+) -> Series:
+    """Process a single row for tema classification.
+    
+    Args:
+        row: DataFrame row containing 'ementa' or 'Ementa' column
+        model: Pre-trained classification model
+        tokenizer: Tokenizer for the model
+        class_mapping: Mapping from class indices to labels
+        device: Device to run inference on
+        themes: Dictionary of themes and their keywords
+    
+    Returns:
+        Modified row with 'tema_1' and 'tema_2' columns added
+    """
+    ementa = row.get('ementa') or row.get('Ementa', '')
+    ementa = ementa.lower()
+
+    # Rule-based classification
+    matching_themes = [
+        theme for theme, keywords in themes.items()
+        if any(keyword in ementa for keyword in keywords.split(", "))
+    ]
+
+    tokens = tokenizer(ementa, truncation=True, max_length=512, return_tensors="pt")
+    tokens = {key: value.to(device) for key, value in tokens.items()}
+    with torch.no_grad():
+        outputs = model(**tokens)
+    all_proba = outputs.logits.softmax(dim=-1).tolist()[0]
+    top_two_indices = sorted(range(len(all_proba)), key=lambda i: all_proba[i], reverse=True)[:2]
+    top_classes = [class_mapping[idx] for idx in top_two_indices]
+
+    # Determine tema_1 and tema_2
+    if len(matching_themes) >= 2:
+        tema_1, tema_2 = matching_themes[:2]
+    elif len(matching_themes) == 1:
+        tema_1 = matching_themes[0]
+        tema_2 = top_classes[0] if tema_1 != top_classes[0] else top_classes[1]
+    else:
+        tema_1, tema_2 = top_classes[0], top_classes[1]
+
+    row['tema_1'] = tema_1
+    row['tema_2'] = tema_2
+    return row
+
+def process_row_posicao(
+    row: Series,
+    model: PreTrainedModel,
+    tokenizer: Any,
+    class_mapping: Dict[int, str],
+    device: str
+) -> Series:
+    """Process a single row for position classification.
+    
+    Args:
+        row: DataFrame row containing 'ementa' or 'Ementa' column
+        model: Pre-trained classification model
+        tokenizer: Tokenizer for the model
+        class_mapping: Mapping from class indices to labels
+        device: Device to run inference on
+    
+    Returns:
+        Modified row with 'classification' and 'probabilities' columns added
+    """
+    ementa = row.get('ementa') or row.get('Ementa', '').lower()
+
+    tokens = tokenizer(ementa, truncation=True, max_length=512, return_tensors="pt")
+    tokens = {key: value.to(device) for key, value in tokens.items()}
+    with torch.no_grad():
+        outputs = model(**tokens)
+    probabilities = outputs.logits.softmax(dim=-1).tolist()[0]
+    prob_positive = probabilities[1]
+    predicted_index = torch.argmax(outputs.logits, dim=-1).item()
+    predicted_label = class_mapping[predicted_index]
+
+    row['classification'] = predicted_label
+    row['probabilities'] = round(prob_positive, 2)
+    return row
+
+def process_file(
+    input_file: str,
+    output_file: str,
+    model: PreTrainedModel,
+    tokenizer: Any,
+    class_mapping: Dict[int, str],
+    device: str,
+    process_row_func: Any,
+    **kwargs: Any
+) -> None:
+    """Process an entire file applying the specified row processing function.
+    
+    Args:
+        input_file: Path to input CSV file
+        output_file: Path to output CSV file
+        model: Pre-trained classification model
+        tokenizer: Tokenizer for the model
+        class_mapping: Mapping from class indices to labels
+        device: Device to run inference on
+        process_row_func: Function to process each row
+        **kwargs: Additional arguments passed to process_row_func
+    """
+    df = pd.read_csv(input_file)
+    df = df.apply(lambda row: process_row_func(row, model, tokenizer, class_mapping, device, **kwargs), axis=1)
+    df.to_csv(output_file, index=False)
+    logger.info(f"Processed {len(df)} rows and saved to {output_file}")
+
+
+================================================
+FILE: src/utils_inteiroteor.py
+================================================
+import replicate
+from PyPDF2 import PdfReader
+import os
+import requests
+import time
+import logging
+from tenacity import (
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_exponential,
+    before_sleep_log
+)
+logger = logging.getLogger(__name__)
+
+def is_rate_limit_error(exception):
+    return isinstance(exception, replicate.exceptions.ReplicateError) and getattr(exception, "status", None) == 429
+
+def textfrompdf(url: str, filename: str = "downloaded_file.pdf") -> str:
+    """
+    Downloads a PDF from the given URL and extracts its text content.
+
+    Parameters:
+        url (str): The URL of the PDF to download. Must be a valid non-empty string.
+        filename (str): The name of the temporary file to save the PDF. Defaults to "downloaded_file.pdf".
+
+    Returns:
+        str: The extracted text from the PDF or an error message.
+    """
+    if not url:
+        return "URL is empty."
+
+    try:
+        # Step 1: Download the PDF using requests with headers
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        response: requests.Response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an error for bad status codes
+
+        # Save the PDF to a file
+        with open(filename, 'wb') as pdf_file:
+            pdf_file.write(response.content)
+
+        # Step 2: Extract text from the downloaded PDF
+        with open(filename, 'rb') as pdf_file:
+            reader: PdfReader = PdfReader(pdf_file)
+            extracted_text: str = ""
+
+            # Extract text from all pages
+            for page_num in range(len(reader.pages)):
+                page = reader.pages[page_num]
+                extracted_text += page.extract_text()
+
+        # Remove the downloaded file
+        os.remove(filename)
+        return extracted_text
+
+    except requests.RequestException as e:
+        return f"Failed to download the PDF: {e}"
+    except Exception as e:
+        return f"An error occurred while reading the PDF: {e}"
+
+
+@retry(
+    retry=retry_if_exception(is_rate_limit_error),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=11, min=11, max=120),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+)
+def inference(prompt: str, api_token: str, model: str = "meta/meta-llama-3-70b-instruct") -> str:
+    """
+    Perform inference using the Replicate API.
+
+    Parameters:
+        prompt (str): The input prompt to classify.
+
+    Returns:
+        str: The classification result.
+
+    Raises:
+        EnvironmentError: If the api token environment variable is not set.
+        ValueError: If the prompt is empty or invalid.
+        replicate.exceptions.ReplicateError: If there is an error with the Replicate API.
+    """
+    # Validate the prompt
+    if not prompt or not isinstance(prompt, str):
+        raise ValueError("Prompt must be a non-empty string.")
+
+    if not api_token:
+        raise EnvironmentError("Please set the api token environment variable.")
+
+    try:
+        # Initialize the Replicate client
+        replicate_client = replicate.Client(api_token=api_token)
+
+        # Trim the prompt length to 8000 characters
+        if len(prompt) > 8000:
+            prompt = prompt[:8000]
+
+        input_data = {
+            "top_p": 0.9,
+            "prompt": prompt,
+            "min_tokens": 0,
+            "temperature": 0.6,
+            "prompt_template": """
+            <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+            \n\nClassify the following message. It is a law bill in Portuguese and you are a legal assistant defending the women's right. Answer only with 0 or 1. \
+            Answer 0 if it supports womens rights and 1 if not. Answer only with the number and no justification.\
+            <|eot_id|><|start_header_id|>user<|end_header_id|>
+            \n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+            \n\n""",
+            "presence_penalty": 1.15
+        }
+
+        # The @retry decorator handles rate limiting. The manual while loop is removed.
+        output = ""
+        for event in replicate_client.stream(model, input=input_data):
+            output += event.data
+
+        # Remove empty curly braces from the output
+        output = output.replace("{}", "")
+        return output
+
+    except replicate.exceptions.ReplicateError as e:
+        # Re-raise the exception to be handled by the @retry decorator or the caller
+        raise
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred: {e}")
+
+
+================================================
+FILE: src/elasnocongresso/items.py
+================================================
+# Define here the models for your scraped items
+#
+# See documentation in:
+# https://docs.scrapy.org/en/latest/topics/items.html
+
+import scrapy
+
+
+class ElasnocongressoItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    pass
+
+
+
+================================================
+FILE: src/elasnocongresso/middlewares.py
+================================================
+# Define here the models for your spider middleware
+#
+# See documentation in:
+# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+
+from scrapy import signals
+
+# useful for handling different item types with a single interface
+
+
+class ElasnocongressoSpiderMiddleware:
+    # Not all methods need to be defined. If a method is not defined,
+    # scrapy acts as if the spider middleware does not modify the
+    # passed objects.
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        # This method is used by Scrapy to create your spiders.
+        s = cls()
+        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        return s
+
+    def process_spider_input(self, response, spider):
+        # Called for each response that goes through the spider
+        # middleware and into the spider.
+
+        # Should return None or raise an exception.
+        return None
+
+    def process_spider_output(self, response, result, spider):
+        # Called with the results returned from the Spider, after
+        # it has processed the response.
+
+        # Must return an iterable of Request, or item objects.
+        for i in result:
+            yield i
+
+    def process_spider_exception(self, response, exception, spider):
+        # Called when a spider or process_spider_input() method
+        # (from other spider middleware) raises an exception.
+
+        # Should return either None or an iterable of Request or item objects.
+        pass
+
+    def process_start_requests(self, start_requests, spider):
+        # Called with the start requests of the spider, and works
+        # similarly to the process_spider_output() method, except
+        # that it doesn’t have a response associated.
+
+        # Must return only requests (not items).
+        for r in start_requests:
+            yield r
+
+    def spider_opened(self, spider):
+        spider.logger.info("Spider opened: %s" % spider.name)
+
+
+class ElasnocongressoDownloaderMiddleware:
+    # Not all methods need to be defined. If a method is not defined,
+    # scrapy acts as if the downloader middleware does not modify the
+    # passed objects.
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        # This method is used by Scrapy to create your spiders.
+        s = cls()
+        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        return s
+
+    def process_request(self, request, spider):
+        # Called for each request that goes through the downloader
+        # middleware.
+
+        # Must either:
+        # - return None: continue processing this request
+        # - or return a Response object
+        # - or return a Request object
+        # - or raise IgnoreRequest: process_exception() methods of
+        #   installed downloader middleware will be called
+        return None
+
+    def process_response(self, request, response, spider):
+        # Called with the response returned from the downloader.
+
+        # Must either;
+        # - return a Response object
+        # - return a Request object
+        # - or raise IgnoreRequest
+        return response
+
+    def process_exception(self, request, exception, spider):
+        # Called when a download handler or a process_request()
+        # (from other downloader middleware) raises an exception.
+
+        # Must either:
+        # - return None: continue processing this exception
+        # - return a Response object: stops process_exception() chain
+        # - return a Request object: stops process_exception() chain
+        pass
+
+    def spider_opened(self, spider):
+        spider.logger.info("Spider opened: %s" % spider.name)
+
+
+
+================================================
+FILE: src/elasnocongresso/pipelines.py
+================================================
+# Define your item pipelines here
+#
+# Don't forget to add your pipeline to the ITEM_PIPELINES setting
+# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+
+
+# useful for handling different item types with a single interface
+
+
+class ElasnocongressoPipeline:
+    def process_item(self, item, spider):
+        return item
+
+
+
+================================================
+FILE: src/elasnocongresso/settings.py
+================================================
+# Scrapy settings for elasnocongresso project
+#
+# For simplicity, this file contains only settings considered important or
+# commonly used. You can find more settings consulting the documentation:
+#
+#     https://docs.scrapy.org/en/latest/topics/settings.html
+#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+
+BOT_NAME = "elasnocongresso"
+
+SPIDER_MODULES = ["elasnocongresso.spiders"]
+NEWSPIDER_MODULE = "elasnocongresso.spiders"
+
+
+# Crawl responsibly by identifying yourself (and your website) on the user-agent
+# USER_AGENT = "elasnocongresso (+http://www.yourdomain.com)"
+
+# Obey robots.txt rules
+ROBOTSTXT_OBEY = True
+
+# Configure maximum concurrent requests performed by Scrapy (default: 16)
+# CONCURRENT_REQUESTS = 32
+
+# Configure a delay for requests for the same website (default: 0)
+# See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
+# See also autothrottle settings and docs
+# DOWNLOAD_DELAY = 3
+# The download delay setting will honor only one of:
+# CONCURRENT_REQUESTS_PER_DOMAIN = 16
+# CONCURRENT_REQUESTS_PER_IP = 16
+
+# Disable cookies (enabled by default)
+# COOKIES_ENABLED = False
+
+# Disable Telnet Console (enabled by default)
+# TELNETCONSOLE_ENABLED = False
+
+# Override the default request headers:
+# DEFAULT_REQUEST_HEADERS = {
+#    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+#    "Accept-Language": "en",
+# }
+
+# Enable or disable spider middlewares
+# See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+# SPIDER_MIDDLEWARES = {
+#    "elasnocongresso.middlewares.ElasnocongressoSpiderMiddleware": 543,
+# }
+
+# Enable or disable downloader middlewares
+# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+# DOWNLOADER_MIDDLEWARES = {
+#    "elasnocongresso.middlewares.ElasnocongressoDownloaderMiddleware": 543,
+# }
+
+# Enable or disable extensions
+# See https://docs.scrapy.org/en/latest/topics/extensions.html
+# EXTENSIONS = {
+#    "scrapy.extensions.telnet.TelnetConsole": None,
+# }
+
+# Configure item pipelines
+# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+# ITEM_PIPELINES = {
+#    "elasnocongresso.pipelines.ElasnocongressoPipeline": 300,
+# }
+
+# Enable and configure the AutoThrottle extension (disabled by default)
+# See https://docs.scrapy.org/en/latest/topics/autothrottle.html
+# AUTOTHROTTLE_ENABLED = True
+# The initial download delay
+# AUTOTHROTTLE_START_DELAY = 5
+# The maximum download delay to be set in case of high latencies
+# AUTOTHROTTLE_MAX_DELAY = 60
+# The average number of requests Scrapy should be sending in parallel to
+# each remote server
+# AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+# Enable showing throttling stats for every response received:
+# AUTOTHROTTLE_DEBUG = False
+
+# Enable and configure HTTP caching (disabled by default)
+# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
+# HTTPCACHE_ENABLED = True
+# HTTPCACHE_EXPIRATION_SECS = 0
+# HTTPCACHE_DIR = "httpcache"
+# HTTPCACHE_IGNORE_HTTP_CODES = []
+# HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
+
+# Set settings whose default value is deprecated to a future-proof value
+REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+FEED_EXPORT_ENCODING = "utf-8"
+
+ROBOTSTXT_OBEY = True
+COOKIES_ENABLED = False
+DOWNLOAD_DELAY = 0.25
+AUTOTHROTTLE_ENABLED = True
+
+
+
+================================================
+FILE: src/elasnocongresso/spiders/camara_spider.py
+================================================
+import scrapy
+from scrapy.spiders import XMLFeedSpider
+from scrapy.exporters import CsvItemExporter
+import redis
+from datetime import datetime, timedelta
+from .theme_assert import assert_theme
+
+"""
+This is the spider (https://docs.scrapy.org/en/latest/topics/spiders.html)
+that scrapes the data for the Câmara (lower chamber)
+"""
+
+"Legacy rule that defines the date range of the scraper: Captura o dia, mês e ano de ontem"
+dia_anterior = (datetime.now() - timedelta(1)).strftime("%d")
+mes_anterior = (datetime.now() - timedelta(1)).strftime("%m")
+ano_anterior = (datetime.now() - timedelta(1)).strftime("%Y")
+
+"Legacy rule that defines the date range of the scraper: Captura o dia, mês e ano de amanha (assim nao preciso mudar o codigo para remover o parametro data_ate)"
+now = datetime.now()
+dia_hoje = (datetime.now() + timedelta(1)).strftime("%d")
+mes_hoje = (datetime.now() + timedelta(1)).strftime("%m")
+ano_hoje = (datetime.now() + timedelta(1)).strftime("%Y")
+
+
+class CamaraSpider(XMLFeedSpider):
+    "Definition of basic configs of the Spider and the rules for its iterations"
+
+    url = (
+        "https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio=%s-%s-%s&dataFim=%s-%s-%s&ordem=ASC&ordenarPor=id&itens=100"
+        % (ano_anterior, mes_anterior, dia_anterior, ano_hoje, mes_hoje, dia_hoje)
+    )
+    name = "camara"
+    allowed_domains = ["dadosabertos.camara.leg.br"]
+    start_urls = [url]
+    iterator = "iternodes"
+    itertag = "proposicao_"
+
+    def __init__(self):
+        "Init using Redis for caching and savepoint, and also versioning the output file with the current YMD."
+        current_date = datetime.now().strftime("%Y%m%d")
+        self.file = open("camara_%s.csv" % (current_date), "wb")
+        self.exporter = CsvItemExporter(self.file)
+        self.exporter.start_exporting()
+        self.redis = redis.Redis(host="redis", port=6379, db=0)
+
+    def parse_node(self, response, node):
+        """
+        The first endpoint required for scraping the Câmara data.
+        Using retries and redis.
+        The Câmara API uses XML.
+        """
+        tries = 1
+        try:
+            item = dict()
+            item["id"] = node.xpath("id/text()").extract_first()
+            item["uri"] = node.xpath("uri/text()").extract_first()
+            item["siglaTipo"] = node.xpath("siglaTipo/text()").extract_first()
+            item["codTipo"] = node.xpath("codTipo/text()").extract_first()
+            item["numero"] = node.xpath("numero/text()").extract_first()
+            item["ano"] = node.xpath("ano/text()").extract_first()
+            item["ementa"] = node.xpath("ementa/text()").extract_first()
+
+            current_date = datetime.now().isoformat()
+            self.redis.set(
+                "savepoint_camara", f'{item["id"]}, {current_date}, {item["uri"]}'
+            )
+
+            row_request = scrapy.Request(item["uri"], callback=self.parse_row_data)
+            row_request.meta["item"] = item
+            yield row_request
+
+            next_page_url = response.xpath(
+                '//link[rel="next"]/href/text()'
+            ).extract_first()
+            if next_page_url:
+                yield scrapy.Request(next_page_url, callback=self.parse_next_page)
+
+        except Exception:
+            print(f"Erro ao processar linha, tentativa: {tries}")
+            self.redis.set(
+                f'savepoint_camara_erro:{item["id"]}', f'{current_date}, {item["uri"]}'
+            )
+            if tries < 3:
+                tries += 1
+                yield scrapy.Request(
+                    response.url, callback=self.parse_node, dont_filter=True
+                )
+
+    def parse_row_data(self, response):
+        """
+        This function parses the majority of data. It extracts the 'columns' from the XML
+        """
+        item = response.meta["item"]
+        item["dataApresentacao"], item["horaApresentacao"] = (
+            response.xpath("//dados/dataApresentacao/text()")
+            .extract_first(default="")
+            .split("T")
+        )
+
+        item["uriOrgaoNumerador"] = response.xpath(
+            "//dados/uriOrgaoNumerador/text()"
+        ).extract_first()
+        item["uriAutores"] = response.xpath("//dados/uriAutores/text()").extract_first()
+        item["descricaoTipo"] = response.xpath(
+            "//dados/descricaoTipo/text()"
+        ).extract_first()
+        item["ementaDetalhada"] = response.xpath(
+            "//dados/ementaDetalhada/text()"
+        ).extract_first()
+        item["keywords"] = response.xpath("//dados/keywords/text()").extract_first()
+        item["uriPropPrincipal"] = response.xpath(
+            "//dados/uriPropPrincipal/text()"
+        ).extract_first()
+        item["uriPropAnterior"] = response.xpath(
+            "//dados/uriPropAnterior/text()"
+        ).extract_first()
+        item["uriPropPosterior"] = response.xpath(
+            "//dados/uriPropPosterior/text()"
+        ).extract_first()
+        item["urlInteiroTeor"] = response.xpath(
+            "//dados/urlInteiroTeor/text()"
+        ).extract_first()
+        item["urnFinal"] = response.xpath("//dados/urnFinal/text()").extract_first()
+        item["texto"] = response.xpath("//dados/texto/text()").extract_first()
+        item["justificativa"] = response.xpath(
+            "//dados/justificativa/text()"
+        ).extract_first()
+
+        "Dados de tramitação"
+        item["dataDaTramitacao"], item["horaDaTramitacao"] = (
+            response.xpath("//dados/statusProposicao/dataHora/text()")
+            .extract_first(default="")
+            .split("T")
+        )
+        item["sequencia"] = response.xpath(
+            "//dados/statusProposicao/sequencia/text()"
+        ).extract_first()
+        item["siglaOrgao"] = response.xpath(
+            "//dados/statusProposicao/siglaOrgao/text()"
+        ).extract_first()
+        item["uriOrgao"] = response.xpath(
+            "//dados/statusProposicao/uriOrgao/text()"
+        ).extract_first()
+        item["uriUltimoRelator"] = response.xpath(
+            "//dados/statusProposicao/uriUltimoRelator/text()"
+        ).extract_first()
+        item["regime"] = response.xpath(
+            "//dados/statusProposicao/regime/text()"
+        ).extract_first()
+        item["descricaoTramitacao"] = response.xpath(
+            "//dados/statusProposicao/descricaoTramitacao/text()"
+        ).extract_first()
+        item["codTipoTramitacao"] = response.xpath(
+            "//dados/statusProposicao/codTipoTramitacao/text()"
+        ).extract_first()
+        item["descricaoSituacao"] = response.xpath(
+            "//dados/statusProposicao/descricaoSituacao/text()"
+        ).extract_first()
+        item["codSituacao"] = response.xpath(
+            "//dados/statusProposicao/codSituacao/text()"
+        ).extract_first()
+        item["despacho"] = response.xpath(
+            "//dados/statusProposicao/despacho/text()"
+        ).extract_first()
+        item["url"] = response.xpath(
+            "//dados/statusProposicao/url/text()"
+        ).extract_first()
+        item["ambito"] = response.xpath(
+            "//dados/statusProposicao/ambito/text()"
+        ).extract_first()
+        item["apreciacao"] = response.xpath(
+            "//dados/statusProposicao/apreciacao/text()"
+        ).extract_first()
+
+        "Colunas/Dados construídos com concatenação."
+        item["urlTramitacao"] = (
+            f"https://www.camara.leg.br/propostas-legislativas/{item['id']}"
+        )
+        item["nomeDoProjeto"] = f"{item['siglaTipo']} {item['numero']}/{item['ano']}"
+
+        "Theme assertion function call, that selects only the relevant data."
+        theme_assertion = assert_theme(
+            {
+                "ementa": item["ementa"],
+                "ementaDetalhada": item["ementaDetalhada"],
+                "keywords": item["keywords"],
+            }
+        )
+        if theme_assertion["row_relevant"]:
+            item["temas"] = ", ".join(theme_assertion["temas"])
+
+            authors_request = scrapy.Request(
+                item["uriAutores"], callback=self.parse_authors
+            )
+            authors_request.meta["item"] = item
+            return authors_request
+
+    def parse_authors(self, response):
+        "The authors of the proposal are on a different endpoint, thus this function extracts it."
+        item = response.meta["item"]
+
+        item["autor"] = response.xpath("//autor/nome/text()").extract_first()
+        item["cargo"] = response.xpath("//autor/tipo/text()").extract_first()
+
+        self.exporter.export_item(item)
+        return item
+
+    def parse_next_page(self, response):
+        "The main endpoint is paginated, thus this function iterates through the pages."
+        for node in response.xpath("//proposicao_"):
+            yield from self.parse_node(response, node)
+
+    def close_spider(self, spider):
+        "Closing the spider, and exporting the file."
+        self.exporter.finish_exporting()
+        self.file.close()
+
+
+
+================================================
+FILE: src/elasnocongresso/spiders/senado_spider.py
+================================================
+import scrapy
+from scrapy.spiders import XMLFeedSpider
+from scrapy.exporters import CsvItemExporter
+import redis
+from datetime import datetime, timedelta
+from .theme_assert import assert_theme
+import logging
+
+"""
+This is the spider (https://docs.scrapy.org/en/latest/topics/spiders.html)
+that scrapes the data for the Senado (upper chamber).
+"""
+
+
+class SenadoSpider(XMLFeedSpider):
+    "Definition of basic configs of the Spider and the rules for its iterations"
+
+    dia_anterior = (datetime.now() - timedelta(1)).strftime("%d")
+    mes_anterior = (datetime.now() - timedelta(1)).strftime("%m")
+    ano_anterior = (datetime.now() - timedelta(1)).strftime("%Y")
+    url = "http://legis.senado.leg.br/dadosabertos/materia/tramitando?data=%s%s%s" % (
+        ano_anterior,
+        mes_anterior,
+        dia_anterior,
+    )
+    name = "senado"
+    allowed_domains = ["legis.senado.leg.br"]
+    start_urls = [url]
+    iterator = "iternodes"
+    itertag = "Materia"
+
+    def __init__(self):
+        "Init using Redis for caching and savepoint, and also versioning the output file with the current YMD."
+        current_date = datetime.now().strftime("%Y%m%d")
+        self.file = open(f"senado_{current_date}.csv", "wb")
+        self.exporter = CsvItemExporter(self.file)
+        self.exporter.start_exporting()
+        self.redis = redis.Redis(host="redis", port=6379, db=0)
+
+    def parse_node(self, response, node):
+        """
+        The first endpoint required for scraping the Senado data.
+        Using retries and redis.
+        The Senado API uses XML.
+        """
+        tries = 1
+        try:
+            item = dict()
+            item["id"] = node.xpath(
+                "IdentificacaoMateria/CodigoMateria/text()"
+            ).extract_first()
+            item["SiglaCasaIdentificacaoMateria"] = node.xpath(
+                "IdentificacaoMateria/SiglaCasaIdentificacaoMateria/text()"
+            ).extract_first()
+            item["NomeCasaIdentificacaoMateria"] = node.xpath(
+                "IdentificacaoMateria/NomeCasaIdentificacaoMateria/text()"
+            ).extract_first()
+            item["SiglaSubtipoMateria"] = node.xpath(
+                "IdentificacaoMateria/SiglaSubtipoMateria/text()"
+            ).extract_first()
+            item["NumeroMateria"] = node.xpath(
+                "IdentificacaoMateria/NumeroMateria/text()"
+            ).extract_first()
+            item["AnoMateria"] = node.xpath(
+                "IdentificacaoMateria/AnoMateria/text()"
+            ).extract_first()
+            item["IdentificacaoProcesso"] = node.xpath(
+                "IdentificacaoMateria/IdentificacaoProcesso/text()"
+            ).extract_first()
+            item["NomedoProjeto"] = node.xpath(
+                "IdentificacaoMateria/DescricaoIdentificacaoMateria/text()"
+            ).extract_first()
+            item["IndicadorTramitando"] = node.xpath(
+                "IdentificacaoMateria/IndicadorTramitando/text()"
+            ).extract_first()
+            item["Ementa"] = node.xpath("Ementa/text()").extract_first()
+            item["Autor"] = node.xpath("Autor/text()").extract_first()
+            item["DataApresentacao"] = node.xpath(
+                "DataApresentacao/text()"
+            ).extract_first()
+            item["DataDaTramitação"], item["HoraDaTramitação"] = (
+                node.xpath("DataUltimaAtualizacao/text()")
+                .extract_first(default="")
+                .split(" ")
+            )
+
+            "Colunas/Dados construídos com concatenação"
+            item["UrlTramitacao"] = (
+                f"https://www25.senado.leg.br/web/atividade/materias/-/materia/{item['id']}"
+            )
+
+            theme_assertion = assert_theme({"Ementa": item["Ementa"]})
+            if theme_assertion["row_relevant"]:
+                item["temas"] = ", ".join(theme_assertion["temas"])
+
+                current_date = datetime.now().isoformat()
+                self.redis.set(
+                    "savepoint_senado", f'{item["id"]}, {current_date}'
+                )
+
+                row_url = f"https://legis.senado.leg.br/dadosabertos/materia/{item['id']}"
+                row_request = scrapy.Request(row_url, callback=self.parse_row_data)
+                row_request.meta["item"] = item
+                yield row_request
+
+        except Exception:
+            logging.info(f"Erro ao processar linha, tentativa: {tries}")
+            self.redis.set(
+                f'savepoint_senado_erro:{item["id"]}', f"{current_date}"
+            )
+            if tries < 3:
+                tries += 1
+                yield scrapy.Request(
+                    response.url, callback=self.parse_node, dont_filter=True
+                )
+
+    def parse_row_data(self, response):
+        item = response.meta["item"]
+
+        item["ApelidoMateria"] = response.xpath(
+            "//ApelidoMateria/text()"
+        ).extract_first()
+        item["Autor"] = response.xpath("//Autor/text()").extract_first()
+        item["CasaIniciadoraNoLegislativo"] = response.xpath(
+            "//CasaIniciadoraNoLegislativo/text()"
+        ).extract_first()
+        item["NumeroRepublicacaoMpv"] = response.xpath(
+            "//NumeroRepublicacaoMpv/text()"
+        ).extract_first()
+        item["IndicadorComplementar"] = response.xpath(
+            "//IndicadorComplementar/text()"
+        ).extract_first()
+        item["DataApresentacao"] = response.xpath(
+            "//DataApresentacao/text()"
+        ).extract_first()
+        item["DataAssinatura"] = response.xpath(
+            "//DataAssinatura/text()"
+        ).extract_first()
+        item["AssuntoEspecificoCod"] = response.xpath(
+            "Assunto/AssuntoEspecifico/Codigo"
+        ).extract_first()
+        item["AssuntoEspecificoDesc"] = response.xpath(
+            "Assunto/AssuntoEspecifico/Descricao"
+        ).extract_first()
+        item["AssuntoGeralCod"] = response.xpath(
+            "Assunto/AssuntoGeral/Codigo"
+        ).extract_first()
+        item["AssuntoGeralDesc"] = response.xpath(
+            "Assunto/AssuntoGeral/Descricao"
+        ).extract_first()
+
+        movements_url = response.xpath(
+            '//Servico[NomeServico="MovimentacaoMateria"]/UrlServico/text()'
+        ).extract_first()
+        movements_request = scrapy.Request(movements_url, callback=self.parse_movements)
+        movements_request.meta["item"] = item
+        yield movements_request
+
+    def parse_movements(self, reponse):
+        item = reponse.meta["item"]
+
+        item["MovimentacaoDescricaoSituacao"] = reponse.xpath(
+            "//SituacaoAtual/DescricaoSituacao/text()"
+        ).extract_first()
+        item["MovimentacaoDescricao"] = reponse.xpath(
+            "//InformeLegislativo/Descricao/text()"
+        ).extract_first()
+
+        self.exporter.export_item(item)
+        return item
+
+    def close_spider(self, spider):
+        self.exporter.finish_exporting()
+        self.file.close()
+
+
+
+================================================
+FILE: src/elasnocongresso/spiders/theme_assert.py
+================================================
+import re
+
+"""
+This module exports the assert_theme function.
+That is used to assert if a proposal is relevant for the goal of this project.
+"""
+
+
+def assert_theme(input_obj):
+    """
+    This function use two different regex. One looking for terms on words on itself,
+    and the other looks for words that are combined with another keyword.
+
+    The return of this function is a boolean that indicates wether the row is relevant
+    and the matches of both regex.
+    """
+    input_string = " ".join([value or "" for value in input_obj.values()])
+
+    if not input_string.strip():
+        return {"row_relevant": False, "temas": []}
+
+    pattern1 = re.compile(r'\b(ABORTAMENTO|ABORTO|ABUSO SEXUAL|AMAMENTAÇÃO|ASSÉDIO|ASSÉDIO SEXUAL|BEBÊ|CASAMENTO|CASAMENTO INFANTIL|CONCEPÇÃO|CONTRACEPÇÃO|CONTRACEPTIVO|CRECHE|CRIANÇA|CYTOTEC|DIREITO À VIDA|DIREITO DOS HOMENS|DIREITO REPRODUTIVO|DIREITOS REPRODUTIVOS|DIVÓRCIO|DOMÉSTICA|EDUCAÇÃO DOMICILIAR|EDUCAÇÃO INFANTIL|EDUCAÇÃO SEXUAL|ESCOLA SEM PARTIDO|ESTUPRO|ESTUPRO DE VULNERÁVEL|EXPLORAÇÃO SEXUAL|FEMINICÍDIO|FEMININO|FEMINISMO|FETO|GÊNERO|GESTAÇÃO|GESTANTE|GRAVIDEZ|GUARDA DE FILHOS|GUARDA DOS FILHOS|HOMESCHOOLING|HOMICÍDIO DE MULHER|HOMOSSEXUAL|IDENTIDADE DE GÊNERO|IDEOLOGIA DE GÊNERO|IGUALDADE|IGUALDADE DE GÊNERO|INTERRUPÇÃO DA GESTAÇÃO|INTERRUPÇÃO DA GRAVIDEZ|LÉSBICA|LICENÇA MATERNIDADE|MACHISMO|MÃE|MARIA DA PENHA|MATERNIDADE|MIFEPRISTONE|MISOPROSTOL|MORTE DE MULHER|MUDANÇA DE SEXO|MULHER|MULHER NEGRA|MULHER TRANS|MULHERES INDÍGENAS|MULHERES NEGRAS|MULHERES QUILOMBOLAS|MULHERES TRANS|NASCITURO|NEGRA|ORIENTAÇÃO SEXUAL|PARTO|PROSTITUIÇÃO|READEQUAÇÃO SEXUAL|SEXO|SEXUALIDADE|TRABALHO DOMÉSTICO|TRANS|TRANSEX|TRANSGEN|TRANSEXUAL|TRANSEXUALIDADE|ÚTERO|VIOLÊNCIA CONTRA A MULHER|VIOLÊNCIA DE GÊNERO|VIOLÊNCIA POLÍTICA DE GÊNERO|VIOLÊNCIA DOMÉSTICA|VIOLÊNCIA OBSTÉTRICA|VIOLÊNCIA SEXUAL|SEXUAL)\b', re.IGNORECASE)
+    pattern2 = re.compile(r'(?=.*\bmulher\b).*\b(COTAS|TRABALHO|RAÇA|PARTICIPAÇÃO POLÍTICA|RACIAL|POLÍTICA|RACISMO|RELIGIÃO|EDUCAÇÃO RELIGIOSA|DEUS)\b', re.IGNORECASE)
+
+    matches = pattern1.findall(input_string) + pattern2.findall(input_string)
+    return {"row_relevant": len(matches) > 0, "temas": matches}
+
+
