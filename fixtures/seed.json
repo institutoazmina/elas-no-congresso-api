@@ -1,0 +1,291 @@
+[
+  {
+    "model": "legislatures.legislature",
+    "pk": 57,
+    "fields": {
+      "number": 57,
+      "start_date": "2023-02-01",
+      "end_date": "2027-01-31"
+    }
+  },
+  {
+    "model": "legislatures.legislature",
+    "pk": 56,
+    "fields": {
+      "number": 56,
+      "start_date": "2019-02-01",
+      "end_date": "2023-01-31"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 1,
+    "fields": {
+      "acronym": "PT",
+      "name": "Partido dos Trabalhadores",
+      "ideology": "Esquerda"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 2,
+    "fields": {
+      "acronym": "PL",
+      "name": "Partido Liberal",
+      "ideology": "Centro/Direita"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 3,
+    "fields": {
+      "acronym": "PSB",
+      "name": "Partido Socialista Brasileiro",
+      "ideology": "Centro-Esquerda"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 4,
+    "fields": {
+      "acronym": "PSDB",
+      "name": "Partido da Social Democracia Brasileira",
+      "ideology": "Centro"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 5,
+    "fields": {
+      "acronym": "PP",
+      "name": "Partido Progressista",
+      "ideology": "Direita"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 6,
+    "fields": {
+      "acronym": "REPUBLICANOS",
+      "name": "Republicanos",
+      "ideology": "Direita"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 7,
+    "fields": {
+      "acronym": "UNIÃO",
+      "name": "Partido Union Brasil",
+      "ideology": "Centro-Direita"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 8,
+    "fields": {
+      "acronym": "PCdoB",
+      "name": "Partido Comunista do Brasil",
+      "ideology": "Esquerda"
+    }
+  },
+  {
+    "model": "legislatures.party",
+    "pk": 9,
+    "fields": {
+      "acronym": "PSOL",
+      "name": "Partido Socialismo e Liberdade",
+      "ideology": "Esquerda"
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 1,
+    "fields": {
+      "slug": "direitos-humanos",
+      "name": "Direitos Humanos",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 2,
+    "fields": {
+      "slug": "igualdade-de-genero",
+      "name": "Igualdade de Gênero",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 3,
+    "fields": {
+      "slug": "diversidade",
+      "name": "Diversidade",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 4,
+    "fields": {
+      "slug": "educacao",
+      "name": "Educação",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 5,
+    "fields": {
+      "slug": "saude",
+      "name": "Saúde",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 6,
+    "fields": {
+      "slug": "meio-ambiente",
+      "name": "Meio Ambiente",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 7,
+    "fields": {
+      "slug": "economia",
+      "name": "Economia",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 8,
+    "fields": {
+      "slug": "seguranca-publica",
+      "name": "Segurança Pública",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 9,
+    "fields": {
+      "slug": "cultura",
+      "name": "Cultura",
+      "parent": null
+    }
+  },
+  {
+    "model": "taxonomy.theme",
+    "pk": 10,
+    "fields": {
+      "slug": "ciencia-tecnologia",
+      "name": "Ciência e Tecnologia",
+      "parent": null
+    }
+  },
+  {
+    "model": "committees.committee",
+    "pk": 1,
+    "fields": {
+      "house": "CD",
+      "acronym": "CCJ",
+      "name": "Comissão de Constituição e Justiça",
+      "kind": "permanente",
+      "is_active": true
+    }
+  },
+  {
+    "model": "committees.committee",
+    "pk": 2,
+    "fields": {
+      "house": "CD",
+      "acronym": "CMulheres",
+      "name": "Comissão de Direitos da Mulher",
+      "kind": "permanente",
+      "is_active": true
+    }
+  },
+  {
+    "model": "committees.committee",
+    "pk": 3,
+    "fields": {
+      "house": "CD",
+      "acronym": "CFinanças",
+      "name": "Comissão de Finanças e Tributação",
+      "kind": "permanente",
+      "is_active": true
+    }
+  },
+  {
+    "model": "committees.committee",
+    "pk": 4,
+    "fields": {
+      "house": "CD",
+      "acronym": "CEducação",
+      "name": "Comissão de Educação",
+      "kind": "permanente",
+      "is_active": true
+    }
+  },
+  {
+    "model": "committees.committee",
+    "pk": 5,
+    "fields": {
+      "house": "CD",
+      "acronym": "CMeioAmbiente",
+      "name": "Comissão de Meio Ambiente",
+      "kind": "permanente",
+      "is_active": true
+    }
+  },
+  {
+    "model": "taxonomy.analyticaltag",
+    "pk": 1,
+    "fields": {
+      "slug": "violencia-contra-mulher",
+      "name": "Violência Contra Mulher",
+      "description": "Projetos relacionados a violência de gênero"
+    }
+  },
+  {
+    "model": "taxonomy.analyticaltag",
+    "pk": 2,
+    "fields": {
+      "slug": "licenca-maternidade",
+      "name": "Licença Maternidade",
+      "description": "Projetos sobre direitos maternais"
+    }
+  },
+  {
+    "model": "taxonomy.analyticaltag",
+    "pk": 3,
+    "fields": {
+      "slug": "capacitismo",
+      "name": "Capacitismo",
+      "description": "Projetos relacionados a pessoas com deficiência"
+    }
+  },
+  {
+    "model": "taxonomy.analyticaltag",
+    "pk": 4,
+    "fields": {
+      "slug": "racismo",
+      "name": "Racismo",
+      "description": "Projetos relacionados a combate ao racismo"
+    }
+  },
+  {
+    "model": "taxonomy.analyticaltag",
+    "pk": 5,
+    "fields": {
+      "slug": "lgtb+",
+      "name": "LGTB+",
+      "description": "Projetos relacionados a direitos de pessoas lgbtqia+"
+    }
+  }
+]

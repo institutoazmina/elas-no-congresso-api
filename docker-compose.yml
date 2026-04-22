@@ -1,0 +1,95 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: elas-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: elas
+      POSTGRES_USER: elas
+      POSTGRES_PASSWORD: elas
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "random_page_cost=1.1"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U elas"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: elas-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build: .
+    container_name: elas-api
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "1"
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: elas
+      POSTGRES_USER: elas
+      POSTGRES_PASSWORD: elas
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python -m uvicorn config.asgi:application --host 0.0.0.0 --port 8000"
+
+  worker:
+    build: .
+    container_name: elas-worker
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: elas
+      POSTGRES_USER: elas
+      POSTGRES_PASSWORD: elas
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config worker -l info --concurrency=2
+
+  beat:
+    build: .
+    container_name: elas-beat
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: elas
+      POSTGRES_USER: elas
+      POSTGRES_PASSWORD: elas
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+volumes:
+  pgdata:
+  redisdata:
