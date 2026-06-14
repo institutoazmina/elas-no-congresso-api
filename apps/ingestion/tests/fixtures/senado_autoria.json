@@ -1,0 +1,54 @@
+{
+  "AutoriaMateria": {
+    "noNamespaceSchemaLocation": "https://legis.senado.leg.br/dadosabertos/dados/AutoriaMateriav1.xsd",
+    "Metadados": {
+      "Versao": "14/06/2026 13:42:30",
+      "VersaoServico": "1",
+      "DataVersaoServico": "2021-09-14",
+      "DescricaoDataSet": "Lista os Autores da Matéria.",
+      "Descontinuacao": {
+        "DataDepreciacao": "2025-03-18",
+        "DataDesativacaoCompleta": "2026-02-01",
+        "UrlServicoSubstituto": "https://legis.senado.leg.br/dadosabertos/processo/{idProcesso}"
+      }
+    },
+    "Materia": {
+      "IdentificacaoMateria": {
+        "CodigoMateria": "167294",
+        "SiglaCasaIdentificacaoMateria": "SF",
+        "SiglaSubtipoMateria": "PL",
+        "NumeroMateria": "592",
+        "AnoMateria": "2025",
+        "DescricaoIdentificacaoMateria": "PL 592/2025",
+        "IndicadorTramitando": "Sim"
+      },
+      "Autoria": {
+        "Autor": [
+          {
+            "NomeAutor": "Jader Barbalho",
+            "SiglaTipoAutor": "SENADOR",
+            "DescricaoTipoAutor": "Senador",
+            "UfAutor": "PA",
+            "NumOrdemAutor": "1",
+            "IndicadorOutrosAutores": "Não",
+            "IdentificacaoParlamentar": {
+              "CodigoParlamentar": "35",
+              "CodigoPublicoNaLegAtual": "932",
+              "CodigoDeputadoNaCamara": "1314",
+              "NomeParlamentar": "Jader Barbalho",
+              "NomeCompletoParlamentar": "Jader Fontenelle Barbalho",
+              "SexoParlamentar": "Masculino",
+              "FormaTratamento": "Senador",
+              "UrlFotoParlamentar": "http://www.senado.leg.br/senadores/img/fotos-oficiais/senador35.jpg",
+              "UrlPaginaParlamentar": "http://www25.senado.leg.br/web/senadores/senador/-/perfil/35",
+              "EmailParlamentar": "sen.jaderbarbalho@senado.leg.br",
+              "UrlPagParticularParlamentar": "http://jaderbarbalho.com.br/",
+              "SiglaPartidoParlamentar": "MDB",
+              "UfParlamentar": "PA"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

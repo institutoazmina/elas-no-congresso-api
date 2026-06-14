@@ -2,7 +2,7 @@ from datetime import date
 
 from django.utils import timezone
 
-from apps.core.enums import House
+from apps.core.enums import Gender, House
 from apps.ingestion import mappers
 
 
@@ -67,7 +67,26 @@ class TestCamaraMappers:
         )
         assert authors[0]["external_id"] == 123
         assert authors[0]["order"] == 1
+        assert authors[0]["gender"] is None  # preenchido só no enrich
         assert authors[1]["external_id"] is None
+
+    def test_enrich_author_from_deputy(self):
+        author = {"name": "X", "party": None, "state": None, "gender": None}
+        deputy = {"sexo": "F", "ultimoStatus": {"siglaPartido": "PT", "siglaUf": "SP"}}
+        mappers.enrich_camara_author(author, deputy)
+        assert author["gender"] == Gender.F
+        assert author["party"] == "PT"
+        assert author["state"] == "SP"
+
+
+class TestMapGender:
+    def test_variants(self):
+        assert mappers._map_gender("M") == Gender.M
+        assert mappers._map_gender("Masculino") == Gender.M
+        assert mappers._map_gender("f") == Gender.F
+        assert mappers._map_gender("Feminino") == Gender.F
+        assert mappers._map_gender(None) is None
+        assert mappers._map_gender("X") is None
 
 
 class TestSenadoMappers:
@@ -113,6 +132,28 @@ class TestSenadoMappers:
     def test_authors_empty(self):
         assert mappers.parse_senado_authors({}) == []
         assert mappers.parse_senado_authors({"DadosBasicosMateria": {"Autor": "  "}}) == []
+
+    def test_authors_from_autoria_fixture(self, senado_payload):
+        autores = senado_payload["autoria"]["AutoriaMateria"]["Materia"]["Autoria"]["Autor"]
+        autores = autores if isinstance(autores, list) else [autores]
+        out = mappers.parse_senado_authors_from_autoria(autores)
+        assert len(out) == 1
+        a = out[0]
+        assert a["kind"] == "parlamentar"
+        assert a["party"] and a["state"]
+        assert a["gender"] in (Gender.M, Gender.F)
+        assert a["external_id"]
+
+    def test_authors_from_autoria_institutional(self):
+        out = mappers.parse_senado_authors_from_autoria(
+            [{"NomeAutor": "Poder Executivo", "DescricaoTipoAutor": "Poder Executivo"}]
+        )
+        assert out[0]["external_id"] is None
+        assert out[0]["gender"] is None
+
+    def test_authors_from_autoria_empty(self):
+        assert mappers.parse_senado_authors_from_autoria([]) == []
+        assert mappers.parse_senado_authors_from_autoria([{"NomeAutor": "  "}]) == []
 
 
 class TestPickSenadoFullTextUrl:

@@ -92,6 +92,10 @@ class TestCamaraClient:
         assert c.fetch_detail(9) == {"id": 9}
         assert c.fetch_authors(9) == [{"nome": "X"}]
 
+    def test_fetch_deputy(self):
+        c = _client_for(CamaraClient, lambda r: httpx.Response(200, json={"dados": {"sexo": "F"}}))
+        assert c.fetch_deputy(204554) == {"sexo": "F"}
+
 
 class TestSenadoClient:
     def test_list_materias_normalizes_single(self):
@@ -150,3 +154,15 @@ class TestSenadoClient:
 
         empty = _client_for(SenadoClient, lambda r: httpx.Response(200, json={}))
         assert empty.fetch_texts(7) == []
+
+    def test_fetch_authors_normalizes(self):
+        def handler(request):
+            return httpx.Response(
+                200,
+                json={"AutoriaMateria": {"Materia": {"Autoria": {"Autor": {"NomeAutor": "X"}}}}},
+            )
+
+        c = _client_for(SenadoClient, handler)
+        assert c.fetch_authors(7) == [{"NomeAutor": "X"}]
+        empty = _client_for(SenadoClient, lambda r: httpx.Response(200, json={}))
+        assert empty.fetch_authors(7) == []

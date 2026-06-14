@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from apps.core.enums import House
+from apps.core.enums import Gender, House
 from apps.ingestion.resolvers import _is_institutional, resolve_author
 from apps.legislatures.models import (
     InstitutionalAuthor,
@@ -67,3 +67,14 @@ class TestResolveAuthor:
         # segunda vez reaproveita (get_or_create)
         parl2, _ = resolve_author({"name": "Pessoa Nova"}, House.CAMARA)
         assert parl2.pk == parl.pk
+
+    def test_creates_with_gender(self):
+        parl, _ = resolve_author({"name": "Nova Com Sexo", "gender": Gender.F}, House.CAMARA)
+        assert parl.gender == Gender.F
+
+    def test_backfills_gender_on_existing(self):
+        parl = _make_term(54321)
+        assert not parl.gender
+        resolve_author({"name": "Ignora", "external_id": 54321, "gender": Gender.M}, House.CAMARA)
+        parl.refresh_from_db()
+        assert parl.gender == Gender.M

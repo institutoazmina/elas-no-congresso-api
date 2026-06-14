@@ -9,9 +9,21 @@ from datetime import date, datetime
 
 from django.utils import timezone
 
-from apps.core.enums import House
+from apps.core.enums import Gender, House
 
 # ── helpers ──────────────────────────────────────────────────────────────────
+
+def _map_gender(raw: str | None) -> str | None:
+    """Normaliza sexo das APIs ('M'/'F'/'Masculino'/'Feminino') → Gender."""
+    if not raw:
+        return None
+    r = raw.strip().lower()
+    if r in ("m", "masculino"):
+        return Gender.M
+    if r in ("f", "feminino"):
+        return Gender.F
+    return None
+
 
 def _to_int(val) -> int | None:
     try:
@@ -100,7 +112,11 @@ def map_camara_event(detail: dict) -> dict | None:
 
 
 def parse_camara_authors(authors: list[dict]) -> list[dict]:
-    """Normaliza autores da Câmara em ``{name, kind, external_id, order}``."""
+    """Normaliza autores da Câmara em ``{name, kind, external_id, party, state, gender, order}``.
+
+    ``party``/``state``/``gender`` ficam None aqui — são preenchidos por
+    ``enrich_camara_author`` a partir do detalhe do deputado.
+    """
     out = []
     for i, a in enumerate(authors, start=1):
         uri = a.get("uri") or ""
@@ -110,10 +126,22 @@ def parse_camara_authors(authors: list[dict]) -> list[dict]:
                 "name": a.get("nome") or "",
                 "kind": a.get("tipo") or "",
                 "external_id": _to_int(m.group(1)) if m else None,
+                "party": None,
+                "state": None,
+                "gender": None,
                 "order": i,
             }
         )
     return out
+
+
+def enrich_camara_author(author: dict, deputy: dict) -> dict:
+    """Preenche sexo/partido/UF de um autor da Câmara com o detalhe do deputado."""
+    status = deputy.get("ultimoStatus", {}) or {}
+    author["gender"] = _map_gender(deputy.get("sexo"))
+    author["party"] = status.get("siglaPartido")
+    author["state"] = status.get("siglaUf")
+    return author
 
 
 # ── Senado ───────────────────────────────────────────────────────────────────
@@ -231,7 +259,36 @@ def parse_senado_authors(detail: dict, summary: dict | None = None) -> list[dict
             "kind": "parlamentar" if is_person else "instituição",
             "party": party,
             "state": state,
-            "external_id": None,  # não disponível no texto livre do Senado
+            "gender": None,  # texto livre não traz sexo
+            "external_id": None,  # nem código do parlamentar
             "order": 1,
         }
     ]
+
+
+def parse_senado_authors_from_autoria(autores: list[dict]) -> list[dict]:
+    """Normaliza autores via serviço de autoria do Senado.
+
+    Mais rico que o texto livre: traz código, sexo, partido e UF
+    (em ``IdentificacaoParlamentar``). Retorna ``[]`` se vazio (a task então
+    cai no fallback ``parse_senado_authors``).
+    """
+    out = []
+    for a in autores:
+        ip = a.get("IdentificacaoParlamentar", {}) or {}
+        name = ip.get("NomeParlamentar") or a.get("NomeAutor") or ""
+        if not name.strip():
+            continue
+        is_person = bool(ip.get("CodigoParlamentar"))
+        out.append(
+            {
+                "name": name.strip(),
+                "kind": "parlamentar" if is_person else (a.get("DescricaoTipoAutor") or "instituição"),
+                "party": ip.get("SiglaPartidoParlamentar"),
+                "state": ip.get("UfParlamentar") or a.get("UfAutor"),
+                "gender": _map_gender(ip.get("SexoParlamentar")),
+                "external_id": _to_int(ip.get("CodigoParlamentar")),
+                "order": _to_int(a.get("NumOrdemAutor")) or 1,
+            }
+        )
+    return out

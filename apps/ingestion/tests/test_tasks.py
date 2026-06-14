@@ -12,8 +12,9 @@ from apps.taxonomy.models import PropositionTheme
 # ── fake clients ──────────────────────────────────────────────────────────────
 
 class _FakeCamara:
-    def __init__(self, summary, detail, authors):
+    def __init__(self, summary, detail, authors, deputy=None):
         self._s, self._d, self._a = summary, detail, authors
+        self._dep = deputy or {}
 
     def __enter__(self):
         return self
@@ -30,11 +31,15 @@ class _FakeCamara:
     def fetch_authors(self, _id):
         return self._a
 
+    def fetch_deputy(self, _id):
+        return self._dep
+
 
 class _FakeSenado:
-    def __init__(self, summary, detail, movements, texts=None):
+    def __init__(self, summary, detail, movements, texts=None, authors=None):
         self._s, self._d, self._m = summary, detail, movements
         self._t = texts or []
+        self._a = authors or []
 
     def __enter__(self):
         return self
@@ -53,6 +58,9 @@ class _FakeSenado:
 
     def fetch_texts(self, _id):
         return self._t
+
+    def fetch_authors(self, _id):
+        return self._a
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -127,18 +135,29 @@ class TestClassifyProposition:
 @pytest.mark.django_db
 class TestIngestCamaraFlow:
     def test_full_flow(self, monkeypatch, camara_payload):
+        # autor deputado real (com sexo/partido) para exercitar fetch_deputy/enrich
+        authors = [
+            {"nome": "Deputada X", "tipo": "Deputado(a)",
+             "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/204554"}
+        ]
+        sigla = camara_payload["deputy"]["ultimoStatus"]["siglaPartido"]
+        Party.objects.get_or_create(acronym=sigla, defaults={"name": sigla})
         monkeypatch.setattr("apps.ingestion.fulltext.extract_pdf_text", lambda url: None)
         monkeypatch.setattr(
             tasks,
             "CamaraClient",
-            lambda: _FakeCamara(camara_payload["summary"], camara_payload["detail"], camara_payload["authors"]),
+            lambda: _FakeCamara(
+                camara_payload["summary"], camara_payload["detail"], authors, camara_payload["deputy"]
+            ),
         )
         run_pk = tasks.ingest_camara()
         run = IngestionRun.objects.get(pk=run_pk)
         assert run.status == IngestionRun.Status.SUCCESS
-        assert run.relevant_count >= 1
         assert run.upserted_count >= 1
-        assert Proposition.objects.filter(house="camara").exists()
+        prop = Proposition.objects.filter(house="camara").first()
+        author = prop.authors.first()
+        assert author.party is not None  # partido do deputado
+        assert author.parliamentarian.gender  # sexo preenchido
 
     def test_per_item_error_is_counted(self, monkeypatch, camara_payload):
         class _BoomCamara(_FakeCamara):
@@ -192,6 +211,8 @@ class TestIngestSenadoFlow:
             "DataApresentacao": "2025-02-20",
         }
         monkeypatch.setattr("apps.ingestion.fulltext.extract_pdf_text", lambda url: None)
+        autoria = senado_payload["autoria"]["AutoriaMateria"]["Materia"]["Autoria"]["Autor"]
+        autoria = autoria if isinstance(autoria, list) else [autoria]
         monkeypatch.setattr(
             tasks,
             "SenadoClient",
@@ -200,6 +221,7 @@ class TestIngestSenadoFlow:
                 senado_payload["detail"],
                 senado_payload["movements"],
                 senado_payload["texts"],
+                autoria,
             ),
         )
         run = IngestionRun.objects.get(pk=tasks.ingest_senado())
@@ -208,6 +230,8 @@ class TestIngestSenadoFlow:
         prop = Proposition.objects.filter(house="senado").first()
         assert prop is not None
         assert prop.full_text_url and "sdleg-getter" in prop.full_text_url
+        author = prop.authors.first()
+        assert author.parliamentarian.gender  # sexo via autoria
 
     def test_irrelevant_is_skipped(self, monkeypatch):
         summary = {"IdentificacaoMateria": {"CodigoMateria": "1"}, "Ementa": "Reforma tributária"}

@@ -20,6 +20,7 @@ def camara_payload(load_fixture):
         "summary": load_fixture("camara_summary.json"),
         "detail": load_fixture("camara_detail.json"),
         "authors": load_fixture("camara_authors.json"),
+        "deputy": load_fixture("camara_deputy.json"),
     }
 
 
@@ -30,4 +31,5 @@ def senado_payload(load_fixture):
         "detail": load_fixture("senado_detail.json"),
         "movements": load_fixture("senado_movements.json"),
         "texts": load_fixture("senado_texts.json"),
+        "autoria": load_fixture("senado_autoria.json"),
     }
