@@ -6,6 +6,16 @@ import pytest
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
+@pytest.fixture(autouse=True)
+def _reset_theme_cache():
+    """Isola o cache de termos do theme_assert entre os testes."""
+    from apps.ingestion.theme_assert import invalidate_cache
+
+    invalidate_cache()
+    yield
+    invalidate_cache()
+
+
 @pytest.fixture
 def load_fixture():
     def _load(name: str):

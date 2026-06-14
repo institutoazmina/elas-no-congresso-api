@@ -1,7 +1,17 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import IngestionRun
+from .models import IngestionRun, RelevanceTerm
+
+
+@admin.register(RelevanceTerm)
+class RelevanceTermAdmin(ModelAdmin):
+    list_display = ["term", "mode", "is_active", "updated_at"]
+    list_filter = ["mode", "is_active"]
+    list_editable = ["is_active"]
+    search_fields = ["term"]
+    ordering = ["mode", "term"]
+    fields = ["term", "mode", "is_active", "notes"]
 
 
 @admin.register(IngestionRun)
