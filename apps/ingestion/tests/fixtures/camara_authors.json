@@ -1,0 +1,10 @@
+[
+  {
+    "uri": "https://dadosabertos.camara.leg.br/api/v2/orgaos/78",
+    "nome": "Senado Federal - Valdir Raupp",
+    "codTipo": 40000,
+    "tipo": "Órgão do Poder Legislativo",
+    "ordemAssinatura": 1,
+    "proponente": 1
+  }
+]

@@ -1,0 +1,128 @@
+{
+  "house": "senado",
+  "external_id": 167294,
+  "type_code": "PL",
+  "number_label": "PL 592/2025",
+  "number": 592,
+  "year": 2025,
+  "presented_at": "2025-02-20",
+  "ementa": "Altera a Lei nº 9.394, de 20 de dezembro de 1996 (Lei de Diretrizes e Bases da Educação Nacional), para incluir nos currículos da educação infantil e do ensino fundamental a educação alimentar e nutricional.",
+  "keywords": " ALTERAÇÃO ,  LEI FEDERAL ,  LEI DE DIRETRIZES E BASES DA EDUCAÇÃO NACIONAL ,  INCLUSÃO ,  CURRICULO ,  EDUCAÇÃO INFANTIL ,  ENSINO FUNDAMENTAL ,  ENSINO ,  ALIMENTAÇÃO ,  NUTRIÇÃO ,  PROPRIEDADE ,  ALIMENTOS ,  HIGIENE ,  SAUDE .",
+  "full_text_url": "http://legis.senado.leg.br/sdleg-getter/documento?dm=9904707",
+  "tramitation_url": "https://www25.senado.leg.br/web/atividade/materias/-/materia/167294",
+  "raw_payload": {
+    "summary": {
+      "IdentificacaoMateria": {
+        "CodigoMateria": "167294",
+        "SiglaCasaIdentificacaoMateria": "SF",
+        "NomeCasaIdentificacaoMateria": "Senado Federal",
+        "SiglaSubtipoMateria": "PL",
+        "NumeroMateria": "00592",
+        "AnoMateria": "2025",
+        "DescricaoObjetivoProcesso": "Iniciadora",
+        "IdentificacaoProcesso": "8796023",
+        "DescricaoIdentificacaoMateria": "PL 592/2025",
+        "IndicadorTramitando": "Sim"
+      },
+      "Ementa": "Altera a Lei nº 9.394, de 20 de dezembro de 1996 (Lei de Diretrizes e Bases da Educação Nacional), para incluir nos currículos da educação infantil e do ensino fundamental a educação alimentar e nutricional.",
+      "Autor": "Senador Jader Barbalho (MDB/PA)",
+      "DataApresentacao": "2025-02-20",
+      "DataUltimaAtualizacao": "2026-06-12 18:04:39"
+    },
+    "detail": {
+      "IdentificacaoMateria": {
+        "CodigoMateria": "167294",
+        "SiglaCasaIdentificacaoMateria": "SF",
+        "SiglaSubtipoMateria": "PL",
+        "DescricaoSubtipoMateria": "Projeto de Lei",
+        "NumeroMateria": "00592",
+        "AnoMateria": "2025",
+        "DescricaoObjetivoProcesso": "Iniciadora",
+        "DescricaoIdentificacaoMateria": "PL 592/2025",
+        "IndicadorTramitando": "Sim",
+        "IdentificacaoProcesso": "8796023"
+      },
+      "DadosBasicosMateria": {
+        "EmentaMateria": "Altera a Lei nº 9.394, de 20 de dezembro de 1996 (Lei de Diretrizes e Bases da Educação Nacional), para incluir nos currículos da educação infantil e do ensino fundamental a educação alimentar e nutricional.",
+        "IndexacaoMateria": " ALTERAÇÃO ,  LEI FEDERAL ,  LEI DE DIRETRIZES E BASES DA EDUCAÇÃO NACIONAL ,  INCLUSÃO ,  CURRICULO ,  EDUCAÇÃO INFANTIL ,  ENSINO FUNDAMENTAL ,  ENSINO ,  ALIMENTAÇÃO ,  NUTRIÇÃO ,  PROPRIEDADE ,  ALIMENTOS ,  HIGIENE ,  SAUDE .",
+        "Autor": "Senador Jader Barbalho (MDB/PA)",
+        "CasaIniciadoraNoLegislativo": "SF",
+        "IndicadorComplementar": "Não",
+        "DataApresentacao": "2025-02-20",
+        "NaturezaMateria": {
+          "CodigoNatureza": "11",
+          "NomeNatureza": "NORMA_GERAL",
+          "DescricaoNatureza": "Norma Geral"
+        }
+      },
+      "Classificacoes": {
+        "Classificacao": [
+          {
+            "CodigoClasse": "33808942",
+            "DescricaoClasse": "Saúde",
+            "DescricaoClasseHierarquica": "Política Social / Saúde"
+          },
+          {
+            "CodigoClasse": "33809288",
+            "DescricaoClasse": "Educação Básica",
+            "DescricaoClasseHierarquica": "Política Social / Educação / Educação Básica"
+          }
+        ]
+      },
+      "OrigemMateria": {
+        "SiglaCasaOrigem": "SF"
+      },
+      "OutrasInformacoes": {
+        "Servico": [
+          {
+            "NomeServico": "AtualizacaoMateria",
+            "DescricaoServico": "Mostra as atualizações mais recentes da matéria.",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/atualizacoes/167294"
+          },
+          {
+            "NomeServico": "AutoriaMateria",
+            "DescricaoServico": "Lista o(s) autor(es) da matéria.",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/autoria/167294"
+          },
+          {
+            "NomeServico": "EmendaMateria",
+            "DescricaoServico": "Emendas da matéria",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/emendas/167294"
+          },
+          {
+            "NomeServico": "MovimentacaoMateria",
+            "DescricaoServico": "Informes legislativos, movimentações, despachos, prazos, ordens do dia em que constou, etc.",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/167294"
+          },
+          {
+            "NomeServico": "RelatoriaMateria",
+            "DescricaoServico": "Relatoria atual e relatorias encerradas (histórico) da matéria",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/relatorias/167294"
+          },
+          {
+            "NomeServico": "SituacaoAtualMateria",
+            "DescricaoServico": "Traz a situação e a localização atuais de uma ou mais matérias",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/situacaoatual/167294"
+          },
+          {
+            "NomeServico": "TextoMateria",
+            "DescricaoServico": "Textos da matéria",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/textos/167294"
+          },
+          {
+            "NomeServico": "VotacaoMateria",
+            "DescricaoServico": "Votações da matéria.",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/materia/votacoes/167294"
+          },
+          {
+            "NomeServico": "VotacoesComissao",
+            "UrlServico": "https://legis.senado.leg.br/dadosabertos/votacaoComissao/materia/PL/592/2025"
+          }
+        ]
+      }
+    },
+    "themes": [
+      "educação infantil"
+    ]
+  }
+}
