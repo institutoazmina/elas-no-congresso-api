@@ -17,6 +17,9 @@ def ministack_container():
     settings.AWS_SES_ENDPOINT_URL = endpoint
     # anymail's SES backend reads the endpoint from ANYMAIL, not AWS_SES_ENDPOINT_URL
     settings.ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = endpoint
+    # Django's test runner forces EMAIL_BACKEND to locmem; restore the real SES
+    # backend so emails actually hit the MiniStack mock (true integration test).
+    settings.EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
 
     deadline = time.time() + 30
     while time.time() < deadline:

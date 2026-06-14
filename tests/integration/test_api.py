@@ -20,7 +20,7 @@ class TestPropositionsEndpoints:
             parliamentarian=self.parliamentarian,
             legislature_number=leg,
             party=party,
-            house="CD",
+            house="camara",
             role="Titular",
             state="SP",
             external_id=1,
@@ -28,28 +28,31 @@ class TestPropositionsEndpoints:
         )
         self.proposition = Proposition.objects.create(
             external_id=1,
-            house="CD",
-            number="123",
+            house="camara",
+            type_code="pl",
+            number_label="PL 123/2024",
+            number=123,
             year=2024,
+            presented_at="2024-01-01",
             ementa="Test proposition about women rights",
-            status="pending",
+            current_status="Em tramitação",
         )
 
     def test_list_propositions(self):
-        response = self.client.get("/api/v1/propositions")
+        response = self.client.get("/api/v1/propositions/")
         assert response.status_code == 200
         data = response.json()
         assert "items" in data
 
     def test_list_propositions_pagination(self):
-        response = self.client.get("/api/v1/propositions?limit=10&offset=0")
+        response = self.client.get("/api/v1/propositions/?limit=10&offset=0")
         assert response.status_code == 200
 
     def test_get_proposition_detail(self):
         response = self.client.get(f"/api/v1/propositions/{self.proposition.pk}")
         assert response.status_code == 200
         data = response.json()
-        assert data["number"] == "123"
+        assert data["number"] == 123
 
     def test_get_proposition_not_found(self):
         response = self.client.get("/api/v1/propositions/99999")
@@ -70,7 +73,7 @@ class TestParliamentariansEndpoints:
             parliamentarian=self.parliamentarian,
             legislature_number=leg,
             party=party,
-            house="CD",
+            house="camara",
             role="Titular",
             state="SP",
             external_id=1,
@@ -78,11 +81,13 @@ class TestParliamentariansEndpoints:
         )
 
     def test_list_parliamentarians(self):
-        response = self.client.get("/api/v1/parliamentarians")
+        response = self.client.get("/api/v1/legislatures/parliamentarians")
         assert response.status_code == 200
 
     def test_get_parliamentarian_detail(self):
-        response = self.client.get(f"/api/v1/parliamentarians/{self.parliamentarian.pk}")
+        response = self.client.get(
+            f"/api/v1/legislatures/parliamentarians/{self.parliamentarian.pk}"
+        )
         assert response.status_code == 200
 
 
@@ -94,7 +99,7 @@ class TestTaxonomyEndpoints:
 
     def test_list_themes(self):
         Theme.objects.create(slug="test", name="Test Theme")
-        response = self.client.get("/api/v1/themes")
+        response = self.client.get("/api/v1/taxonomy/themes")
         assert response.status_code == 200
         data = response.json()
         assert len(data) >= 1
@@ -108,9 +113,9 @@ class TestSubscriptionsEndpoints:
 
     def test_create_subscription(self):
         response = self.client.post(
-            "/api/v1/subscriptions",
+            "/api/v1/subscriptions/",
             data={"email": "test@example.com", "ast": {"op": "and", "children": [
-                {"field": "house", "op": "eq", "value": "CD"}
+                {"field": "house", "op": "eq", "value": "camara"}
             ]}},
             content_type="application/json",
         )
@@ -125,7 +130,7 @@ class TestPartiesEndpoints:
         Party.objects.create(acronym="PT", name="Partido dos Trabalhadores")
 
     def test_list_parties(self):
-        response = self.client.get("/api/v1/parties")
+        response = self.client.get("/api/v1/legislatures/parties")
         assert response.status_code == 200
 
 
@@ -136,5 +141,5 @@ class TestCommitteesEndpoints:
         self.client = Client()
 
     def test_list_committees(self):
-        response = self.client.get("/api/v1/committees")
+        response = self.client.get("/api/v1/committees/")
         assert response.status_code == 200
