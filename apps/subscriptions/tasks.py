@@ -9,12 +9,17 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-def _send(subject: str, body_text: str, body_html: str, to: str) -> str:
-    """Send a multipart email via the configured backend; return the message id."""
+def _send(subject: str, body_text: str, body_html: str, to: str) -> str | None:
+    """Send a multipart email via the configured backend; return the message id.
+
+    Returns None when the active backend isn't anymail (e.g. locmem/console),
+    so the task doesn't crash outside production.
+    """
     msg = EmailMultiAlternatives(subject=subject, body=body_text, to=[to])
     msg.attach_alternative(body_html, "text/html")
     msg.send()
-    return msg.anymail_status.message_id
+    status = getattr(msg, "anymail_status", None)
+    return status.message_id if status else None
 
 
 @shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
