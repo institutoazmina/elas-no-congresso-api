@@ -12,5 +12,10 @@ CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
 
 DATABASES["default"]["CONN_MAX_AGE"] = 60  # noqa: F405
+# Verify pooled connections are still alive before reuse (pairs with CONN_MAX_AGE)
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True  # noqa: F405

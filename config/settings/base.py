@@ -26,6 +26,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "anymail",
     "django_celery_beat",
     "django_celery_results",
 ]
@@ -152,12 +153,30 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+# Public base URL used to build links inside outgoing emails
+SITE_BASE_URL = config("SITE_BASE_URL", default="http://localhost:8000")
+
 # AWS SES
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="test")
 AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="test")
 AWS_DEFAULT_REGION = config("AWS_DEFAULT_REGION", default="us-east-1")
 AWS_SES_ENDPOINT_URL = config("AWS_SES_ENDPOINT_URL", default=None)
 AWS_SES_FROM_EMAIL = config("AWS_SES_FROM_EMAIL", default="alertas@elasnocongresso.local")
+
+# Email via django-anymail (Amazon SES v2 backend). dev/test point the SES
+# client at a local mock by patching ANYMAIL["AMAZON_SES_CLIENT_PARAMS"].
+EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+DEFAULT_FROM_EMAIL = AWS_SES_FROM_EMAIL
+SERVER_EMAIL = AWS_SES_FROM_EMAIL
+ANYMAIL = {
+    "AMAZON_SES_CLIENT_PARAMS": {
+        "region_name": AWS_DEFAULT_REGION,
+        "aws_access_key_id": AWS_ACCESS_KEY_ID,
+        "aws_secret_access_key": AWS_SECRET_ACCESS_KEY,
+    },
+}
+if AWS_SES_ENDPOINT_URL:
+    ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = AWS_SES_ENDPOINT_URL
 
 # Subscription confirmation token TTL (hours)
 SUBSCRIPTION_CONFIRM_TTL_HOURS = 48

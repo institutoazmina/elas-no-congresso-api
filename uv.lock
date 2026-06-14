@@ -480,6 +480,26 @@ wheels = [
 ]
 
 [[package]]
+name = "django-anymail"
+version = "15.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "idna" },
+    { name = "requests" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/43/f0aadb31f2c58afcd9f001f4291998cbd6d289898167e79d908506fc6faf/django_anymail-15.0.tar.gz", hash = "sha256:23d8ab6589afe8cc1ae7665c26879814ad192f4c3ed837a2a1868b0a056869e0", size = 106985 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/75/d1/daae99ec3b30886010a499975880ec20c32c622bee6b92c226b715e42f0c/django_anymail-15.0-py3-none-any.whl", hash = "sha256:64d33dd1084bfc8e4e12245f56629be40aa0b0498fc7fc7544d87b9b2048be1e", size = 147229 },
+]
+
+[package.optional-dependencies]
+amazon-ses = [
+    { name = "boto3" },
+]
+
+[[package]]
 name = "django-celery-beat"
 version = "2.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -609,6 +629,7 @@ dependencies = [
     { name = "boto3" },
     { name = "celery", extra = ["redis"] },
     { name = "django" },
+    { name = "django-anymail", extra = ["amazon-ses"] },
     { name = "django-celery-beat" },
     { name = "django-celery-results" },
     { name = "django-ninja" },
@@ -645,6 +666,7 @@ requires-dist = [
     { name = "boto3", specifier = ">=1.35" },
     { name = "celery", extras = ["redis"], specifier = ">=5.4" },
     { name = "django", specifier = ">=5.1,<5.2" },
+    { name = "django-anymail", extras = ["amazon-ses"], specifier = ">=10" },
     { name = "django-celery-beat", specifier = ">=2.9.0" },
     { name = "django-celery-results", specifier = ">=2.6.0" },
     { name = "django-ninja", specifier = ">=1.4" },

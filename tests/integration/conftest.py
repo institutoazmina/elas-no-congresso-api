@@ -13,7 +13,10 @@ def ministack_container():
     container = DockerContainer("nahuelnucera/ministack").with_exposed_ports(4566)
     container.start()
     port = container.get_exposed_port(4566)
-    settings.AWS_SES_ENDPOINT_URL = f"http://localhost:{port}"
+    endpoint = f"http://localhost:{port}"
+    settings.AWS_SES_ENDPOINT_URL = endpoint
+    # anymail's SES backend reads the endpoint from ANYMAIL, not AWS_SES_ENDPOINT_URL
+    settings.ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = endpoint
 
     deadline = time.time() + 30
     while time.time() < deadline:
