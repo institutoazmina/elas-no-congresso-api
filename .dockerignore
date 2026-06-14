@@ -3,6 +3,10 @@
 .gitignore
 .gitattributes
 
+# Agent / tooling config
+.claude/
+.cursor/
+
 # Python artifacts
 __pycache__
 *.pyc

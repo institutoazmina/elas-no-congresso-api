@@ -25,22 +25,6 @@ DJANGO_APPS = [
     "django.contrib.postgres",
 ]
 
-WAGTAIL_APPS = [
-    "wagtail.contrib.forms",
-    "wagtail.contrib.redirects",
-    "wagtail.embeds",
-    "wagtail.sites",
-    "wagtail.users",
-    "wagtail.snippets",
-    "wagtail.documents",
-    "wagtail.images",
-    "wagtail.search",
-    "wagtail.admin",
-    "wagtail",
-    "modelcluster",
-    "taggit",
-]
-
 THIRD_PARTY_APPS = [
     "django_celery_beat",
     "django_celery_results",
@@ -55,11 +39,10 @@ LOCAL_APPS = [
     "apps.activity",
     "apps.norms",
     "apps.subscriptions",
-    "apps.cms",
     "apps.ingestion",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -70,7 +53,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -179,10 +161,6 @@ AWS_SES_FROM_EMAIL = config("AWS_SES_FROM_EMAIL", default="alertas@elasnocongres
 
 # Subscription confirmation token TTL (hours)
 SUBSCRIPTION_CONFIRM_TTL_HOURS = 48
-
-# Wagtail
-WAGTAIL_SITE_NAME = "Elas no Congresso CMS"
-WAGTAILADMIN_BASE_URL = config("WAGTAILADMIN_BASE_URL", default="http://localhost:8000")
 
 # django-unfold
 UNFOLD = {
