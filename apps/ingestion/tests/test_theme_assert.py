@@ -1,4 +1,9 @@
+import pytest
+
 from apps.ingestion.theme_assert import assert_theme
+
+# assert_theme consulta o banco (cai nos defaults quando vazio).
+pytestmark = pytest.mark.django_db
 
 
 class TestAssertTheme:
