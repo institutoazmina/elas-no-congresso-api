@@ -1,0 +1,794 @@
+{
+  "noNamespaceSchemaLocation": "https://legis.senado.leg.br/dadosabertos/dados/MovimentacaoMateriav7.xsd",
+  "Metadados": {
+    "Versao": "14/06/2026 13:04:01",
+    "VersaoServico": "7",
+    "DataVersaoServico": "2020-07-08",
+    "DescricaoDataSet": "Informes Legislativos, Movimentações, Despachos, Prazos, Ordens do Dia em que constou etc.",
+    "Descontinuacao": {
+      "DataDepreciacao": "2025-03-18",
+      "DataDesativacaoCompleta": "2026-02-01",
+      "UrlServicoSubstituto": "https://legis.senado.leg.br/dadosabertos/processo/{idProcesso}"
+    }
+  },
+  "Materia": {
+    "IdentificacaoMateria": {
+      "CodigoMateria": "167294",
+      "SiglaCasaIdentificacaoMateria": "SF",
+      "NomeCasaIdentificacaoMateria": "Senado Federal",
+      "SiglaSubtipoMateria": "PL",
+      "DescricaoSubtipoMateria": "Projeto de Lei",
+      "NumeroMateria": "592",
+      "AnoMateria": "2025",
+      "DescricaoObjetivoProcesso": "Iniciadora",
+      "DescricaoIdentificacaoMateria": "PL 592/2025",
+      "IndicadorTramitando": "Sim",
+      "IdentificacaoProcesso": "8796023"
+    },
+    "Autuacoes": {
+      "Autuacao": [
+        {
+          "NumeroAutuacao": "1",
+          "DescricaoAutuacao": "Autuação Principal",
+          "SituacoesAtuais": {
+            "SituacaoAtual": [
+              {
+                "DataSituacao": "2026-06-12",
+                "CodigoSituacao": "138",
+                "SiglaSituacao": "INPAUTA",
+                "DescricaoSituacao": "INCLUÍDA NA PAUTA DA REUNIÃO"
+              }
+            ]
+          },
+          "InformesLegislativos": {
+            "InformeLegislativo": [
+              {
+                "Data": "2026-06-12 18:04:39",
+                "IdInformeLegislativo": "2291016",
+                "Descricao": "Matéria constante da Pauta da 36ª Reunião da Comissão de Assuntos Sociais, agendada para o dia 17/06/2026.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "138",
+                  "SiglaSituacao": "INPAUTA"
+                }
+              },
+              {
+                "Data": "2026-06-10 12:59:36",
+                "IdInformeLegislativo": "2290565",
+                "Descricao": "Em reunião realizada em 10/06/2026, a apreciação da matéria foi adiada.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "42",
+                  "SiglaSituacao": "PRONTPAUT"
+                }
+              },
+              {
+                "Data": "2026-06-03 17:54:39",
+                "IdInformeLegislativo": "2289447",
+                "Descricao": "Matéria constante da Pauta da 32ª Reunião da Comissão de Assuntos Sociais, agendada para o dia 10/06/2026.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "138",
+                  "SiglaSituacao": "INPAUTA"
+                }
+              },
+              {
+                "Data": "2026-05-26 16:41:56",
+                "IdInformeLegislativo": "2287997",
+                "Descricao": "Matéria não apreciada, em razão do cancelamento da 28ª reunião da Comissão.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "42",
+                  "SiglaSituacao": "PRONTPAUT"
+                }
+              },
+              {
+                "Data": "2026-05-22 15:04:22",
+                "IdInformeLegislativo": "2287612",
+                "Descricao": "Matéria constante da Pauta da 28ª Reunião da Comissão de Assuntos Sociais, agendada para o dia 27/05/2026.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "138",
+                  "SiglaSituacao": "INPAUTA"
+                }
+              },
+              {
+                "Data": "2026-05-20 12:34:56",
+                "IdInformeLegislativo": "2287096",
+                "Descricao": "Em reunião realizada em 20/05/2026, a apreciação da matéria foi adiada.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "42",
+                  "SiglaSituacao": "PRONTPAUT"
+                }
+              },
+              {
+                "Data": "2026-05-15 17:16:03",
+                "IdInformeLegislativo": "2286575",
+                "Descricao": "Matéria constante da Pauta da 26ª Reunião da Comissão de Assuntos Sociais, agendada para o dia 20/05/2026.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "138",
+                  "SiglaSituacao": "INPAUTA"
+                }
+              },
+              {
+                "Data": "2026-05-13 11:19:01",
+                "IdInformeLegislativo": "2285802",
+                "Descricao": "Em reunião realizada em 13/05/2026, a apreciação da matéria foi adiada.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "42",
+                  "SiglaSituacao": "PRONTPAUT"
+                }
+              },
+              {
+                "Data": "2026-05-08 17:59:50",
+                "IdInformeLegislativo": "2285353",
+                "Descricao": "Matéria constante da Pauta da 24ª Reunião da Comissão de Assuntos Sociais, agendada para o dia 13/05/2026.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "138",
+                  "SiglaSituacao": "INPAUTA"
+                }
+              },
+              {
+                "Data": "2026-05-04 11:21:02",
+                "IdInformeLegislativo": "2284123",
+                "Descricao": "Recebido o relatório da senadora Professora Dorinha Seabra, com voto favorável ao Projeto.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "42",
+                  "SiglaSituacao": "PRONTPAUT"
+                },
+                "TextosAssociados": {
+                  "TextoAssociado": [
+                    {
+                      "CodigoTexto": "10213913",
+                      "DescricaoTipoTexto": "Relatório Legislativo",
+                      "TipoDocumento": "PDF",
+                      "FormatoTexto": "application/pdf",
+                      "DataTexto": "2026-05-04",
+                      "UrlTexto": "http://legis.senado.leg.br/sdleg-getter/documento?dm=10213913",
+                      "DescricaoTexto": "Relatório Legislativo - SF267266492285",
+                      "AutoriaTexto": "Senadora Professora Dorinha Seabra (UNIÃO/TO)"
+                    }
+                  ]
+                }
+              },
+              {
+                "Data": "2026-02-12 10:58:15",
+                "IdInformeLegislativo": "2273386",
+                "Descricao": "Redistribuído à Senadora Professora Dorinha Seabra, para emitir relatório.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "91",
+                  "SiglaSituacao": "RELATOR"
+                }
+              },
+              {
+                "Data": "2025-09-11 22:31:43",
+                "IdInformeLegislativo": "2253831",
+                "Descricao": "Devolvido pelo Senador Flávio Arns, para redistribuição.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "87",
+                  "SiglaSituacao": "AGDREL"
+                }
+              },
+              {
+                "Data": "2025-09-10 11:42:55",
+                "IdInformeLegislativo": "2253584",
+                "Descricao": "Distribuído ao Senador Flávio Arns, para emitir relatório.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "91",
+                  "SiglaSituacao": "RELATOR"
+                }
+              },
+              {
+                "Data": "2025-07-05 11:55:25",
+                "IdInformeLegislativo": "2245357",
+                "Descricao": "Não foram oferecidas emendas no prazo regimental.\nMatéria aguardando distribuição.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "87",
+                  "SiglaSituacao": "AGDREL"
+                }
+              },
+              {
+                "Data": "2025-06-30 07:17:11",
+                "IdInformeLegislativo": "2243774",
+                "Descricao": "Prazo para apresentação de emendas:\nPrimeiro dia: 30/06/2025.\nÚltimo dia: 04/07/2025.",
+                "Local": {
+                  "CodigoLocal": "55313",
+                  "SiglaLocal": "SACAS",
+                  "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                }
+              },
+              {
+                "Data": "2025-06-27 15:00:44",
+                "IdInformeLegislativo": "2243737",
+                "Descricao": "Prazo: Apresentação de Emendas a projeto terminativo em Comissão (Art. 122, II, \"c\", do RISF). De 30/06/2025 a 04/07/2025. Perante a CAS.",
+                "Local": {
+                  "CodigoLocal": "13594",
+                  "SiglaLocal": "SEADI",
+                  "NomeLocal": "Secretaria de Atas e Diários",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "40",
+                  "SiglaColegiado": "CAS",
+                  "NomeColegiado": "Comissão de Assuntos Sociais",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                }
+              },
+              {
+                "Data": "2025-06-27 14:52:21",
+                "IdInformeLegislativo": "2243709",
+                "Descricao": "A matéria vai à CAS, seguindo posteriormente à CE, em decisão terminativa, nos termos do art. 91, I, do Regimento Interno, podendo receber emendas perante a primeira comissão do despacho pelo prazo de cinco dias úteis, nos termos do art. 122, II, “c”, do Regimento Interno.",
+                "Local": {
+                  "CodigoLocal": "13594",
+                  "SiglaLocal": "SEADI",
+                  "NomeLocal": "Secretaria de Atas e Diários",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "1998",
+                  "SiglaColegiado": "PLEN",
+                  "NomeColegiado": "Plenário do Senado Federal",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "20",
+                  "SiglaSituacao": "AGREMD"
+                }
+              },
+              {
+                "Data": "2025-02-20 14:49:16",
+                "IdInformeLegislativo": "2229196",
+                "Descricao": "Autuado o Projeto de Lei nº 592/2025. O projeto vai à publicação.",
+                "Local": {
+                  "CodigoLocal": "55312",
+                  "SiglaLocal": "SLSF",
+                  "NomeLocal": "Secretaria Legislativa do Senado Federal",
+                  "SiglaCasaLocal": "SF",
+                  "NomeCasaLocal": "Senado Federal"
+                },
+                "Colegiado": {
+                  "CodigoColegiado": "1998",
+                  "SiglaColegiado": "PLEN",
+                  "NomeColegiado": "Plenário do Senado Federal",
+                  "SiglaCasaColegiado": "SF",
+                  "NomeCasaColegiado": "Senado Federal"
+                },
+                "SituacaoIniciada": {
+                  "CodigoSituacao": "175",
+                  "SiglaSituacao": "AGDESP"
+                },
+                "TextosAssociados": {
+                  "TextoAssociado": [
+                    {
+                      "CodigoTexto": "9904707",
+                      "DescricaoTipoTexto": "Avulso inicial da matéria",
+                      "TipoDocumento": "PDF",
+                      "FormatoTexto": "application/pdf",
+                      "DataTexto": "2025-02-20",
+                      "UrlTexto": "http://legis.senado.leg.br/sdleg-getter/documento?dm=9904707",
+                      "DescricaoTexto": "Avulso inicial da matéria - SF253025698729",
+                      "AutoriaTexto": "Senado Federal"
+                    },
+                    {
+                      "CodigoTexto": "9904701",
+                      "DescricaoTipoTexto": "Projeto de Lei Ordinária",
+                      "TipoDocumento": "PDF",
+                      "FormatoTexto": "application/pdf",
+                      "DataTexto": "2025-02-20",
+                      "UrlTexto": "http://legis.senado.leg.br/sdleg-getter/documento?dm=9904701",
+                      "DescricaoTexto": "PL 592/2025",
+                      "AutoriaTexto": "Senador Jader Barbalho (MDB/PA)"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "Movimentacoes": {
+            "Movimentacao": [
+              {
+                "IdMovimentacao": "9985932",
+                "Origem": {
+                  "DataEnvio": "2025-06-27 15:04:47",
+                  "Local": {
+                    "CodigoLocal": "13594",
+                    "SiglaLocal": "SEADI",
+                    "NomeLocal": "Secretaria de Atas e Diários",
+                    "SiglaCasaLocal": "SF",
+                    "NomeCasaLocal": "Senado Federal"
+                  }
+                },
+                "Destino": {
+                  "DataRecebimento": "2025-06-27 18:17:06",
+                  "Local": {
+                    "CodigoLocal": "55313",
+                    "SiglaLocal": "SACAS",
+                    "NomeLocal": "Secretaria de Apoio à Comissão de Assuntos Sociais",
+                    "SiglaCasaLocal": "SF",
+                    "NomeCasaLocal": "Senado Federal"
+                  },
+                  "Colegiado": {
+                    "CodigoColegiado": "40",
+                    "SiglaColegiado": "CAS",
+                    "NomeColegiado": "Comissão de Assuntos Sociais",
+                    "SiglaCasaColegiado": "SF",
+                    "NomeCasaColegiado": "Senado Federal"
+                  }
+                }
+              },
+              {
+                "IdMovimentacao": "9985851",
+                "Origem": {
+                  "DataEnvio": "2025-06-27 13:23:48",
+                  "Local": {
+                    "CodigoLocal": "55312",
+                    "SiglaLocal": "SLSF",
+                    "NomeLocal": "Secretaria Legislativa do Senado Federal",
+                    "SiglaCasaLocal": "SF",
+                    "NomeCasaLocal": "Senado Federal"
+                  }
+                },
+                "Destino": {
+                  "DataRecebimento": "2025-06-27 14:52:16",
+                  "Local": {
+                    "CodigoLocal": "13594",
+                    "SiglaLocal": "SEADI",
+                    "NomeLocal": "Secretaria de Atas e Diários",
+                    "SiglaCasaLocal": "SF",
+                    "NomeCasaLocal": "Senado Federal"
+                  }
+                }
+              }
+            ]
+          },
+          "HistoricoSituacoes": {
+            "Situacao": [
+              {
+                "DataSituacao": "2026-06-12 18:04:39",
+                "CodigoSituacao": "138",
+                "SiglaSituacao": "INPAUTA",
+                "DescricaoSituacao": "INCLUÍDA NA PAUTA DA REUNIÃO"
+              },
+              {
+                "DataSituacao": "2026-06-10 12:59:36",
+                "CodigoSituacao": "42",
+                "SiglaSituacao": "PRONTPAUT",
+                "DescricaoSituacao": "PRONTA PARA A PAUTA NA COMISSÃO"
+              },
+              {
+                "DataSituacao": "2026-06-03 17:54:39",
+                "CodigoSituacao": "138",
+                "SiglaSituacao": "INPAUTA",
+                "DescricaoSituacao": "INCLUÍDA NA PAUTA DA REUNIÃO"
+              },
+              {
+                "DataSituacao": "2026-05-26 16:41:56",
+                "CodigoSituacao": "42",
+                "SiglaSituacao": "PRONTPAUT",
+                "DescricaoSituacao": "PRONTA PARA A PAUTA NA COMISSÃO"
+              },
+              {
+                "DataSituacao": "2026-05-22 15:04:22",
+                "CodigoSituacao": "138",
+                "SiglaSituacao": "INPAUTA",
+                "DescricaoSituacao": "INCLUÍDA NA PAUTA DA REUNIÃO"
+              },
+              {
+                "DataSituacao": "2026-05-20 12:34:56",
+                "CodigoSituacao": "42",
+                "SiglaSituacao": "PRONTPAUT",
+                "DescricaoSituacao": "PRONTA PARA A PAUTA NA COMISSÃO"
+              },
+              {
+                "DataSituacao": "2026-05-15 17:16:03",
+                "CodigoSituacao": "138",
+                "SiglaSituacao": "INPAUTA",
+                "DescricaoSituacao": "INCLUÍDA NA PAUTA DA REUNIÃO"
+              },
+              {
+                "DataSituacao": "2026-05-13 11:19:01",
+                "CodigoSituacao": "42",
+                "SiglaSituacao": "PRONTPAUT",
+                "DescricaoSituacao": "PRONTA PARA A PAUTA NA COMISSÃO"
+              },
+              {
+                "DataSituacao": "2026-05-08 17:59:50",
+                "CodigoSituacao": "138",
+                "SiglaSituacao": "INPAUTA",
+                "DescricaoSituacao": "INCLUÍDA NA PAUTA DA REUNIÃO"
+              },
+              {
+                "DataSituacao": "2026-05-04 11:21:02",
+                "CodigoSituacao": "42",
+                "SiglaSituacao": "PRONTPAUT",
+                "DescricaoSituacao": "PRONTA PARA A PAUTA NA COMISSÃO"
+              },
+              {
+                "DataSituacao": "2026-02-12 10:58:15",
+                "CodigoSituacao": "91",
+                "SiglaSituacao": "RELATOR",
+                "DescricaoSituacao": "MATÉRIA COM A RELATORIA"
+              },
+              {
+                "DataSituacao": "2025-09-11 22:31:43",
+                "CodigoSituacao": "87",
+                "SiglaSituacao": "AGDREL",
+                "DescricaoSituacao": "AGUARDANDO DESIGNAÇÃO DO RELATOR"
+              },
+              {
+                "DataSituacao": "2025-09-10 11:42:55",
+                "CodigoSituacao": "91",
+                "SiglaSituacao": "RELATOR",
+                "DescricaoSituacao": "MATÉRIA COM A RELATORIA"
+              },
+              {
+                "DataSituacao": "2025-07-05 11:55:25",
+                "CodigoSituacao": "87",
+                "SiglaSituacao": "AGDREL",
+                "DescricaoSituacao": "AGUARDANDO DESIGNAÇÃO DO RELATOR"
+              },
+              {
+                "DataSituacao": "2025-06-27 14:52:21",
+                "CodigoSituacao": "20",
+                "SiglaSituacao": "AGREMD",
+                "DescricaoSituacao": "AGUARDANDO RECEBIMENTO DE EMENDAS"
+              },
+              {
+                "DataSituacao": "2025-02-20 14:49:16",
+                "CodigoSituacao": "175",
+                "SiglaSituacao": "AGDESP",
+                "DescricaoSituacao": "AGUARDANDO DESPACHO"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Despachos": {
+      "Despacho": [
+        {
+          "DataDespacho": "2025-06-27",
+          "Motivacao": {
+            "TipoMotivacao": "Decisão da Presidência"
+          },
+          "EncontroLegislativo": {
+            "IdentificacaoEncontro": "8855802",
+            "NumeroEncontro": "1",
+            "DataHoraEncontro": "2025-06-27T07:00:00,000000-03:00",
+            "SiglaCasaEncontro": "SF",
+            "TipoEncontro": "SES",
+            "DescricaoTipoEncontro": "Eventos Independentes de Sessão",
+            "Colegiado": {
+              "CodigoColegiado": "1998",
+              "SiglaColegiado": "PLEN",
+              "SiglaCompleta": "SF-PLEN",
+              "SiglaCasaColegiado": "SF",
+              "NomeColegiado": "Plenário do Senado Federal"
+            }
+          },
+          "IndicadorDespachoCancelado": "Não",
+          "Providencias": {
+            "Providencia": [
+              {
+                "SiglaTipoProcedimento": "ANALISE",
+                "DescricaoTipoProcedimento": "Análise",
+                "NumOrdemProvidencia": "1",
+                "TipoAnalisePorTempo": "SUCESSIVA",
+                "IndicadorReexame": "Não",
+                "Destinatarios": {
+                  "Destinatario": [
+                    {
+                      "NumeroOrdem": "1",
+                      "TipoDeliberacao": "NAO_TERMINATIVA",
+                      "Colegiado": {
+                        "CodigoColegiado": "40",
+                        "SiglaColegiado": "CAS",
+                        "SiglaCompleta": "SF-CAS",
+                        "SiglaCasaColegiado": "SF",
+                        "NomeColegiado": "Comissão de Assuntos Sociais"
+                      }
+                    },
+                    {
+                      "NumeroOrdem": "2",
+                      "TipoDeliberacao": "TERMINATIVA",
+                      "Colegiado": {
+                        "CodigoColegiado": "2749",
+                        "SiglaColegiado": "CE",
+                        "SiglaCompleta": "CD-CE",
+                        "SiglaCasaColegiado": "CD",
+                        "NomeColegiado": "Comissão de Educação"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "DataDespacho": "2025-06-27",
+          "Motivacao": {
+            "TipoMotivacao": "Decisão da Presidência"
+          },
+          "EncontroLegislativo": {
+            "Colegiado": {
+              "SiglaCompleta": "-"
+            }
+          },
+          "IndicadorDespachoCancelado": "Não",
+          "Providencias": {
+            "Providencia": [
+              {
+                "SiglaTipoProcedimento": "ANALISE",
+                "DescricaoTipoProcedimento": "Análise",
+                "NumOrdemProvidencia": "1",
+                "TipoAnalisePorTempo": "SUCESSIVA",
+                "TipoConteudo": "MATERIA",
+                "IndicadorReexame": "Não",
+                "Destinatarios": {
+                  "Destinatario": [
+                    {
+                      "NumeroOrdem": "1",
+                      "TipoDeliberacao": "NAO_TERMINATIVA",
+                      "Colegiado": {
+                        "CodigoColegiado": "40",
+                        "SiglaColegiado": "CAS",
+                        "SiglaCompleta": "SF-CAS",
+                        "SiglaCasaColegiado": "SF",
+                        "NomeColegiado": "Comissão de Assuntos Sociais"
+                      }
+                    },
+                    {
+                      "NumeroOrdem": "2",
+                      "TipoDeliberacao": "TERMINATIVA",
+                      "Colegiado": {
+                        "CodigoColegiado": "47",
+                        "SiglaColegiado": "CE",
+                        "SiglaCompleta": "SF-CE",
+                        "SiglaCasaColegiado": "SF",
+                        "NomeColegiado": "Comissão de Educação e Cultura"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Prazos": {
+      "Prazo": [
+        {
+          "IdentificacaoComissao": {
+            "CodigoComissao": "40",
+            "SiglaComissao": "CAS",
+            "NomeComissao": "Comissão de Assuntos Sociais",
+            "SiglaCasaComissao": "SF",
+            "NomeCasaComissao": "Senado Federal"
+          },
+          "CodigoTipoPrazo": "41969861",
+          "DescricaoTipoPrazo": "Apresentação de Emendas a projeto terminativo em Comissão",
+          "DescricaoTipoFundamento": "Art. 122, II, \"c\", do RISF",
+          "TipoFase": "E",
+          "DescricaoTipoFase": "Encerrado",
+          "IndicadorProrrogado": "Não",
+          "DataInicioPrazo": "2025-06-30",
+          "DataFimPrazo": "2025-07-04"
+        }
+      ]
+    },
+    "AtualizacoesRecentes": {
+      "Atualizacao": [
+        {
+          "InformacaoAtualizada": "EVENTO_LEGISLATIVO",
+          "DataUltimaAtualizacao": "2026-06-12 18:04:39"
+        }
+      ]
+    }
+  }
+}

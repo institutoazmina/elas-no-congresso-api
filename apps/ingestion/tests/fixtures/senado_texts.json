@@ -1,0 +1,53 @@
+[
+  {
+    "CodigoTexto": "9904707",
+    "DescricaoTipoTexto": "Avulso inicial da matéria",
+    "TipoDocumento": "PDF",
+    "FormatoTexto": "application/pdf",
+    "DataTexto": "2025-02-20",
+    "UrlTexto": "http://legis.senado.leg.br/sdleg-getter/documento?dm=9904707",
+    "DescricaoTexto": "Avulso inicial da matéria - SF253025698729",
+    "AutoriaTexto": "Senado Federal",
+    "IdentificacaoComissao": {
+      "CodigoComissao": "1998",
+      "SiglaComissao": "PLEN",
+      "NomeComissao": "Plenário do Senado Federal",
+      "SiglaCasaComissao": "SF",
+      "NomeCasaComissao": "Senado Federal"
+    }
+  },
+  {
+    "CodigoTexto": "9904701",
+    "DescricaoTipoTexto": "Projeto de Lei Ordinária",
+    "TipoDocumento": "PDF",
+    "FormatoTexto": "application/pdf",
+    "DataTexto": "2025-02-20",
+    "UrlTexto": "http://legis.senado.leg.br/sdleg-getter/documento?dm=9904701",
+    "DescricaoTexto": "PL 592/2025",
+    "AutoriaTexto": "Senador Jader Barbalho (MDB/PA)",
+    "IdentificacaoComissao": {
+      "CodigoComissao": "1998",
+      "SiglaComissao": "PLEN",
+      "NomeComissao": "Plenário do Senado Federal",
+      "SiglaCasaComissao": "SF",
+      "NomeCasaComissao": "Senado Federal"
+    }
+  },
+  {
+    "CodigoTexto": "10213913",
+    "DescricaoTipoTexto": "Relatório Legislativo",
+    "TipoDocumento": "PDF",
+    "FormatoTexto": "application/pdf",
+    "DataTexto": "2026-05-04",
+    "UrlTexto": "http://legis.senado.leg.br/sdleg-getter/documento?dm=10213913",
+    "DescricaoTexto": "Relatório Legislativo - SF267266492285",
+    "AutoriaTexto": "Senadora Professora Dorinha Seabra (UNIÃO/TO)",
+    "IdentificacaoComissao": {
+      "CodigoComissao": "40",
+      "SiglaComissao": "CAS",
+      "NomeComissao": "Comissão de Assuntos Sociais",
+      "SiglaCasaComissao": "SF",
+      "NomeCasaComissao": "Senado Federal"
+    }
+  }
+]

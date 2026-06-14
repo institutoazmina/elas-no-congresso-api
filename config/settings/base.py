@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from celery.schedules import crontab
 from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -55,6 +56,7 @@ LOCAL_APPS = [
     "apps.norms",
     "apps.subscriptions",
     "apps.cms",
+    "apps.ingestion",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -155,6 +157,18 @@ CELERY_TASK_ACKS_LATE = True
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_TASK_COMPRESSION = "gzip"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# Coleta diária (DatabaseScheduler sincroniza este dict para o banco no startup).
+CELERY_BEAT_SCHEDULE = {
+    "ingest-camara-daily": {
+        "task": "apps.ingestion.tasks.ingest_camara",
+        "schedule": crontab(hour=6, minute=0),
+    },
+    "ingest-senado-daily": {
+        "task": "apps.ingestion.tasks.ingest_senado",
+        "schedule": crontab(hour=6, minute=10),
+    },
+}
 
 # AWS SES
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="test")

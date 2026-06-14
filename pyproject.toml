@@ -13,9 +13,12 @@ dependencies = [
     "django-redis>=5.4",
     "django-unfold>=0.76",
     "gunicorn>=22",
+    "httpx>=0.28.1",
     "pgvector>=0.3",
     "psycopg[binary]>=3.2",
+    "pypdf>=6.13.2",
     "python-decouple>=3.8",
+    "tenacity>=9.1.4",
     "uvicorn[standard]>=0.30",
     "wagtail>=7.3,<8",
     "whitenoise>=6.7",
@@ -63,3 +66,17 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
 asyncio_mode = "auto"
+
+[tool.coverage.run]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "*/conftest.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
