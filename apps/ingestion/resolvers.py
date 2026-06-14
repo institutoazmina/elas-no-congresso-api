@@ -51,6 +51,7 @@ def resolve_author(author: dict, house: str) -> tuple[Parliamentarian | None, In
     name = (author.get("name") or "").strip()
     kind = (author.get("kind") or "").strip()
     external_id = author.get("external_id")
+    gender = author.get("gender")
 
     if not name:
         return None, None
@@ -68,10 +69,22 @@ def resolve_author(author: dict, house: str) -> tuple[Parliamentarian | None, In
             .first()
         )
         if term:
+            _backfill_gender(term.parliamentarian, gender)
             return term.parliamentarian, None
 
     # Pessoa sem mandato conhecido: cria parlamentar mínimo pelo nome.
-    parl, created = Parliamentarian.objects.get_or_create(full_name=name)
+    parl, created = Parliamentarian.objects.get_or_create(
+        full_name=name, defaults={"gender": gender}
+    )
     if created:
         logger.info("Parlamentar mínimo criado por coleta: %s (casa=%s)", name, house)
+    else:
+        _backfill_gender(parl, gender)
     return parl, None
+
+
+def _backfill_gender(parl: Parliamentarian, gender: str | None) -> None:
+    """Preenche o sexo de um parlamentar já existente quando ainda estiver vazio."""
+    if gender and not parl.gender:
+        parl.gender = gender
+        parl.save(update_fields=["gender"])

@@ -24,12 +24,14 @@ from apps.taxonomy.models import PropositionTheme, Theme
 from .clients.camara import CamaraClient
 from .clients.senado import SenadoClient
 from .mappers import (
+    enrich_camara_author,
     map_camara_event,
     map_camara_proposition,
     map_senado_event,
     map_senado_proposition,
     parse_camara_authors,
     parse_senado_authors,
+    parse_senado_authors_from_autoria,
     pick_senado_full_text_url,
 )
 from .models import IngestionRun
@@ -135,6 +137,9 @@ def ingest_camara(self):
                     if not result["row_relevant"]:  # pragma: no cover — defensivo
                         continue
                     authors = parse_camara_authors(client.fetch_authors(prop_id))
+                    for author in authors:
+                        if author["external_id"]:  # deputado → busca sexo/partido/UF
+                            enrich_camara_author(author, client.fetch_deputy(author["external_id"]))
                     pk = _persist(
                         map_camara_proposition(summary, detail, result["temas"]),
                         map_camara_event(detail),
@@ -175,7 +180,10 @@ def ingest_senado(self):
                     detail = client.fetch_detail(materia_id)
                     movements = client.fetch_movements(materia_id)
                     full_text_url = pick_senado_full_text_url(client.fetch_texts(materia_id))
-                    authors = parse_senado_authors(detail, summary)
+                    # Autoria traz sexo/partido/UF; cai no texto livre se vazio.
+                    authors = parse_senado_authors_from_autoria(
+                        client.fetch_authors(materia_id)
+                    ) or parse_senado_authors(detail, summary)
                     pk = _persist(
                         map_senado_proposition(summary, detail, result["temas"], full_text_url),
                         map_senado_event(movements),

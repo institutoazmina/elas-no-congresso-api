@@ -63,3 +63,20 @@ class SenadoClient(BaseClient):
         if isinstance(textos, dict):
             textos = [textos]
         return textos
+
+    def fetch_authors(self, materia_id: int) -> list[dict]:
+        """Autores da matéria via serviço de autoria.
+
+        Caminho: AutoriaMateria.Materia.Autoria.Autor (objeto único ou lista).
+        Cada autor traz ``IdentificacaoParlamentar`` com sexo, partido e UF.
+        """
+        payload = self.get_json(f"/materia/autoria/{materia_id}")
+        autores = (
+            payload.get("AutoriaMateria", {})
+            .get("Materia", {})
+            .get("Autoria", {})
+            .get("Autor", [])
+        )
+        if isinstance(autores, dict):
+            autores = [autores]
+        return autores
