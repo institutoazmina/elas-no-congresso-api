@@ -5,6 +5,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Override SES endpoint for local MiniStack
 AWS_SES_ENDPOINT_URL = "http://ministack:4566"
+ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = AWS_SES_ENDPOINT_URL  # noqa: F405
 
 # Show queries in development
 INSTALLED_APPS += ["django.contrib.admindocs"]  # noqa: F405

@@ -58,9 +58,9 @@ USER nonroot
 
 EXPOSE 8000
 
-# exec-form (no shell in distroless)
+# exec-form (no shell in distroless); hits the liveness endpoint, not just the socket
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD ["python", "-c", "import socket; s = socket.create_connection(('localhost', 8000), timeout=4); s.close()"]
+    CMD ["python", "-c", "import sys,urllib.request; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health/', timeout=4).status == 200 else 1)"]
 
 ENTRYPOINT ["tini", "--"]
 

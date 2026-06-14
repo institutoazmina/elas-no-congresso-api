@@ -1,27 +1,23 @@
 import logging
 
-import boto3
-from botocore.exceptions import ClientError
+from anymail.exceptions import AnymailError
 from celery import shared_task
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
 
-def _ses_client():
-    kwargs = dict(
-        service_name="sesv2",
-        region_name=settings.AWS_DEFAULT_REGION,
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    )
-    if settings.AWS_SES_ENDPOINT_URL:
-        kwargs["endpoint_url"] = settings.AWS_SES_ENDPOINT_URL
-    return boto3.client(**kwargs)
+def _send(subject: str, body_text: str, body_html: str, to: str) -> str:
+    """Send a multipart email via the configured backend; return the message id."""
+    msg = EmailMultiAlternatives(subject=subject, body=body_text, to=[to])
+    msg.attach_alternative(body_html, "text/html")
+    msg.send()
+    return msg.anymail_status.message_id
 
 
-@shared_task(bind=True, autoretry_for=(ClientError,), retry_backoff=True, max_retries=5)
+@shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
 def send_alert_email(self, subscription_id: int, proposition_id: int):
     from apps.propositions.models import Proposition
     from apps.subscriptions.models import Subscription
@@ -32,7 +28,7 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
     except (Subscription.DoesNotExist, Proposition.DoesNotExist):
         return
 
-    base_url = settings.WAGTAILADMIN_BASE_URL.rstrip("/")
+    base_url = settings.SITE_BASE_URL.rstrip("/")
     unsubscribe_url = f"{base_url}/api/v1/subscriptions/unsubscribe/{sub.unsubscribe_token}"
     prop_url = f"{base_url}/api/v1/propositions/{prop.pk}"
 
@@ -52,25 +48,12 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
         f"<hr><p><small><a href='{unsubscribe_url}'>Cancelar inscrição</a></small></p>"
     )
 
-    client = _ses_client()
-    response = client.send_email(
-        FromEmailAddress=settings.AWS_SES_FROM_EMAIL,
-        Destination={"ToAddresses": [sub.email]},
-        Content={
-            "Simple": {
-                "Subject": {"Data": subject, "Charset": "UTF-8"},
-                "Body": {
-                    "Text": {"Data": body_text, "Charset": "UTF-8"},
-                    "Html": {"Data": body_html, "Charset": "UTF-8"},
-                },
-            }
-        },
-    )
+    message_id = _send(subject, body_text, body_html, sub.email)
     logger.info("Alert sent to %s for proposition %d", sub.email, proposition_id)
-    return response["MessageId"]
+    return message_id
 
 
-@shared_task(bind=True, autoretry_for=(ClientError,), retry_backoff=True, max_retries=5)
+@shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
 def send_confirmation_email(self, subscription_id: int):
     from apps.subscriptions.models import Subscription
 
@@ -79,7 +62,7 @@ def send_confirmation_email(self, subscription_id: int):
     except Subscription.DoesNotExist:
         return
 
-    base_url = settings.WAGTAILADMIN_BASE_URL.rstrip("/")
+    base_url = settings.SITE_BASE_URL.rstrip("/")
     confirm_url = f"{base_url}/api/v1/subscriptions/confirm/{sub.confirm_token}"
 
     subject = "[Elas no Congresso] Confirme sua inscricao de alertas"
@@ -93,22 +76,9 @@ def send_confirmation_email(self, subscription_id: int):
         "<p>O link expira em 48 horas.</p>"
     )
 
-    client = _ses_client()
-    response = client.send_email(
-        FromEmailAddress=settings.AWS_SES_FROM_EMAIL,
-        Destination={"ToAddresses": [sub.email]},
-        Content={
-            "Simple": {
-                "Subject": {"Data": subject, "Charset": "UTF-8"},
-                "Body": {
-                    "Text": {"Data": body_text, "Charset": "UTF-8"},
-                    "Html": {"Data": body_html, "Charset": "UTF-8"},
-                },
-            }
-        },
-    )
+    message_id = _send(subject, body_text, body_html, sub.email)
     logger.info("Confirmation sent to %s", sub.email)
-    return response["MessageId"]
+    return message_id
 
 
 @shared_task
