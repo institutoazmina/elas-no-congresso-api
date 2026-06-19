@@ -1,24 +1,26 @@
-# Kamal 2 deploy — elas-no-congresso (EC2 Graviton / ARM64, us-east-2)
-# Build no CI (x86) targetando linux/arm64; pull + run no EC2.
+# Kamal 2 deploy — elas-no-congresso (EC2 Graviton / ARM64)
+# Build no CI (x86) targetando linux/arm64; pull + run no servidor.
+# Repo é open source: nenhum host/endpoint/credencial fica neste arquivo.
+# Detalhes de infra vêm do ambiente (GH Secrets no CI / export local).
 service: elas-no-congresso
 
-# Imagem pública no GHCR. CI faz push; servidor faz pull.
+# Imagem pública no GHCR (mesmo nome do repo). CI faz push; servidor faz pull.
 image: wura-io/elas-no-congresso-api
 
-# ---- Servidores (todos no mesmo EC2 t4g.micro por enquanto) ----
+# ---- Servidores: host vem do ambiente (não exposto no repo) ----
 servers:
   web:
-    - 3.145.11.201
+    - <%= ENV["DEPLOY_HOST"] %>
   worker:
     hosts:
-      - 3.145.11.201
+      - <%= ENV["DEPLOY_HOST"] %>
     cmd: celery -A config worker -l INFO --concurrency 2
   beat:
     hosts:
-      - 3.145.11.201
+      - <%= ENV["DEPLOY_HOST"] %>
     cmd: celery -A config beat -l INFO -S django
 
-# ---- kamal-proxy: HTTP no IP por enquanto. Domínio + SSL depois. ----
+# ---- kamal-proxy: HTTP por enquanto. Domínio + SSL depois. ----
 proxy:
   ssl: false
   app_port: 8000
@@ -26,7 +28,7 @@ proxy:
     path: /health/
     interval: 3
 
-# ---- Registry GHCR. Credenciais vêm do ambiente (CI / export local). ----
+# ---- Registry GHCR. Credenciais vêm do ambiente. ----
 registry:
   server: ghcr.io
   username:
@@ -34,42 +36,43 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# ---- Build multi-arch: EC2 é ARM64 ----
+# ---- Build multi-arch: servidor é ARM64 ----
 builder:
   arch: arm64
 
 # ---- Variáveis de ambiente ----
 env:
   clear:
+    # Não-sensível / não-identificável
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DEBUG: "False"
-    # IP libera teste; trocar/acrescentar domínio depois
-    ALLOWED_HOSTS: "3.145.11.201,localhost,127.0.0.1"
-    # RDS externo (não é container)
-    POSTGRES_HOST: elas-no-congress-db.cn8kk8kmokrw.us-east-2.rds.amazonaws.com
-    POSTGRES_PORT: "5432"
-    POSTGRES_DB: elas
-    POSTGRES_USER: elas_admin
-    # Redis = accessory no mesmo host (hostname = nome do container)
+    # Redis = accessory no mesmo host (hostname interno = nome do container)
     REDIS_URL: redis://elas-no-congresso-redis:6379/0
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0
-    # SES / AWS
-    AWS_DEFAULT_REGION: us-east-2
-    AWS_SES_FROM_EMAIL: alertas@elasnocongresso.com.br
-    SITE_BASE_URL: http://3.145.11.201
-    # Desliga redirect HTTPS durante teste HTTP. Ligar (remover) quando tiver SSL.
+    # Desliga redirect HTTPS durante teste HTTP. Remover quando tiver SSL.
     SECURE_SSL_REDIRECT: "False"
   secret:
     - SECRET_KEY
+    # Banco (RDS) — endpoint/credenciais não expostos no repo
+    - POSTGRES_HOST
+    - POSTGRES_PORT
+    - POSTGRES_DB
+    - POSTGRES_USER
     - POSTGRES_PASSWORD
+    # Rede / host
+    - ALLOWED_HOSTS
+    - SITE_BASE_URL
+    # AWS / SES
+    - AWS_DEFAULT_REGION
+    - AWS_SES_FROM_EMAIL
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
 
-# ---- Redis accessory (no EC2) ----
+# ---- Redis accessory (no servidor) ----
 accessories:
   redis:
     image: redis:7-alpine
-    host: 3.145.11.201
+    host: <%= ENV["DEPLOY_HOST"] %>
     cmd: redis-server --appendonly yes
     volumes:
       - /var/lib/elas/redis:/data
