@@ -34,6 +34,13 @@ RUN set -eux; \
     # bundled test suites inside packages
     find /app/.venv -type d -name tests -prune -exec rm -rf {} + 2>/dev/null || true
 
+# ---- Static assets: collectstatic needs a shell + app code; the distroless
+# runtime has neither. Bake the whitenoise manifest here, copy it into runtime.
+# Build-time SECRET_KEY is a throwaway (collectstatic never touches DB/secrets). ----
+COPY . .
+RUN DJANGO_SETTINGS_MODULE=config.settings.prod SECRET_KEY=build-only-collectstatic \
+    /app/.venv/bin/python manage.py collectstatic --noinput --clear
+
 # ---- Runtime: distroless, no shell, no package manager ----
 FROM gcr.io/distroless/cc-debian12 AS runtime
 
@@ -53,6 +60,9 @@ WORKDIR /app
 
 # Application code, owned by the distroless nonroot user (uid 65532)
 COPY --chown=65532:65532 . .
+
+# Pre-built static manifest (whitenoise ManifestStorage); runtime can't collectstatic
+COPY --from=builder --chown=65532:65532 /app/staticfiles /app/staticfiles
 
 USER nonroot
 
