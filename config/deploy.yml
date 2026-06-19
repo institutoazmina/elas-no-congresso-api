@@ -30,9 +30,11 @@ servers:
     options:
       no-healthcheck: true
 
-# ---- kamal-proxy: HTTP por enquanto. Domínio + SSL depois. ----
+# ---- kamal-proxy: HTTPS via Let's Encrypt (desafio HTTP-01 na porta 80).
+# Cloudflare deve ficar DNS-only (cinza) p/ o desafio chegar na origem. ----
 proxy:
-  ssl: false
+  ssl: true
+  host: api.elasnocongresso.com.br
   app_port: 8000
   healthcheck:
     path: /health/
@@ -59,8 +61,6 @@ env:
     # Redis = accessory no mesmo host (hostname interno = nome do container)
     REDIS_URL: redis://elas-no-congresso-redis:6379/0
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0
-    # Desliga redirect HTTPS durante teste HTTP. Remover quando tiver SSL.
-    SECURE_SSL_REDIRECT: "False"
   secret:
     - SECRET_KEY
     # Banco (RDS) — endpoint/credenciais não expostos no repo
