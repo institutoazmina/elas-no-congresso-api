@@ -8,6 +8,9 @@ AWS_SES_ENDPOINT_URL = None
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Controlável por env: desligar durante teste HTTP (sem SSL); ligar com domínio/SSL.
 SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+# O healthcheck interno do kamal-proxy chega via HTTP (sem X-Forwarded-Proto);
+# sem isenção, SECURE_SSL_REDIRECT devolve 301 e o container fica "unhealthy".
+SECURE_REDIRECT_EXEMPT = [r"^health/"]  # casa health/ e health/ready/
 
 # Django 4+ exige origin (com esquema) p/ POSTs do admin sob HTTPS atrás de proxy.
 # Derivado do SITE_BASE_URL (https://api...) — não duplica o domínio em outro lugar.
