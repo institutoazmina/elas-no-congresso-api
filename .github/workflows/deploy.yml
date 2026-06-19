@@ -1,0 +1,71 @@
+name: Deploy (Kamal)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Não deixa dois deploys correrem ao mesmo tempo no mesmo host.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write   # GITHUB_TOKEN faz push no GHCR
+    env:
+      # Host (não exposto no repo) + segredos do app — via GitHub Secrets
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+      SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_SES_FROM_EMAIL: ${{ secrets.AWS_SES_FROM_EMAIL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # Registry: o próprio token do Actions tem write:packages pro repo
+      KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+      KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby (Kamal)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install Kamal
+        run: gem install kamal -v 2.12.0
+
+      # Runner é x86; a imagem alvo é arm64 (EC2 Graviton) -> emulação via QEMU.
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Trust EC2 host key
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # kamal deploy: build arm64 -> push GHCR -> pull + run no EC2 (web/worker/beat)
+      - name: Kamal deploy
+        run: kamal deploy
+
+      # Migrations rodam no EC2 (único nó que alcança o RDS). --roles web evita 3x.
+      - name: Migrate (on server)
+        run: kamal app exec --roles web "python manage.py migrate --noinput"
