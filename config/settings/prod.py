@@ -8,6 +8,10 @@ AWS_SES_ENDPOINT_URL = None
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Controlável por env: desligar durante teste HTTP (sem SSL); ligar com domínio/SSL.
 SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+
+# Django 4+ exige origin (com esquema) p/ POSTs do admin sob HTTPS atrás de proxy.
+# Derivado do SITE_BASE_URL (https://api...) — não duplica o domínio em outro lugar.
+CSRF_TRUSTED_ORIGINS = [SITE_BASE_URL]  # noqa: F405
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000
