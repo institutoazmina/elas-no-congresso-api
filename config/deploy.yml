@@ -7,6 +7,10 @@ service: elas-no-congresso
 # Imagem pública no GHCR (mesmo nome do repo). CI faz push; servidor faz pull.
 image: wura-io/elas-no-congresso-api
 
+# EC2 AL2023: login via ec2-user (root desabilitado). Chave via ssh-agent.
+ssh:
+  user: ec2-user
+
 # ---- Servidores: host vem do ambiente (não exposto no repo) ----
 servers:
   web:
