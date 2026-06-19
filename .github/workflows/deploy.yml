@@ -5,17 +5,22 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  id-token: write   # OIDC -> assume AWS role
+  contents: read
+  packages: write   # GITHUB_TOKEN faz push no GHCR
+
 # Não deixa dois deploys correrem ao mesmo tempo no mesmo host.
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  AWS_REGION: us-east-2
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write   # GITHUB_TOKEN faz push no GHCR
     env:
       # Host (não exposto no repo) + segredos do app — via GitHub Secrets
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
@@ -29,8 +34,6 @@ jobs:
       SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       AWS_SES_FROM_EMAIL: ${{ secrets.AWS_SES_FROM_EMAIL }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       # Registry: o próprio token do Actions tem write:packages pro repo
       KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
@@ -62,10 +65,47 @@ jobs:
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
-      # kamal deploy: build arm64 -> push GHCR -> pull + run no EC2 (web/worker/beat)
+      # OIDC: assume a role da AWS (sem chave estática). A role precisa de
+      # permissão p/ authorize/revoke-security-group-ingress no SG do EC2.
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # O SG do EC2 só libera SSH pro IP do dev. Abre a porta 22 pro IP público
+      # deste runner (efêmero) só durante o deploy; o cleanup revoga no fim.
+      - name: Open SSH for this runner
+        run: |
+          RUNNER_IP="$(curl -fsS https://checkip.amazonaws.com)"
+          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
+          aws ec2 authorize-security-group-ingress \
+            --group-id "${{ secrets.EC2_SECURITY_GROUP_ID }}" \
+            --protocol tcp --port 22 --cidr "${RUNNER_IP}/32" \
+            --region "$AWS_REGION" >/dev/null
+          echo "SSH liberado para ${RUNNER_IP}/32"
+
+      # kamal deploy: build arm64 -> push GHCR -> pull + run no EC2 (web/worker/beat).
+      # AWS_* (SES) setados aqui no step p/ NÃO herdar as creds OIDC temporárias.
       - name: Kamal deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: kamal deploy
 
       # Migrations rodam no EC2 (único nó que alcança o RDS). --roles web evita 3x.
       - name: Migrate (on server)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: kamal app exec --roles web "python manage.py migrate --noinput"
+
+      # Sempre revoga a regra temporária — mesmo se o deploy falhar.
+      - name: Revoke SSH for this runner
+        if: always() && env.RUNNER_IP != ''
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id "${{ secrets.EC2_SECURITY_GROUP_ID }}" \
+            --protocol tcp --port 22 --cidr "${RUNNER_IP}/32" \
+            --region "$AWS_REGION" >/dev/null || true
+          echo "SSH revogado para ${RUNNER_IP}/32"
