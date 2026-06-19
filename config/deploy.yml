@@ -19,10 +19,16 @@ servers:
     hosts:
       - <%= ENV["DEPLOY_HOST"] %>
     cmd: celery -A config worker -l INFO --concurrency 2
+    # Celery não serve HTTP; desliga o HEALTHCHECK HTTP herdado da imagem
+    # (kamal passa a esperar só "running" em vez de "healthy").
+    options:
+      no-healthcheck: true
   beat:
     hosts:
       - <%= ENV["DEPLOY_HOST"] %>
     cmd: celery -A config beat -l INFO -S django
+    options:
+      no-healthcheck: true
 
 # ---- kamal-proxy: HTTP por enquanto. Domínio + SSL depois. ----
 proxy:
