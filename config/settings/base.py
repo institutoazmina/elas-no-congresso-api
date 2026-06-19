@@ -46,6 +46,9 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    # First: rewrite Host on health paths so orchestrator probes bypass
+    # ALLOWED_HOSTS (kamal-proxy uses the container ID as Host).
+    "config.middleware.HealthCheckHostMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
