@@ -1,44 +1,46 @@
-# Kamal 2 deploy — elas-no-congresso (EC2 Graviton / ARM64)
-# Build no CI (x86) targetando linux/arm64; pull + run no servidor.
+# Kamal 2 deploy — elas-no-congresso
+# Colocation no EC2 AzMina-Mautic-et-all (x86_64) junto de mautic/metabase/elasnacamera.
+# Padrão do host: SEM kamal-proxy (porta 80 é do nginx do host) — publica numa porta
+# local e a borda é o Cloudflare Tunnel (igual metabase). Ver ec2-fit.md.
 # Repo é open source: nenhum host/endpoint/credencial fica neste arquivo.
-# Detalhes de infra vêm do ambiente (GH Secrets no CI / export local).
 service: elas-no-congresso
 
 # Imagem pública no GHCR (mesmo nome do repo). CI faz push; servidor faz pull.
 image: wura-io/elas-no-congresso-api
 
-# EC2 AL2023: login via ec2-user (root desabilitado). Chave via ssh-agent.
+# Host Ubuntu 24.04: login via ubuntu (no grupo docker). Chave via ssh-agent.
 ssh:
-  user: ec2-user
+  user: ubuntu
 
 # ---- Servidores: host vem do ambiente (não exposto no repo) ----
 servers:
   web:
-    - <%= ENV["DEPLOY_HOST"] %>
+    hosts:
+      - <%= ENV["DEPLOY_HOST"] %>
+    # SEM kamal-proxy: porta 80/443 do host são do nginx + cloudflared.
+    proxy: false
+    options:
+      # Publica só no gateway docker0 (172.17.0.1) — alcançável pelo cloudflared
+      # do host, NÃO exposto na internet. Túnel CF aponta p/ http://172.17.0.1:8010.
+      publish:
+        - "172.17.0.1:8010:8000"
+      # Teto de RAM: box de 3.8 GB compartilhado — protege mautic/metabase de OOM.
+      memory: 512m
   worker:
     hosts:
       - <%= ENV["DEPLOY_HOST"] %>
-    cmd: celery -A config worker -l INFO --concurrency 2
-    # Celery não serve HTTP; desliga o HEALTHCHECK HTTP herdado da imagem
-    # (kamal passa a esperar só "running" em vez de "healthy").
+    cmd: celery -A config worker -l INFO --concurrency 1
+    # Celery não serve HTTP; desliga o HEALTHCHECK HTTP herdado da imagem.
     options:
       no-healthcheck: true
+      memory: 512m
   beat:
     hosts:
       - <%= ENV["DEPLOY_HOST"] %>
     cmd: celery -A config beat -l INFO -S django
     options:
       no-healthcheck: true
-
-# ---- kamal-proxy: HTTPS via Let's Encrypt (desafio HTTP-01 na porta 80).
-# Cloudflare deve ficar DNS-only (cinza) p/ o desafio chegar na origem. ----
-proxy:
-  ssl: true
-  host: api.elasnocongresso.com.br
-  app_port: 8000
-  healthcheck:
-    path: /health/
-    interval: 3
+      memory: 256m
 
 # ---- Registry GHCR. Credenciais vêm do ambiente. ----
 registry:
@@ -48,9 +50,9 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# ---- Build multi-arch: servidor é ARM64 ----
+# ---- Build: host é x86_64 (não Graviton). Runner do CI já é x86 → sem QEMU. ----
 builder:
-  arch: arm64
+  arch: amd64
 
 # ---- Variáveis de ambiente ----
 env:
@@ -58,7 +60,7 @@ env:
     # Não-sensível / não-identificável
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DEBUG: "False"
-    # Redis = accessory no mesmo host (hostname interno = nome do container)
+    # Redis = accessory isolado no mesmo host (NÃO reusar o redis_elasnacamera).
     REDIS_URL: redis://elas-no-congresso-redis:6379/0
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0
   secret:
@@ -78,7 +80,7 @@ env:
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
 
-# ---- Redis accessory (no servidor) ----
+# ---- Redis accessory (no servidor), isolado por nome próprio ----
 accessories:
   redis:
     image: redis:7-alpine

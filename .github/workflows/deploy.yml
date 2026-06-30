@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write   # OIDC -> assume AWS role
   contents: read
   packages: write   # GITHUB_TOKEN faz push no GHCR
 
@@ -14,9 +13,6 @@ permissions:
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
-
-env:
-  AWS_REGION: us-east-2
 
 jobs:
   deploy:
@@ -48,10 +44,7 @@ jobs:
       - name: Install Kamal
         run: gem install kamal -v 2.12.0
 
-      # Runner é x86; a imagem alvo é arm64 (EC2 Graviton) -> emulação via QEMU.
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
+      # Host é x86_64 e o runner também → build amd64 nativo, sem QEMU.
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -65,28 +58,10 @@ jobs:
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
-      # OIDC: assume a role da AWS (sem chave estática). A role precisa de
-      # permissão p/ authorize/revoke-security-group-ingress no SG do EC2.
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      # O SG do EC2 só libera SSH pro IP do dev. Abre a porta 22 pro IP público
-      # deste runner (efêmero) só durante o deploy; o cleanup revoga no fim.
-      - name: Open SSH for this runner
-        run: |
-          RUNNER_IP="$(curl -fsS https://checkip.amazonaws.com)"
-          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
-          aws ec2 authorize-security-group-ingress \
-            --group-id "${{ secrets.EC2_SECURITY_GROUP_ID }}" \
-            --protocol tcp --port 22 --cidr "${RUNNER_IP}/32" \
-            --region "$AWS_REGION" >/dev/null
-          echo "SSH liberado para ${RUNNER_IP}/32"
-
-      # kamal deploy: build arm64 -> push GHCR -> pull + run no EC2 (web/worker/beat).
-      # AWS_* (SES) setados aqui no step p/ NÃO herdar as creds OIDC temporárias.
+      # kamal deploy: build amd64 -> push GHCR -> pull + run no EC2 (web/worker/beat).
+      # Host compartilhado: deploy é proxy:false, publica web em 172.17.0.1:8010.
+      # A borda (api.elasnocongresso.com.br) é o Cloudflare Tunnel — ver ops/colocation-setup.md.
+      # AWS_* (SES) setados aqui no step p/ não vazarem p/ outros steps.
       - name: Kamal deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -99,13 +74,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: kamal app exec --roles web "python manage.py migrate --noinput"
-
-      # Sempre revoga a regra temporária — mesmo se o deploy falhar.
-      - name: Revoke SSH for this runner
-        if: always() && env.RUNNER_IP != ''
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id "${{ secrets.EC2_SECURITY_GROUP_ID }}" \
-            --protocol tcp --port 22 --cidr "${RUNNER_IP}/32" \
-            --region "$AWS_REGION" >/dev/null || true
-          echo "SSH revogado para ${RUNNER_IP}/32"
