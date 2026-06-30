@@ -72,8 +72,10 @@ jobs:
         run: kamal deploy
 
       # Migrations rodam no EC2 (único nó que alcança o RDS). --roles web evita 3x.
+      # --reuse: roda no container web já vivo. Sem --reuse, o exec sobe um container
+      # novo herdando publish 172.17.0.1:8010 e colide com o web → "port already allocated".
       - name: Migrate (on server)
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: kamal app exec --roles web "python manage.py migrate --noinput"
+        run: kamal app exec --reuse --roles web "python manage.py migrate --noinput"
