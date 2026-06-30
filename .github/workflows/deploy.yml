@@ -61,6 +61,16 @@ jobs:
           ssh-keygen -R "$DEPLOY_HOST" 2>/dev/null || true
           ssh-keyscan "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
+      # proxy:false publica web numa porta fixa (172.17.0.1:8010). Logo o web NOVO não
+      # consegue bindar 8010 enquanto o ANTIGO segura a porta → "port already allocated".
+      # Para o web atual antes do boot p/ liberar a porta (também limpa container órfão de
+      # deploy anterior que falhou). Downtime de ~segundos, OK p/ API atrás do CF Tunnel.
+      - name: Liberar porta do web (proxy:false usa porta fixa)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: kamal app stop --roles web || true
+
       # kamal deploy: build amd64 -> push GHCR -> pull + run no EC2 (web/worker/beat).
       # Host compartilhado: deploy é proxy:false, publica web em 172.17.0.1:8010.
       # A borda (api.elasnocongresso.com.br) é o Cloudflare Tunnel — ver ops/colocation-setup.md.
