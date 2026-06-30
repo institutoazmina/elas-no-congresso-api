@@ -54,9 +54,12 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Trust EC2 host key
+        # Sem -H: o net-ssh do Kamal não casa entradas hasheadas e dá HostKeyMismatch.
+        # ssh-keygen -R limpa qualquer entrada stale antes de regravar a chave viva.
         run: |
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keygen -R "$DEPLOY_HOST" 2>/dev/null || true
+          ssh-keyscan "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
       # kamal deploy: build amd64 -> push GHCR -> pull + run no EC2 (web/worker/beat).
       # Host compartilhado: deploy é proxy:false, publica web em 172.17.0.1:8010.
