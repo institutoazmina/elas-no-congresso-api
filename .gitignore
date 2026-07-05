@@ -40,3 +40,8 @@ Thumbs.db
 
 # Django collectstatic output (baked into image at build)
 staticfiles/
+
+# AI
+.claude
+.agents
+skills-lock.json
