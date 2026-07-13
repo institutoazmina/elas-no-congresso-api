@@ -35,7 +35,9 @@ _HEADERS = {
 _OCR_MIN_CHARS = 500
 # Só adota o OCR se ele acrescentar conteúdo substancial sobre o pypdf.
 _OCR_GAIN_MIN = 200
-_OCR_DPI = 300
+# 200 DPI: pixmap ~pela metade de 300 — evita OOM no worker (512m). Qualidade
+# de OCR ainda boa para os PDFs legislativos.
+_OCR_DPI = 200
 _OCR_LANG = "por"
 
 
@@ -110,8 +112,10 @@ def _ocr_page(doc, index: int) -> str | None:
         if _TESSERACT_CMD:
             pytesseract.pytesseract.tesseract_cmd = _TESSERACT_CMD
         pix = doc[index].get_pixmap(dpi=_OCR_DPI)
-        img = Image.open(io.BytesIO(pix.tobytes("png")))
-        return pytesseract.image_to_string(img, lang=_OCR_LANG).strip()
+        png = pix.tobytes("png")
+        pix = None  # libera o pixmap (memória C do PyMuPDF) o quanto antes
+        with Image.open(io.BytesIO(png)) as img:
+            return pytesseract.image_to_string(img, lang=_OCR_LANG).strip()
     except Exception as exc:  # noqa: BLE001 — OCR é best-effort
         logger.warning("OCR falhou na página %d: %s", index, exc)
         return None
