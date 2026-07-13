@@ -54,9 +54,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-             python -m uvicorn config.asgi:application --host 0.0.0.0 --port 8000"
+    # Runtime é distroless (sem shell): não dá para usar `sh -c`.
+    # O entrypoint em Python migra e sobe o uvicorn.
+    command: ["python", "scripts/start_api.py"]
 
   worker:
     build: .

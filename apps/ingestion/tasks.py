@@ -72,7 +72,10 @@ def _persist(prop_kwargs: dict, event_kwargs: dict | None, authors: list[dict], 
             if a.get("party"):
                 from apps.legislatures.models import Party
 
-                party = Party.objects.filter(acronym__iexact=a["party"]).first()
+                sigla = a["party"].strip().upper()
+                party, _ = Party.objects.get_or_create(
+                    acronym=sigla, defaults={"name": sigla}
+                )
             PropositionAuthor.objects.create(
                 proposition=prop,
                 parliamentarian=parl,
@@ -141,7 +144,7 @@ def ingest_camara(self):
                         if author["external_id"]:  # deputado → busca sexo/partido/UF
                             enrich_camara_author(author, client.fetch_deputy(author["external_id"]))
                     pk = _persist(
-                        map_camara_proposition(summary, detail, result["temas"]),
+                        map_camara_proposition(summary, detail),
                         map_camara_event(detail),
                         authors,
                         result["temas"],
@@ -185,7 +188,7 @@ def ingest_senado(self):
                         client.fetch_authors(materia_id)
                     ) or parse_senado_authors(detail, summary)
                     pk = _persist(
-                        map_senado_proposition(summary, detail, result["temas"], full_text_url),
+                        map_senado_proposition(summary, detail, full_text_url),
                         map_senado_event(movements),
                         authors,
                         result["temas"],
@@ -232,6 +235,9 @@ def classify_proposition(proposition_id: int):
         from .fulltext import extract_pdf_text
 
         full_text = extract_pdf_text(prop.full_text_url)
+        if full_text:
+            prop.full_text = full_text
+            prop.save(update_fields=["full_text"])
 
     logger.info(
         "[ML pendente] classificar proposição id=%s %s — inteiro teor: %s chars",

@@ -40,13 +40,14 @@ class TestHelpers:
 class TestCamaraMappers:
     def test_proposition_from_fixture(self, camara_payload):
         prop = mappers.map_camara_proposition(
-            camara_payload["summary"], camara_payload["detail"], ["útero"]
+            camara_payload["summary"], camara_payload["detail"]
         )
         assert prop["house"] == House.CAMARA
         assert prop["external_id"] == int(camara_payload["summary"]["id"])
         assert prop["number_label"].startswith(prop["type_code"])
         assert "camara.leg.br" in prop["tramitation_url"]
-        assert prop["raw_payload"]["themes"] == ["útero"]
+        # raw_payload guarda o retorno bruto da request de detalhe
+        assert prop["raw_payload"] == camara_payload["detail"]
 
     def test_event_from_fixture(self, camara_payload):
         event = mappers.map_camara_event(camara_payload["detail"])
@@ -92,7 +93,7 @@ class TestMapGender:
 class TestSenadoMappers:
     def test_proposition_from_fixture(self, senado_payload):
         prop = mappers.map_senado_proposition(
-            senado_payload["summary"], senado_payload["detail"], []
+            senado_payload["summary"], senado_payload["detail"]
         )
         assert prop["house"] == House.SENADO
         assert prop["external_id"]
@@ -187,6 +188,6 @@ class TestPickSenadoFullTextUrl:
 
     def test_proposition_carries_full_text_url(self, senado_payload):
         prop = mappers.map_senado_proposition(
-            senado_payload["summary"], senado_payload["detail"], [], "http://x/doc.pdf"
+            senado_payload["summary"], senado_payload["detail"], "http://x/doc.pdf"
         )
         assert prop["full_text_url"] == "http://x/doc.pdf"

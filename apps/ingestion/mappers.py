@@ -66,7 +66,7 @@ _DEPUTY_ID_RE = re.compile(r"/deputados/(\d+)")
 
 # ── Câmara ───────────────────────────────────────────────────────────────────
 
-def map_camara_proposition(summary: dict, detail: dict, themes: list[str]) -> dict:
+def map_camara_proposition(summary: dict, detail: dict) -> dict:
     """summary (lista) + detail (/proposicoes/{id}) → kwargs de Proposition."""
     status = detail.get("statusProposicao", {}) or {}
     sigla = summary.get("siglaTipo") or detail.get("siglaTipo") or ""
@@ -91,7 +91,7 @@ def map_camara_proposition(summary: dict, detail: dict, themes: list[str]) -> di
         "regime": status.get("regime"),
         "scope": status.get("ambito"),
         "appreciation_mode": status.get("apreciacao"),
-        "raw_payload": {"summary": summary, "detail": detail, "themes": themes},
+        "raw_payload": detail,
     }
 
 
@@ -147,7 +147,7 @@ def enrich_camara_author(author: dict, deputy: dict) -> dict:
 # ── Senado ───────────────────────────────────────────────────────────────────
 
 def map_senado_proposition(
-    summary: dict, detail: dict, themes: list[str], full_text_url: str | None = None
+    summary: dict, detail: dict, full_text_url: str | None = None
 ) -> dict:
     """summary (lista tramitando) + detail (/materia/{id}) → kwargs de Proposition."""
     ident = summary.get("IdentificacaoMateria", {}) or {}
@@ -169,7 +169,7 @@ def map_senado_proposition(
         "keywords": dados.get("IndexacaoMateria"),
         "full_text_url": full_text_url,
         "tramitation_url": f"https://www25.senado.leg.br/web/atividade/materias/-/materia/{external_id}",
-        "raw_payload": {"summary": summary, "detail": detail, "themes": themes},
+        "raw_payload": detail,
     }
 
 

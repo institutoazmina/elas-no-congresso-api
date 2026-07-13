@@ -2,7 +2,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models import GeneratedField
 
-from apps.core.enums import House
+from apps.core.enums import House, HumanRelevance
 from apps.legislatures.models import InstitutionalAuthor, Parliamentarian, Party
 
 
@@ -17,6 +17,7 @@ class Proposition(models.Model):
     ementa = models.TextField()
     keywords = models.TextField(null=True, blank=True)
     full_text_url = models.TextField(null=True, blank=True)
+    full_text = models.TextField(null=True, blank=True)
     tramitation_url = models.TextField(null=True, blank=True)
     current_status = models.TextField(null=True, blank=True)
     current_status_code = models.IntegerField(null=True, blank=True)
@@ -144,6 +145,57 @@ class PropositionAnalysis(models.Model):
         indexes = [
             models.Index(fields=["quiterometer_score"], name="idx_analysis_quitero"),
         ]
+
+
+class AssessmentOrganization(models.Model):
+    """Organização da sociedade civil que avalia proposições (avaliadora)."""
+
+    name = models.TextField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "assessment_organizations"
+
+    def __str__(self):
+        return self.name
+
+
+class PropositionAnnotation(models.Model):
+    """Anotação humana de uma avaliadora sobre uma proposição."""
+
+    proposition = models.ForeignKey(
+        Proposition, on_delete=models.CASCADE, related_name="annotations"
+    )
+    organization = models.ForeignKey(
+        AssessmentOrganization, on_delete=models.PROTECT, related_name="annotations"
+    )
+    # Avaliação: Favorável -> True, Desfavorável -> False, vazio -> NULL
+    is_favorable = models.BooleanField(null=True, blank=True)
+    # Há ressalvas?: S -> True, N/vazio -> False
+    has_caveats = models.BooleanField(default=False)
+    relevance = models.CharField(
+        max_length=20, choices=HumanRelevance.choices, default=HumanRelevance.RELEVANTE
+    )
+    # nota av (1 / -1) e nota rel (2 / 1)
+    assessment_score = models.SmallIntegerField(null=True, blank=True)
+    relevance_score = models.SmallIntegerField(null=True, blank=True)
+    # Tema (class humana): texto livre, preserva fidelidade ao dado original
+    human_theme = models.TextField(null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "proposition_annotations"
+
+    def save(self, *args, **kwargs):
+        # Invariante: relevance nunca é nulo — cai em 'relevante' se vier None.
+        if self.relevance is None:
+            self.relevance = HumanRelevance.RELEVANTE
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.organization} · {self.proposition}"
 
 
 class PropositionEmbedding(models.Model):

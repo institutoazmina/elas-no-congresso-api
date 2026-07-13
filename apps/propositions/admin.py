@@ -2,8 +2,10 @@ from django.contrib import admin
 from unfold.admin import ModelAdmin, TabularInline
 
 from .models import (
+    AssessmentOrganization,
     Proposition,
     PropositionAnalysis,
+    PropositionAnnotation,
     PropositionAuthor,
     PropositionEvent,
     PropositionRapporteur,
@@ -30,6 +32,12 @@ class AnalysisInline(TabularInline):
     extra = 0
     fields = ["classification", "quiterometer_score", "llm_position", "ai_summary"]
 
+class AnnotationInline(TabularInline):
+    model = PropositionAnnotation
+    extra = 0
+    fields = ["organization", "is_favorable", "has_caveats", "relevance", "human_theme", "comments"]
+    autocomplete_fields = ["organization"]
+
 
 @admin.register(Proposition)
 class PropositionAdmin(ModelAdmin):
@@ -37,7 +45,7 @@ class PropositionAdmin(ModelAdmin):
     list_filter = ["house", "is_active", "type_code"]
     search_fields = ["number_label", "ementa", "keywords"]
     readonly_fields = ["created_at", "updated_at"]
-    inlines = [AuthorInline, RapporteurInline, AnalysisInline]
+    inlines = [AuthorInline, RapporteurInline, AnalysisInline, AnnotationInline]
     ordering = ["-presented_at"]
 
 
@@ -51,3 +59,16 @@ class PropositionEventAdmin(ModelAdmin):
 class PropositionAnalysisAdmin(ModelAdmin):
     list_display = ["proposition", "classification", "quiterometer_score", "analyzed_at"]
     readonly_fields = ["analyzed_at"]
+
+@admin.register(AssessmentOrganization)
+class AssessmentOrganizationAdmin(ModelAdmin):
+    list_display = ["name", "created_at"]
+    search_fields = ["name"]
+
+@admin.register(PropositionAnnotation)
+class PropositionAnnotationAdmin(ModelAdmin):
+    list_display = ["proposition", "organization", "is_favorable", "has_caveats", "relevance", "human_theme"]
+    list_filter = ["organization", "is_favorable", "has_caveats", "relevance"]
+    search_fields = ["human_theme", "comments"]
+    autocomplete_fields = ["proposition", "organization"]
+    readonly_fields = ["created_at", "updated_at"]
