@@ -15,6 +15,18 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends tini && \
     rm -rf /var/lib/apt/lists/*
 
+# Tesseract (OCR do inteiro teor) — o runtime é distroless (sem apt), então
+# instalamos aqui e juntamos binário + libs (via ldd) + dados de idioma (por)
+# num diretório /ocr para copiar no runtime.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-por && \
+    mkdir -p /ocr/bin /ocr/lib /ocr/tessdata && \
+    cp /usr/bin/tesseract /ocr/bin/ && \
+    ldd /usr/bin/tesseract | awk '/=>/ {print $3}' | grep . | sort -u \
+        | xargs -I{} cp -Lv {} /ocr/lib/ && \
+    cp -L /usr/share/tesseract-ocr/*/tessdata/*.traineddata /ocr/tessdata/ && \
+    rm -rf /var/lib/apt/lists/*
+
 # Standalone CPython 3.12 (relocatable) + main deps pinned by uv.lock
 COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -55,6 +67,13 @@ COPY --from=builder /usr/bin/tini /usr/bin/tini
 
 # libz: psycopg[binary]'s bundled libpq links it; not present in distroless/cc
 COPY --from=builder /usr/lib/*-linux-gnu/libz.so.1 /usr/lib/libz.so.1
+
+# Tesseract: binário + libs + dados de idioma (por) para o OCR do inteiro teor
+COPY --from=builder /ocr/bin/tesseract /usr/bin/tesseract
+COPY --from=builder /ocr/lib/ /usr/lib/
+COPY --from=builder /ocr/tessdata/ /usr/share/tessdata/
+ENV TESSERACT_CMD=/usr/bin/tesseract \
+    TESSDATA_PREFIX=/usr/share/tessdata
 
 WORKDIR /app
 
