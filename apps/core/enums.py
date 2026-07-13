@@ -78,3 +78,10 @@ class RelationType(models.TextChoices):
     SIMILAR = "similar", "Similar"
     PREDECESSOR = "predecessor", "Predecessora"
     SUCCESSOR = "successor", "Sucessora"
+
+
+class HumanRelevance(models.TextChoices):
+    MUITO_RELEVANTE = "muito_relevante", "Muito relevante"
+    POUCO_RELEVANTE = "pouco_relevante", "Pouco relevante"
+    RELEVANTE = "relevante", "Relevante"
+    SAIU_DE_PAUTA = "saiu_de_pauta", "Saiu de pauta"

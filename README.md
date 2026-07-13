@@ -64,7 +64,6 @@ Documentação completa em `/api/v1/docs`.
 ## Admin
 
 - Django Admin: `http://localhost:8000/admin/` (usar sessão Django)
-- Wagtail CMS: `http://localhost:8000/cms/`
 
 ### Criar Admin
 

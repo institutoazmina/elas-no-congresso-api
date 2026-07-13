@@ -1,8 +1,17 @@
+import io
+import json
+
 import pytest
 from django.test import Client
 
 from apps.legislatures.models import Legislature, Parliamentarian, ParliamentarianTerm, Party
-from apps.propositions.models import Proposition
+from apps.propositions.dataset import FIELDS
+from apps.propositions.models import (
+    AssessmentOrganization,
+    Proposition,
+    PropositionAnnotation,
+    PropositionAuthor,
+)
 from apps.taxonomy.models import Theme
 
 
@@ -57,6 +66,143 @@ class TestPropositionsEndpoints:
     def test_get_proposition_not_found(self):
         response = self.client.get("/api/v1/propositions/99999")
         assert response.status_code == 404
+
+
+@pytest.mark.django_db
+class TestDatasetEndpoint:
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.client = Client()
+        party = Party.objects.create(acronym="PT", name="Partido dos Trabalhadores")
+        maria = Parliamentarian.objects.create(full_name="Maria Silva", gender="F")
+        joao = Parliamentarian.objects.create(full_name="João Souza", gender="M")
+        self.prop = Proposition.objects.create(
+            external_id=42, house="camara", type_code="pl",
+            number_label="PL 123/2024", number=123, year=2024,
+            presented_at="2024-01-01", ementa="Sobre direitos das mulheres",
+            full_text="texto integral", tramitation_url="https://camara.leg.br/42",
+        )
+        # 2 autores → cada anotação vira 2 linhas
+        PropositionAuthor.objects.create(
+            proposition=self.prop, parliamentarian=maria, party=party,
+            state_at_authorship="SP", order_index=1,
+        )
+        PropositionAuthor.objects.create(
+            proposition=self.prop, parliamentarian=joao, party=party,
+            state_at_authorship="RJ", order_index=2,
+        )
+        # 2 anotações (favorável / desfavorável)
+        anis = AssessmentOrganization.objects.create(name="Anis")
+        themis = AssessmentOrganization.objects.create(name="Themis")
+        PropositionAnnotation.objects.create(
+            proposition=self.prop, organization=anis, is_favorable=True,
+            relevance="muito_relevante", human_theme="Aborto",
+        )
+        PropositionAnnotation.objects.create(
+            proposition=self.prop, organization=themis, is_favorable=False,
+            relevance="pouco_relevante", human_theme="Saúde",
+        )
+
+    def test_row_per_annotation_times_author(self):
+        r = self.client.get("/api/v1/dataset/")
+        assert r.status_code == 200
+        data = r.json()
+        # 2 anotações × 2 autores = 4 linhas
+        assert data["count"] == 4
+        assert len(data["items"]) == 4
+
+    def test_field_mapping_and_labels(self):
+        r = self.client.get("/api/v1/dataset/")
+        rows = r.json()["items"]
+        assert set(rows[0]) == {
+            "house", "id", "uri", "type_code", "name", "year", "summary",
+            "full_text", "author", "party", "state", "gender", "assessment",
+            "relevance", "theme", "is_favorable",
+        }
+        # id = external_id
+        assert all(row["id"] == 42 for row in rows)
+        assert all(row["uri"] == "https://camara.leg.br/42" for row in rows)
+        # rótulos em português
+        assert {row["assessment"] for row in rows} == {"Favorável", "Desfavorável"}
+        assert {row["gender"] for row in rows} == {"Feminino", "Masculino"}
+        assert {row["relevance"] for row in rows} == {"Muito relevante", "Pouco relevante"}
+        # autor / party / state por autor
+        assert {row["author"] for row in rows} == {"Maria Silva", "João Souza"}
+        assert {row["state"] for row in rows} == {"SP", "RJ"}
+        assert all(row["party"] == "PT" for row in rows)
+
+    def test_is_favorable_matches_assessment(self):
+        rows = self.client.get("/api/v1/dataset/").json()["items"]
+        for row in rows:
+            assert row["is_favorable"] is (row["assessment"] == "Favorável")
+
+    def test_default_returns_only_labeled(self):
+        # anotação sem rótulo (is_favorable=None) → excluída por padrão
+        PropositionAnnotation.objects.create(
+            proposition=self.prop,
+            organization=AssessmentOrganization.objects.create(name="Cfemea"),
+            is_favorable=None,
+        )
+        default = self.client.get("/api/v1/dataset/").json()["count"]
+        allrows = self.client.get(
+            "/api/v1/dataset/", {"include_unlabeled": "true"}
+        ).json()["count"]
+        assert default == 4  # só as 2 rotuladas × 2 autores
+        assert allrows == 6  # 3 anotações × 2 autores
+
+    def test_pagination_and_house_filter(self):
+        r = self.client.get("/api/v1/dataset/", {"limit": 2, "offset": 0})
+        assert len(r.json()["items"]) == 2
+        assert r.json()["count"] == 4
+        assert self.client.get("/api/v1/dataset/", {"house": "senado"}).json()["count"] == 0
+
+    def test_download_csv(self):
+        r = self.client.get("/api/v1/dataset/download", {"format": "csv"})
+        assert r.status_code == 200
+        assert r["Content-Type"].startswith("text/csv")
+        assert "attachment" in r["Content-Disposition"] and "dataset.csv" in r["Content-Disposition"]
+        body = b"".join(r.streaming_content).decode()
+        lines = [ln for ln in body.splitlines() if ln]
+        header = lines[0].split(",")
+        assert header == [
+            "house", "id", "uri", "type_code", "name", "year", "summary",
+            "full_text", "author", "party", "state", "gender", "assessment",
+            "relevance", "theme", "is_favorable",
+        ]
+        assert len(lines) - 1 == 4  # header + 4 linhas (2 anotações × 2 autores)
+
+    def test_download_jsonl(self):
+        r = self.client.get("/api/v1/dataset/download", {"format": "jsonl"})
+        assert r.status_code == 200
+        assert r["Content-Type"] == "application/x-ndjson"
+        rows = [json.loads(ln) for ln in b"".join(r.streaming_content).decode().splitlines() if ln]
+        assert len(rows) == 4
+        assert set(rows[0]) == set(FIELDS)
+        assert {row["author"] for row in rows} == {"Maria Silva", "João Souza"}
+
+    def test_download_parquet(self):
+        import pyarrow.parquet as pq
+
+        r = self.client.get("/api/v1/dataset/download", {"format": "parquet"})
+        assert r.status_code == 200
+        assert r["Content-Type"] == "application/vnd.apache.parquet"
+        table = pq.read_table(io.BytesIO(r.content))
+        assert table.num_rows == 4
+        assert table.column_names == FIELDS
+
+    def test_download_invalid_format(self):
+        r = self.client.get("/api/v1/dataset/download", {"format": "xml"})
+        assert r.status_code == 400
+
+    def test_download_respects_only_labeled_default(self):
+        PropositionAnnotation.objects.create(
+            proposition=self.prop,
+            organization=AssessmentOrganization.objects.create(name="Cfemea"),
+            is_favorable=None,
+        )
+        r = self.client.get("/api/v1/dataset/download", {"format": "jsonl"})
+        rows = [ln for ln in b"".join(r.streaming_content).decode().splitlines() if ln]
+        assert len(rows) == 4  # só as rotuladas (2 × 2 autores); a sem rótulo fica de fora
 
 
 @pytest.mark.django_db

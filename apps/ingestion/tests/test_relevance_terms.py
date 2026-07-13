@@ -1,9 +1,24 @@
 import pytest
 
 from apps.ingestion.models import RelevanceTerm
-from apps.ingestion.theme_assert import assert_theme
+from apps.ingestion.theme_assert import assert_theme, invalidate_cache
 
 pytestmark = pytest.mark.django_db
+
+
+@pytest.fixture(autouse=True)
+def _empty_relevance_terms():
+    """Isola os testes de tema da migração de seed (0003_seed_relevance_terms).
+
+    O seed roda na criação do banco de teste (fora da transação do teste), então
+    a tabela nunca está vazia — e os defaults do theme_assert jamais seriam
+    exercitados. Aqui limpamos a tabela dentro da transação de cada teste
+    (revertida ao fim) e invalidamos o cache de termos antes e depois.
+    """
+    RelevanceTerm.objects.all().delete()
+    invalidate_cache()
+    yield
+    invalidate_cache()
 
 
 class TestRelevanceTermModel:
