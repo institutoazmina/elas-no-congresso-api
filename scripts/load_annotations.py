@@ -17,13 +17,21 @@ Resolução do id da proposição (a planilha é suja), em 3 caminhos, nesta ord
   Cada candidato é validado contra `Nome` (tipo+número/ano); só o que bate é aceito.
   Ver scripts/verify_annotation_sources.py e o teste --limit 50 (50/50 resolvidas).
 
+Durabilidade (grava uma a uma — nada acumulado em memória):
+  - propositions/authors/parliamentarians/parties: gravadas A CADA proposição
+    (``_persist`` + ``update_or_create``).
+  - cada anotação é gravada IMEDIATAMENTE após montada (uma linha = um INSERT
+    commitado). Se cair, perde-se no máximo a linha em andamento.
+  - ``--start N`` retoma de onde parou (pula as N primeiras linhas, sem apagar).
+
 Uso:
-    uv run python scripts/load_annotations.py [--limit N] [--dry-run]
-                                              [--reset] [--skip-deputy-enrich]
+    uv run python scripts/load_annotations.py [--limit N] [--dry-run] [--reset]
+        [--start N] [--skip-deputy-enrich]
 
 --limit N            processa só as N primeiras linhas (teste).
 --dry-run            resolve/coleta e imprime, sem escrever no banco.
---reset              apaga proposition_annotations antes de carregar (idempotência).
+--reset              apaga proposition_annotations antes de carregar (recomeço limpo).
+--start N            retoma a partir da linha N (pula as N primeiras; não apaga).
 --skip-deputy-enrich não busca sexo/partido/UF do deputado (mais rápido, menos rico).
 """
 
@@ -40,8 +48,6 @@ import django
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
 django.setup()
-
-from django.db import transaction  # noqa: E402
 
 from apps.core.enums import HumanRelevance  # noqa: E402
 from apps.ingestion.clients.camara import CamaraClient  # noqa: E402
@@ -275,6 +281,8 @@ def main():
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--reset", action="store_true")
+    ap.add_argument("--start", type=int, default=0,
+                    help="retoma a partir da linha N (pula as N primeiras; não apaga)")
     ap.add_argument("--skip-deputy-enrich", action="store_true")
     args = ap.parse_args()
 
@@ -288,18 +296,22 @@ def main():
         n = PropositionAnnotation.objects.count()
         PropositionAnnotation.objects.all().delete()
         log.info("--reset: %d anotações apagadas", n)
-    elif not args.dry_run and PropositionAnnotation.objects.exists():
-        log.error("Já existem anotações no banco. Use --reset para recarregar.")
+    elif not args.dry_run and not args.start and PropositionAnnotation.objects.exists():
+        log.error("Já existem anotações. Use --reset (recomeço limpo) "
+                  "ou --start N (retomar a partir da linha N).")
         sys.exit(1)
+    if args.start:
+        log.info("--start: pulando as %d primeiras linhas (retomada)", args.start)
 
     cam, sen = CamaraClient(), SenadoClient()
     prop_cache: dict[tuple, int | None] = {}
     org_cache: dict[str, AssessmentOrganization] = {}
-    annotations = []
     stats = {"linhas": 0, "prop_ok": 0, "prop_falha": 0, "anot_criadas": 0}
 
     try:
         for i, row in enumerate(rows, 1):
+            if i <= args.start:
+                continue
             stats["linhas"] += 1
             key = (row.get("casa"), row.get("id"), row.get("uri"))
             if key not in prop_cache:
@@ -329,16 +341,13 @@ def main():
             if org is None:
                 org, _ = AssessmentOrganization.objects.get_or_create(name=name)
                 org_cache[name] = org
-            annotations.append(build_annotation(row, pk, org))
+            # Grava a anotação JÁ — 1 INSERT commitado por linha (durável).
+            build_annotation(row, pk, org).save()
+            stats["anot_criadas"] += 1
 
             if i % 200 == 0:
-                log.info("  ... %d/%d linhas (props únicas=%d)",
-                         i, len(rows), len(prop_cache))
-
-        if not args.dry_run and annotations:
-            with transaction.atomic():
-                PropositionAnnotation.objects.bulk_create(annotations, batch_size=500)
-            stats["anot_criadas"] = len(annotations)
+                log.info("  ... linha %d/%d | anotações salvas=%d | props únicas=%d",
+                         i, len(rows), stats["anot_criadas"], len(prop_cache))
     finally:
         cam.close()
         sen.close()

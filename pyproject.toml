@@ -23,6 +23,9 @@ dependencies = [
     "uvicorn[standard]>=0.30",
     "whitenoise>=6.7",
     "pyarrow>=25.0.0",
+    "pymupdf>=1.28.0",
+    "pytesseract>=0.3.13",
+    "pillow>=12.3.0",
 ]
 
 [dependency-groups]

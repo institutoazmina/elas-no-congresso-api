@@ -35,7 +35,8 @@ class TestExtractPdfText:
             fulltext, "PdfReader", lambda buf: _FakeReader([_FakePage("Ola "), _FakePage("Mundo")])
         )
         text = fulltext.extract_pdf_text("https://x/doc.pdf", client=_client(_ok_pdf))
-        assert text == "Ola Mundo"
+        # páginas agora são separadas por "\n" (evita grudar palavras entre páginas)
+        assert text == "Ola\nMundo"
 
     def test_no_extractable_text_returns_none(self, monkeypatch):
         monkeypatch.setattr(
