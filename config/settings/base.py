@@ -146,6 +146,10 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_ACKS_LATE = True
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+# Task longo (backfill de anotações ~2-3h) + acks_late no broker Redis: sem isto,
+# o broker re-entrega a mensagem após 1h (visibility_timeout padrão) e o task
+# rodaria de novo. Estende a janela para além da duração da carga.
+CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 6 * 60 * 60}  # 6h
 CELERY_TASK_COMPRESSION = "gzip"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 

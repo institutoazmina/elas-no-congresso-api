@@ -74,7 +74,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 log = logging.getLogger("load_annotations")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-DEFAULT_CSV = Path(__file__).resolve().parent.parent / "annotated-data.csv"
+DEFAULT_CSV = Path(__file__).resolve().parent.parent / "tmp" / "annotated-data.csv"
 
 
 # ── resolução do id da proposição (mesma lógica do verify) ────────────────────
@@ -273,35 +273,39 @@ def build_annotation(row, prop_pk, org):
     )
 
 
-# ── main ──────────────────────────────────────────────────────────────────────
+# ── execução ────────────────────────────────────────────────────────────────
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--csv", type=Path, default=DEFAULT_CSV)
-    ap.add_argument("--limit", type=int, default=None)
-    ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--reset", action="store_true")
-    ap.add_argument("--start", type=int, default=0,
-                    help="retoma a partir da linha N (pula as N primeiras; não apaga)")
-    ap.add_argument("--skip-deputy-enrich", action="store_true")
-    args = ap.parse_args()
+def run(
+    *,
+    csv_path=DEFAULT_CSV,
+    limit: int | None = None,
+    dry_run: bool = False,
+    reset: bool = False,
+    start: int = 0,
+    skip_deputy_enrich: bool = False,
+) -> dict:
+    """Executa a carga. Reutilizável pela CLI e por um task Celery.
 
-    with open(args.csv, encoding="utf-8") as f:
+    Levanta ``RuntimeError`` se já houver anotações e não for ``reset``/``start``.
+    Retorna o dict de stats.
+    """
+    with open(csv_path, encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    if args.limit:
-        rows = rows[: args.limit]
+    if limit:
+        rows = rows[:limit]
     log.info("Linhas a processar: %d", len(rows))
 
-    if args.reset and not args.dry_run:
+    if reset and not dry_run:
         n = PropositionAnnotation.objects.count()
         PropositionAnnotation.objects.all().delete()
-        log.info("--reset: %d anotações apagadas", n)
-    elif not args.dry_run and not args.start and PropositionAnnotation.objects.exists():
-        log.error("Já existem anotações. Use --reset (recomeço limpo) "
-                  "ou --start N (retomar a partir da linha N).")
-        sys.exit(1)
-    if args.start:
-        log.info("--start: pulando as %d primeiras linhas (retomada)", args.start)
+        log.info("reset: %d anotações apagadas", n)
+    elif not dry_run and not start and PropositionAnnotation.objects.exists():
+        raise RuntimeError(
+            "Já existem anotações. Use reset=True (recomeço limpo) "
+            "ou start=N (retomar a partir da linha N)."
+        )
+    if start:
+        log.info("start: pulando as %d primeiras linhas (retomada)", start)
 
     cam, sen = CamaraClient(), SenadoClient()
     prop_cache: dict[tuple, int | None] = {}
@@ -310,15 +314,15 @@ def main():
 
     try:
         for i, row in enumerate(rows, 1):
-            if i <= args.start:
+            if i <= start:
                 continue
             stats["linhas"] += 1
             key = (row.get("casa"), row.get("id"), row.get("uri"))
             if key not in prop_cache:
                 try:
                     prop_cache[key] = resolve_and_persist(
-                        row, cam, sen, dry_run=args.dry_run,
-                        enrich_deputy=not args.skip_deputy_enrich,
+                        row, cam, sen, dry_run=dry_run,
+                        enrich_deputy=not skip_deputy_enrich,
                     )
                 except Exception:
                     log.exception("Falha ao coletar linha %d (%s)", i, row.get("Nome"))
@@ -333,7 +337,7 @@ def main():
                 continue
             stats["prop_ok"] += 1
 
-            if args.dry_run:
+            if dry_run:
                 continue
 
             name = row["Avaliadora"].strip()
@@ -358,6 +362,28 @@ def main():
     log.info("  proposições únicas resolvidas: %d",
              sum(1 for v in prop_cache.values() if v))
     log.info("  avaliadoras (orgs): %d", len(org_cache))
+    return stats
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--csv", type=Path, default=DEFAULT_CSV)
+    ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reset", action="store_true")
+    ap.add_argument("--start", type=int, default=0,
+                    help="retoma a partir da linha N (pula as N primeiras; não apaga)")
+    ap.add_argument("--skip-deputy-enrich", action="store_true")
+    args = ap.parse_args()
+    try:
+        run(
+            csv_path=args.csv, limit=args.limit, dry_run=args.dry_run,
+            reset=args.reset, start=args.start,
+            skip_deputy_enrich=args.skip_deputy_enrich,
+        )
+    except RuntimeError as exc:
+        log.error("%s", exc)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

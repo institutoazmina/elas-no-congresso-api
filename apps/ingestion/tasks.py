@@ -245,3 +245,20 @@ def classify_proposition(proposition_id: int):
         prop.number_label,
         len(full_text) if full_text else 0,
     )
+
+
+# ── carga retroativa de anotações — JOB TEMPORÁRIO (remover após a carga) ─────
+
+@shared_task(bind=True)
+def backfill_annotations(self, reset: bool = True, start: int = 0, limit: int | None = None):
+    """Carga retroativa das anotações humanas (one-shot, sequencial).
+
+    Roda em processo no worker, gravando uma a uma (durável). Para retomar após
+    queda, disparar de novo com ``start=<última linha>`` e ``reset=False``.
+    """
+    from scripts.load_annotations import run
+
+    logger.info("[backfill] iniciando (reset=%s start=%s limit=%s)", reset, start, limit)
+    stats = run(reset=reset, start=start, limit=limit)
+    logger.info("[backfill] concluído: %s", stats)
+    return stats

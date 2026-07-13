@@ -29,7 +29,7 @@ django.setup()
 from apps.ingestion.clients.camara import CamaraClient  # noqa: E402
 from apps.ingestion.clients.senado import SenadoClient  # noqa: E402
 
-DEFAULT_CSV = Path(__file__).resolve().parent.parent / "annotated-data.csv"
+DEFAULT_CSV = Path(__file__).resolve().parent.parent / "tmp" / "annotated-data.csv"
 
 # ── extração de id/casa das colunas sujas ────────────────────────────────────
 
