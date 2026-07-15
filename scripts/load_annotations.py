@@ -88,7 +88,10 @@ _URI_PATTERNS = [
     (re.compile(r"legis\.senado\.leg\.br/dadosabertos/materia/(\d+)"), "senado"),
 ]
 _CASA_TO_HOUSE = {"CD": "camara", "SF": "senado"}
-_NOME_RE = re.compile(r"^\s*([A-Za-zÀ-ÿ]+)\s*0*(\d+)\s*/\s*(\d{4})")
+# Separador: a planilha usa '/', mas há linha com '-' ('PL 258-2019'). Sem isto
+# parse_nome devolve None, e _matches rejeita TODO candidato (bool(expected)),
+# derrubando a linha inteira mesmo com o id certo.
+_NOME_RE = re.compile(r"^\s*([A-Za-zÀ-ÿ]+)\s*0*(\d+)\s*[/\-.]\s*(\d{4})")
 
 
 def parse_nome(nome: str):
