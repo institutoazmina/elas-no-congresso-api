@@ -91,7 +91,10 @@ def _extract(content: bytes, url: str = "") -> str | None:
     if doc is not None:
         doc.close()
 
-    return "\n".join(parts).strip() or None
+    # Postgres recusa NUL (0x00) em campo text, e o pypdf emite \x00 quando o
+    # PDF tem mapa de encoding quebrado — sem isto o _persist estoura DataError
+    # e a proposição inteira se perde.
+    return "\n".join(parts).replace("\x00", "").strip() or None
 
 
 def _open_fitz(content: bytes):
