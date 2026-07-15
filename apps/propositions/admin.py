@@ -42,7 +42,9 @@ class AnnotationInline(TabularInline):
 @admin.register(Proposition)
 class PropositionAdmin(ModelAdmin):
     list_display = ["number_label", "year", "house", "type_code", "is_active", "presented_at"]
-    list_filter = ["house", "is_active", "type_code"]
+    # EmptyFieldListFilter cobre NULL e '' — os dois estados de "sem inteiro
+    # teor" (ex.: OCR que não rodou ou falhou).
+    list_filter = ["house", "is_active", "type_code", ("full_text", admin.EmptyFieldListFilter)]
     search_fields = ["number_label", "ementa", "keywords"]
     readonly_fields = ["created_at", "updated_at"]
     inlines = [AuthorInline, RapporteurInline, AnalysisInline, AnnotationInline]
@@ -68,7 +70,12 @@ class AssessmentOrganizationAdmin(ModelAdmin):
 @admin.register(PropositionAnnotation)
 class PropositionAnnotationAdmin(ModelAdmin):
     list_display = ["proposition", "organization", "is_favorable", "has_caveats", "relevance", "human_theme"]
-    list_filter = ["organization", "is_favorable", "has_caveats", "relevance"]
+    # full_text é da Proposition, não da anotação: filtra as anotações cuja
+    # proposição está sem inteiro teor (linhas inúteis para o dataset de treino).
+    list_filter = [
+        "organization", "is_favorable", "has_caveats", "relevance",
+        ("proposition__full_text", admin.EmptyFieldListFilter),
+    ]
     search_fields = ["human_theme", "comments"]
     autocomplete_fields = ["proposition", "organization"]
     readonly_fields = ["created_at", "updated_at"]
