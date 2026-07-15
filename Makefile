@@ -29,18 +29,22 @@ migrate:
 seed:
 	docker-compose exec api python manage.py loaddata fixtures/*.json || true
 
+# pytest/ruff/mypy/locust rodam no host (via uv), não em `docker-compose exec api`:
+# o runtime da imagem é distroless e buildado com `uv sync --no-dev`, então não
+# tem shell nem as dev deps. Os testes de integração falam com o Postgres do
+# compose pela porta publicada — `make up` antes.
 test:
-	docker-compose exec api pytest tests/unit/ -v
+	uv run pytest tests/unit/
 
 test-integration:
-	docker-compose exec api pytest tests/integration/ -v --reuse-db
+	uv run pytest tests/integration/ --reuse-db
 
 loadtest:
-	docker-compose exec api locust -f tests/load/test_load.py --host http://api:8000
+	uv run locust -f tests/load/test_load.py --host http://localhost:8000
 
 lint:
-	docker-compose exec api ruff check .
-	docker-compose exec api mypy .
+	uv run ruff check .
+	uv run mypy .
 
 clean:
 	docker-compose down -v
