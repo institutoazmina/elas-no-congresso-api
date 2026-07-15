@@ -37,8 +37,8 @@ router = Router()
 # Ordem canônica dos campos de saída (vale p/ JSON, CSV, Parquet e JSONL).
 FIELDS = [
     "house", "id", "uri", "type_code", "name", "year", "summary", "full_text",
-    "author", "party", "state", "gender", "assessment", "relevance", "theme",
-    "is_favorable",
+    "author", "author_index", "party", "state", "gender", "assessment",
+    "relevance", "theme", "is_favorable",
 ]
 
 
@@ -52,6 +52,7 @@ class DatasetRowSchema(Schema):
     summary: str | None = None  # propositions.ementa
     full_text: str | None = None
     author: str | None = None
+    author_index: int | None = None  # proposition_authors.order_index
     party: str | None = None
     state: str | None = None
     gender: str | None = None
@@ -98,6 +99,7 @@ def _dataset_qs(house: str | None, year: int | None, include_unlabeled: bool):
             F("proposition__authors__parliamentarian__full_name"),
             F("proposition__authors__institutional_author__name"),
         ),
+        author_index=F("proposition__authors__order_index"),
         party=F("proposition__authors__party__acronym"),
         state=F("proposition__authors__state_at_authorship"),
         gender=_label_case(
@@ -111,7 +113,7 @@ def _dataset_qs(house: str | None, year: int | None, include_unlabeled: bool):
         ),
         relevance_label=_label_case("relevance", dict(HumanRelevance.choices)),
         theme=F("human_theme"),
-    ).order_by("id", "proposition__authors__order_index")
+    ).order_by("id", "author_index")
 
 
 def _row(d: dict) -> dict:
@@ -126,6 +128,7 @@ def _row(d: dict) -> dict:
         "summary": d["summary"],
         "full_text": d["full_text"],
         "author": d["author"],
+        "author_index": d["author_index"],
         "party": d["party"],
         "state": d["state"],
         "gender": d["gender"],

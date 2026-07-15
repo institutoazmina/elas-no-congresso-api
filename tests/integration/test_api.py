@@ -116,8 +116,8 @@ class TestDatasetEndpoint:
         rows = r.json()["items"]
         assert set(rows[0]) == {
             "house", "id", "uri", "type_code", "name", "year", "summary",
-            "full_text", "author", "party", "state", "gender", "assessment",
-            "relevance", "theme", "is_favorable",
+            "full_text", "author", "author_index", "party", "state", "gender",
+            "assessment", "relevance", "theme", "is_favorable",
         }
         # id = external_id
         assert all(row["id"] == 42 for row in rows)
@@ -130,6 +130,12 @@ class TestDatasetEndpoint:
         assert {row["author"] for row in rows} == {"Maria Silva", "João Souza"}
         assert {row["state"] for row in rows} == {"SP", "RJ"}
         assert all(row["party"] == "PT" for row in rows)
+        # author_index = proposition_authors.order_index, e as linhas de cada
+        # anotação saem ordenadas por ele
+        assert {(row["author"], row["author_index"]) for row in rows} == {
+            ("Maria Silva", 1), ("João Souza", 2),
+        }
+        assert [row["author_index"] for row in rows] == [1, 2, 1, 2]
 
     def test_is_favorable_matches_assessment(self):
         rows = self.client.get("/api/v1/dataset/").json()["items"]
@@ -166,8 +172,8 @@ class TestDatasetEndpoint:
         header = lines[0].split(",")
         assert header == [
             "house", "id", "uri", "type_code", "name", "year", "summary",
-            "full_text", "author", "party", "state", "gender", "assessment",
-            "relevance", "theme", "is_favorable",
+            "full_text", "author", "author_index", "party", "state", "gender",
+            "assessment", "relevance", "theme", "is_favorable",
         ]
         assert len(lines) - 1 == 4  # header + 4 linhas (2 anotações × 2 autores)
 
