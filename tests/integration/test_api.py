@@ -96,11 +96,12 @@ class TestDatasetEndpoint:
         themis = AssessmentOrganization.objects.create(name="Themis")
         PropositionAnnotation.objects.create(
             proposition=self.prop, organization=anis, is_favorable=True,
-            relevance="muito_relevante", human_theme="Aborto",
+            relevance="muito_relevante", category="direitos_sexuais_reprodutivos",
+            legacy_theme="Aborto",
         )
         PropositionAnnotation.objects.create(
             proposition=self.prop, organization=themis, is_favorable=False,
-            relevance="pouco_relevante", human_theme="Saúde",
+            relevance="pouco_relevante", category="saude", legacy_theme="Saúde",
         )
 
     def test_row_per_annotation_times_author(self):
@@ -117,7 +118,7 @@ class TestDatasetEndpoint:
         assert set(rows[0]) == {
             "house", "id", "uri", "type_code", "name", "year", "summary",
             "full_text", "author", "author_index", "party", "state", "gender",
-            "assessment", "relevance", "theme", "is_favorable",
+            "assessment", "relevance", "theme", "is_favorable", "legacy_theme",
         }
         # id = external_id
         assert all(row["id"] == 42 for row in rows)
@@ -126,6 +127,9 @@ class TestDatasetEndpoint:
         assert {row["assessment"] for row in rows} == {"Favorável", "Desfavorável"}
         assert {row["gender"] for row in rows} == {"Feminino", "Masculino"}
         assert {row["relevance"] for row in rows} == {"Muito relevante", "Pouco relevante"}
+        # `theme` é a categoria (taxonomia fechada); o texto livre foi para `legacy_theme`
+        assert {row["theme"] for row in rows} == {"Direitos Sexuais e Reprodutivos", "Saúde"}
+        assert {row["legacy_theme"] for row in rows} == {"Aborto", "Saúde"}
         # autor / party / state por autor
         assert {row["author"] for row in rows} == {"Maria Silva", "João Souza"}
         assert {row["state"] for row in rows} == {"SP", "RJ"}
@@ -147,7 +151,7 @@ class TestDatasetEndpoint:
         PropositionAnnotation.objects.create(
             proposition=self.prop,
             organization=AssessmentOrganization.objects.create(name="Cfemea"),
-            is_favorable=None,
+            is_favorable=None, category="violencias_de_genero",
         )
         default = self.client.get("/api/v1/dataset/").json()["count"]
         allrows = self.client.get(
@@ -170,10 +174,11 @@ class TestDatasetEndpoint:
         body = b"".join(r.streaming_content).decode()
         lines = [ln for ln in body.splitlines() if ln]
         header = lines[0].split(",")
+        # `legacy_theme` entrou no FIM: as colunas anteriores não se deslocam
         assert header == [
             "house", "id", "uri", "type_code", "name", "year", "summary",
             "full_text", "author", "author_index", "party", "state", "gender",
-            "assessment", "relevance", "theme", "is_favorable",
+            "assessment", "relevance", "theme", "is_favorable", "legacy_theme",
         ]
         assert len(lines) - 1 == 4  # header + 4 linhas (2 anotações × 2 autores)
 
@@ -204,7 +209,7 @@ class TestDatasetEndpoint:
         PropositionAnnotation.objects.create(
             proposition=self.prop,
             organization=AssessmentOrganization.objects.create(name="Cfemea"),
-            is_favorable=None,
+            is_favorable=None, category="violencias_de_genero",
         )
         r = self.client.get("/api/v1/dataset/download", {"format": "jsonl"})
         rows = [ln for ln in b"".join(r.streaming_content).decode().splitlines() if ln]

@@ -35,7 +35,9 @@ class AnalysisInline(TabularInline):
 class AnnotationInline(TabularInline):
     model = PropositionAnnotation
     extra = 0
-    fields = ["organization", "is_favorable", "has_caveats", "relevance", "human_theme", "comments"]
+    # `legacy_theme` fica fora: o tema livre foi substituído pelo select de
+    # `category`, e o texto antigo é histórico (visível só no form da anotação).
+    fields = ["organization", "is_favorable", "has_caveats", "relevance", "category", "comments"]
     autocomplete_fields = ["organization"]
 
 
@@ -69,13 +71,14 @@ class AssessmentOrganizationAdmin(ModelAdmin):
 
 @admin.register(PropositionAnnotation)
 class PropositionAnnotationAdmin(ModelAdmin):
-    list_display = ["proposition", "organization", "is_favorable", "has_caveats", "relevance", "human_theme"]
+    list_display = ["proposition", "organization", "category", "is_favorable", "has_caveats", "relevance"]
     # full_text é da Proposition, não da anotação: filtra as anotações cuja
     # proposição está sem inteiro teor (linhas inúteis para o dataset de treino).
     list_filter = [
-        "organization", "is_favorable", "has_caveats", "relevance",
+        "category", "organization", "is_favorable", "has_caveats", "relevance",
         ("proposition__full_text", admin.EmptyFieldListFilter),
     ]
-    search_fields = ["human_theme", "comments"]
+    search_fields = ["legacy_theme", "comments"]
     autocomplete_fields = ["proposition", "organization"]
-    readonly_fields = ["created_at", "updated_at"]
+    # `legacy_theme` é o tema livre da planilha: consultável, nunca editável.
+    readonly_fields = ["legacy_theme", "created_at", "updated_at"]

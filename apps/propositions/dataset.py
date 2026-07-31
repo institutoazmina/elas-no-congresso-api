@@ -9,7 +9,13 @@ linhas — reproduzindo a estrutura do CSV de treino original.
 
 Por padrão retorna só dados anotados (``is_favorable`` preenchido);
 ``include_unlabeled=true`` inclui os sem rótulo. Campos em inglês; os rótulos de
-``assessment``/``relevance``/``gender`` saem em português (via Case/When no SQL).
+``assessment``/``relevance``/``gender``/``theme`` saem em português (via Case/When
+no SQL).
+
+``theme`` mudou de conteúdo: era o texto livre da planilha (107 variantes, com
+duplicatas de caixa) e passou a ser a categoria da taxonomia fechada
+(``PropositionCategory``, 10 valores). O texto original continua disponível na
+coluna ``legacy_theme``, acrescentada no fim para não deslocar as demais.
 """
 
 import csv
@@ -28,7 +34,7 @@ from ninja import Field, Router, Schema
 from ninja.errors import HttpError
 from ninja.pagination import LimitOffsetPagination, paginate
 
-from apps.core.enums import Gender, HumanRelevance
+from apps.core.enums import Gender, HumanRelevance, PropositionCategory
 
 from .models import PropositionAnnotation
 
@@ -38,7 +44,7 @@ router = Router()
 FIELDS = [
     "house", "id", "uri", "type_code", "name", "year", "summary", "full_text",
     "author", "author_index", "party", "state", "gender", "assessment",
-    "relevance", "theme", "is_favorable",
+    "relevance", "theme", "is_favorable", "legacy_theme",
 ]
 
 
@@ -58,8 +64,9 @@ class DatasetRowSchema(Schema):
     gender: str | None = None
     assessment: str | None = None
     relevance: str | None = Field(default=None, validation_alias="relevance_label")
-    theme: str | None = None
+    theme: str | None = Field(default=None, validation_alias="theme_label")
     is_favorable: bool | None = None
+    legacy_theme: str | None = None
 
 
 def _label_case(field: str, mapping: dict) -> Case:
@@ -86,7 +93,9 @@ def _dataset_qs(house: str | None, year: int | None, include_unlabeled: bool):
         qs = qs.filter(proposition__year=year)
 
     return qs.values(
-        "is_favorable",  # coluna do model → chave "is_favorable" (bool cru)
+        # colunas do model saem com o próprio nome (alias com F() daria conflito)
+        "is_favorable",  # bool cru
+        "legacy_theme",  # "Tema (class humana)" da planilha, texto livre
         house=F("proposition__house"),
         external_id=F("proposition__external_id"),
         uri=F("proposition__tramitation_url"),
@@ -112,7 +121,9 @@ def _dataset_qs(house: str | None, year: int | None, include_unlabeled: bool):
             output_field=CharField(),
         ),
         relevance_label=_label_case("relevance", dict(HumanRelevance.choices)),
-        theme=F("human_theme"),
+        # `theme` passa a ser a categoria (taxonomia fechada, rótulo em
+        # português); o texto livre antigo continua disponível em `legacy_theme`.
+        theme_label=_label_case("category", dict(PropositionCategory.choices)),
     ).order_by("id", "author_index")
 
 
@@ -134,8 +145,9 @@ def _row(d: dict) -> dict:
         "gender": d["gender"],
         "assessment": d["assessment"],
         "relevance": d["relevance_label"],
-        "theme": d["theme"],
+        "theme": d["theme_label"],
         "is_favorable": d["is_favorable"],
+        "legacy_theme": d["legacy_theme"],
     }
 
 

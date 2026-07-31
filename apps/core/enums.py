@@ -85,3 +85,33 @@ class HumanRelevance(models.TextChoices):
     POUCO_RELEVANTE = "pouco_relevante", "Pouco relevante"
     RELEVANTE = "relevante", "Relevante"
     SAIU_DE_PAUTA = "saiu_de_pauta", "Saiu de pauta"
+
+
+class PropositionCategory(models.TextChoices):
+    """Taxonomia editorial fechada ("Categorias 2026") das anotações humanas.
+
+    Substitui o antigo `human_theme` (texto livre, 107 variantes com duplicatas
+    de caixa). Toda anotação é obrigatoriamente uma destas — o texto original
+    ficou preservado em `legacy_theme`, fora dos formulários.
+    """
+
+    VIOLENCIAS_DE_GENERO = "violencias_de_genero", "Violências de Gênero"
+    TRABALHO_ECONOMIA_CUIDADO = (
+        "trabalho_economia_cuidado", "Trabalho, Economia, Cuidado e Proteção Social"
+    )
+    DIREITOS_SEXUAIS_REPRODUTIVOS = (
+        "direitos_sexuais_reprodutivos", "Direitos Sexuais e Reprodutivos"
+    )
+    PARTICIPACAO_POLITICA = (
+        "participacao_politica", "Participação Política e Institucionalidade"
+    )
+    LGBTQIAPN = "lgbtqiapn", "LGBTQIAPN+"
+    SAUDE = "saude", "Saúde"
+    EDUCACAO_CULTURA = "educacao_cultura", "Educação e Cultura"
+    FAMILIA_PARENTALIDADE = (
+        "familia_parentalidade", "Família, Parentalidade e Relações Civis"
+    )
+    INFANCIA_ADOLESCENCIA = "infancia_adolescencia", "Infância e Adolescência"
+    IGUALDADE_ANTIDISCRIMINACAO = (
+        "igualdade_antidiscriminacao", "Igualdade e Antidiscriminação"
+    )
