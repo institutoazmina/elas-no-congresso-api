@@ -2,7 +2,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models import GeneratedField
 
-from apps.core.enums import House, HumanRelevance
+from apps.core.enums import House, HumanRelevance, PropositionCategory
 from apps.legislatures.models import InstitutionalAuthor, Parliamentarian, Party
 
 
@@ -179,14 +179,27 @@ class PropositionAnnotation(models.Model):
     # nota av (1 / -1) e nota rel (2 / 1)
     assessment_score = models.SmallIntegerField(null=True, blank=True)
     relevance_score = models.SmallIntegerField(null=True, blank=True)
-    # Tema (class humana): texto livre, preserva fidelidade ao dado original
-    human_theme = models.TextField(null=True, blank=True)
+    # Categorias 2026: taxonomia fechada, obrigatória. Substitui o antigo
+    # `human_theme` como campo de trabalho das avaliadoras.
+    category = models.CharField(max_length=32, choices=PropositionCategory.choices)
+    # Antigo `human_theme` ("Tema (class humana)"): texto livre da planilha, com
+    # granularidade que as 10 categorias colapsam (Feminicídio, Lei Maria da
+    # Penha, Microcefalia...). Preservado como histórico, fora dos formulários.
+    legacy_theme = models.TextField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "proposition_annotations"
+        constraints = [
+            # `choices` só vale em forms/full_clean; o check garante no banco
+            # que scripts e shell também fiquem dentro da taxonomia.
+            models.CheckConstraint(
+                condition=models.Q(category__in=PropositionCategory.values),
+                name="proposition_annotations_category_check",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         # Invariante: relevance nunca é nulo — cai em 'relevante' se vier None.

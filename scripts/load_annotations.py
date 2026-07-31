@@ -41,6 +41,7 @@ import logging
 import os
 import re
 import sys
+from functools import lru_cache
 from pathlib import Path
 
 import django
@@ -65,6 +66,11 @@ from apps.ingestion.mappers import (  # noqa: E402
     pick_senado_full_text_url,
 )
 from apps.ingestion.tasks import _persist  # noqa: E402
+from apps.propositions.categories import (  # noqa: E402
+    load_category_map,
+    parse_category,
+    proposition_fallback,
+)
 from apps.propositions.models import (  # noqa: E402
     AssessmentOrganization,
     PropositionAnnotation,
@@ -262,6 +268,36 @@ def clean(v):
     return v or None
 
 
+def map_category(row):
+    """Categoria (obrigatória): coluna `Categorias 2026`, com o mapa como reserva.
+
+    Planilhas antigas (o `annotated-data.csv` da carga original) não têm a coluna;
+    para elas cai em ``tmp/categories-2026.csv``, casando por (Nome, Avaliadora).
+    Sem nenhum dos dois a linha é intransponível — `category` é NOT NULL.
+    """
+    if (categoria := parse_category(row.get("Categorias 2026"))):
+        return categoria
+    prop = parse_nome(row.get("Nome", ""))
+    if prop:
+        mapa, fallback = _category_map()
+        # Par (proposição, avaliadora); se a avaliadora divergir da planilha,
+        # cai na categoria da proposição quando ela for única.
+        categoria = mapa.get((*prop, (row.get("Avaliadora") or "").strip())) or fallback.get(prop)
+    if not categoria:
+        raise ValueError(
+            f"linha sem categoria: Nome={row.get('Nome')!r} "
+            f"Avaliadora={row.get('Avaliadora')!r} — acrescente a coluna "
+            "'Categorias 2026' à planilha ou regenere tmp/categories-2026.csv"
+        )
+    return categoria
+
+
+@lru_cache(maxsize=1)
+def _category_map():
+    mapa = load_category_map()
+    return mapa, proposition_fallback(mapa)
+
+
 def build_annotation(row, prop_pk, org):
     return PropositionAnnotation(
         proposition_id=prop_pk,
@@ -271,7 +307,8 @@ def build_annotation(row, prop_pk, org):
         relevance=map_relevance(row.get("Relevância")),
         assessment_score=map_score(row.get("nota av")),
         relevance_score=map_score(row.get("nota rel")),
-        human_theme=clean(row.get("Tema (class humana)")),
+        category=map_category(row),
+        legacy_theme=clean(row.get("Tema (class humana)")),
         comments=clean(row.get("Comentários")),
     )
 

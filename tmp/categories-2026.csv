@@ -1,0 +1,3127 @@
+type_code,number,year,organization,category
+MPV,1319,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PDL,518,2019,SPW,participacao_politica
+PDL,699,2019,Mana a Mana,violencias_de_genero
+PDL,19,2020,Anis,lgbtqiapn
+PDL,38,2020,Anis,lgbtqiapn
+PDL,47,2020,Anis,lgbtqiapn
+PDL,73,2020,Anis,direitos_sexuais_reprodutivos
+PDL,250,2020,Anis,direitos_sexuais_reprodutivos
+PDL,251,2020,Anis,direitos_sexuais_reprodutivos
+PDL,259,2020,Anis,direitos_sexuais_reprodutivos
+PDL,271,2020,Anis,direitos_sexuais_reprodutivos
+PDL,308,2020,ARTIGO 19,violencias_de_genero
+PDL,381,2020,Anis,direitos_sexuais_reprodutivos
+PDL,383,2020,Anis,direitos_sexuais_reprodutivos
+PDL,385,2020,Anis,direitos_sexuais_reprodutivos
+PDL,386,2020,Anis,direitos_sexuais_reprodutivos
+PDL,387,2020,Anis,direitos_sexuais_reprodutivos
+PDL,409,2020,Anis,direitos_sexuais_reprodutivos
+PDL,410,2020,Anis,direitos_sexuais_reprodutivos
+PDL,412,2020,Anis,direitos_sexuais_reprodutivos
+PDL,413,2020,Anis,direitos_sexuais_reprodutivos
+PDL,428,2020,Anis,direitos_sexuais_reprodutivos
+PDL,459,2020,Anis,participacao_politica
+PDL,472,2020,Anis,direitos_sexuais_reprodutivos
+PDL,481,2020,Anis,lgbtqiapn
+PDL,9,2021,Observatório da Violência Obstétrica no Brasil,saude
+PDL,18,2021,Instituto Maria da Penha,participacao_politica
+PDL,136,2021,Anis,direitos_sexuais_reprodutivos
+PDL,176,2021,deFEMde - Rede Feminista de Juristas,direitos_sexuais_reprodutivos
+PDL,252,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PDL,375,2021,Anis,direitos_sexuais_reprodutivos
+PDL,378,2021,Anis,direitos_sexuais_reprodutivos
+PDL,612,2021,Anis,direitos_sexuais_reprodutivos
+PDL,613,2021,Anis,direitos_sexuais_reprodutivos
+PDL,158,2022,Instituto + Diversidade,lgbtqiapn
+PDL,359,2022,SOF,saude
+PDL,360,2022,SOF,saude
+PDL,362,2022,SOF,saude
+PDL,363,2022,SOF,saude
+PDL,364,2022,SOF,saude
+PDL,68,2023,Instituto + Diversidade,lgbtqiapn
+PDL,91,2023,Instituto + Diversidade,lgbtqiapn
+PDL,92,2023,Instituto + Diversidade,lgbtqiapn
+PDL,181,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,lgbtqiapn
+PDL,333,2023,Instituto + Diversidade,lgbtqiapn
+PDL,335,2023,Instituto + Diversidade,lgbtqiapn
+PDL,336,2023,Instituto + Diversidade,lgbtqiapn
+PDL,337,2023,Instituto + Diversidade,lgbtqiapn
+PDL,338,2023,Instituto + Diversidade,lgbtqiapn
+PDL,339,2023,Instituto + Diversidade,lgbtqiapn
+PDL,342,2023,Instituto + Diversidade,lgbtqiapn
+PDL,343,2023,Anis,direitos_sexuais_reprodutivos
+PDL,427,2023,Instituto + Diversidade,lgbtqiapn
+PDL,15,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PDL,20,2024,Anis,direitos_sexuais_reprodutivos
+PDL,23,2024,Anis,direitos_sexuais_reprodutivos
+PDL,24,2024,Anis,direitos_sexuais_reprodutivos
+PDL,31,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PDL,36,2024,Anis,direitos_sexuais_reprodutivos
+PDL,38,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PDL,111,2024,Anis,direitos_sexuais_reprodutivos
+PDL,169,2024,Juristas Negras,trabalho_economia_cuidado
+PDL,204,2024,Instituto + Diversidade,lgbtqiapn
+PDL,265,2024,Instituto + Diversidade,lgbtqiapn
+PDL,331,2024,Instituto Update,lgbtqiapn
+PDL,333,2024,Instituto + Diversidade,lgbtqiapn
+PDL,347,2024,Instituto + Diversidade,lgbtqiapn
+PDL,375,2024,Instituto + Diversidade,educacao_cultura
+PDL,377,2024,Instituto + Diversidade,educacao_cultura
+PDL,378,2024,Instituto + Diversidade,educacao_cultura
+PDL,381,2024,Instituto + Diversidade,educacao_cultura
+PDL,3,2025,Anis,direitos_sexuais_reprodutivos
+PDL,3,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PDL,6,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PDL,19,2025,Anis,direitos_sexuais_reprodutivos
+PDL,35,2025,Anis,direitos_sexuais_reprodutivos
+PDL,36,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PDL,48,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PDL,53,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PDL,65,2025,Instituto Patrícia Galvão,violencias_de_genero
+PDL,74,2025,Instituto Patrícia Galvão,violencias_de_genero
+PDL,122,2025,Anis,direitos_sexuais_reprodutivos
+PDL,138,2025,Instituto Patrícia Galvão,violencias_de_genero
+PDL,154,2025,Instituto + Diversidade,lgbtqiapn
+PDL,343,2025,Instituto Patrícia Galvão,infancia_adolescencia
+PDL,1122,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PDL,1154,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PDL,1209,2025,Anis,direitos_sexuais_reprodutivos
+PDL,1210,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PDL,155,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PDL,182,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,igualdade_antidiscriminacao
+PDL,269,2026,ARTIGO 19,igualdade_antidiscriminacao
+PEC,75,2019,ARTIGO 19,violencias_de_genero
+PEC,81,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PEC,158,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PEC,163,2019,Gepô,trabalho_economia_cuidado
+PEC,176,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PEC,177,2019,Gepô,trabalho_economia_cuidado
+PEC,18,2021,Mulheres Negras Decidem,participacao_politica
+PEC,24,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PEC,49,2023,Anis,direitos_sexuais_reprodutivos
+PEC,58,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PEC,52,2024,Instituto Update,participacao_politica
+PEC,19,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PEC,31,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PEC,41,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PFS,3,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,17,2019,Instituto Maria da Penha,violencias_de_genero
+PL,25,2019,Saúde_Gestante,saude
+PL,112,2019,Instituto Maria da Penha,violencias_de_genero
+PL,118,2019,Anis,direitos_sexuais_reprodutivos
+PL,119,2019,Saúde_Gestante,saude
+PL,120,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,123,2019,Instituto Maria da Penha,violencias_de_genero
+PL,124,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,126,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,130,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,147,2019,Saúde_Gestante,trabalho_economia_cuidado
+PL,173,2019,SOF,trabalho_economia_cuidado
+PL,226,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,242,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,258,2019,SPW,educacao_cultura
+PL,260,2019,Anis,direitos_sexuais_reprodutivos
+PL,294,2019,SOF,trabalho_economia_cuidado
+PL,331,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,338,2019,Anis,educacao_cultura
+PL,382,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,415,2019,Instituto Maria da Penha,violencias_de_genero
+PL,450,2019,SPW,violencias_de_genero
+PL,452,2019,SPW,violencias_de_genero
+PL,453,2019,Instituto Maria da Penha,violencias_de_genero
+PL,464,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,472,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,483,2019,Anis,violencias_de_genero
+PL,501,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,503,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,508,2019,Gepô,educacao_cultura
+PL,510,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,517,2019,ARTIGO 19,violencias_de_genero
+PL,523,2019,Anis,educacao_cultura
+PL,556,2019,Anis,direitos_sexuais_reprodutivos
+PL,564,2019,SOF,direitos_sexuais_reprodutivos
+PL,588,2019,Instituto Maria da Penha,violencias_de_genero
+PL,598,2019,Mana a Mana,violencias_de_genero
+PL,625,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,638,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,645,2019,Gepô,trabalho_economia_cuidado
+PL,655,2019,SOF,violencias_de_genero
+PL,672,2019,SPW,lgbtqiapn
+PL,713,2019,Themis,igualdade_antidiscriminacao
+PL,715,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,788,2019,SOF,direitos_sexuais_reprodutivos
+PL,818,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,848,2019,Anis,direitos_sexuais_reprodutivos
+PL,851,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,852,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,856,2019,Instituto Maria da Penha,violencias_de_genero
+PL,860,2019,SPW,lgbtqiapn
+PL,865,2019,Gepô,trabalho_economia_cuidado
+PL,878,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,886,2019,Instituto Maria da Penha,violencias_de_genero
+PL,903,2019,Instituto Maria da Penha,violencias_de_genero
+PL,920,2019,LabCidade,trabalho_economia_cuidado
+PL,976,2019,Instituto Maria da Penha,violencias_de_genero
+PL,977,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,978,2019,Saúde_Gestante,trabalho_economia_cuidado
+PL,1006,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,1007,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,1008,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,1009,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,1020,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1037,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,1119,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,1126,2019,SOF,trabalho_economia_cuidado
+PL,1136,2019,Saúde_Gestante,saude
+PL,1190,2019,Instituto Maria da Penha,violencias_de_genero
+PL,1217,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,1233,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,1234,2019,ARTIGO 19,violencias_de_genero
+PL,1239,2019,Ecos,educacao_cultura
+PL,1256,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,1309,2019,Instituto Maria da Penha,violencias_de_genero
+PL,1310,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,1314,2019,Gepô,trabalho_economia_cuidado
+PL,1317,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1320,2019,Instituto Maria da Penha,violencias_de_genero
+PL,1325,2019,SOF,trabalho_economia_cuidado
+PL,1337,2019,Anis,violencias_de_genero
+PL,1379,2019,Gepô,trabalho_economia_cuidado
+PL,1380,2019,Anis,violencias_de_genero
+PL,1381,2019,Gepô,educacao_cultura
+PL,1382,2019,Themis,trabalho_economia_cuidado
+PL,1399,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1416,2019,Empodera,educacao_cultura
+PL,1419,2019,Mana a Mana,violencias_de_genero
+PL,1450,2019,Gepô,trabalho_economia_cuidado
+PL,1462,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,1484,2019,Empodera,educacao_cultura
+PL,1509,2019,Empodera,educacao_cultura
+PL,1510,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,1514,2019,Gepô,trabalho_economia_cuidado
+PL,1526,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,1541,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,1568,2019,ARTIGO 19,violencias_de_genero
+PL,1590,2019,SPW,violencias_de_genero
+PL,1610,2019,Gepô,trabalho_economia_cuidado
+PL,1619,2019,Instituto Maria da Penha,violencias_de_genero
+PL,1630,2019,Anis,direitos_sexuais_reprodutivos
+PL,1648,2019,Gepô,trabalho_economia_cuidado
+PL,1650,2019,Gepô,educacao_cultura
+PL,1696,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1704,2019,Saúde_Gestante,trabalho_economia_cuidado
+PL,1729,2019,Instituto Maria da Penha,violencias_de_genero
+PL,1787,2019,Anis,saude
+PL,1819,2019,Themis,trabalho_economia_cuidado
+PL,1841,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,1866,2019,Mana a Mana,violencias_de_genero
+PL,1869,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,1891,2019,Anis,violencias_de_genero
+PL,1909,2019,Mana a Mana,violencias_de_genero
+PL,1943,2019,Gepô,trabalho_economia_cuidado
+PL,1944,2019,Gepô,trabalho_economia_cuidado
+PL,1946,2019,Mana a Mana,violencias_de_genero
+PL,1950,2019,Instituto Maria da Penha,violencias_de_genero
+PL,1982,2019,Anis,violencias_de_genero
+PL,1984,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,2010,2019,Gepô,trabalho_economia_cuidado
+PL,2016,2019,ARTIGO 19,violencias_de_genero
+PL,2027,2019,Instituto Maria da Penha,violencias_de_genero
+PL,2031,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,2041,2019,ARTIGO 19,violencias_de_genero
+PL,2084,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,2147,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,2150,2019,ARTIGO 19,violencias_de_genero
+PL,2176,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,2200,2019,SPW,lgbtqiapn
+PL,2217,2019,ARTIGO 19,violencias_de_genero
+PL,2235,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,2249,2019,Gepô,infancia_adolescencia
+PL,2251,2019,ARTIGO 19,violencias_de_genero
+PL,2263,2019,ARTIGO 19,violencias_de_genero
+PL,2282,2019,Themis,violencias_de_genero
+PL,2335,2019,Themis,violencias_de_genero
+PL,2372,2019,Gepô,trabalho_economia_cuidado
+PL,2409,2019,Themis,violencias_de_genero
+PL,2438,2019,Instituto Maria da Penha,violencias_de_genero
+PL,2446,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,2458,2019,Gepô,trabalho_economia_cuidado
+PL,2484,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,2496,2019,Themis,igualdade_antidiscriminacao
+PL,2509,2019,Anis,saude
+PL,2513,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,2514,2019,Themis,participacao_politica
+PL,2538,2019,Instituto Patrícia Galvão,violencias_de_genero
+PL,2541,2019,Themis,violencias_de_genero
+PL,2553,2019,ARTIGO 19,violencias_de_genero
+PL,2558,2019,Themis,violencias_de_genero
+PL,2574,2019,SOF,direitos_sexuais_reprodutivos
+PL,2586,2019,Themis,violencias_de_genero
+PL,2587,2019,Ecos,lgbtqiapn
+PL,2596,2019,SPW,lgbtqiapn
+PL,2633,2019,Anis,saude
+PL,2639,2019,SPW,lgbtqiapn
+PL,2640,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,2653,2019,SPW,lgbtqiapn
+PL,2661,2019,Themis,violencias_de_genero
+PL,2674,2019,Gepô,trabalho_economia_cuidado
+PL,2697,2019,ARTIGO 19,violencias_de_genero
+PL,2706,2019,Mana a Mana,violencias_de_genero
+PL,2737,2019,ARTIGO 19,violencias_de_genero
+PL,2757,2019,Instituto Maria da Penha,violencias_de_genero
+PL,2802,2019,Instituto Maria da Penha,violencias_de_genero
+PL,2808,2019,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,2846,2019,SPW,violencias_de_genero
+PL,2869,2019,LabCidade,violencias_de_genero
+PL,2887,2019,SOF,trabalho_economia_cuidado
+PL,2893,2019,SOF,direitos_sexuais_reprodutivos
+PL,2902,2019,LabCidade,trabalho_economia_cuidado
+PL,2913,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,2916,2019,Saúde_Gestante,saude
+PL,2939,2019,ARTIGO 19,violencias_de_genero
+PL,2940,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3059,2019,ARTIGO 19,violencias_de_genero
+PL,3085,2019,Gepô,trabalho_economia_cuidado
+PL,3106,2019,ARTIGO 19,violencias_de_genero
+PL,3138,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3139,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3154,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3206,2019,Saúde_Gestante,trabalho_economia_cuidado
+PL,3251,2019,SOF,trabalho_economia_cuidado
+PL,3257,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3258,2019,SOF,trabalho_economia_cuidado
+PL,3290,2019,LabCidade,trabalho_economia_cuidado
+PL,3299,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3311,2019,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,3311,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3319,2019,Saúde_Gestante,saude
+PL,3340,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3391,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3406,2019,SOF,direitos_sexuais_reprodutivos
+PL,3414,2019,Gepô,trabalho_economia_cuidado
+PL,3415,2019,Anis,direitos_sexuais_reprodutivos
+PL,3417,2019,Themis,violencias_de_genero
+PL,3441,2019,Themis,violencias_de_genero
+PL,3453,2019,SPW,lgbtqiapn
+PL,3459,2019,Mana a Mana,violencias_de_genero
+PL,3475,2019,Mana a Mana,violencias_de_genero
+PL,3493,2019,Themis,violencias_de_genero
+PL,3573,2019,Anis,violencias_de_genero
+PL,3574,2019,ARTIGO 19,violencias_de_genero
+PL,3579,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3584,2019,Gepô,trabalho_economia_cuidado
+PL,3595,2019,Gepô,trabalho_economia_cuidado
+PL,3611,2019,Saúde_Gestante,saude
+PL,3623,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,3633,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3634,2019,Anis,violencias_de_genero
+PL,3635,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3699,2019,Empodera,educacao_cultura
+PL,3712,2019,Mana a Mana,violencias_de_genero
+PL,3775,2019,Saúde_Gestante,saude
+PL,3792,2019,Gepô,trabalho_economia_cuidado
+PL,3793,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3820,2019,Gepô,trabalho_economia_cuidado
+PL,3822,2019,Themis,participacao_politica
+PL,3852,2019,Instituto Maria da Penha,violencias_de_genero
+PL,3856,2019,Gepô,participacao_politica
+PL,3863,2019,Gepô,trabalho_economia_cuidado
+PL,3871,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3876,2019,Anis,violencias_de_genero
+PL,3905,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3947,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,3980,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4015,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,4020,2019,Gepô,participacao_politica
+PL,4021,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,4023,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4024,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,4067,2019,Anis,violencias_de_genero
+PL,4087,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,4089,2019,Empodera,educacao_cultura
+PL,4104,2019,Anis,violencias_de_genero
+PL,4149,2019,SOF,direitos_sexuais_reprodutivos
+PL,4150,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,4194,2019,Mana a Mana,violencias_de_genero
+PL,4230,2019,ARTIGO 19,violencias_de_genero
+PL,4258,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4264,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4311,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4320,2019,Anis,violencias_de_genero
+PL,4329,2019,Anis,violencias_de_genero
+PL,4374,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4379,2019,deFEMde - Rede Feminista de Juristas,trabalho_economia_cuidado
+PL,4469,2019,Anis,violencias_de_genero
+PL,4474,2019,Gepô,trabalho_economia_cuidado
+PL,4531,2019,Gepô,trabalho_economia_cuidado
+PL,4555,2019,Anis,violencias_de_genero
+PL,4560,2019,Anis,violencias_de_genero
+PL,4567,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4589,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4605,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,4609,2019,Instituto Maria da Penha,violencias_de_genero
+PL,4648,2019,SOF,violencias_de_genero
+PL,4659,2019,Gepô,trabalho_economia_cuidado
+PL,4684,2019,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,4692,2019,LabCidade,trabalho_economia_cuidado
+PL,4734,2019,SOF,violencias_de_genero
+PL,4748,2019,SOF,violencias_de_genero
+PL,4767,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,4769,2019,ARTIGO 19,familia_parentalidade
+PL,4770,2019,Anis,direitos_sexuais_reprodutivos
+PL,4827,2019,Themis,violencias_de_genero
+PL,4828,2019,Themis,violencias_de_genero
+PL,4846,2019,Mana a Mana,violencias_de_genero
+PL,4866,2019,Mana a Mana,violencias_de_genero
+PL,4875,2019,Gepô,infancia_adolescencia
+PL,4919,2019,SPW,violencias_de_genero
+PL,4946,2019,SPW,igualdade_antidiscriminacao
+PL,4948,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,4949,2019,Themis,igualdade_antidiscriminacao
+PL,5033,2019,SPW,violencias_de_genero
+PL,5042,2019,Gepô,educacao_cultura
+PL,5058,2019,LabCidade,trabalho_economia_cuidado
+PL,5092,2019,Mana a Mana,violencias_de_genero
+PL,5225,2019,Gepô,trabalho_economia_cuidado
+PL,5250,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,5254,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5262,2019,LabCidade,trabalho_economia_cuidado
+PL,5274,2019,SOF,violencias_de_genero
+PL,5278,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5351,2019,Gepô,educacao_cultura
+PL,5355,2019,Gepô,trabalho_economia_cuidado
+PL,5361,2019,Gepô,participacao_politica
+PL,5386,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5388,2019,Mana a Mana,violencias_de_genero
+PL,5408,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5416,2019,Gepô,educacao_cultura
+PL,5418,2019,Mana a Mana,violencias_de_genero
+PL,5419,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5423,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PL,5509,2019,Mana a Mana,violencias_de_genero
+PL,5533,2019,Gepô,educacao_cultura
+PL,5535,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5606,2019,Mana a Mana,violencias_de_genero
+PL,5609,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5621,2019,Instituto Maria da Penha,violencias_de_genero
+PL,5642,2019,SPW,violencias_de_genero
+PL,5678,2019,Gepô,trabalho_economia_cuidado
+PL,5701,2019,Themis,violencias_de_genero
+PL,5708,2019,SPW,violencias_de_genero
+PL,5768,2019,Saúde_Gestante,direitos_sexuais_reprodutivos
+PL,5799,2019,Anis,direitos_sexuais_reprodutivos
+PL,5810,2019,Plan International,educacao_cultura
+PL,5872,2019,Mana a Mana,violencias_de_genero
+PL,5909,2019,ARTIGO 19,violencias_de_genero
+PL,5941,2019,Mana a Mana,violencias_de_genero
+PL,5945,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6040,2019,Saúde_Gestante,saude
+PL,6063,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6115,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6167,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6203,2019,Gepô,trabalho_economia_cuidado
+PL,6224,2019,SOF,violencias_de_genero
+PL,6232,2019,Saúde_Gestante,saude
+PL,6249,2019,Gepô,trabalho_economia_cuidado
+PL,6278,2019,Mana a Mana,violencias_de_genero
+PL,6298,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6333,2019,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,6362,2019,Empodera,educacao_cultura
+PL,6363,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6364,2019,Mana a Mana,violencias_de_genero
+PL,6410,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6428,2019,Anis,educacao_cultura
+PL,6437,2019,Instituto Maria da Penha,violencias_de_genero
+PL,6523,2019,Anis,saude
+PL,6582,2019,LabCidade,trabalho_economia_cuidado
+PL,29,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,38,2020,Gepô,igualdade_antidiscriminacao
+PL,61,2020,Instituto Maria da Penha,violencias_de_genero
+PL,63,2020,Instituto Maria da Penha,violencias_de_genero
+PL,64,2020,Instituto Maria da Penha,violencias_de_genero
+PL,84,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,109,2020,Instituto Maria da Penha,violencias_de_genero
+PL,116,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,124,2020,Instituto Maria da Penha,violencias_de_genero
+PL,136,2020,Anis,lgbtqiapn
+PL,167,2020,Themis,violencias_de_genero
+PL,234,2020,ARTIGO 19,violencias_de_genero
+PL,242,2020,Themis,trabalho_economia_cuidado
+PL,253,2020,ARTIGO 19,violencias_de_genero
+PL,254,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,255,2020,Empodera,igualdade_antidiscriminacao
+PL,259,2020,Mulheres Negras Decidem,participacao_politica
+PL,266,2020,Instituto Maria da Penha,violencias_de_genero
+PL,279,2020,Instituto Maria da Penha,violencias_de_genero
+PL,291,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,299,2020,Instituto Maria da Penha,violencias_de_genero
+PL,320,2020,Instituto Maria da Penha,violencias_de_genero
+PL,346,2020,Gepô,violencias_de_genero
+PL,366,2020,Instituto Maria da Penha,violencias_de_genero
+PL,395,2020,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,479,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,499,2020,ARTIGO 19,violencias_de_genero
+PL,505,2020,Instituto Maria da Penha,violencias_de_genero
+PL,518,2020,Anis,direitos_sexuais_reprodutivos
+PL,519,2020,Instituto Maria da Penha,violencias_de_genero
+PL,523,2020,Instituto Maria da Penha,violencias_de_genero
+PL,537,2020,Anis,direitos_sexuais_reprodutivos
+PL,556,2020,ARTIGO 19,violencias_de_genero
+PL,557,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,568,2020,Instituto Maria da Penha,violencias_de_genero
+PL,580,2020,Anis,violencias_de_genero
+PL,581,2020,Anis,violencias_de_genero
+PL,603,2020,Instituto Maria da Penha,violencias_de_genero
+PL,614,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,620,2020,Instituto Maria da Penha,violencias_de_genero
+PL,636,2020,Themis,violencias_de_genero
+PL,641,2020,Instituto Maria da Penha,violencias_de_genero
+PL,781,2020,Themis,violencias_de_genero
+PL,786,2020,Gepô,educacao_cultura
+PL,810,2020,Themis,trabalho_economia_cuidado
+PL,824,2020,Gepô,educacao_cultura
+PL,865,2020,Gepô,educacao_cultura
+PL,993,2020,SOF,trabalho_economia_cuidado
+PL,1012,2020,Themis,violencias_de_genero
+PL,1046,2020,SOF,trabalho_economia_cuidado
+PL,1048,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,1050,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,1054,2020,Mulheres Negras Decidem,participacao_politica
+PL,1105,2020,Gepô,educacao_cultura
+PL,1221,2020,ARTIGO 19,violencias_de_genero
+PL,1229,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,1230,2020,SOF,trabalho_economia_cuidado
+PL,1233,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,1281,2020,Gepô,educacao_cultura
+PL,1291,2020,Instituto Maria da Penha,violencias_de_genero
+PL,1319,2020,Instituto Maria da Penha,violencias_de_genero
+PL,1368,2020,Instituto Maria da Penha,violencias_de_genero
+PL,1372,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,1444,2020,Instituto Maria da Penha,violencias_de_genero
+PL,1458,2020,Instituto Maria da Penha,violencias_de_genero
+PL,1552,2020,Instituto Maria da Penha,violencias_de_genero
+PL,1648,2020,Themis,trabalho_economia_cuidado
+PL,1796,2020,Themis,violencias_de_genero
+PL,1798,2020,Themis,violencias_de_genero
+PL,1827,2020,Gepô,educacao_cultura
+PL,1909,2020,Gepô,educacao_cultura
+PL,1930,2020,Anis,violencias_de_genero
+PL,1942,2020,Gepô,educacao_cultura
+PL,1945,2020,Anis,direitos_sexuais_reprodutivos
+PL,1964,2020,Anis,violencias_de_genero
+PL,1979,2020,Anis,direitos_sexuais_reprodutivos
+PL,2011,2020,SOF,trabalho_economia_cuidado
+PL,2013,2020,Anis,violencias_de_genero
+PL,2016,2020,Gepô,educacao_cultura
+PL,2029,2020,Themis,violencias_de_genero
+PL,2094,2020,ARTIGO 19,violencias_de_genero
+PL,2099,2020,Themis,trabalho_economia_cuidado
+PL,2159,2020,Gepô,educacao_cultura
+PL,2179,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,2190,2020,Anis,violencias_de_genero
+PL,2244,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2248,2020,Instituto Maria da Penha,violencias_de_genero
+PL,2311,2020,Instituto Maria da Penha,violencias_de_genero
+PL,2315,2020,ARTIGO 19,violencias_de_genero
+PL,2434,2020,Anis,violencias_de_genero
+PL,2501,2020,Themis,trabalho_economia_cuidado
+PL,2508,2020,Themis,familia_parentalidade
+PL,2510,2020,Themis,violencias_de_genero
+PL,2560,2020,Instituto Maria da Penha,violencias_de_genero
+PL,2578,2020,Anis,lgbtqiapn
+PL,2582,2020,Anis,violencias_de_genero
+PL,2681,2020,SOF,trabalho_economia_cuidado
+PL,2688,2020,Anis,violencias_de_genero
+PL,2690,2020,Anis,violencias_de_genero
+PL,2726,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,2737,2020,Gepô,violencias_de_genero
+PL,2753,2020,Anis,familia_parentalidade
+PL,2762,2020,Anis,violencias_de_genero
+PL,2765,2020,SOF,direitos_sexuais_reprodutivos
+PL,2839,2020,Themis,trabalho_economia_cuidado
+PL,2859,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2860,2020,Instituto Maria da Penha,violencias_de_genero
+PL,2891,2020,ARTIGO 19,violencias_de_genero
+PL,2900,2020,Anis,violencias_de_genero
+PL,2920,2020,Anis,violencias_de_genero
+PL,2960,2020,Anis,trabalho_economia_cuidado
+PL,2962,2020,Anis,violencias_de_genero
+PL,2990,2020,Anis,violencias_de_genero
+PL,2993,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3021,2020,Gepô,educacao_cultura
+PL,3032,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,3034,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3056,2020,SOF,trabalho_economia_cuidado
+PL,3180,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3223,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3244,2020,Themis,violencias_de_genero
+PL,3298,2020,Anis,lgbtqiapn
+PL,3314,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3321,2020,Themis,violencias_de_genero
+PL,3333,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3342,2020,Gepô,trabalho_economia_cuidado
+PL,3347,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3374,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3396,2020,Empodera,lgbtqiapn
+PL,3411,2020,Observatório da Violência Obstétrica no Brasil,igualdade_antidiscriminacao
+PL,3418,2020,Themis,familia_parentalidade
+PL,3423,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3428,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3435,2020,ARTIGO 19,familia_parentalidade
+PL,3453,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,3456,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3505,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3510,2020,Gepô,trabalho_economia_cuidado
+PL,3533,2020,Gepô,familia_parentalidade
+PL,3540,2020,Mulheres Negras Decidem,participacao_politica
+PL,3542,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3545,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3549,2020,Gepô,trabalho_economia_cuidado
+PL,3553,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,3564,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3598,2020,ARTIGO 19,lgbtqiapn
+PL,3628,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3633,2020,Gepô,trabalho_economia_cuidado
+PL,3645,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,3652,2020,Gepô,trabalho_economia_cuidado
+PL,3667,2020,Anis,lgbtqiapn
+PL,3691,2020,Instituto Maria da Penha,violencias_de_genero
+PL,3696,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,3726,2020,Empodera,trabalho_economia_cuidado
+PL,3791,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,3823,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,3855,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3859,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3869,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3878,2020,SOF,trabalho_economia_cuidado
+PL,3913,2020,SOF,trabalho_economia_cuidado
+PL,3932,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3955,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3974,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,3988,2020,Instituto Maria da Penha,violencias_de_genero
+PL,4048,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4062,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4069,2020,Mulheres Negras Decidem,participacao_politica
+PL,4129,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,4133,2020,Instituto Maria da Penha,violencias_de_genero
+PL,4143,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4164,2020,SOF,participacao_politica
+PL,4175,2020,Gepô,familia_parentalidade
+PL,4182,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,4185,2020,Gepô,trabalho_economia_cuidado
+PL,4196,2020,ARTIGO 19,violencias_de_genero
+PL,4202,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,4213,2020,Mulheres Negras Decidem,participacao_politica
+PL,4218,2020,Instituto Maria da Penha,igualdade_antidiscriminacao
+PL,4245,2020,Anis,violencias_de_genero
+PL,4252,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4271,2020,ARTIGO 19,violencias_de_genero
+PL,4285,2020,ARTIGO 19,violencias_de_genero
+PL,4286,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4287,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4290,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4297,2020,Anis,direitos_sexuais_reprodutivos
+PL,4300,2020,Instituto Patrícia Galvão,violencias_de_genero
+PL,4319,2020,ARTIGO 19,violencias_de_genero
+PL,4332,2020,Themis,trabalho_economia_cuidado
+PL,4343,2020,Instituto Maria da Penha,violencias_de_genero
+PL,4345,2020,ARTIGO 19,violencias_de_genero
+PL,4351,2020,Themis,trabalho_economia_cuidado
+PL,4363,2020,Instituto Patrícia Galvão,trabalho_economia_cuidado
+PL,4391,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",participacao_politica
+PL,4398,2020,Mulheres Negras Decidem,lgbtqiapn
+PL,4399,2020,ARTIGO 19,lgbtqiapn
+PL,4403,2020,Gepô,igualdade_antidiscriminacao
+PL,4411,2020,ARTIGO 19,violencias_de_genero
+PL,4432,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,4515,2020,Anis,direitos_sexuais_reprodutivos
+PL,4550,2020,Themis,violencias_de_genero
+PL,4559,2020,Themis,violencias_de_genero
+PL,4603,2020,Anis,infancia_adolescencia
+PL,4709,2020,Mulheres Negras Decidem,igualdade_antidiscriminacao
+PL,4798,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,4814,2020,Themis,violencias_de_genero
+PL,4824,2020,Anis,violencias_de_genero
+PL,4834,2020,Themis,violencias_de_genero
+PL,4837,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,4840,2020,Anis,direitos_sexuais_reprodutivos
+PL,4870,2020,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,4899,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,4932,2020,Themis,violencias_de_genero
+PL,4941,2020,Themis,violencias_de_genero
+PL,4961,2020,Themis,violencias_de_genero
+PL,4963,2020,TretAqui,violencias_de_genero
+PL,4970,2020,Themis,violencias_de_genero
+PL,4973,2020,Themis,violencias_de_genero
+PL,4983,2020,Anis,violencias_de_genero
+PL,4996,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5008,2020,Anis,lgbtqiapn
+PL,5016,2020,Anis,violencias_de_genero
+PL,5035,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,5036,2020,Anis,violencias_de_genero
+PL,5041,2020,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,5055,2020,Anis,violencias_de_genero
+PL,5095,2020,Anis,violencias_de_genero
+PL,5101,2020,Anis,violencias_de_genero
+PL,5102,2020,Anis,violencias_de_genero
+PL,5106,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5128,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5136,2020,Themis,violencias_de_genero
+PL,5144,2020,Anis,violencias_de_genero
+PL,5168,2020,Themis,violencias_de_genero
+PL,5176,2020,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,5192,2020,Themis,violencias_de_genero
+PL,5201,2020,Anis,infancia_adolescencia
+PL,5203,2020,Themis,violencias_de_genero
+PL,5204,2020,Themis,violencias_de_genero
+PL,5208,2020,Themis,violencias_de_genero
+PL,5214,2020,Themis,violencias_de_genero
+PL,5219,2020,Themis,violencias_de_genero
+PL,5229,2020,Mulheres Negras Decidem,igualdade_antidiscriminacao
+PL,5231,2020,Mulheres Negras Decidem,igualdade_antidiscriminacao
+PL,5245,2020,Mulheres Negras Decidem,igualdade_antidiscriminacao
+PL,5254,2020,Themis,violencias_de_genero
+PL,5257,2020,Anis,trabalho_economia_cuidado
+PL,5264,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,5267,2020,Empodera,igualdade_antidiscriminacao
+PL,5274,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,5276,2020,Anis,direitos_sexuais_reprodutivos
+PL,5279,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5295,2020,TretAqui,participacao_politica
+PL,5329,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5373,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,5404,2020,Mulheres Negras Decidem,violencias_de_genero
+PL,5423,2020,Anis,familia_parentalidade
+PL,5435,2020,Anis,direitos_sexuais_reprodutivos
+PL,5443,2020,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,5445,2020,Themis,violencias_de_genero
+PL,5464,2020,Anis,violencias_de_genero
+PL,5464,2020,Plan International,violencias_de_genero
+PL,5477,2020,Mulheres Negras Decidem,violencias_de_genero
+PL,5537,2020,Anis,violencias_de_genero
+PL,5552,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,5554,2020,Themis,violencias_de_genero
+PL,5574,2020,Anis,violencias_de_genero
+PL,5577,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5578,2020,Anis,direitos_sexuais_reprodutivos
+PL,5587,2020,TretAqui,participacao_politica
+PL,5588,2020,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,5593,2020,Mulheres Negras Decidem,violencias_de_genero
+PL,5611,2020,TretAqui,violencias_de_genero
+PL,5631,2020,Mulheres Negras Decidem,igualdade_antidiscriminacao
+PL,5656,2020,Observatório da Violência Obstétrica no Brasil,saude
+PL,5657,2020,Mulheres Negras Decidem,educacao_cultura
+PL,61,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,74,2021,Instituto Maria da Penha,violencias_de_genero
+PL,76,2021,Anis,lgbtqiapn
+PL,77,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,79,2021,Instituto Maria da Penha,participacao_politica
+PL,80,2021,Anis,lgbtqiapn
+PL,82,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,83,2021,Instituto Maria da Penha,violencias_de_genero
+PL,85,2021,Instituto Maria da Penha,violencias_de_genero
+PL,92,2021,Anis,lgbtqiapn
+PL,93,2021,Instituto Maria da Penha,violencias_de_genero
+PL,96,2021,Anis,lgbtqiapn
+PL,101,2021,Empodera,violencias_de_genero
+PL,109,2021,Empodera,violencias_de_genero
+PL,110,2021,Empodera,violencias_de_genero
+PL,116,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,138,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,144,2021,Instituto + Diversidade,lgbtqiapn
+PL,146,2021,Instituto Maria da Penha,violencias_de_genero
+PL,159,2021,Anis,violencias_de_genero
+PL,218,2021,Instituto Maria da Penha,violencias_de_genero
+PL,232,2021,Anis,direitos_sexuais_reprodutivos
+PL,299,2021,Anis,direitos_sexuais_reprodutivos
+PL,301,2021,Instituto Maria da Penha,violencias_de_genero
+PL,304,2021,Instituto Maria da Penha,violencias_de_genero
+PL,320,2021,Instituto Maria da Penha,violencias_de_genero
+PL,321,2021,Empodera,trabalho_economia_cuidado
+PL,322,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,323,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,324,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,354,2021,Instituto Maria da Penha,violencias_de_genero
+PL,355,2021,Instituto Maria da Penha,violencias_de_genero
+PL,359,2021,Anis,direitos_sexuais_reprodutivos
+PL,383,2021,Instituto Maria da Penha,violencias_de_genero
+PL,415,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,434,2021,Anis,direitos_sexuais_reprodutivos
+PL,531,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,541,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,571,2021,ARTIGO 19,violencias_de_genero
+PL,583,2021,Instituto Maria da Penha,violencias_de_genero
+PL,586,2021,ARTIGO 19,violencias_de_genero
+PL,608,2021,ARTIGO 19,violencias_de_genero
+PL,633,2021,ARTIGO 19,violencias_de_genero
+PL,651,2021,ARTIGO 19,violencias_de_genero
+PL,666,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,741,2021,Instituto Maria da Penha,violencias_de_genero
+PL,768,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,770,2021,Instituto Maria da Penha,violencias_de_genero
+PL,775,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,781,2021,Instituto Maria da Penha,violencias_de_genero
+PL,782,2021,Instituto Maria da Penha,violencias_de_genero
+PL,791,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,793,2021,ARTIGO 19,trabalho_economia_cuidado
+PL,794,2021,Instituto Maria da Penha,violencias_de_genero
+PL,801,2021,Instituto Maria da Penha,violencias_de_genero
+PL,840,2021,Mulheres Negras Decidem,educacao_cultura
+PL,854,2021,Instituto Maria da Penha,violencias_de_genero
+PL,855,2021,Empodera,igualdade_antidiscriminacao
+PL,856,2021,Instituto Maria da Penha,educacao_cultura
+PL,876,2021,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,995,2021,Instituto Maria da Penha,violencias_de_genero
+PL,998,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1012,2021,Anis,violencias_de_genero
+PL,1025,2021,Empodera,violencias_de_genero
+PL,1134,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1225,2021,Instituto + Diversidade,lgbtqiapn
+PL,1246,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1303,2021,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1364,2021,Mulheres Negras Decidem,participacao_politica
+PL,1449,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1454,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1489,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1515,2021,Anis,direitos_sexuais_reprodutivos
+PL,1523,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1529,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1555,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1558,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1565,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1569,2021,Anis,violencias_de_genero
+PL,1590,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1592,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1614,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1619,2021,Anis,violencias_de_genero
+PL,1624,2021,Anis,violencias_de_genero
+PL,1629,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1664,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,1670,2021,Empodera,lgbtqiapn
+PL,1685,2021,Mulheres Negras Decidem,participacao_politica
+PL,1705,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1714,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1715,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1728,2021,Empodera,lgbtqiapn
+PL,1740,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1807,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,1876,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1883,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1899,2021,Instituto Maria da Penha,violencias_de_genero
+PL,1951,2021,Instituto Maria da Penha,participacao_politica
+PL,1960,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2003,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2019,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2020,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2062,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2092,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,2117,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2125,2021,Anis,direitos_sexuais_reprodutivos
+PL,2139,2021,Empodera,lgbtqiapn
+PL,2171,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2193,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2194,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2195,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2220,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2221,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2225,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2240,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2255,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2287,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2293,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2302,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2304,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2325,2021,Instituto Update,violencias_de_genero
+PL,2348,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2353,2021,Instituto + Diversidade,lgbtqiapn
+PL,2358,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2417,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2451,2021,Anis,direitos_sexuais_reprodutivos
+PL,2464,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2466,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,2478,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,2504,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2517,2021,Instituto Maria da Penha,educacao_cultura
+PL,2525,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2553,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2556,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2589,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,2598,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2612,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2623,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2624,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,2625,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2649,2021,Instituto + Diversidade,lgbtqiapn
+PL,2656,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2675,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2683,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,2702,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2707,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2709,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,2719,2021,deFEMde - Rede Feminista de Juristas,direitos_sexuais_reprodutivos
+PL,2743,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2747,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2748,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2760,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2773,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2783,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2784,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2788,2021,Instituto Maria da Penha,participacao_politica
+PL,2797,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2798,2021,deFEMde - Rede Feminista de Juristas,direitos_sexuais_reprodutivos
+PL,2809,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2824,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2830,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2841,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2859,2021,Instituto + Diversidade,lgbtqiapn
+PL,2866,2021,Instituto + Diversidade,lgbtqiapn
+PL,2878,2021,deFEMde - Rede Feminista de Juristas,direitos_sexuais_reprodutivos
+PL,2889,2021,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2952,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2958,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2965,2021,SOF,familia_parentalidade
+PL,2978,2021,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2983,2021,Instituto Maria da Penha,violencias_de_genero
+PL,2984,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3008,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3020,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3021,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,3031,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,3048,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3057,2021,Instituto Maria da Penha,educacao_cultura
+PL,3062,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3105,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3112,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3210,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3213,2021,Instituto + Diversidade,lgbtqiapn
+PL,3245,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3259,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,3305,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3306,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3311,2021,Anis,lgbtqiapn
+PL,3325,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3382,2021,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3393,2021,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,3435,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,3444,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3487,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3501,2021,Instituto Maria da Penha,participacao_politica
+PL,3515,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3560,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3616,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3621,2021,Anis,lgbtqiapn
+PL,3632,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3642,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3666,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3674,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3680,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3696,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3717,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,3722,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3725,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3731,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3741,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3751,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3769,2021,Empodera,lgbtqiapn
+PL,3781,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3837,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3875,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3897,2021,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3900,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3921,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,3922,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3933,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3944,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3945,2021,Mulheres Negras Decidem,igualdade_antidiscriminacao
+PL,3964,2021,Instituto Maria da Penha,violencias_de_genero
+PL,3968,2021,Empodera,educacao_cultura
+PL,3996,2021,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,4011,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4016,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4036,2021,Anis,lgbtqiapn
+PL,4099,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,4147,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4148,2021,Anis,direitos_sexuais_reprodutivos
+PL,4170,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4190,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,4251,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4252,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4282,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4291,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4302,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,4306,2021,ARTIGO 19,violencias_de_genero
+PL,4313,2021,Instituto Maria da Penha,violencias_de_genero
+PL,4327,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,4360,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,4377,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,4389,2021,Anis,direitos_sexuais_reprodutivos
+PL,4410,2021,ARTIGO 19,violencias_de_genero
+PL,4411,2021,ARTIGO 19,violencias_de_genero
+PL,4417,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,4458,2021,Instituto Maria da Penha,educacao_cultura
+PL,4462,2021,ARTIGO 19,violencias_de_genero
+PL,4470,2021,ARTIGO 19,violencias_de_genero
+PL,4480,2021,ARTIGO 19,violencias_de_genero
+PL,4520,2021,Anis,lgbtqiapn
+PL,4530,2021,ARTIGO 19,violencias_de_genero
+PL,4574,2021,Observatório da Violência Obstétrica no Brasil,saude
+PL,4579,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,4593,2021,Instituto Maria da Penha,educacao_cultura
+PL,4596,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,23,2022,Observatório da Violência Obstétrica no Brasil,saude
+PL,24,2022,Instituto Maria da Penha,violencias_de_genero
+PL,31,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,37,2022,Instituto Maria da Penha,violencias_de_genero
+PL,43,2022,ARTIGO 19,violencias_de_genero
+PL,45,2022,Instituto Maria da Penha,violencias_de_genero
+PL,81,2022,Observatório da Violência Obstétrica no Brasil,saude
+PL,82,2022,Instituto Maria da Penha,violencias_de_genero
+PL,135,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,139,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,153,2022,Instituto Maria da Penha,violencias_de_genero
+PL,162,2022,Anis,direitos_sexuais_reprodutivos
+PL,202,2022,Instituto Maria da Penha,violencias_de_genero
+PL,229,2022,Empodera,trabalho_economia_cuidado
+PL,285,2022,Instituto Maria da Penha,violencias_de_genero
+PL,308,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,324,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,335,2022,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,390,2022,Instituto Maria da Penha,violencias_de_genero
+PL,391,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,434,2022,Instituto Maria da Penha,violencias_de_genero
+PL,453,2022,Instituto Maria da Penha,violencias_de_genero
+PL,467,2022,Instituto Maria da Penha,violencias_de_genero
+PL,478,2022,ARTIGO 19,violencias_de_genero
+PL,499,2022,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,517,2022,ARTIGO 19,violencias_de_genero
+PL,544,2022,ARTIGO 19,violencias_de_genero
+PL,588,2022,ARTIGO 19,violencias_de_genero
+PL,638,2022,Instituto Maria da Penha,violencias_de_genero
+PL,681,2022,ARTIGO 19,violencias_de_genero
+PL,684,2022,Anis,lgbtqiapn
+PL,738,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,776,2022,ARTIGO 19,educacao_cultura
+PL,778,2022,Instituto Maria da Penha,violencias_de_genero
+PL,779,2022,Instituto Maria da Penha,violencias_de_genero
+PL,842,2022,Instituto Maria da Penha,violencias_de_genero
+PL,883,2022,Anis,direitos_sexuais_reprodutivos
+PL,884,2022,Instituto Maria da Penha,violencias_de_genero
+PL,885,2022,Instituto Maria da Penha,violencias_de_genero
+PL,906,2022,Observatório da Violência Obstétrica no Brasil,saude
+PL,935,2022,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,976,2022,Instituto Maria da Penha,violencias_de_genero
+PL,985,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,993,2022,Anis,lgbtqiapn
+PL,994,2022,Anis,lgbtqiapn
+PL,1005,2022,Instituto Maria da Penha,educacao_cultura
+PL,1007,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1111,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1131,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1151,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1156,2022,Empodera,violencias_de_genero
+PL,1157,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1168,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1176,2022,deFEMde - Rede Feminista de Juristas,lgbtqiapn
+PL,1190,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1214,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1221,2022,Empodera,educacao_cultura
+PL,1236,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1249,2022,deFEMde - Rede Feminista de Juristas,saude
+PL,1292,2022,deFEMde - Rede Feminista de Juristas,violencias_de_genero
+PL,1299,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1326,2022,Observatório da Violência Obstétrica no Brasil,saude
+PL,1328,2022,Anis,direitos_sexuais_reprodutivos
+PL,1338,2022,Instituto Maria da Penha,educacao_cultura
+PL,1350,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1364,2022,Empodera,violencias_de_genero
+PL,1371,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1382,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1411,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1500,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1517,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1591,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1604,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1640,2022,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1672,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1705,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1713,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1717,2022,Observatório da Violência Obstétrica no Brasil,saude
+PL,1722,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1741,2022,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1742,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1753,2022,Anis,direitos_sexuais_reprodutivos
+PL,1763,2022,Anis,violencias_de_genero
+PL,1769,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1777,2022,Anis,violencias_de_genero
+PL,1781,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1795,2022,Instituto + Diversidade,lgbtqiapn
+PL,1798,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1801,2022,Anis,igualdade_antidiscriminacao
+PL,1822,2022,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,1833,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1836,2022,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1837,2022,Anis,violencias_de_genero
+PL,1838,2022,Anis,direitos_sexuais_reprodutivos
+PL,1853,2022,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,1890,2022,Instituto Maria da Penha,violencias_de_genero
+PL,1891,2022,Empodera,educacao_cultura
+PL,1893,2022,Anis,direitos_sexuais_reprodutivos
+PL,1899,2022,SOF,saude
+PL,1906,2022,Instituto Update,violencias_de_genero
+PL,1912,2022,Rede Liberdade,trabalho_economia_cuidado
+PL,1983,2022,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2004,2022,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2007,2022,Anis,direitos_sexuais_reprodutivos
+PL,2008,2022,SOF,saude
+PL,2014,2022,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2028,2022,ARTIGO 19,familia_parentalidade
+PL,2037,2022,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2049,2022,SOF,saude
+PL,2062,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,2072,2022,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2083,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,2099,2022,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2103,2022,Instituto Update,violencias_de_genero
+PL,2112,2022,Instituto Patrícia Galvão,educacao_cultura
+PL,2126,2022,Instituto Maria da Penha,violencias_de_genero
+PL,2146,2022,Instituto + Diversidade,lgbtqiapn
+PL,2152,2022,Instituto + Diversidade,trabalho_economia_cuidado
+PL,2155,2022,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2176,2022,Instituto Maria da Penha,violencias_de_genero
+PL,2178,2022,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,2262,2022,Instituto Maria da Penha,violencias_de_genero
+PL,2285,2022,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,2291,2022,Rede Liberdade,trabalho_economia_cuidado
+PL,2313,2022,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,2338,2022,Instituto Maria da Penha,violencias_de_genero
+PL,2345,2022,Instituto Update,violencias_de_genero
+PL,2356,2022,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2415,2022,Instituto + Diversidade,lgbtqiapn
+PL,2416,2022,Instituto + Diversidade,trabalho_economia_cuidado
+PL,2421,2022,Instituto Update,trabalho_economia_cuidado
+PL,2448,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2471,2022,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,2493,2022,Rede Liberdade,trabalho_economia_cuidado
+PL,2539,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2573,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2596,2022,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,2603,2022,SOF,direitos_sexuais_reprodutivos
+PL,2606,2022,Instituto Update,violencias_de_genero
+PL,2618,2022,Instituto Update,violencias_de_genero
+PL,2628,2022,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2693,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,2723,2022,Instituto Maria da Penha,violencias_de_genero
+PL,2758,2022,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2759,2022,Instituto Update,violencias_de_genero
+PL,2763,2022,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,2813,2022,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2816,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,2825,2022,Instituto Update,violencias_de_genero
+PL,2873,2022,Anis,direitos_sexuais_reprodutivos
+PL,2877,2022,Rede Liberdade,trabalho_economia_cuidado
+PL,2898,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2906,2022,Instituto Maria da Penha,infancia_adolescencia
+PL,2924,2022,Instituto Update,violencias_de_genero
+PL,2938,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2959,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,2960,2022,SOF,direitos_sexuais_reprodutivos
+PL,2981,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3040,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3042,2022,SOF,familia_parentalidade
+PL,3,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,12,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,14,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,31,2023,SOF,saude
+PL,35,2023,ARTIGO 19,familia_parentalidade
+PL,52,2023,Themis,violencias_de_genero
+PL,100,2023,SOF,violencias_de_genero
+PL,111,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,112,2023,Instituto Maria da Penha,violencias_de_genero
+PL,116,2023,SOF,violencias_de_genero
+PL,128,2023,Rede Liberdade,violencias_de_genero
+PL,183,2023,Anis,direitos_sexuais_reprodutivos
+PL,190,2023,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,192,2023,Instituto + Diversidade,lgbtqiapn
+PL,197,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,200,2023,Instituto Update,violencias_de_genero
+PL,201,2023,Instituto Update,violencias_de_genero
+PL,204,2023,Instituto + Diversidade,lgbtqiapn
+PL,228,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,229,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,269,2023,Rede Liberdade,lgbtqiapn
+PL,293,2023,Instituto Maria da Penha,violencias_de_genero
+PL,301,2023,Anis,direitos_sexuais_reprodutivos
+PL,303,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,310,2023,Instituto Maria da Penha,violencias_de_genero
+PL,311,2023,Instituto Maria da Penha,violencias_de_genero
+PL,312,2023,SOF,saude
+PL,319,2023,Rede Liberdade,violencias_de_genero
+PL,331,2023,Instituto Maria da Penha,violencias_de_genero
+PL,341,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,359,2023,Anis,direitos_sexuais_reprodutivos
+PL,366,2023,SOF,direitos_sexuais_reprodutivos
+PL,375,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,381,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,403,2023,Instituto Maria da Penha,violencias_de_genero
+PL,404,2023,Instituto Maria da Penha,violencias_de_genero
+PL,409,2023,Instituto Maria da Penha,violencias_de_genero
+PL,410,2023,Instituto Maria da Penha,violencias_de_genero
+PL,419,2023,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,420,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,421,2023,Instituto Maria da Penha,violencias_de_genero
+PL,432,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,433,2023,Instituto Maria da Penha,violencias_de_genero
+PL,435,2023,Instituto Maria da Penha,violencias_de_genero
+PL,437,2023,Rede Liberdade,violencias_de_genero
+PL,460,2023,Instituto Maria da Penha,violencias_de_genero
+PL,461,2023,Themis,violencias_de_genero
+PL,471,2023,Themis,violencias_de_genero
+PL,472,2023,ARTIGO 19,familia_parentalidade
+PL,501,2023,Instituto + Diversidade,lgbtqiapn
+PL,506,2023,SOF,saude
+PL,514,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,538,2023,Themis,violencias_de_genero
+PL,539,2023,Rede Liberdade,violencias_de_genero
+PL,553,2023,Themis,violencias_de_genero
+PL,560,2023,Themis,violencias_de_genero
+PL,561,2023,Rede Liberdade,violencias_de_genero
+PL,563,2023,Rede Liberdade,educacao_cultura
+PL,567,2023,Empodera,saude
+PL,568,2023,Instituto Update,lgbtqiapn
+PL,569,2023,SOF,saude
+PL,573,2023,Themis,violencias_de_genero
+PL,581,2023,Themis,violencias_de_genero
+PL,583,2023,SOF,saude
+PL,591,2023,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,612,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,saude
+PL,646,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,657,2023,Instituto Maria da Penha,violencias_de_genero
+PL,682,2023,Instituto + Diversidade,lgbtqiapn
+PL,684,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,688,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,691,2023,Instituto Update,violencias_de_genero
+PL,701,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,725,2023,Instituto Maria da Penha,violencias_de_genero
+PL,737,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,saude
+PL,754,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,758,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,761,2023,Instituto Update,igualdade_antidiscriminacao
+PL,763,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,764,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,766,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,768,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,818,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,869,2023,Instituto Maria da Penha,violencias_de_genero
+PL,874,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,875,2023,Instituto Maria da Penha,violencias_de_genero
+PL,883,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,884,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,894,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,896,2023,ARTIGO 19,violencias_de_genero
+PL,901,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,904,2023,Juristas Negras,trabalho_economia_cuidado
+PL,912,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,914,2023,Instituto + Diversidade,igualdade_antidiscriminacao
+PL,918,2023,Instituto Maria da Penha,violencias_de_genero
+PL,921,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,923,2023,Instituto Maria da Penha,violencias_de_genero
+PL,926,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,929,2023,Instituto Maria da Penha,violencias_de_genero
+PL,933,2023,Instituto Maria da Penha,violencias_de_genero
+PL,943,2023,Instituto Maria da Penha,violencias_de_genero
+PL,945,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,950,2023,Instituto Maria da Penha,violencias_de_genero
+PL,951,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,960,2023,Instituto + Diversidade,lgbtqiapn
+PL,968,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,saude
+PL,970,2023,Instituto Maria da Penha,violencias_de_genero
+PL,979,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,982,2023,Instituto Maria da Penha,violencias_de_genero
+PL,986,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,988,2023,Instituto Maria da Penha,violencias_de_genero
+PL,989,2023,Instituto Patrícia Galvão,violencias_de_genero
+PL,990,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,994,2023,Instituto + Diversidade,lgbtqiapn
+PL,996,2023,Instituto Maria da Penha,violencias_de_genero
+PL,998,2023,Anis,direitos_sexuais_reprodutivos
+PL,999,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,1000,2023,SOF,violencias_de_genero
+PL,1003,2023,Anis,direitos_sexuais_reprodutivos
+PL,1004,2023,Anis,direitos_sexuais_reprodutivos
+PL,1012,2023,Instituto + Diversidade,trabalho_economia_cuidado
+PL,1020,2023,SOF,violencias_de_genero
+PL,1033,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,1037,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,1054,2023,Instituto Update,trabalho_economia_cuidado
+PL,1056,2023,Instituto Maria da Penha,violencias_de_genero
+PL,1058,2023,Instituto + Diversidade,lgbtqiapn
+PL,1067,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,1096,2023,Plan International,infancia_adolescencia
+PL,1098,2023,Juristas Negras,trabalho_economia_cuidado
+PL,1136,2023,Instituto + Diversidade,lgbtqiapn
+PL,1141,2023,ARTIGO 19,familia_parentalidade
+PL,1149,2023,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,1161,2023,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,1169,2023,SOF,violencias_de_genero
+PL,1174,2023,Rede Liberdade,lgbtqiapn
+PL,1176,2023,SOF,violencias_de_genero
+PL,1196,2023,SOF,violencias_de_genero
+PL,1197,2023,SOF,violencias_de_genero
+PL,1203,2023,Instituto + Diversidade,trabalho_economia_cuidado
+PL,1222,2023,Instituto Maria da Penha,violencias_de_genero
+PL,1244,2023,Instituto Maria da Penha,violencias_de_genero
+PL,1255,2023,SOF,violencias_de_genero
+PL,1258,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,1294,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1298,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1303,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,1304,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1319,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1320,2023,Anis,direitos_sexuais_reprodutivos
+PL,1334,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,1344,2023,Anis,direitos_sexuais_reprodutivos
+PL,1381,2023,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,1400,2023,Instituto Update,educacao_cultura
+PL,1401,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,1441,2023,Plan International,familia_parentalidade
+PL,1444,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,1463,2023,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1479,2023,Instituto Maria da Penha,violencias_de_genero
+PL,1500,2023,SOF,violencias_de_genero
+PL,1526,2023,Instituto Update,saude
+PL,1561,2023,Themis,violencias_de_genero
+PL,1587,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,1596,2023,Instituto + Diversidade,lgbtqiapn
+PL,1597,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,1604,2023,Themis,violencias_de_genero
+PL,1605,2023,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1648,2023,Anis,direitos_sexuais_reprodutivos
+PL,1653,2023,Themis,violencias_de_genero
+PL,1707,2023,Themis,violencias_de_genero
+PL,1716,2023,Instituto Update,igualdade_antidiscriminacao
+PL,1729,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1750,2023,Rede Liberdade,violencias_de_genero
+PL,1776,2023,ARTIGO 19,familia_parentalidade
+PL,1799,2023,SOF,saude
+PL,1819,2023,Anis,direitos_sexuais_reprodutivos
+PL,1822,2023,Instituto Maria da Penha,violencias_de_genero
+PL,1838,2023,Instituto + Diversidade,lgbtqiapn
+PL,1852,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,1875,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,1891,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,1892,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,1906,2023,Instituto + Diversidade,lgbtqiapn
+PL,1973,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,familia_parentalidade
+PL,2024,2023,Instituto Update,violencias_de_genero
+PL,2025,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2042,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2047,2023,SOF,trabalho_economia_cuidado
+PL,2104,2023,Instituto Update,participacao_politica
+PL,2107,2023,Themis,direitos_sexuais_reprodutivos
+PL,2128,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2164,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2195,2023,Instituto Update,violencias_de_genero
+PL,2199,2023,Instituto Update,violencias_de_genero
+PL,2208,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2210,2023,Instituto + Diversidade,lgbtqiapn
+PL,2220,2023,Instituto Update,violencias_de_genero
+PL,2237,2023,Instituto Update,participacao_politica
+PL,2253,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2259,2023,Instituto Update,violencias_de_genero
+PL,2260,2023,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,2283,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2293,2023,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,2298,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2322,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PL,2325,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,2327,2023,Rede Liberdade,lgbtqiapn
+PL,2372,2023,Instituto + Diversidade,lgbtqiapn
+PL,2373,2023,Instituto Update,violencias_de_genero
+PL,2396,2023,Instituto Update,violencias_de_genero
+PL,2426,2023,Instituto Update,violencias_de_genero
+PL,2437,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2444,2023,Instituto Update,violencias_de_genero
+PL,2448,2023,ARTIGO 19,familia_parentalidade
+PL,2449,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,2490,2023,Anis,direitos_sexuais_reprodutivos
+PL,2491,2023,Instituto Update,violencias_de_genero
+PL,2494,2023,Anis,direitos_sexuais_reprodutivos
+PL,2495,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2496,2023,SOF,saude
+PL,2498,2023,Anis,direitos_sexuais_reprodutivos
+PL,2523,2023,Instituto + Diversidade,lgbtqiapn
+PL,2534,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2539,2023,SOF,familia_parentalidade
+PL,2552,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2553,2023,Instituto Update,violencias_de_genero
+PL,2564,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2574,2023,Instituto + Diversidade,lgbtqiapn
+PL,2613,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2614,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2637,2023,Instituto Update,violencias_de_genero
+PL,2643,2023,SOF,lgbtqiapn
+PL,2650,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,2654,2023,Instituto + Diversidade,lgbtqiapn
+PL,2674,2023,SOF,direitos_sexuais_reprodutivos
+PL,2680,2023,SOF,trabalho_economia_cuidado
+PL,2736,2023,Instituto Update,violencias_de_genero
+PL,2738,2023,Instituto Update,violencias_de_genero
+PL,2766,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,2771,2023,Rede Liberdade,participacao_politica
+PL,2781,2023,SOF,direitos_sexuais_reprodutivos
+PL,2782,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2791,2023,Instituto Update,violencias_de_genero
+PL,2829,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,educacao_cultura
+PL,2837,2023,Instituto Maria da Penha,violencias_de_genero
+PL,2856,2023,Instituto Update,violencias_de_genero
+PL,2874,2023,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,2887,2023,Instituto Update,violencias_de_genero
+PL,2959,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,2968,2023,Instituto Update,trabalho_economia_cuidado
+PL,2975,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3040,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,3054,2023,Instituto + Diversidade,lgbtqiapn
+PL,3094,2023,SOF,saude
+PL,3097,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3109,2023,Instituto + Diversidade,lgbtqiapn
+PL,3111,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3112,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3130,2023,SOF,familia_parentalidade
+PL,3137,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,3171,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3178,2023,ARTIGO 19,igualdade_antidiscriminacao
+PL,3182,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3194,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3200,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3201,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3204,2023,SOF,familia_parentalidade
+PL,3246,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3251,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3271,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3278,2023,Instituto + Diversidade,lgbtqiapn
+PL,3284,2023,Instituto + Diversidade,lgbtqiapn
+PL,3324,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3328,2023,Instituto + Diversidade,lgbtqiapn
+PL,3350,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,3422,2023,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,3444,2023,Plan International,trabalho_economia_cuidado
+PL,3450,2023,SOF,trabalho_economia_cuidado
+PL,3470,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3511,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3536,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,3627,2023,Instituto + Diversidade,lgbtqiapn
+PL,3628,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3635,2023,SOF,direitos_sexuais_reprodutivos
+PL,3656,2023,SOF,familia_parentalidade
+PL,3702,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,3705,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3710,2023,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,3735,2023,ARTIGO 19,familia_parentalidade
+PL,3748,2023,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,3749,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3753,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3762,2023,Instituto Update,participacao_politica
+PL,3764,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3767,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3773,2023,Juristas Negras,trabalho_economia_cuidado
+PL,3777,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,3802,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3810,2023,SOF,familia_parentalidade
+PL,3828,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3847,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3850,2023,Anis,direitos_sexuais_reprodutivos
+PL,3856,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3858,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3874,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3896,2023,Instituto Maria da Penha,violencias_de_genero
+PL,3911,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,3944,2023,Instituto Update,trabalho_economia_cuidado
+PL,3964,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,4005,2023,Anis,direitos_sexuais_reprodutivos
+PL,4024,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4043,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4060,2023,SOF,saude
+PL,4069,2023,Rede Liberdade,violencias_de_genero
+PL,4100,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4124,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4125,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4155,2023,Instituto + Diversidade,lgbtqiapn
+PL,4162,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4163,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,4164,2023,Anis,direitos_sexuais_reprodutivos
+PL,4167,2023,Anis,direitos_sexuais_reprodutivos
+PL,4230,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4254,2023,Instituto Update,participacao_politica
+PL,4266,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4281,2023,Anis,direitos_sexuais_reprodutivos
+PL,4307,2023,Anis,direitos_sexuais_reprodutivos
+PL,4315,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4366,2023,Rede Liberdade,violencias_de_genero
+PL,4376,2023,Rede Liberdade,violencias_de_genero
+PL,4381,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4383,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,4385,2023,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,4420,2023,Rede Liberdade,educacao_cultura
+PL,4442,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4469,2023,Anis,direitos_sexuais_reprodutivos
+PL,4485,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,4500,2023,Instituto Update,educacao_cultura
+PL,4520,2023,Rede Liberdade,violencias_de_genero
+PL,4525,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,4537,2023,Instituto + Diversidade,lgbtqiapn
+PL,4546,2023,Instituto + Diversidade,educacao_cultura
+PL,4577,2023,Themis,violencias_de_genero
+PL,4578,2023,Themis,violencias_de_genero
+PL,4591,2023,Instituto + Diversidade,lgbtqiapn
+PL,4597,2023,Rede Liberdade,participacao_politica
+PL,4626,2023,Themis,violencias_de_genero
+PL,4642,2023,Instituto + Diversidade,igualdade_antidiscriminacao
+PL,4709,2023,Instituto Update,direitos_sexuais_reprodutivos
+PL,4723,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,4754,2023,Rede Liberdade,violencias_de_genero
+PL,4781,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4789,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4794,2023,SOF,direitos_sexuais_reprodutivos
+PL,4842,2023,Empodera,violencias_de_genero
+PL,4843,2023,SOF,trabalho_economia_cuidado
+PL,4844,2023,Instituto + Diversidade,educacao_cultura
+PL,4885,2023,Instituto Maria da Penha,violencias_de_genero
+PL,4886,2023,Instituto + Diversidade,lgbtqiapn
+PL,4923,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,direitos_sexuais_reprodutivos
+PL,4952,2023,ARTIGO 19,familia_parentalidade
+PL,4972,2023,Themis,violencias_de_genero
+PL,4979,2023,Anis,direitos_sexuais_reprodutivos
+PL,4986,2023,Themis,violencias_de_genero
+PL,4987,2023,Plan International,violencias_de_genero
+PL,5011,2023,ARTIGO 19,familia_parentalidade
+PL,5013,2023,Anis,direitos_sexuais_reprodutivos
+PL,5034,2023,Instituto + Diversidade,lgbtqiapn
+PL,5037,2023,Themis,violencias_de_genero
+PL,5038,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5063,2023,Coletivo Feminista Sexualidade e Saúde,saude
+PL,5071,2023,Themis,violencias_de_genero
+PL,5099,2023,Anis,direitos_sexuais_reprodutivos
+PL,5123,2023,Instituto + Diversidade,lgbtqiapn
+PL,5125,2023,Themis,violencias_de_genero
+PL,5133,2023,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,5145,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5178,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5181,2023,Anis,saude
+PL,5193,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5194,2023,Anis,direitos_sexuais_reprodutivos
+PL,5203,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5253,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5260,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5295,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5306,2023,Juristas Negras,violencias_de_genero
+PL,5310,2023,Themis,violencias_de_genero
+PL,5321,2023,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,5342,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5371,2023,Anis,direitos_sexuais_reprodutivos
+PL,5452,2023,ARTIGO 19,familia_parentalidade
+PL,5457,2023,Instituto + Diversidade,lgbtqiapn
+PL,5467,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5472,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5496,2023,Juristas Negras,trabalho_economia_cuidado
+PL,5498,2023,ARTIGO 19,familia_parentalidade
+PL,5512,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5513,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5546,2023,Themis,violencias_de_genero
+PL,5573,2023,Themis,violencias_de_genero
+PL,5577,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5603,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,5608,2023,SOF,saude
+PL,5609,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5630,2023,Rede Liberdade,igualdade_antidiscriminacao
+PL,5658,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5663,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5672,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5673,2023,SOF,saude
+PL,5674,2023,Themis,violencias_de_genero
+PL,5682,2023,Anis,direitos_sexuais_reprodutivos
+PL,5695,2023,Themis,violencias_de_genero
+PL,5698,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5701,2023,Rede Liberdade,igualdade_antidiscriminacao
+PL,5704,2023,SOF,violencias_de_genero
+PL,5705,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5710,2023,Instituto Update,violencias_de_genero
+PL,5712,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5720,2023,ARTIGO 19,familia_parentalidade
+PL,5721,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,5722,2023,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,5756,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,5760,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,5771,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,5775,2023,Rede Liberdade,trabalho_economia_cuidado
+PL,5778,2023,Themis,violencias_de_genero
+PL,5781,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5811,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5812,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5860,2023,Themis,violencias_de_genero
+PL,5863,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5870,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5880,2023,Instituto Maria da Penha,violencias_de_genero
+PL,5885,2023,SOF,familia_parentalidade
+PL,5906,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,5914,2023,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,5915,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,5958,2023,ARTIGO 19,familia_parentalidade
+PL,5994,2023,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,5995,2023,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,6001,2023,Instituto Maria da Penha,violencias_de_genero
+PL,6010,2023,Instituto Maria da Penha,violencias_de_genero
+PL,6020,2023,Rede Liberdade,violencias_de_genero
+PL,6063,2023,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,6068,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,6112,2023,Themis,violencias_de_genero
+PL,6113,2023,Instituto Maria da Penha,violencias_de_genero
+PL,6197,2023,Instituto Maria da Penha,violencias_de_genero
+PL,6198,2023,Instituto Maria da Penha,violencias_de_genero
+PL,6219,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,6222,2023,Themis,direitos_sexuais_reprodutivos
+PL,6234,2023,Plan International,violencias_de_genero
+PL,8,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,9,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,11,2024,Anis,violencias_de_genero
+PL,21,2024,Rede Liberdade,violencias_de_genero
+PL,28,2024,Instituto Marielle Franco,violencias_de_genero
+PL,29,2024,Anis,violencias_de_genero
+PL,33,2024,Instituto Marielle Franco,violencias_de_genero
+PL,34,2024,Instituto Maria da Penha,violencias_de_genero
+PL,37,2024,Instituto Marielle Franco,direitos_sexuais_reprodutivos
+PL,38,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,56,2024,Instituto + Diversidade,lgbtqiapn
+PL,88,2024,Themis,saude
+PL,91,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,102,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,106,2024,Themis,direitos_sexuais_reprodutivos
+PL,108,2024,Instituto Marielle Franco,violencias_de_genero
+PL,121,2024,Rede Liberdade,violencias_de_genero
+PL,122,2024,Instituto + Diversidade,infancia_adolescencia
+PL,135,2024,Themis,infancia_adolescencia
+PL,147,2024,Instituto Maria da Penha,violencias_de_genero
+PL,177,2024,Instituto Maria da Penha,violencias_de_genero
+PL,181,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,195,2024,ARTIGO 19,infancia_adolescencia
+PL,198,2024,Juristas Negras,familia_parentalidade
+PL,198,2024,Themis,familia_parentalidade
+PL,200,2024,Juristas Negras,familia_parentalidade
+PL,211,2024,Rede Liberdade,violencias_de_genero
+PL,226,2024,Anis,violencias_de_genero
+PL,232,2024,Themis,direitos_sexuais_reprodutivos
+PL,243,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,248,2024,Rede Liberdade,violencias_de_genero
+PL,254,2024,Anis,educacao_cultura
+PL,295,2024,Instituto Marielle Franco,violencias_de_genero
+PL,300,2024,Instituto Maria da Penha,violencias_de_genero
+PL,304,2024,Instituto Update,violencias_de_genero
+PL,307,2024,Rede Liberdade,trabalho_economia_cuidado
+PL,308,2024,Instituto Marielle Franco,violencias_de_genero
+PL,319,2024,Instituto Marielle Franco,violencias_de_genero
+PL,322,2024,Juristas Negras,educacao_cultura
+PL,333,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,343,2024,Instituto Update,violencias_de_genero
+PL,348,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,353,2024,Juristas Negras,trabalho_economia_cuidado
+PL,354,2024,Juristas Negras,lgbtqiapn
+PL,361,2024,Rede Liberdade,violencias_de_genero
+PL,364,2024,Instituto Marielle Franco,violencias_de_genero
+PL,370,2024,Instituto Marielle Franco,violencias_de_genero
+PL,370,2024,Rede Liberdade,violencias_de_genero
+PL,378,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,385,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",participacao_politica
+PL,400,2024,Anis,direitos_sexuais_reprodutivos
+PL,400,2024,Observatório da Violência Obstétrica no Brasil,saude
+PL,406,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,414,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,416,2024,Instituto + Diversidade,lgbtqiapn
+PL,421,2024,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,425,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,450,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,452,2024,Instituto Maria da Penha,violencias_de_genero
+PL,475,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,477,2024,Instituto Update,violencias_de_genero
+PL,478,2024,Instituto Maria da Penha,violencias_de_genero
+PL,486,2024,Themis,infancia_adolescencia
+PL,487,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,492,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,494,2024,Juristas Negras,familia_parentalidade
+PL,501,2024,Themis,trabalho_economia_cuidado
+PL,520,2024,Anis,violencias_de_genero
+PL,522,2024,Juristas Negras,educacao_cultura
+PL,523,2024,Instituto Maria da Penha,violencias_de_genero
+PL,535,2024,Instituto Marielle Franco,violencias_de_genero
+PL,538,2024,Instituto Marielle Franco,violencias_de_genero
+PL,561,2024,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,561,2024,Rede Liberdade,familia_parentalidade
+PL,562,2024,Instituto Patrícia Galvão,trabalho_economia_cuidado
+PL,563,2024,Juristas Negras,trabalho_economia_cuidado
+PL,571,2024,Instituto Marielle Franco,violencias_de_genero
+PL,576,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,577,2024,Instituto + Diversidade,educacao_cultura
+PL,578,2024,Instituto Marielle Franco,trabalho_economia_cuidado
+PL,585,2024,Instituto + Diversidade,trabalho_economia_cuidado
+PL,590,2024,Instituto Marielle Franco,violencias_de_genero
+PL,593,2024,Anis,violencias_de_genero
+PL,594,2024,Juristas Negras,familia_parentalidade
+PL,602,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,604,2024,Instituto Update,saude
+PL,607,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,614,2024,Instituto Update,direitos_sexuais_reprodutivos
+PL,629,2024,Instituto Maria da Penha,violencias_de_genero
+PL,636,2024,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,637,2024,Instituto Update,saude
+PL,640,2024,Juristas Negras,violencias_de_genero
+PL,642,2024,Juristas Negras,infancia_adolescencia
+PL,646,2024,Instituto Maria da Penha,violencias_de_genero
+PL,654,2024,Instituto + Diversidade,violencias_de_genero
+PL,655,2024,Themis,trabalho_economia_cuidado
+PL,656,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,657,2024,Juristas Negras,direitos_sexuais_reprodutivos
+PL,658,2024,Juristas Negras,violencias_de_genero
+PL,662,2024,Themis,trabalho_economia_cuidado
+PL,677,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,686,2024,Rede Liberdade,violencias_de_genero
+PL,697,2024,Instituto Update,violencias_de_genero
+PL,704,2024,Instituto Maria da Penha,saude
+PL,712,2024,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,717,2024,Juristas Negras,violencias_de_genero
+PL,736,2024,Instituto Maria da Penha,educacao_cultura
+PL,737,2024,Instituto Marielle Franco,violencias_de_genero
+PL,738,2024,Instituto Maria da Penha,violencias_de_genero
+PL,772,2024,Instituto Update,educacao_cultura
+PL,782,2024,Instituto + Diversidade,violencias_de_genero
+PL,794,2024,Instituto Marielle Franco,violencias_de_genero
+PL,797,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,819,2024,Instituto Update,violencias_de_genero
+PL,822,2024,Instituto Marielle Franco,violencias_de_genero
+PL,824,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,828,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,837,2024,Instituto Marielle Franco,violencias_de_genero
+PL,851,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,869,2024,Themis,familia_parentalidade
+PL,872,2024,Instituto Update,trabalho_economia_cuidado
+PL,899,2024,Anis,educacao_cultura
+PL,899,2024,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,940,2024,Juristas Negras,familia_parentalidade
+PL,941,2024,Juristas Negras,familia_parentalidade
+PL,941,2024,Rede Liberdade,familia_parentalidade
+PL,945,2024,Instituto Maria da Penha,trabalho_economia_cuidado
+PL,955,2024,Themis,infancia_adolescencia
+PL,956,2024,Instituto Marielle Franco,violencias_de_genero
+PL,974,2024,Themis,educacao_cultura
+PL,977,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,993,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,1004,2024,Instituto Update,violencias_de_genero
+PL,1008,2024,Instituto Update,trabalho_economia_cuidado
+PL,1028,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,1031,2024,Juristas Negras,direitos_sexuais_reprodutivos
+PL,1050,2024,Instituto Marielle Franco,violencias_de_genero
+PL,1052,2024,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,1065,2024,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,1092,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,1094,2024,Anis,direitos_sexuais_reprodutivos
+PL,1096,2024,Anis,direitos_sexuais_reprodutivos
+PL,1098,2024,Instituto + Diversidade,participacao_politica
+PL,1099,2024,Juristas Negras,violencias_de_genero
+PL,1100,2024,Juristas Negras,educacao_cultura
+PL,1101,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,1107,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,1125,2024,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,1136,2024,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,1142,2024,Themis,trabalho_economia_cuidado
+PL,1146,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,1152,2024,Anis,direitos_sexuais_reprodutivos
+PL,1158,2024,Juristas Negras,educacao_cultura
+PL,1160,2024,Instituto + Diversidade,lgbtqiapn
+PL,1168,2024,Rede Liberdade,violencias_de_genero
+PL,1171,2024,Themis,trabalho_economia_cuidado
+PL,1176,2024,Instituto + Diversidade,educacao_cultura
+PL,1190,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,1191,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,1225,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,1238,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,1242,2024,Rede Liberdade,violencias_de_genero
+PL,1249,2024,Anis,direitos_sexuais_reprodutivos
+PL,1270,2024,Juristas Negras,violencias_de_genero
+PL,1279,2024,Instituto Marielle Franco,violencias_de_genero
+PL,1281,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,1302,2024,Instituto Marielle Franco,violencias_de_genero
+PL,1305,2024,Instituto + Diversidade,lgbtqiapn
+PL,1309,2024,Anis,direitos_sexuais_reprodutivos
+PL,1339,2024,Themis,trabalho_economia_cuidado
+PL,1345,2024,Juristas Negras,educacao_cultura
+PL,1362,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,1374,2024,Themis,trabalho_economia_cuidado
+PL,1378,2024,Juristas Negras,violencias_de_genero
+PL,1381,2024,Rede Liberdade,violencias_de_genero
+PL,1395,2024,Juristas Negras,trabalho_economia_cuidado
+PL,1424,2024,Instituto Maria da Penha,violencias_de_genero
+PL,1429,2024,Juristas Negras,trabalho_economia_cuidado
+PL,1430,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,1433,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,1442,2024,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,1442,2024,Instituto Maria da Penha,violencias_de_genero
+PL,1450,2024,Juristas Negras,familia_parentalidade
+PL,1490,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,1491,2024,Juristas Negras,educacao_cultura
+PL,1503,2024,Instituto Maria da Penha,violencias_de_genero
+PL,1508,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,1517,2024,ARTIGO 19,educacao_cultura
+PL,1527,2024,Juristas Negras,educacao_cultura
+PL,1553,2024,Anis,violencias_de_genero
+PL,1585,2024,Instituto Marielle Franco,violencias_de_genero
+PL,1607,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,1608,2024,Instituto Maria da Penha,violencias_de_genero
+PL,1611,2024,Instituto Marielle Franco,violencias_de_genero
+PL,1651,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,1669,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,1699,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,1715,2024,Rede Liberdade,violencias_de_genero
+PL,1720,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,1749,2024,Instituto Marielle Franco,violencias_de_genero
+PL,1764,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,1766,2024,Themis,trabalho_economia_cuidado
+PL,1775,2024,Instituto Update,violencias_de_genero
+PL,1796,2024,Themis,educacao_cultura
+PL,1839,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,1869,2024,Juristas Negras,igualdade_antidiscriminacao
+PL,1878,2024,Themis,saude
+PL,1881,2024,Juristas Negras,educacao_cultura
+PL,1898,2024,Anis,violencias_de_genero
+PL,1904,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,1910,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,1927,2024,Anis,direitos_sexuais_reprodutivos
+PL,1933,2024,Themis,saude
+PL,1944,2024,Instituto Update,saude
+PL,1958,2024,Anis,direitos_sexuais_reprodutivos
+PL,1977,2024,Rede Liberdade,familia_parentalidade
+PL,1978,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2025,2024,Instituto Patrícia Galvão,infancia_adolescencia
+PL,2029,2024,Themis,violencias_de_genero
+PL,2046,2024,Anis,lgbtqiapn
+PL,2058,2024,Anis,violencias_de_genero
+PL,2069,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,2080,2024,Instituto + Diversidade,educacao_cultura
+PL,2090,2024,Juristas Negras,trabalho_economia_cuidado
+PL,2099,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,2108,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2127,2024,Instituto Maria da Penha,violencias_de_genero
+PL,2156,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2161,2024,Instituto Update,educacao_cultura
+PL,2165,2024,Rede Liberdade,violencias_de_genero
+PL,2169,2024,Instituto Maria da Penha,violencias_de_genero
+PL,2195,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,2199,2024,Juristas Negras,familia_parentalidade
+PL,2219,2024,Instituto Patrícia Galvão,infancia_adolescencia
+PL,2225,2024,Plan International,infancia_adolescencia
+PL,2230,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,2237,2024,Themis,trabalho_economia_cuidado
+PL,2238,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,2276,2024,Instituto Update,lgbtqiapn
+PL,2284,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,2285,2024,Juristas Negras,familia_parentalidade
+PL,2286,2024,Instituto Update,violencias_de_genero
+PL,2296,2024,Juristas Negras,trabalho_economia_cuidado
+PL,2303,2024,Instituto Patrícia Galvão,infancia_adolescencia
+PL,2313,2024,Instituto Update,infancia_adolescencia
+PL,2319,2024,Juristas Negras,educacao_cultura
+PL,2341,2024,ARTIGO 19,violencias_de_genero
+PL,2350,2024,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,2363,2024,Instituto + Diversidade,lgbtqiapn
+PL,2368,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2383,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,2388,2024,Rede Liberdade,violencias_de_genero
+PL,2396,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,2426,2024,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2428,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,2429,2024,Instituto Patrícia Galvão,infancia_adolescencia
+PL,2459,2024,Rede Liberdade,violencias_de_genero
+PL,2469,2024,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2479,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2495,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,2499,2024,Instituto Maria da Penha,direitos_sexuais_reprodutivos
+PL,2506,2024,Rede Liberdade,violencias_de_genero
+PL,2520,2024,Anis,direitos_sexuais_reprodutivos
+PL,2521,2024,Anis,direitos_sexuais_reprodutivos
+PL,2522,2024,Anis,direitos_sexuais_reprodutivos
+PL,2524,2024,Anis,direitos_sexuais_reprodutivos
+PL,2525,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,2525,2024,Juristas Negras,violencias_de_genero
+PL,2528,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,2531,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,2533,2024,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,2538,2024,Anis,familia_parentalidade
+PL,2547,2024,Juristas Negras,trabalho_economia_cuidado
+PL,2549,2024,ARTIGO 19,educacao_cultura
+PL,2549,2024,Rede Liberdade,educacao_cultura
+PL,2565,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2568,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2576,2024,Instituto + Diversidade,lgbtqiapn
+PL,2590,2024,Instituto Update,saude
+PL,2592,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2602,2024,Anis,saude
+PL,2605,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,2613,2024,Instituto Maria da Penha,violencias_de_genero
+PL,2615,2024,Instituto Maria da Penha,violencias_de_genero
+PL,2636,2024,Anis,violencias_de_genero
+PL,2639,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,2641,2024,Themis,trabalho_economia_cuidado
+PL,2643,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,2645,2024,Juristas Negras,educacao_cultura
+PL,2660,2024,Instituto Update,direitos_sexuais_reprodutivos
+PL,2664,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,2666,2024,Instituto Maria da Penha,saude
+PL,2667,2024,Instituto Update,lgbtqiapn
+PL,2668,2024,Instituto Update,lgbtqiapn
+PL,2669,2024,Instituto + Diversidade,violencias_de_genero
+PL,2671,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2674,2024,Themis,trabalho_economia_cuidado
+PL,2696,2024,Instituto Update,saude
+PL,2697,2024,Juristas Negras,trabalho_economia_cuidado
+PL,2701,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,2709,2024,Instituto Maria da Penha,infancia_adolescencia
+PL,2709,2024,Plan International,educacao_cultura
+PL,2717,2024,Themis,infancia_adolescencia
+PL,2724,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2755,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,2777,2024,Juristas Negras,trabalho_economia_cuidado
+PL,2791,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,2799,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2807,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2808,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2832,2024,Anis,direitos_sexuais_reprodutivos
+PL,2853,2024,Themis,trabalho_economia_cuidado
+PL,2854,2024,Themis,educacao_cultura
+PL,2856,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,2857,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,2859,2024,Themis,direitos_sexuais_reprodutivos
+PL,2861,2024,ARTIGO 19,violencias_de_genero
+PL,2883,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,2886,2024,Instituto + Diversidade,infancia_adolescencia
+PL,2921,2024,Instituto + Diversidade,infancia_adolescencia
+PL,2928,2024,Instituto Marielle Franco,violencias_de_genero
+PL,2942,2024,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,2942,2024,Juristas Negras,violencias_de_genero
+PL,2958,2024,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,2964,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,2977,2024,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,2983,2024,Themis,infancia_adolescencia
+PL,2988,2024,Anis,violencias_de_genero
+PL,2989,2024,Instituto Update,violencias_de_genero
+PL,2992,2024,ARTIGO 19,violencias_de_genero
+PL,3011,2024,Themis,saude
+PL,3023,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3050,2024,Instituto Update,infancia_adolescencia
+PL,3051,2024,Instituto + Diversidade,lgbtqiapn
+PL,3052,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,3100,2024,Anis,lgbtqiapn
+PL,3102,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3109,2024,ARTIGO 19,violencias_de_genero
+PL,3110,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,3156,2024,Juristas Negras,educacao_cultura
+PL,3181,2024,Themis,infancia_adolescencia
+PL,3189,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,3218,2024,Instituto Update,lgbtqiapn
+PL,3221,2024,Themis,trabalho_economia_cuidado
+PL,3235,2024,Instituto Update,saude
+PL,3244,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3268,2024,Themis,saude
+PL,3285,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,3288,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,3293,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,3302,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,3317,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3323,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,3338,2024,Instituto + Diversidade,educacao_cultura
+PL,3346,2024,Anis,violencias_de_genero
+PL,3361,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,3379,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,3389,2024,Juristas Negras,violencias_de_genero
+PL,3396,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3397,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3400,2024,Instituto + Diversidade,lgbtqiapn
+PL,3425,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,3440,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3459,2024,Juristas Negras,trabalho_economia_cuidado
+PL,3462,2024,Themis,trabalho_economia_cuidado
+PL,3481,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3488,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3502,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,3506,2024,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,3519,2024,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,3525,2024,Themis,direitos_sexuais_reprodutivos
+PL,3546,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,3561,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,3572,2024,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,3591,2024,Coletivo Feminista Sexualidade e Saúde,saude
+PL,3601,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3660,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,3680,2024,Themis,saude
+PL,3687,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3700,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,3705,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3736,2024,ARTIGO 19,educacao_cultura
+PL,3759,2024,Instituto Marielle Franco,educacao_cultura
+PL,3760,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3789,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3800,2024,Rede Liberdade,infancia_adolescencia
+PL,3800,2024,Themis,familia_parentalidade
+PL,3821,2024,ARTIGO 19,violencias_de_genero
+PL,3832,2024,Themis,trabalho_economia_cuidado
+PL,3833,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3877,2024,Instituto Patrícia Galvão,infancia_adolescencia
+PL,3880,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3881,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3885,2024,Juristas Negras,violencias_de_genero
+PL,3888,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,3893,2024,Instituto Marielle Franco,violencias_de_genero
+PL,3895,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,3923,2024,Instituto Update,lgbtqiapn
+PL,3930,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3968,2024,ARTIGO 19,educacao_cultura
+PL,3970,2024,Themis,trabalho_economia_cuidado
+PL,3974,2024,Anis,direitos_sexuais_reprodutivos
+PL,3983,2024,Instituto + Diversidade,violencias_de_genero
+PL,3986,2024,Instituto Maria da Penha,violencias_de_genero
+PL,3990,2024,ARTIGO 19,violencias_de_genero
+PL,4011,2024,Themis,trabalho_economia_cuidado
+PL,4012,2024,Themis,trabalho_economia_cuidado
+PL,4025,2024,ARTIGO 19,trabalho_economia_cuidado
+PL,4036,2024,Themis,educacao_cultura
+PL,4062,2024,Juristas Negras,trabalho_economia_cuidado
+PL,4088,2024,Anis,violencias_de_genero
+PL,4090,2024,Juristas Negras,saude
+PL,4101,2024,Instituto + Diversidade,lgbtqiapn
+PL,4109,2024,Anis,direitos_sexuais_reprodutivos
+PL,4124,2024,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,4129,2024,Instituto Update,lgbtqiapn
+PL,4137,2024,Anis,direitos_sexuais_reprodutivos
+PL,4146,2024,Instituto Update,lgbtqiapn
+PL,4161,2024,Rede Liberdade,violencias_de_genero
+PL,4182,2024,Themis,infancia_adolescencia
+PL,4221,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4224,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4225,2024,Instituto + Diversidade,trabalho_economia_cuidado
+PL,4226,2024,Themis,direitos_sexuais_reprodutivos
+PL,4228,2024,Anis,violencias_de_genero
+PL,4233,2024,Anis,direitos_sexuais_reprodutivos
+PL,4245,2024,Instituto Update,infancia_adolescencia
+PL,4264,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4269,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4272,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,4274,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PL,4276,2024,Rede Liberdade,violencias_de_genero
+PL,4286,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4287,2024,Rede Liberdade,violencias_de_genero
+PL,4294,2024,Juristas Negras,saude
+PL,4296,2024,Anis,direitos_sexuais_reprodutivos
+PL,4306,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4314,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4330,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4342,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4403,2024,Juristas Negras,participacao_politica
+PL,4410,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4416,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4425,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4440,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4464,2024,Rede Liberdade,violencias_de_genero
+PL,4474,2024,Themis,infancia_adolescencia
+PL,4502,2024,Themis,educacao_cultura
+PL,4504,2024,Instituto Update,saude
+PL,4525,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,4536,2024,Juristas Negras,igualdade_antidiscriminacao
+PL,4540,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4551,2024,Juristas Negras,trabalho_economia_cuidado
+PL,4568,2024,Rede Liberdade,violencias_de_genero
+PL,4573,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4578,2024,Instituto Patrícia Galvão,violencias_de_genero
+PL,4591,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4600,2024,Instituto Patrícia Galvão,direitos_sexuais_reprodutivos
+PL,4615,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,4631,2024,Themis,direitos_sexuais_reprodutivos
+PL,4650,2024,Themis,direitos_sexuais_reprodutivos
+PL,4674,2024,Themis,direitos_sexuais_reprodutivos
+PL,4676,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4686,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4687,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,4688,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4695,2024,Juristas Negras,violencias_de_genero
+PL,4697,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4708,2024,Juristas Negras,violencias_de_genero
+PL,4711,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4712,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4754,2024,Rede Liberdade,violencias_de_genero
+PL,4767,2024,Juristas Negras,igualdade_antidiscriminacao
+PL,4797,2024,Juristas Negras,violencias_de_genero
+PL,4822,2024,Instituto + Diversidade,lgbtqiapn
+PL,4830,2024,Instituto Maria da Penha,violencias_de_genero
+PL,4906,2024,Instituto + Diversidade,direitos_sexuais_reprodutivos
+PL,4911,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,4912,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4916,2024,Themis,trabalho_economia_cuidado
+PL,4928,2024,Rede Liberdade,violencias_de_genero
+PL,4939,2024,Instituto Maria da Penha,direitos_sexuais_reprodutivos
+PL,4941,2024,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,4944,2024,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,4966,2024,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,4975,2024,Juristas Negras,violencias_de_genero
+PL,4980,2024,Instituto Marielle Franco,violencias_de_genero
+PL,4983,2024,Instituto Update,lgbtqiapn
+PL,4989,2024,Juristas Negras,trabalho_economia_cuidado
+PL,5004,2024,Rede Liberdade,violencias_de_genero
+PL,5018,2024,Instituto Marielle Franco,infancia_adolescencia
+PL,5025,2024,Instituto Marielle Franco,violencias_de_genero
+PL,25,2025,Juristas Negras,familia_parentalidade
+PL,65,2025,Instituto Marielle Franco,educacao_cultura
+PL,68,2025,ARTIGO 19,violencias_de_genero
+PL,69,2025,Instituto Marielle Franco,violencias_de_genero
+PL,75,2025,Themis,infancia_adolescencia
+PL,77,2025,Juristas Negras,educacao_cultura
+PL,85,2025,Instituto Update,direitos_sexuais_reprodutivos
+PL,97,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,98,2025,Juristas Negras,saude
+PL,130,2025,Instituto Update,direitos_sexuais_reprodutivos
+PL,131,2025,Instituto + Diversidade,direitos_sexuais_reprodutivos
+PL,140,2025,Instituto Marielle Franco,violencias_de_genero
+PL,154,2025,Anis,direitos_sexuais_reprodutivos
+PL,180,2025,Instituto Update,direitos_sexuais_reprodutivos
+PL,181,2025,Instituto + Diversidade,lgbtqiapn
+PL,184,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,185,2025,Instituto Marielle Franco,violencias_de_genero
+PL,186,2025,Themis,familia_parentalidade
+PL,189,2025,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,192,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,199,2025,Instituto Update,infancia_adolescencia
+PL,211,2025,Juristas Negras,trabalho_economia_cuidado
+PL,226,2025,Themis,infancia_adolescencia
+PL,230,2025,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,235,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,248,2025,Themis,trabalho_economia_cuidado
+PL,255,2025,Instituto Marielle Franco,violencias_de_genero
+PL,256,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,260,2025,Instituto Maria da Penha,violencias_de_genero
+PL,263,2025,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,264,2025,Juristas Negras,violencias_de_genero
+PL,280,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,286,2025,Rede Liberdade,violencias_de_genero
+PL,296,2025,Anis,violencias_de_genero
+PL,301,2025,Themis,trabalho_economia_cuidado
+PL,302,2025,Instituto Maria da Penha,violencias_de_genero
+PL,303,2025,Instituto Update,educacao_cultura
+PL,346,2025,Instituto Update,violencias_de_genero
+PL,361,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,369,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PL,373,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,383,2025,Instituto Update,saude
+PL,403,2025,Instituto Maria da Penha,infancia_adolescencia
+PL,459,2025,Instituto Marielle Franco,saude
+PL,460,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,465,2025,Instituto Update,saude
+PL,471,2025,Instituto Marielle Franco,violencias_de_genero
+PL,481,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,481,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,482,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,483,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,487,2025,Instituto Patrícia Galvão,educacao_cultura
+PL,499,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,501,2025,Instituto Update,educacao_cultura
+PL,504,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,507,2025,Instituto Marielle Franco,violencias_de_genero
+PL,525,2025,Instituto Marielle Franco,violencias_de_genero
+PL,547,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,552,2025,Instituto Marielle Franco,violencias_de_genero
+PL,576,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,584,2025,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,588,2025,Instituto Patrícia Galvão,infancia_adolescencia
+PL,595,2025,Instituto Marielle Franco,violencias_de_genero
+PL,604,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,605,2025,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,611,2025,Rede Liberdade,violencias_de_genero
+PL,612,2025,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,619,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,624,2025,Themis,infancia_adolescencia
+PL,625,2025,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,639,2025,Instituto Update,violencias_de_genero
+PL,649,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,651,2025,Instituto Maria da Penha,violencias_de_genero
+PL,653,2025,Instituto Marielle Franco,violencias_de_genero
+PL,662,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,669,2025,Instituto Maria da Penha,violencias_de_genero
+PL,690,2025,ARTIGO 19,violencias_de_genero
+PL,692,2025,Instituto Maria da Penha,violencias_de_genero
+PL,693,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,701,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,702,2025,ARTIGO 19,familia_parentalidade
+PL,705,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,705,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,707,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,709,2025,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,717,2025,Instituto + Diversidade,lgbtqiapn
+PL,720,2025,Juristas Negras,violencias_de_genero
+PL,755,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,758,2025,Instituto Marielle Franco,violencias_de_genero
+PL,763,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,764,2025,Instituto Update,infancia_adolescencia
+PL,775,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,778,2025,Anis,violencias_de_genero
+PL,785,2025,Themis,infancia_adolescencia
+PL,788,2025,Instituto Update,violencias_de_genero
+PL,789,2025,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,791,2025,Juristas Negras,educacao_cultura
+PL,794,2025,ARTIGO 19,violencias_de_genero
+PL,795,2025,Instituto Marielle Franco,violencias_de_genero
+PL,797,2025,Instituto Marielle Franco,violencias_de_genero
+PL,808,2025,Rede Liberdade,violencias_de_genero
+PL,814,2025,Instituto Marielle Franco,violencias_de_genero
+PL,820,2025,Anis,direitos_sexuais_reprodutivos
+PL,821,2025,Instituto Maria da Penha,violencias_de_genero
+PL,822,2025,Anis,direitos_sexuais_reprodutivos
+PL,825,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,827,2025,Instituto Update,lgbtqiapn
+PL,828,2025,ARTIGO 19,violencias_de_genero
+PL,829,2025,ARTIGO 19,violencias_de_genero
+PL,833,2025,Instituto Marielle Franco,violencias_de_genero
+PL,840,2025,Instituto Patrícia Galvão,infancia_adolescencia
+PL,844,2025,ARTIGO 19,saude
+PL,850,2025,Juristas Negras,saude
+PL,872,2025,Instituto Maria da Penha,violencias_de_genero
+PL,876,2025,Instituto Update,direitos_sexuais_reprodutivos
+PL,880,2025,Rede Liberdade,infancia_adolescencia
+PL,891,2025,Instituto + Diversidade,lgbtqiapn
+PL,895,2025,Instituto Update,trabalho_economia_cuidado
+PL,906,2025,Instituto Update,lgbtqiapn
+PL,919,2025,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,929,2025,Juristas Negras,violencias_de_genero
+PL,934,2025,ARTIGO 19,educacao_cultura
+PL,935,2025,ARTIGO 19,educacao_cultura
+PL,936,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,944,2025,Anis,violencias_de_genero
+PL,961,2025,Instituto Marielle Franco,violencias_de_genero
+PL,975,2025,Juristas Negras,saude
+PL,979,2025,Instituto Maria da Penha,violencias_de_genero
+PL,980,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,983,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,984,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1004,2025,Instituto + Diversidade,direitos_sexuais_reprodutivos
+PL,1009,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",infancia_adolescencia
+PL,1015,2025,ARTIGO 19,violencias_de_genero
+PL,1018,2025,Juristas Negras,trabalho_economia_cuidado
+PL,1032,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1033,2025,Rede Liberdade,violencias_de_genero
+PL,1035,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,1048,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1059,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,1074,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,1112,2025,Themis,infancia_adolescencia
+PL,1116,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1117,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,1117,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,1141,2025,Juristas Negras,saude
+PL,1158,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1160,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,1161,2025,Instituto Update,saude
+PL,1171,2025,Themis,infancia_adolescencia
+PL,1191,2025,Juristas Negras,violencias_de_genero
+PL,1197,2025,Themis,direitos_sexuais_reprodutivos
+PL,1206,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1207,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,1232,2025,ARTIGO 19,educacao_cultura
+PL,1237,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1239,2025,Instituto Update,infancia_adolescencia
+PL,1245,2025,Instituto Update,infancia_adolescencia
+PL,1270,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,1275,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1279,2025,Instituto Update,infancia_adolescencia
+PL,1288,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1295,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1298,2025,ARTIGO 19,violencias_de_genero
+PL,1299,2025,Instituto Update,violencias_de_genero
+PL,1299,2025,Plan International,violencias_de_genero
+PL,1301,2025,Anis,direitos_sexuais_reprodutivos
+PL,1309,2025,Rede Liberdade,trabalho_economia_cuidado
+PL,1318,2025,Instituto Update,lgbtqiapn
+PL,1344,2025,Instituto Maria da Penha,infancia_adolescencia
+PL,1373,2025,Juristas Negras,saude
+PL,1395,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,1404,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1423,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,1441,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1443,2025,Juristas Negras,direitos_sexuais_reprodutivos
+PL,1445,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,1446,2025,ARTIGO 19,violencias_de_genero
+PL,1473,2025,Rede Liberdade,violencias_de_genero
+PL,1492,2025,Themis,direitos_sexuais_reprodutivos
+PL,1500,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1504,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1513,2025,Instituto Update,educacao_cultura
+PL,1520,2025,Instituto Update,trabalho_economia_cuidado
+PL,1523,2025,Instituto Patrícia Galvão,infancia_adolescencia
+PL,1527,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1535,2025,Instituto Patrícia Galvão,infancia_adolescencia
+PL,1538,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,1550,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1559,2025,Instituto Update,violencias_de_genero
+PL,1562,2025,ARTIGO 19,educacao_cultura
+PL,1564,2025,Themis,trabalho_economia_cuidado
+PL,1566,2025,Juristas Negras,trabalho_economia_cuidado
+PL,1585,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,1621,2025,Rede Liberdade,violencias_de_genero
+PL,1623,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1626,2025,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,1687,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1689,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1716,2025,Anis,trabalho_economia_cuidado
+PL,1735,2025,Rede Liberdade,lgbtqiapn
+PL,1736,2025,Instituto + Diversidade,lgbtqiapn
+PL,1741,2025,Rede Liberdade,infancia_adolescencia
+PL,1744,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1746,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1753,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1761,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,1762,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,1763,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,1784,2025,Instituto + Diversidade,lgbtqiapn
+PL,1789,2025,ARTIGO 19,participacao_politica
+PL,1801,2025,ARTIGO 19,infancia_adolescencia
+PL,1806,2025,Instituto + Diversidade,direitos_sexuais_reprodutivos
+PL,1852,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,1859,2025,Instituto + Diversidade,lgbtqiapn
+PL,1900,2025,Themis,trabalho_economia_cuidado
+PL,1919,2025,Anis,direitos_sexuais_reprodutivos
+PL,1971,2025,Plan International,participacao_politica
+PL,1972,2025,Instituto Marielle Franco,infancia_adolescencia
+PL,1976,2025,Instituto Marielle Franco,violencias_de_genero
+PL,1977,2025,Instituto Maria da Penha,violencias_de_genero
+PL,1986,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2004,2025,Instituto Update,violencias_de_genero
+PL,2058,2025,ARTIGO 19,violencias_de_genero
+PL,2063,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,2103,2025,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2123,2025,Rede Liberdade,violencias_de_genero
+PL,2126,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2134,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,2135,2025,Anis,violencias_de_genero
+PL,2145,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,2152,2025,Instituto + Diversidade,lgbtqiapn
+PL,2155,2025,Instituto + Diversidade,lgbtqiapn
+PL,2158,2025,Instituto Update,educacao_cultura
+PL,2169,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,2188,2025,Instituto Maria da Penha,violencias_de_genero
+PL,2199,2025,Instituto + Diversidade,lgbtqiapn
+PL,2202,2025,Instituto + Diversidade,lgbtqiapn
+PL,2215,2025,Instituto + Diversidade,lgbtqiapn
+PL,2219,2025,Instituto Marielle Franco,infancia_adolescencia
+PL,2256,2025,Themis,direitos_sexuais_reprodutivos
+PL,2270,2025,Rede Liberdade,trabalho_economia_cuidado
+PL,2281,2025,Instituto Maria da Penha,violencias_de_genero
+PL,2320,2025,ARTIGO 19,educacao_cultura
+PL,2334,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2349,2025,Anis,violencias_de_genero
+PL,2353,2025,Anis,violencias_de_genero
+PL,2375,2025,Instituto + Diversidade,lgbtqiapn
+PL,2376,2025,Juristas Negras,infancia_adolescencia
+PL,2393,2025,Observatório da Violência Obstétrica no Brasil,infancia_adolescencia
+PL,2414,2025,Instituto Update,lgbtqiapn
+PL,2415,2025,Themis,trabalho_economia_cuidado
+PL,2424,2025,Instituto Maria da Penha,violencias_de_genero
+PL,2425,2025,Coletivo Feminista Sexualidade e Saúde,infancia_adolescencia
+PL,2443,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2498,2025,Instituto Update,educacao_cultura
+PL,2526,2025,Juristas Negras,violencias_de_genero
+PL,2538,2025,Themis,trabalho_economia_cuidado
+PL,2551,2025,Themis,infancia_adolescencia
+PL,2562,2025,Instituto Update,participacao_politica
+PL,2570,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,2591,2025,Instituto + Diversidade,infancia_adolescencia
+PL,2595,2025,Instituto Update,trabalho_economia_cuidado
+PL,2624,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2666,2025,Instituto Marielle Franco,infancia_adolescencia
+PL,2685,2025,Instituto Maria da Penha,infancia_adolescencia
+PL,2805,2025,SOF,educacao_cultura
+PL,2810,2025,Plan International,violencias_de_genero
+PL,2810,2025,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,2865,2025,Anis,trabalho_economia_cuidado
+PL,2865,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,2927,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,2945,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2977,2025,Instituto Marielle Franco,violencias_de_genero
+PL,2979,2025,Rede Liberdade,violencias_de_genero
+PL,3028,2025,Rede Liberdade,direitos_sexuais_reprodutivos
+PL,3050,2025,Rede Liberdade,violencias_de_genero
+PL,3088,2025,Rede Liberdade,violencias_de_genero
+PL,3092,2025,Rede Liberdade,violencias_de_genero
+PL,3097,2025,Rede Liberdade,violencias_de_genero
+PL,3098,2025,Rede Liberdade,violencias_de_genero
+PL,3099,2025,Rede Liberdade,violencias_de_genero
+PL,3102,2025,Anis,direitos_sexuais_reprodutivos
+PL,3127,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3140,2025,Juristas Negras,lgbtqiapn
+PL,3158,2025,Plan International,violencias_de_genero
+PL,3178,2025,Plan International,violencias_de_genero
+PL,3179,2025,Anis,saude
+PL,3200,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,3303,2025,Themis,familia_parentalidade
+PL,3340,2025,Rede Liberdade,violencias_de_genero
+PL,3341,2025,Juristas Negras,violencias_de_genero
+PL,3343,2025,Themis,familia_parentalidade
+PL,3360,2025,ARTIGO 19,familia_parentalidade
+PL,3366,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3378,2025,Anis,participacao_politica
+PL,3379,2025,Instituto Update,participacao_politica
+PL,3381,2025,Juristas Negras,igualdade_antidiscriminacao
+PL,3407,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,igualdade_antidiscriminacao
+PL,3415,2025,Juristas Negras,participacao_politica
+PL,3417,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,3420,2025,Plan International,familia_parentalidade
+PL,3421,2025,Plan International,educacao_cultura
+PL,3439,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,3449,2025,SOF,trabalho_economia_cuidado
+PL,3452,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3461,2025,Themis,participacao_politica
+PL,3474,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3490,2025,Anis,saude
+PL,3493,2025,Anis,trabalho_economia_cuidado
+PL,3522,2025,SOF,trabalho_economia_cuidado
+PL,3524,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,3539,2025,Plan International,educacao_cultura
+PL,3545,2025,Juristas Negras,violencias_de_genero
+PL,3596,2025,Juristas Negras,violencias_de_genero
+PL,3602,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3605,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,3633,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,3634,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3640,2025,Instituto Update,participacao_politica
+PL,3647,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,3655,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3656,2025,ARTIGO 19,violencias_de_genero
+PL,3662,2025,Juristas Negras,violencias_de_genero
+PL,3671,2025,Juristas Negras,violencias_de_genero
+PL,3708,2025,ARTIGO 19,direitos_sexuais_reprodutivos
+PL,3722,2025,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,3723,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3732,2025,Rede Liberdade,familia_parentalidade
+PL,3773,2025,ARTIGO 19,violencias_de_genero
+PL,3790,2025,Plan International,trabalho_economia_cuidado
+PL,3803,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,3808,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,3813,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,3815,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3830,2025,Juristas Negras,igualdade_antidiscriminacao
+PL,3832,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,3836,2025,Plan International,violencias_de_genero
+PL,3837,2025,Plan International,violencias_de_genero
+PL,3840,2025,Plan International,violencias_de_genero
+PL,3841,2025,Plan International,trabalho_economia_cuidado
+PL,3848,2025,Plan International,violencias_de_genero
+PL,3849,2025,Plan International,violencias_de_genero
+PL,3850,2025,Plan International,violencias_de_genero
+PL,3851,2025,Plan International,violencias_de_genero
+PL,3854,2025,Plan International,violencias_de_genero
+PL,3856,2025,Plan International,violencias_de_genero
+PL,3857,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3859,2025,Plan International,violencias_de_genero
+PL,3861,2025,Plan International,violencias_de_genero
+PL,3867,2025,Plan International,violencias_de_genero
+PL,3875,2025,Plan International,violencias_de_genero
+PL,3876,2025,Plan International,trabalho_economia_cuidado
+PL,3878,2025,Plan International,violencias_de_genero
+PL,3881,2025,Plan International,violencias_de_genero
+PL,3884,2025,Plan International,familia_parentalidade
+PL,3885,2025,Plan International,violencias_de_genero
+PL,3886,2025,Plan International,trabalho_economia_cuidado
+PL,3889,2025,Plan International,violencias_de_genero
+PL,3898,2025,Plan International,trabalho_economia_cuidado
+PL,3899,2025,Plan International,violencias_de_genero
+PL,3900,2025,Plan International,violencias_de_genero
+PL,3903,2025,Plan International,violencias_de_genero
+PL,3908,2025,Plan International,participacao_politica
+PL,3910,2025,Plan International,violencias_de_genero
+PL,3914,2025,Plan International,trabalho_economia_cuidado
+PL,3926,2025,Anis,trabalho_economia_cuidado
+PL,3927,2025,Plan International,violencias_de_genero
+PL,3935,2025,Plan International,familia_parentalidade
+PL,3938,2025,ARTIGO 19,saude
+PL,3949,2025,Themis,familia_parentalidade
+PL,3956,2025,Plan International,violencias_de_genero
+PL,3960,2025,Plan International,violencias_de_genero
+PL,3963,2025,Plan International,violencias_de_genero
+PL,3964,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,3965,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,3966,2025,Juristas Negras,igualdade_antidiscriminacao
+PL,3970,2025,Plan International,violencias_de_genero
+PL,3981,2025,Themis,familia_parentalidade
+PL,3984,2025,Anis,violencias_de_genero
+PL,3985,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",familia_parentalidade
+PL,3987,2025,Plan International,violencias_de_genero
+PL,3990,2025,Instituto Maria da Penha,violencias_de_genero
+PL,3991,2025,ARTIGO 19,familia_parentalidade
+PL,3994,2025,Plan International,violencias_de_genero
+PL,4006,2025,Instituto Maria da Penha,violencias_de_genero
+PL,4014,2025,Plan International,violencias_de_genero
+PL,4015,2025,Plan International,educacao_cultura
+PL,4021,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4022,2025,Plan International,violencias_de_genero
+PL,4026,2025,Juristas Negras,violencias_de_genero
+PL,4027,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,4037,2025,Anis,trabalho_economia_cuidado
+PL,4043,2025,Plan International,participacao_politica
+PL,4051,2025,Anis,saude
+PL,4053,2025,Plan International,violencias_de_genero
+PL,4061,2025,Plan International,violencias_de_genero
+PL,4065,2025,Plan International,trabalho_economia_cuidado
+PL,4067,2025,Juristas Negras,violencias_de_genero
+PL,4070,2025,Instituto Update,educacao_cultura
+PL,4078,2025,Plan International,trabalho_economia_cuidado
+PL,4083,2025,ARTIGO 19,igualdade_antidiscriminacao
+PL,4109,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,4161,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,4165,2025,Instituto Maria da Penha,violencias_de_genero
+PL,4173,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4186,2025,Juristas Negras,violencias_de_genero
+PL,4208,2025,Plan International,familia_parentalidade
+PL,4210,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4220,2025,Rede Liberdade,violencias_de_genero
+PL,4226,2025,SOF,trabalho_economia_cuidado
+PL,4237,2025,Plan International,violencias_de_genero
+PL,4248,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4261,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,4265,2025,Instituto Maria da Penha,violencias_de_genero
+PL,4267,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,4281,2025,ARTIGO 19,violencias_de_genero
+PL,4295,2025,Juristas Negras,violencias_de_genero
+PL,4296,2025,Anis,violencias_de_genero
+PL,4298,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,4300,2025,ARTIGO 19,violencias_de_genero
+PL,4311,2025,Anis,familia_parentalidade
+PL,4320,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,4323,2025,Plan International,violencias_de_genero
+PL,4368,2025,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,4388,2025,SOF,trabalho_economia_cuidado
+PL,4391,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,4407,2025,Plan International,participacao_politica
+PL,4433,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4439,2025,Anis,lgbtqiapn
+PL,4457,2025,Empodera,trabalho_economia_cuidado
+PL,4460,2025,Rede Liberdade,violencias_de_genero
+PL,4463,2025,Rede Liberdade,violencias_de_genero
+PL,4468,2025,Plan International,violencias_de_genero
+PL,4473,2025,Plan International,violencias_de_genero
+PL,4484,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4487,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,4494,2025,Coletivo Feminista Sexualidade e Saúde,igualdade_antidiscriminacao
+PL,4532,2025,Themis,violencias_de_genero
+PL,4536,2025,Anis,saude
+PL,4551,2025,Anis,familia_parentalidade
+PL,4564,2025,Juristas Negras,lgbtqiapn
+PL,4578,2025,Empodera,educacao_cultura
+PL,4588,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,4593,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,4594,2025,Plan International,educacao_cultura
+PL,4603,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4627,2025,Instituto Update,participacao_politica
+PL,4634,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,4644,2025,Anis,violencias_de_genero
+PL,4652,2025,ARTIGO 19,familia_parentalidade
+PL,4659,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,4665,2025,Anis,educacao_cultura
+PL,4684,2025,Empodera,trabalho_economia_cuidado
+PL,4710,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,4720,2025,Themis,familia_parentalidade
+PL,4724,2025,Themis,familia_parentalidade
+PL,4729,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,saude
+PL,4736,2025,SOF,trabalho_economia_cuidado
+PL,4746,2025,Plan International,violencias_de_genero
+PL,4753,2025,Juristas Negras,violencias_de_genero
+PL,4756,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,4768,2025,Juristas Negras,familia_parentalidade
+PL,4792,2025,Juristas Negras,participacao_politica
+PL,4800,2025,Juristas Negras,lgbtqiapn
+PL,4801,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,4813,2025,Anis,direitos_sexuais_reprodutivos
+PL,4836,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,4854,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,4864,2025,Rede Liberdade,violencias_de_genero
+PL,4878,2025,Juristas Negras,saude
+PL,4880,2025,ARTIGO 19,familia_parentalidade
+PL,4887,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,4902,2025,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,4913,2025,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,4915,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,4916,2025,Plan International,violencias_de_genero
+PL,4922,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,4933,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,4951,2025,Anis,violencias_de_genero
+PL,4954,2025,Rede Liberdade,familia_parentalidade
+PL,4996,2025,Plan International,violencias_de_genero
+PL,4997,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,5013,2025,Themis,violencias_de_genero
+PL,5027,2025,Instituto Maria da Penha,violencias_de_genero
+PL,5049,2025,Juristas Negras,participacao_politica
+PL,5055,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,5067,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,5072,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,5084,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,5105,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,5110,2025,Instituto Maria da Penha,violencias_de_genero
+PL,5114,2025,Plan International,participacao_politica
+PL,5116,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,5128,2025,Rede Liberdade,violencias_de_genero
+PL,5134,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,5139,2025,Juristas Negras,educacao_cultura
+PL,5159,2025,Anis,trabalho_economia_cuidado
+PL,5167,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,5181,2025,Anis,educacao_cultura
+PL,5192,2025,SOF,trabalho_economia_cuidado
+PL,5198,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",participacao_politica
+PL,5232,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,5239,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,5240,2025,ARTIGO 19,familia_parentalidade
+PL,5247,2025,Rede Liberdade,violencias_de_genero
+PL,5249,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,familia_parentalidade
+PL,5262,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,5275,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",educacao_cultura
+PL,5279,2025,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,5287,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,5295,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,5301,2025,Juristas Negras,trabalho_economia_cuidado
+PL,5304,2025,Plan International,participacao_politica
+PL,5309,2025,Anis,educacao_cultura
+PL,5317,2025,ARTIGO 19,violencias_de_genero
+PL,5325,2025,Plan International,violencias_de_genero
+PL,5329,2025,Juristas Negras,violencias_de_genero
+PL,5343,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,5405,2025,Instituto Patrícia Galvão,educacao_cultura
+PL,5413,2025,Themis,familia_parentalidade
+PL,5416,2025,Juristas Negras,familia_parentalidade
+PL,5424,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,5426,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,5443,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,5446,2025,Plan International,violencias_de_genero
+PL,5470,2025,Anis,trabalho_economia_cuidado
+PL,5472,2025,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,5486,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,5493,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,familia_parentalidade
+PL,5498,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,5501,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,familia_parentalidade
+PL,5505,2025,Anis,direitos_sexuais_reprodutivos
+PL,5525,2025,Rede Liberdade,trabalho_economia_cuidado
+PL,5528,2025,Juristas Negras,familia_parentalidade
+PL,5536,2025,Anis,violencias_de_genero
+PL,5541,2025,Anis,violencias_de_genero
+PL,5605,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,5611,2025,Rede Liberdade,violencias_de_genero
+PL,5632,2025,Anis,direitos_sexuais_reprodutivos
+PL,5648,2025,Rede Liberdade,violencias_de_genero
+PL,5663,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,5667,2025,Anis,violencias_de_genero
+PL,5669,2025,Themis,familia_parentalidade
+PL,5670,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,5671,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",familia_parentalidade
+PL,5687,2025,Themis,violencias_de_genero
+PL,5695,2025,ARTIGO 19,violencias_de_genero
+PL,5697,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,5736,2025,Plan International,violencias_de_genero
+PL,5737,2025,Anis,lgbtqiapn
+PL,5815,2025,Plan International,infancia_adolescencia
+PL,5824,2025,Themis,violencias_de_genero
+PL,5835,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,5885,2025,Themis,familia_parentalidade
+PL,5888,2025,Anis,violencias_de_genero
+PL,5889,2025,SOF,trabalho_economia_cuidado
+PL,5899,2025,Anis,familia_parentalidade
+PL,5904,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,5940,2025,Instituto Maria da Penha,violencias_de_genero
+PL,5943,2025,Juristas Negras,lgbtqiapn
+PL,5980,2025,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,6004,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,6039,2025,Instituto Patrícia Galvão,educacao_cultura
+PL,6052,2025,Juristas Negras,violencias_de_genero
+PL,6053,2025,Juristas Negras,violencias_de_genero
+PL,6057,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,6069,2025,Plan International,educacao_cultura
+PL,6072,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6075,2025,ARTIGO 19,igualdade_antidiscriminacao
+PL,6089,2025,Plan International,violencias_de_genero
+PL,6125,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,6138,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,6140,2025,ARTIGO 19,violencias_de_genero
+PL,6146,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,6179,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6187,2025,Juristas Negras,violencias_de_genero
+PL,6189,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,6194,2025,ARTIGO 19,violencias_de_genero
+PL,6195,2025,Juristas Negras,participacao_politica
+PL,6196,2025,Plan International,participacao_politica
+PL,6197,2025,Anis,violencias_de_genero
+PL,6204,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,6205,2025,Plan International,violencias_de_genero
+PL,6222,2025,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,6224,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,6244,2025,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,6252,2025,Empodera,educacao_cultura
+PL,6260,2025,Plan International,violencias_de_genero
+PL,6275,2025,Juristas Negras,familia_parentalidade
+PL,6285,2025,Observatório da Violência Obstétrica no Brasil,saude
+PL,6286,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,6304,2025,Themis,familia_parentalidade
+PL,6308,2025,Rede Liberdade,violencias_de_genero
+PL,6334,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,6337,2025,Rede Liberdade,violencias_de_genero
+PL,6338,2025,Anis,saude
+PL,6340,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,6344,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,6345,2025,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,6348,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6351,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,6354,2025,Rede Liberdade,violencias_de_genero
+PL,6355,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,6363,2025,Plan International,direitos_sexuais_reprodutivos
+PL,6364,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,6382,2025,Plan International,violencias_de_genero
+PL,6393,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6394,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6396,2025,ARTIGO 19,igualdade_antidiscriminacao
+PL,6397,2025,Plan International,participacao_politica
+PL,6400,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6402,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,familia_parentalidade
+PL,6416,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,6419,2025,ARTIGO 19,violencias_de_genero
+PL,6420,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6435,2025,SOF,trabalho_economia_cuidado
+PL,6438,2025,Juristas Negras,saude
+PL,6439,2025,Juristas Negras,saude
+PL,6440,2025,Juristas Negras,saude
+PL,6441,2025,Juristas Negras,saude
+PL,6442,2025,Juristas Negras,saude
+PL,6452,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,6453,2025,Empodera,trabalho_economia_cuidado
+PL,6458,2025,Plan International,participacao_politica
+PL,6465,2025,Juristas Negras,violencias_de_genero
+PL,6481,2025,Rede Liberdade,violencias_de_genero
+PL,6482,2025,Rede Liberdade,violencias_de_genero
+PL,6486,2025,ARTIGO 19,violencias_de_genero
+PL,6489,2025,Anis,igualdade_antidiscriminacao
+PL,6492,2025,Instituto Update,violencias_de_genero
+PL,6518,2025,Rede Liberdade,violencias_de_genero
+PL,6559,2025,Juristas Negras,violencias_de_genero
+PL,6603,2025,Juristas Negras,igualdade_antidiscriminacao
+PL,6606,2025,SOF,trabalho_economia_cuidado
+PL,6613,2025,Instituto Maria da Penha,violencias_de_genero
+PL,6622,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,6658,2025,Juristas Negras,violencias_de_genero
+PL,6659,2025,Juristas Negras,violencias_de_genero
+PL,6660,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,6661,2025,Juristas Negras,participacao_politica
+PL,6662,2025,Juristas Negras,participacao_politica
+PL,6664,2025,Empodera,trabalho_economia_cuidado
+PL,6675,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,6695,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,6697,2025,ARTIGO 19,violencias_de_genero
+PL,6698,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,6702,2025,ARTIGO 19,familia_parentalidade
+PL,6709,2025,Coletivo Feminista Sexualidade e Saúde,saude
+PL,6730,2025,Anis,trabalho_economia_cuidado
+PL,6731,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,6732,2025,Instituto Update,violencias_de_genero
+PL,6733,2025,Instituto Patrícia Galvão,igualdade_antidiscriminacao
+PL,6744,2025,Plan International,violencias_de_genero
+PL,6746,2025,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,6761,2025,Anis,trabalho_economia_cuidado
+PL,6770,2025,Anis,direitos_sexuais_reprodutivos
+PL,6805,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",familia_parentalidade
+PL,6827,2025,Plan International,participacao_politica
+PL,6843,2025,Plan International,violencias_de_genero
+PL,6847,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,familia_parentalidade
+PL,6852,2025,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,6862,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,6868,2025,Instituto Update,violencias_de_genero
+PL,6870,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",familia_parentalidade
+PL,6885,2025,ARTIGO 19,violencias_de_genero
+PL,6907,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",direitos_sexuais_reprodutivos
+PL,6917,2025,Anis,igualdade_antidiscriminacao
+PL,6944,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,6950,2025,Rede Liberdade,violencias_de_genero
+PL,6956,2025,ARTIGO 19,trabalho_economia_cuidado
+PL,6986,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,6998,2025,Instituto Patrícia Galvão,violencias_de_genero
+PL,7012,2025,Coletivo Feminista Sexualidade e Saúde,familia_parentalidade
+PL,7023,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,7049,2025,SOF,trabalho_economia_cuidado
+PL,7125,2025,Instituto Maria da Penha,violencias_de_genero
+PL,7156,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,7157,2025,Coletivo Feminista Sexualidade e Saúde,direitos_sexuais_reprodutivos
+PL,7159,2025,Anis,direitos_sexuais_reprodutivos
+PL,7165,2025,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,7183,2025,Juristas Negras,violencias_de_genero
+PL,7188,2025,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,7200,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,7203,2025,SOF,trabalho_economia_cuidado
+PL,7223,2025,Juristas Negras,trabalho_economia_cuidado
+PL,2,2026,ARTIGO 19,violencias_de_genero
+PL,8,2026,Instituto Maria da Penha,violencias_de_genero
+PL,29,2026,Plan International,participacao_politica
+PL,34,2026,Juristas Negras,violencias_de_genero
+PL,36,2026,Instituto Maria da Penha,violencias_de_genero
+PL,47,2026,Instituto Patrícia Galvão,trabalho_economia_cuidado
+PL,73,2026,SOF,educacao_cultura
+PL,93,2026,Rede Liberdade,igualdade_antidiscriminacao
+PL,99,2026,Juristas Negras,lgbtqiapn
+PL,129,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,134,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,145,2026,SOF,trabalho_economia_cuidado
+PL,167,2026,Rede Liberdade,violencias_de_genero
+PL,186,2026,Instituto Maria da Penha,violencias_de_genero
+PL,188,2026,Plan International,educacao_cultura
+PL,195,2026,Instituto Maria da Penha,violencias_de_genero
+PL,200,2026,Instituto Maria da Penha,violencias_de_genero
+PL,207,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,243,2026,Instituto Maria da Penha,violencias_de_genero
+PL,244,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,254,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,260,2026,Rede Liberdade,violencias_de_genero
+PL,269,2026,Instituto Maria da Penha,violencias_de_genero
+PL,289,2026,Plan International,trabalho_economia_cuidado
+PL,292,2026,Juristas Negras,lgbtqiapn
+PL,297,2026,Rede Liberdade,violencias_de_genero
+PL,308,2026,Instituto Maria da Penha,violencias_de_genero
+PL,317,2026,Instituto Maria da Penha,violencias_de_genero
+PL,350,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,354,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,363,2026,Instituto Maria da Penha,violencias_de_genero
+PL,378,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,379,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,igualdade_antidiscriminacao
+PL,388,2026,Juristas Negras,lgbtqiapn
+PL,395,2026,Instituto Maria da Penha,violencias_de_genero
+PL,405,2026,Anis,trabalho_economia_cuidado
+PL,406,2026,Anis,violencias_de_genero
+PL,409,2026,Empodera,trabalho_economia_cuidado
+PL,420,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,422,2026,Juristas Negras,lgbtqiapn
+PL,429,2026,Instituto Update,igualdade_antidiscriminacao
+PL,441,2026,Rede Liberdade,violencias_de_genero
+PL,443,2026,Rede Liberdade,violencias_de_genero
+PL,457,2026,Plan International,trabalho_economia_cuidado
+PL,461,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,468,2026,Juristas Negras,violencias_de_genero
+PL,469,2026,Themis,violencias_de_genero
+PL,472,2026,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,485,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,487,2026,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,503,2026,Anis,trabalho_economia_cuidado
+PL,507,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,525,2026,Juristas Negras,violencias_de_genero
+PL,526,2026,ARTIGO 19,violencias_de_genero
+PL,527,2026,Rede Liberdade,violencias_de_genero
+PL,529,2026,Rede Liberdade,violencias_de_genero
+PL,530,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,556,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,570,2026,Themis,familia_parentalidade
+PL,579,2026,SOF,trabalho_economia_cuidado
+PL,587,2026,Anis,saude
+PL,589,2026,Instituto Maria da Penha,violencias_de_genero
+PL,618,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,627,2026,ARTIGO 19,violencias_de_genero
+PL,628,2026,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,632,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,637,2026,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,638,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,641,2026,Anis,participacao_politica
+PL,643,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,644,2026,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,645,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,646,2026,Anis,trabalho_economia_cuidado
+PL,652,2026,Anis,lgbtqiapn
+PL,654,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,657,2026,Empodera,educacao_cultura
+PL,665,2026,Juristas Negras,lgbtqiapn
+PL,666,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,667,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,668,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,669,2026,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,670,2026,Rede Liberdade,violencias_de_genero
+PL,671,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,676,2026,Instituto Maria da Penha,violencias_de_genero
+PL,681,2026,Anis,violencias_de_genero
+PL,688,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,691,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,695,2026,Anis,trabalho_economia_cuidado
+PL,708,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,711,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",familia_parentalidade
+PL,712,2026,Anis,saude
+PL,717,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,723,2026,Instituto Maria da Penha,violencias_de_genero
+PL,727,2026,Rede Liberdade,violencias_de_genero
+PL,733,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,745,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,748,2026,Instituto Maria da Penha,violencias_de_genero
+PL,750,2026,Instituto Update,violencias_de_genero
+PL,754,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,758,2026,Juristas Negras,participacao_politica
+PL,768,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",familia_parentalidade
+PL,769,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,783,2026,Juristas Negras,trabalho_economia_cuidado
+PL,785,2026,Juristas Negras,violencias_de_genero
+PL,786,2026,Anis,violencias_de_genero
+PL,788,2026,Instituto Update,saude
+PL,789,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,795,2026,ARTIGO 19,violencias_de_genero
+PL,797,2026,Juristas Negras,violencias_de_genero
+PL,803,2026,Juristas Negras,violencias_de_genero
+PL,805,2026,ARTIGO 19,violencias_de_genero
+PL,808,2026,Juristas Negras,violencias_de_genero
+PL,812,2026,Rede Liberdade,violencias_de_genero
+PL,827,2026,Instituto Maria da Penha,violencias_de_genero
+PL,830,2026,Juristas Negras,trabalho_economia_cuidado
+PL,832,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,833,2026,Juristas Negras,trabalho_economia_cuidado
+PL,834,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,836,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,856,2026,Observatório da Violência Obstétrica no Brasil,saude
+PL,858,2026,Instituto Maria da Penha,violencias_de_genero
+PL,861,2026,Instituto Update,violencias_de_genero
+PL,862,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,885,2026,Instituto Update,violencias_de_genero
+PL,892,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,898,2026,Rede Liberdade,violencias_de_genero
+PL,909,2026,Instituto Maria da Penha,violencias_de_genero
+PL,914,2026,Themis,familia_parentalidade
+PL,916,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,920,2026,Instituto Maria da Penha,violencias_de_genero
+PL,924,2026,Anis,familia_parentalidade
+PL,936,2026,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,953,2026,Juristas Negras,violencias_de_genero
+PL,963,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,964,2026,Juristas Negras,violencias_de_genero
+PL,965,2026,Instituto Update,violencias_de_genero
+PL,966,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,969,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",saude
+PL,973,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,985,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,986,2026,Instituto Maria da Penha,violencias_de_genero
+PL,988,2026,Juristas Negras,igualdade_antidiscriminacao
+PL,989,2026,Anis,saude
+PL,992,2026,Rede Liberdade,violencias_de_genero
+PL,996,2026,ARTIGO 19,violencias_de_genero
+PL,997,2026,ARTIGO 19,violencias_de_genero
+PL,998,2026,ARTIGO 19,educacao_cultura
+PL,999,2026,ARTIGO 19,participacao_politica
+PL,1000,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1006,2026,Anis,igualdade_antidiscriminacao
+PL,1008,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1010,2026,ARTIGO 19,participacao_politica
+PL,1011,2026,ARTIGO 19,violencias_de_genero
+PL,1012,2026,Anis,violencias_de_genero
+PL,1016,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1019,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,1021,2026,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,1025,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1027,2026,Anis,direitos_sexuais_reprodutivos
+PL,1038,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1040,2026,Rede Liberdade,violencias_de_genero
+PL,1042,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1045,2026,ARTIGO 19,violencias_de_genero
+PL,1050,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1058,2026,Juristas Negras,violencias_de_genero
+PL,1060,2026,Rede Liberdade,violencias_de_genero
+PL,1067,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1068,2026,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,1072,2026,Coletivo Feminista Sexualidade e Saúde,violencias_de_genero
+PL,1075,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1080,2026,Rede Liberdade,violencias_de_genero
+PL,1082,2026,Instituto Patrícia Galvão,igualdade_antidiscriminacao
+PL,1085,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1087,2026,ARTIGO 19,igualdade_antidiscriminacao
+PL,1088,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1095,2026,Rede Liberdade,violencias_de_genero
+PL,1097,2026,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,1100,2026,Themis,violencias_de_genero
+PL,1101,2026,Juristas Negras,violencias_de_genero
+PL,1105,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1106,2026,Juristas Negras,lgbtqiapn
+PL,1107,2026,Anis,violencias_de_genero
+PL,1109,2026,Juristas Negras,trabalho_economia_cuidado
+PL,1115,2026,Plan International,familia_parentalidade
+PL,1116,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,1118,2026,ARTIGO 19,violencias_de_genero
+PL,1119,2026,Rede Liberdade,violencias_de_genero
+PL,1125,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1130,2026,Plan International,participacao_politica
+PL,1138,2026,Anis,violencias_de_genero
+PL,1144,2026,ARTIGO 19,violencias_de_genero
+PL,1145,2026,ARTIGO 19,igualdade_antidiscriminacao
+PL,1146,2026,Rede Liberdade,violencias_de_genero
+PL,1154,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,1155,2026,Juristas Negras,participacao_politica
+PL,1161,2026,Juristas Negras,violencias_de_genero
+PL,1167,2026,Themis,violencias_de_genero
+PL,1173,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,1174,2026,Anis,saude
+PL,1181,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1189,2026,Juristas Negras,violencias_de_genero
+PL,1191,2026,Observatório da Violência Obstétrica no Brasil,familia_parentalidade
+PL,1192,2026,ARTIGO 19,violencias_de_genero
+PL,1201,2026,Plan International,violencias_de_genero
+PL,1208,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1217,2026,Themis,violencias_de_genero
+PL,1226,2026,Anis,violencias_de_genero
+PL,1236,2026,Empodera,trabalho_economia_cuidado
+PL,1260,2026,Anis,direitos_sexuais_reprodutivos
+PL,1261,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1262,2026,Rede Liberdade,violencias_de_genero
+PL,1270,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1272,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,1292,2026,Instituto Update,violencias_de_genero
+PL,1294,2026,Juristas Negras,lgbtqiapn
+PL,1299,2026,Juristas Negras,violencias_de_genero
+PL,1314,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,1315,2026,Empodera,educacao_cultura
+PL,1320,2026,Rede Liberdade,violencias_de_genero
+PL,1324,2026,ARTIGO 19,violencias_de_genero
+PL,1326,2026,Rede Liberdade,violencias_de_genero
+PL,1343,2026,SOF,trabalho_economia_cuidado
+PL,1352,2026,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,1380,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1400,2026,Rede Liberdade,violencias_de_genero
+PL,1425,2026,Anis,violencias_de_genero
+PL,1440,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,1444,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1447,2026,Observatório da Violência Obstétrica no Brasil,saude
+PL,1450,2026,Juristas Negras,participacao_politica
+PL,1456,2026,Plan International,violencias_de_genero
+PL,1457,2026,Empodera,violencias_de_genero
+PL,1461,2026,ARTIGO 19,violencias_de_genero
+PL,1464,2026,Themis,violencias_de_genero
+PL,1477,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1478,2026,Plan International,violencias_de_genero
+PL,1504,2026,Plan International,participacao_politica
+PL,1544,2026,ARTIGO 19,igualdade_antidiscriminacao
+PL,1553,2026,Instituto Update,violencias_de_genero
+PL,1554,2026,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,1555,2026,ARTIGO 19,educacao_cultura
+PL,1567,2026,ARTIGO 19,igualdade_antidiscriminacao
+PL,1599,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1616,2026,Instituto Patrícia Galvão,violencias_de_genero
+PL,1634,2026,Juristas Negras,lgbtqiapn
+PL,1637,2026,Plan International,violencias_de_genero
+PL,1641,2026,Rede Liberdade,violencias_de_genero
+PL,1657,2026,Rede Liberdade,trabalho_economia_cuidado
+PL,1661,2026,Themis,violencias_de_genero
+PL,1682,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,1692,2026,Plan International,trabalho_economia_cuidado
+PL,1695,2026,Juristas Negras,violencias_de_genero
+PL,1706,2026,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,1708,2026,SOF,trabalho_economia_cuidado
+PL,1712,2026,Themis,violencias_de_genero
+PL,1720,2026,Plan International,violencias_de_genero
+PL,1739,2026,Themis,violencias_de_genero
+PL,1742,2026,Observatório da Violência Obstétrica no Brasil,violencias_de_genero
+PL,1752,2026,Rede Liberdade,violencias_de_genero
+PL,1763,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,1765,2026,Observatório da Violência Obstétrica no Brasil,educacao_cultura
+PL,1774,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,1794,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1798,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,1801,2026,ARTIGO 19,educacao_cultura
+PL,1802,2026,Anis,saude
+PL,1806,2026,Themis,participacao_politica
+PL,1811,2026,Rede Liberdade,violencias_de_genero
+PL,1815,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1825,2026,Plan International,educacao_cultura
+PL,1832,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PL,1838,2026,SOF,trabalho_economia_cuidado
+PL,1847,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1870,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1883,2026,Anis,violencias_de_genero
+PL,1889,2026,Anis,violencias_de_genero
+PL,1906,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1920,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1922,2026,Instituto Maria da Penha,violencias_de_genero
+PL,1926,2026,Anis,trabalho_economia_cuidado
+PL,1944,2026,Anis,violencias_de_genero
+PL,1952,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PL,1969,2026,Anis,lgbtqiapn
+PL,1986,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,1988,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
+PL,1991,2026,Plan International,participacao_politica
+PL,1995,2026,Plan International,trabalho_economia_cuidado
+PL,1996,2026,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PL,2017,2026,ARTIGO 19,igualdade_antidiscriminacao
+PL,2020,2026,Anis,educacao_cultura
+PL,2025,2026,Juristas Negras,violencias_de_genero
+PL,2026,2026,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PL,2036,2026,Empodera,igualdade_antidiscriminacao
+PL,2058,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PL,2060,2026,Plan International,violencias_de_genero
+PL,2063,2026,Instituto Maria da Penha,violencias_de_genero
+PL,2064,2026,Rede Liberdade,igualdade_antidiscriminacao
+PL,2065,2026,Anis,violencias_de_genero
+PL,2072,2026,Themis,violencias_de_genero
+PL,2076,2026,Empodera,violencias_de_genero
+PL,2085,2026,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PL,2088,2026,Anis,lgbtqiapn
+PL,2091,2026,Juristas Negras,violencias_de_genero
+PL,2102,2026,Observatório da Violência Obstétrica no Brasil,direitos_sexuais_reprodutivos
+PL,2104,2026,Coletivo Feminista Sexualidade e Saúde,saude
+PL,2105,2026,ARTIGO 19,violencias_de_genero
+PLP,35,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PLP,178,2019,deFEMde - Rede Feminista de Juristas,participacao_politica
+PLP,31,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PLP,122,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PLP,192,2021,Instituto Maria da Penha,trabalho_economia_cuidado
+PLP,22,2022,Instituto Maria da Penha,educacao_cultura
+PLP,62,2022,ARTIGO 19,violencias_de_genero
+PLP,6,2023,ARTIGO 19,familia_parentalidade
+PLP,203,2023,Instituto Update,participacao_politica
+PLP,218,2023,Instituto + Diversidade,igualdade_antidiscriminacao
+PLP,21,2024,Instituto + Diversidade,trabalho_economia_cuidado
+PLP,136,2024,Instituto Maria da Penha,violencias_de_genero
+PLP,136,2024,Rede Liberdade,violencias_de_genero
+PLP,158,2024,Juristas Negras,violencias_de_genero
+PLP,197,2024,Instituto Update,violencias_de_genero
+PLP,206,2024,Coletivo Feminista Sexualidade e Saúde,trabalho_economia_cuidado
+PLP,53,2025,Instituto Maria da Penha,violencias_de_genero
+PLP,69,2025,Themis,familia_parentalidade
+PLP,87,2025,Instituto Maria da Penha,violencias_de_genero
+PLP,183,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PLP,235,2025,Rede Liberdade,participacao_politica
+PLP,255,2025,Instituto Update,participacao_politica
+PLP,39,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,violencias_de_genero
+PLP,40,2026,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PLP,55,2026,Empodera,educacao_cultura
+PLP,103,2026,Juristas Negras,participacao_politica
+PLV,23,2022,Rede Liberdade,trabalho_economia_cuidado
+PLV,2,2023,Juristas Negras,direitos_sexuais_reprodutivos
+PRC,9,2021,Mulheres Negras Decidem,educacao_cultura
+PRC,21,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PRC,31,2021,Instituto Maria da Penha,participacao_politica
+PRC,38,2021,Observatório da Violência Obstétrica no Brasil,trabalho_economia_cuidado
+PRC,73,2021,Instituto Maria da Penha,participacao_politica
+PRC,9,2022,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",violencias_de_genero
+PRC,27,2022,Rede Liberdade,participacao_politica
+PRC,33,2022,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PRC,34,2022,Rede Liberdade,participacao_politica
+PRC,38,2023,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PRC,46,2023,Rede Liberdade,violencias_de_genero
+PRC,58,2023,Rede Liberdade,participacao_politica
+PRC,86,2023,Rede Liberdade,violencias_de_genero
+PRC,59,2024,Instituto + Diversidade,lgbtqiapn
+PRC,14,2025,Coletivo Feminista Sexualidade e Saúde,participacao_politica
+PRC,17,2025,Instituto Marielle Franco,violencias_de_genero
+PRC,35,2025,Anis,direitos_sexuais_reprodutivos
+PRC,1,2026,Juristas Negras,participacao_politica
+PRS,80,2019,SPW,participacao_politica
+PRS,103,2019,SPW,participacao_politica
+PRS,47,2020,"Cepia – Cidadania, Estudo, Pesquisa, Informação e Ação",trabalho_economia_cuidado
+PRS,26,2023,Anis,direitos_sexuais_reprodutivos
+PRS,76,2023,Instituto Maria da Penha,violencias_de_genero
+PRS,110,2023,Instituto Maria da Penha,violencias_de_genero
+PRS,113,2023,Instituto Maria da Penha,violencias_de_genero
+PRS,114,2023,Instituto Update,participacao_politica
+PRS,6,2024,Instituto + Diversidade,participacao_politica
+PRS,30,2024,ARTIGO 19,educacao_cultura
+PRS,69,2024,Rede Liberdade,participacao_politica
+PRS,5,2025,Instituto Patrícia Galvão,violencias_de_genero
+PRS,39,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,trabalho_economia_cuidado
+PRS,60,2025,CFEMEA - Centro Feminista de Estudos e Assessoria,participacao_politica
