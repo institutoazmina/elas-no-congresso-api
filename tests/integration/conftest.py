@@ -51,3 +51,11 @@ def verified_sender(ses_client):
     from django.conf import settings
 
     ses_client.create_email_identity(EmailIdentity=settings.AWS_SES_FROM_EMAIL)
+
+
+@pytest.fixture
+def outbox(settings, mailoutbox):
+    """Troca o SES pelo backend em memória — nos testes de entrega o que importa
+    é *quantos* e-mails saem e para quem, não o transporte."""
+    settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    return mailoutbox

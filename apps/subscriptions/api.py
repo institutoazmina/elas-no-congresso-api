@@ -1,5 +1,8 @@
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.utils import timezone
 from ninja import Router
-from ninja.errors import HttpError
+from ninja.throttling import AnonRateThrottle
 
 from .models import Subscription
 from .schemas import SubscriptionCreateSchema, SubscriptionSchema
@@ -7,39 +10,51 @@ from .schemas import SubscriptionCreateSchema, SubscriptionSchema
 router = Router()
 
 
-@router.post("", response={201: SubscriptionSchema})
+def _back_to_site(page: str, status: str) -> HttpResponseRedirect:
+    """Devolve o usuário ao site estático — o clique veio de um link de e-mail,
+    então quem está do outro lado é uma pessoa num browser, não um cliente HTTP."""
+    return HttpResponseRedirect(f"{settings.PUBLIC_SITE_URL.rstrip('/')}/alertas/{page}?status={status}")
+
+
+@router.post(
+    "",
+    response={201: list[SubscriptionSchema]},
+    throttle=[AnonRateThrottle(f"{settings.SUBSCRIPTION_THROTTLE_RATE_PER_HOUR}/h")],
+)
 def create_subscription(request, payload: SubscriptionCreateSchema):
-    from .service import register_subscription
+    from .service import register_subscriptions
     from .tasks import send_confirmation_email
 
-    sub_id = register_subscription(payload.email, payload.ast)
-    send_confirmation_email.delay(sub_id)
-    sub = Subscription.objects.get(pk=sub_id)
-    return 201, sub
+    alerts = [alert.dict() for alert in payload.alerts]
+    sub_ids = register_subscriptions(payload.email, alerts)
+    # Um e-mail só: o token de qualquer uma das linhas confirma o endereço inteiro.
+    send_confirmation_email.delay(sub_ids[0])
+    return 201, list(Subscription.objects.filter(pk__in=sub_ids))
 
 
-@router.post("/confirm/{token}", response={200: SubscriptionSchema})
+@router.get("/confirm/{token}", auth=None, include_in_schema=False)
 def confirm_subscription(request, token: str):
-    from django.utils import timezone
-
     try:
         sub = Subscription.objects.get(confirm_token=token, is_active=False)
     except Subscription.DoesNotExist:
-        raise HttpError(404, "Token inválido ou já confirmado")
+        return _back_to_site("confirmado", "invalido")
 
-    sub.is_active = True
-    sub.confirmed_at = timezone.now()
-    sub.save(update_fields=["is_active", "confirmed_at"])
-    return sub
+    # Quem confirma confirma o endereço, não a linha: um clique vale para as
+    # duas frequências criadas no mesmo envio.
+    Subscription.objects.filter(email=sub.email, is_active=False).update(
+        is_active=True, confirmed_at=timezone.now()
+    )
+    return _back_to_site("confirmado", "ok")
 
 
-@router.delete("/unsubscribe/{token}", response={200: dict})
+@router.get("/unsubscribe/{token}", auth=None, include_in_schema=False)
 def unsubscribe(request, token: str):
     try:
         sub = Subscription.objects.get(unsubscribe_token=token)
     except Subscription.DoesNotExist:
-        raise HttpError(404, "Token de cancelamento inválido")
+        return _back_to_site("cancelado", "invalido")
 
-    sub.is_active = False
-    sub.save(update_fields=["is_active"])
-    return {"detail": "Inscrição cancelada com sucesso."}
+    # "Cancelar inscrição" no rodapé do e-mail significa parar de receber —
+    # todas as frequências, não só a que gerou aquela mensagem.
+    Subscription.objects.filter(email=sub.email).update(is_active=False)
+    return _back_to_site("cancelado", "ok")

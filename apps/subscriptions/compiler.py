@@ -144,14 +144,16 @@ def ast_to_tsquery(ast: dict) -> tuple[str, bool]:
 def document_to_tsvector_tokens(prop: dict) -> list[str]:
     tokens = []
 
-    for field in ("tipo", "casa", "situacao", "ano", "relator"):
+    for field in ("tipo", "casa", "situacao", "ano", "proposicao"):
         v = prop.get(field)
         if v is not None:
             tokens.append(_make_token(field, v))
 
+    # `relator` é lista no documento (uma proposição pode ter mais de um) —
+    # estava na volta dos escalares e virava o token literal `relator_[]`.
     array_fields = (
         "partido", "autor", "genero", "raca", "religiao",
-        "estado", "tema", "comissao", "frente", "bancada", "norma",
+        "estado", "relator", "tema", "categoria", "comissao", "frente", "bancada", "norma",
     )
     for field in array_fields:
         vals = prop.get(field, [])

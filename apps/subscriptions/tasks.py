@@ -25,12 +25,18 @@ def _send(subject: str, body_text: str, body_html: str, to: str) -> str | None:
 @shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
 def send_alert_email(self, subscription_id: int, proposition_id: int):
     from apps.propositions.models import Proposition
-    from apps.subscriptions.models import Subscription
+    from apps.subscriptions.models import AlertDelivery, Subscription
 
     try:
         sub = Subscription.objects.get(pk=subscription_id, is_active=True)
         prop = Proposition.objects.get(pk=proposition_id)
     except (Subscription.DoesNotExist, Proposition.DoesNotExist):
+        return
+
+    # O match roda de novo quando a anotação humana chega: o unique é o que
+    # impede a mesma proposição de virar dois e-mails.
+    _, primeira_vez = AlertDelivery.objects.get_or_create(subscription=sub, proposition=prop)
+    if not primeira_vez:
         return
 
     base_url = settings.SITE_BASE_URL.rstrip("/")
@@ -88,12 +94,86 @@ def send_confirmation_email(self, subscription_id: int):
 
 @shared_task
 def match_and_notify(proposition_id: int):
+    """Só a fila diária dispara e-mail na hora; a semanal espera o digest."""
+    from .models import Frequency
     from .service import match_proposition
 
-    matched_ids = match_proposition(proposition_id)
+    matched_ids = match_proposition(proposition_id, frequency=Frequency.DAILY)
     for sub_id in matched_ids:
         send_alert_email.delay(sub_id, proposition_id)
-    logger.info("Proposition %d matched %d subscriptions", proposition_id, len(matched_ids))
+    logger.info("Proposition %d matched %d daily subscriptions", proposition_id, len(matched_ids))
+
+
+@shared_task
+def send_weekly_digest():
+    """Um e-mail por inscrição semanal com o que entrou na semana.
+
+    Re-casa as proposições recentes em vez de guardar uma fila de pendências:
+    o volume semanal é pequeno e assim não há estado para desincronizar.
+    # ponytail: janela fixa de 7 dias. Se o beat atrasar ou rodar duas vezes,
+    # repete/perde itens — trocar por marca d'água (last_digest_at) se doer.
+    """
+    from datetime import timedelta
+
+    from apps.propositions.models import Proposition
+
+    from .models import Frequency, Subscription
+    from .service import match_proposition
+
+    cutoff = timezone.now() - timedelta(days=7)
+    recent = list(
+        Proposition.objects.filter(created_at__gte=cutoff).order_by("presented_at", "pk")
+    )
+    if not recent:
+        logger.info("Weekly digest: nothing new this week")
+        return
+
+    per_subscription: dict[int, list] = {}
+    for prop in recent:
+        for sub_id in match_proposition(prop.pk, frequency=Frequency.WEEKLY):
+            per_subscription.setdefault(sub_id, []).append(prop)
+
+    for sub in Subscription.objects.filter(pk__in=per_subscription):
+        send_digest_email.delay(sub.pk, [p.pk for p in per_subscription[sub.pk]])
+    logger.info("Weekly digest queued for %d subscriptions", len(per_subscription))
+
+
+@shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
+def send_digest_email(self, subscription_id: int, proposition_ids: list[int]):
+    from apps.propositions.models import Proposition
+    from apps.subscriptions.models import Subscription
+
+    try:
+        sub = Subscription.objects.get(pk=subscription_id, is_active=True)
+    except Subscription.DoesNotExist:
+        return
+
+    props = list(Proposition.objects.filter(pk__in=proposition_ids).order_by("presented_at", "pk"))
+    if not props:
+        return
+
+    base_url = settings.SITE_BASE_URL.rstrip("/")
+    unsubscribe_url = f"{base_url}/api/v1/subscriptions/unsubscribe/{sub.unsubscribe_token}"
+
+    subject = f"[Elas no Congresso] Resumo da semana: {len(props)} novas proposições"
+    lines = [
+        f"- {p.number_label} ({p.house}): {p.ementa[:200]}\n  {base_url}/api/v1/propositions/{p.pk}"
+        for p in props
+    ]
+    body_text = "\n\n".join(["O que entrou no Congresso esta semana:", *lines, f"Cancelar inscrição: {unsubscribe_url}"])
+    items = "".join(
+        f"<li><strong>{p.number_label}</strong> ({p.house}): {p.ementa[:200]} "
+        f"<a href='{base_url}/api/v1/propositions/{p.pk}'>ver detalhes</a></li>"
+        for p in props
+    )
+    body_html = (
+        f"<h2>O que entrou no Congresso esta semana</h2><ul>{items}</ul>"
+        f"<hr><p><small><a href='{unsubscribe_url}'>Cancelar inscrição</a></small></p>"
+    )
+
+    message_id = _send(subject, body_text, body_html, sub.email)
+    logger.info("Weekly digest sent to %s with %d propositions", sub.email, len(props))
+    return message_id
 
 
 @shared_task

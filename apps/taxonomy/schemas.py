@@ -1,7 +1,14 @@
 
-from ninja import ModelSchema
+from ninja import ModelSchema, Schema
 
 from .models import AnalyticalTag, Theme
+
+
+class CategorySchema(Schema):
+    """`value` é o token que o matcher de alertas usa; `label`, o rótulo."""
+
+    value: str
+    label: str
 
 
 class ThemeSchema(ModelSchema):

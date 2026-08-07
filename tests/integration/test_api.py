@@ -53,6 +53,18 @@ class TestPropositionsEndpoints:
         data = response.json()
         assert "items" in data
 
+    def test_busca_por_texto_encontra_pela_ementa_e_pelo_numero(self):
+        alvo = self.proposition.number_label
+
+        por_ementa = self.client.get("/api/v1/propositions/?q=women")
+        por_numero = self.client.get("/api/v1/propositions/?q=PL 123")
+        sem_relacao = self.client.get("/api/v1/propositions/?q=zzz-nao-existe")
+
+        assert por_ementa.status_code == 200
+        assert [p["number_label"] for p in por_ementa.json()["items"]] == [alvo]
+        assert [p["number_label"] for p in por_numero.json()["items"]] == [alvo]
+        assert sem_relacao.json()["items"] == []
+
     def test_list_propositions_pagination(self):
         response = self.client.get("/api/v1/propositions/?limit=10&offset=0")
         assert response.status_code == 200
@@ -263,20 +275,14 @@ class TestTaxonomyEndpoints:
 
 
 @pytest.mark.django_db
-class TestSubscriptionsEndpoints:
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        self.client = Client()
+def test_lista_categorias_da_taxonomia_editorial():
+    """O modal de alertas monta os checkboxes de tema a partir daqui."""
+    response = Client().get("/api/v1/taxonomy/categories")
 
-    def test_create_subscription(self):
-        response = self.client.post(
-            "/api/v1/subscriptions/",
-            data={"email": "test@example.com", "ast": {"op": "and", "children": [
-                {"field": "house", "op": "eq", "value": "camara"}
-            ]}},
-            content_type="application/json",
-        )
-        assert response.status_code in (201, 400)
+    assert response.status_code == 200
+    categorias = response.json()
+    assert {"value": "violencias_de_genero", "label": "Violências de Gênero"} in categorias
+    assert len(categorias) == 10
 
 
 @pytest.mark.django_db

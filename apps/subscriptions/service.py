@@ -4,41 +4,62 @@ from __future__ import annotations
 import json
 
 from django.db import connection
+from django.utils import timezone
 
-from .compiler import ast_to_tsquery, document_to_tsvector_string
+from .compiler import ast_to_tsquery, document_to_tsvector_tokens
 from .document_builder import build_document
 from .reference_matcher import matches as reference_matches
 
 
-def register_subscription(email: str, ast: dict) -> int:
+def register_subscriptions(email: str, alerts: list[dict]) -> list[int]:
+    """Grava um registro por frequência escolhida. Semanal e diário têm filtros
+    diferentes, então são linhas diferentes — mas do mesmo e-mail, confirmadas
+    de uma vez só."""
     from .models import Subscription
 
-    tsq_str, needs_reval = ast_to_tsquery(ast)
-    sub = Subscription.objects.create(
-        email=email,
-        ast=ast,
-        query=tsq_str,
-        needs_revalidation=needs_reval,
-        is_active=False,
-    )
-    # Store compiled tsquery in DB as text; matching done via raw SQL cast
-    return sub.pk
+    # Reinscrever é *substituir*: quem volta ao modal está reconfigurando o que
+    # recebe, não somando uma segunda inscrição no mesmo endereço.
+    Subscription.objects.filter(email=email).delete()
+
+    accepted_at = timezone.now()
+    created = []
+    for alert in alerts:
+        tsq_str, needs_reval = ast_to_tsquery(alert["ast"])
+        sub = Subscription.objects.create(
+            email=email,
+            frequency=alert["frequency"],
+            ast=alert["ast"],
+            query=tsq_str,
+            needs_revalidation=needs_reval,
+            is_active=False,
+            accepted_terms_at=accepted_at,
+        )
+        # Store compiled tsquery in DB as text; matching done via raw SQL cast
+        created.append(sub.pk)
+    return created
 
 
-def match_document(doc: dict) -> list[int]:
+def match_document(doc: dict, frequency: str | None = None) -> list[int]:
     if not doc:
         return []
 
-    vec = document_to_tsvector_string(doc)
+    tokens = document_to_tsvector_tokens(doc)
+    if not tokens:
+        return []
+
     with connection.cursor() as cur:
+        # array_to_tsvector, não to_tsvector: o parser de texto quebra
+        # `casa_camara` em dois lexemas ('casa' e 'camara') e nada casaria com o
+        # `query::tsquery`, que é cast cru e mantém o token inteiro.
         cur.execute(
             """
             SELECT id, ast, needs_revalidation
             FROM subscriptions
             WHERE is_active
-              AND to_tsvector('simple', %s) @@ query::tsquery
+              AND (%s::text IS NULL OR frequency = %s)
+              AND array_to_tsvector(%s::text[]) @@ query::tsquery
             """,
-            [vec],
+            [frequency, frequency, sorted(set(tokens))],
         )
         rows = cur.fetchall()
 
@@ -54,6 +75,6 @@ def match_document(doc: dict) -> list[int]:
     return sorted(matches)
 
 
-def match_proposition(proposition_id: int) -> list[int]:
+def match_proposition(proposition_id: int, frequency: str | None = None) -> list[int]:
     doc = build_document(proposition_id)
-    return match_document(doc)
+    return match_document(doc, frequency)
