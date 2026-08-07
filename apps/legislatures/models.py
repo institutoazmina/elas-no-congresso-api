@@ -17,6 +17,12 @@ class Legislature(models.Model):
             )
         ]
 
+    @classmethod
+    def for_date(cls, date):
+        """Legislatura vigente na data, ou None — há lacunas entre legislaturas
+        (dissoluções, Governo Provisório 1930-33, Estado Novo 1937-46)."""
+        return cls.objects.filter(start_date__lte=date, end_date__gte=date).first()
+
     def __str__(self):
         return f"{self.number}ª Legislatura"
 
