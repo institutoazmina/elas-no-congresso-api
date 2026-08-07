@@ -201,7 +201,7 @@
     "model": "committees.committee",
     "pk": 1,
     "fields": {
-      "house": "CD",
+      "house": "camara",
       "acronym": "CCJ",
       "name": "Comissão de Constituição e Justiça",
       "kind": "permanente",
@@ -212,7 +212,7 @@
     "model": "committees.committee",
     "pk": 2,
     "fields": {
-      "house": "CD",
+      "house": "camara",
       "acronym": "CMulheres",
       "name": "Comissão de Direitos da Mulher",
       "kind": "permanente",
@@ -223,7 +223,7 @@
     "model": "committees.committee",
     "pk": 3,
     "fields": {
-      "house": "CD",
+      "house": "camara",
       "acronym": "CFinanças",
       "name": "Comissão de Finanças e Tributação",
       "kind": "permanente",
@@ -234,7 +234,7 @@
     "model": "committees.committee",
     "pk": 4,
     "fields": {
-      "house": "CD",
+      "house": "camara",
       "acronym": "CEducação",
       "name": "Comissão de Educação",
       "kind": "permanente",
@@ -245,7 +245,7 @@
     "model": "committees.committee",
     "pk": 5,
     "fields": {
-      "house": "CD",
+      "house": "camara",
       "acronym": "CMeioAmbiente",
       "name": "Comissão de Meio Ambiente",
       "kind": "permanente",

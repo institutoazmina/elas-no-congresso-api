@@ -27,6 +27,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "anymail",
+    "corsheaders",
     "django_celery_beat",
     "django_celery_results",
 ]
@@ -50,6 +51,9 @@ MIDDLEWARE = [
     # ALLOWED_HOSTS (kamal-proxy uses the container ID as Host).
     "config.middleware.HealthCheckHostMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # Antes do CommonMiddleware, como manda o django-cors-headers: o preflight
+    # precisa de resposta antes de qualquer redirect de APPEND_SLASH.
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -163,10 +167,32 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.ingestion.tasks.ingest_senado",
         "schedule": crontab(hour=6, minute=10),
     },
+    # Depois das duas coletas, para o resumo já sair com a semana inteira.
+    "weekly-digest": {
+        "task": "apps.subscriptions.tasks.send_weekly_digest",
+        "schedule": crontab(day_of_week=3, hour=9, minute=0),
+    },
+    "cleanup-unconfirmed-subscriptions": {
+        "task": "apps.subscriptions.tasks.cleanup_unconfirmed_subscriptions",
+        "schedule": crontab(hour=4, minute=0),
+    },
 }
 
 # Public base URL used to build links inside outgoing emails
 SITE_BASE_URL = config("SITE_BASE_URL", default="http://localhost:8000")
+
+# Site estático (outro domínio). Usado para o CORS do modal de alertas e para
+# devolver o usuário a uma página de verdade depois de confirmar/cancelar.
+PUBLIC_SITE_URL = config("PUBLIC_SITE_URL", default="http://localhost:4321")
+
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="https://www.elasnocongresso.com.br,https://elasnocongresso.com.br,http://localhost:4321",
+    cast=Csv(),
+)
+# O modal faz duas coisas no browser: buscar proposições e postar a inscrição.
+# O admin fica de fora — nada com sessão deve responder cross-origin.
+CORS_URLS_REGEX = r"^/api/.*$"
 
 # AWS SES
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="test")
@@ -192,6 +218,12 @@ if AWS_SES_ENDPOINT_URL:
 
 # Subscription confirmation token TTL (hours)
 SUBSCRIPTION_CONFIRM_TTL_HOURS = 48
+
+# O POST de inscrição é aberto e dispara e-mail pago via SES. Uma pessoa se
+# inscreve uma vez; o teto por IP existe só para não virar torneira de spam.
+SUBSCRIPTION_THROTTLE_RATE_PER_HOUR = config(
+    "SUBSCRIPTION_THROTTLE_RATE_PER_HOUR", default=10, cast=int
+)
 
 # django-unfold
 UNFOLD = {

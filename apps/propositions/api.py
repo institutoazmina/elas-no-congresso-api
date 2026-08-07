@@ -31,7 +31,7 @@ def list_propositions(
     if q:
         from django.db.models import Q
         qs = qs.filter(
-            Q(title__icontains=q) | Q(description__icontains=q) | Q(raw_payload__icontains=q)
+            Q(number_label__icontains=q) | Q(ementa__icontains=q) | Q(keywords__icontains=q)
         ).order_by("-presented_at")
     else:
         qs = qs.order_by("-presented_at")

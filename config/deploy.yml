@@ -60,6 +60,11 @@ env:
     # Não-sensível / não-identificável
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DEBUG: "False"
+    # Site estático (domínio público, nada sensível): destino do redirect depois
+    # de confirmar/cancelar alerta, e origem liberada no CORS do modal. Sem isto
+    # o default de dev (localhost:4321) vazaria para produção.
+    PUBLIC_SITE_URL: https://www.elasnocongresso.com.br
+    CORS_ALLOWED_ORIGINS: https://www.elasnocongresso.com.br,https://elasnocongresso.com.br
     # Redis = accessory isolado no mesmo host (NÃO reusar o redis_elasnacamera).
     REDIS_URL: redis://elas-no-congresso-redis:6379/0
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0

@@ -17,6 +17,9 @@ def _slugify(s: str) -> str:
 def build_document(proposition_id: int) -> dict[str, Any]:
     doc: dict[str, Any] = {
         "id": proposition_id,
+        # Mesmo valor de `id`, mas com nome de campo: é assim que o modal pede
+        # para acompanhar uma proposição específica.
+        "proposicao": proposition_id,
         "tipo": None,
         "casa": None,
         "situacao": None,
@@ -29,6 +32,9 @@ def build_document(proposition_id: int) -> dict[str, Any]:
         "estado": [],
         "relator": [],
         "tema": [],
+        # "Categorias 2026": a taxonomia editorial fechada das anotações. É o
+        # que o modal oferece — `tema` guarda as palavras-chave do raspador.
+        "categoria": [],
         "comissao": [],
         "frente": [],
         "bancada": [],
@@ -97,6 +103,18 @@ def build_document(proposition_id: int) -> dict[str, Any]:
         )
         for row in cur.fetchall():
             doc["tema"].append(row[0])
+
+    with connection.cursor() as cur:
+        cur.execute(
+            """
+            SELECT DISTINCT category
+            FROM proposition_annotations
+            WHERE proposition_id = %s AND category IS NOT NULL
+            """,
+            [proposition_id],
+        )
+        for row in cur.fetchall():
+            doc["categoria"].append(row[0])
 
     with connection.cursor() as cur:
         cur.execute(
