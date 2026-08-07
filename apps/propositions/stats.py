@@ -14,6 +14,7 @@ Regras de contagem (decididas com o produto, valem para todos os cortes):
 from typing import Literal
 
 from django.db.models import Count, F, Q
+from django.utils import timezone
 from ninja import Field, Router, Schema
 
 from apps.core.enums import Gender, PropositionCategory
@@ -83,14 +84,19 @@ class StateStatsSchema(Schema):
 # ── endpoints ─────────────────────────────────────────────────────────────────
 
 @router.get("/legislatures", response=LegislatureStatsSchema, by_alias=True)
-def unfavorable_by_legislature(request):
-    """Proposições desfavoráveis por legislatura.
+def unfavorable_by_legislature(request, last: int = 2):
+    """Proposições desfavoráveis por legislatura, da mais antiga para a mais nova.
 
     Não há FK proposição→legislatura: o vínculo é a data de apresentação dentro
     da janela da legislatura. São poucas legislaturas, então vira um COUNT
     filtrado por legislatura numa única query.
+
+    A tabela tem as 60 legislaturas desde 1826, mas só há dados de 2019 em
+    diante (planilha das avaliadoras). ``last`` recorta as N mais recentes já
+    iniciadas — nunca as futuras, que seriam sempre zero. ``last=0`` traz todas.
     """
-    legislatures = list(Legislature.objects.order_by("number"))
+    query = Legislature.objects.filter(start_date__lte=timezone.localdate())
+    legislatures = sorted(query.order_by("-number")[:last] if last else query, key=lambda leg: leg.number)
     if not legislatures:
         return {"legislatures": []}
 

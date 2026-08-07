@@ -20,7 +20,10 @@ class TestPropositionsEndpoints:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.client = Client()
-        leg = Legislature.objects.create(number=57, start_date="2023-02-01", end_date="2027-01-31")
+        leg, _ = Legislature.objects.update_or_create(  # já vem do seed (legislatures.0002)
+            number=57,
+            defaults={"start_date": "2023-02-01", "end_date": "2027-01-31"},
+        )
         party = Party.objects.create(acronym="PT", name="Partido dos Trabalhadores")
         self.parliamentarian = Parliamentarian.objects.create(
             full_name="Maria Silva", gender="F"
@@ -233,7 +236,10 @@ class TestParliamentariansEndpoints:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.client = Client()
-        leg = Legislature.objects.create(number=57, start_date="2023-02-01", end_date="2027-01-31")
+        leg, _ = Legislature.objects.update_or_create(  # já vem do seed (legislatures.0002)
+            number=57,
+            defaults={"start_date": "2023-02-01", "end_date": "2027-01-31"},
+        )
         party = Party.objects.create(acronym="PT", name="Partido dos Trabalhadores")
         self.parliamentarian = Parliamentarian.objects.create(
             full_name="Maria Silva", gender="F"

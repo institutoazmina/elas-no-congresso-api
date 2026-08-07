@@ -46,11 +46,13 @@ def scenario():
     - prop2 (56ª leg): só Ana, favorável.
     - prop3 (57ª leg): só Beto, desfavorável.
     """
-    Legislature.objects.create(
-        number=56, start_date=date(2019, 2, 1), end_date=date(2023, 1, 31)
+    # As 60 legislaturas já vêm da migration legislatures.0002 — só reafirma as
+    # duas que os cenários usam, sem colidir com o seed.
+    Legislature.objects.update_or_create(
+        number=56, defaults={"start_date": date(2019, 2, 1), "end_date": date(2023, 1, 31)}
     )
-    Legislature.objects.create(
-        number=57, start_date=date(2023, 2, 1), end_date=date(2027, 1, 31)
+    Legislature.objects.update_or_create(
+        number=57, defaults={"start_date": date(2023, 2, 1), "end_date": date(2027, 1, 31)}
     )
     pt = Party.objects.create(acronym="PT", name="Partido dos Trabalhadores")
     pl = Party.objects.create(acronym="PL", name="Partido Liberal")
