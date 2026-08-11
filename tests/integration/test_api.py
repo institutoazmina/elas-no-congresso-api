@@ -112,7 +112,7 @@ class TestDatasetEndpoint:
         PropositionAnnotation.objects.create(
             proposition=self.prop, organization=anis, is_favorable=True,
             relevance="muito_relevante", category="direitos_sexuais_reprodutivos",
-            legacy_theme="Aborto",
+            legacy_theme="Aborto", comments="Observação da Anis",
         )
         PropositionAnnotation.objects.create(
             proposition=self.prop, organization=themis, is_favorable=False,
@@ -134,6 +134,7 @@ class TestDatasetEndpoint:
             "house", "id", "uri", "type_code", "name", "year", "summary",
             "full_text", "author", "author_index", "party", "state", "gender",
             "assessment", "relevance", "theme", "is_favorable", "legacy_theme",
+            "comments",
         }
         # id = external_id
         assert all(row["id"] == 42 for row in rows)
@@ -145,6 +146,7 @@ class TestDatasetEndpoint:
         # `theme` é a categoria (taxonomia fechada); o texto livre foi para `legacy_theme`
         assert {row["theme"] for row in rows} == {"Direitos Sexuais e Reprodutivos", "Saúde"}
         assert {row["legacy_theme"] for row in rows} == {"Aborto", "Saúde"}
+        assert {row["comments"] for row in rows} == {"Observação da Anis", None}
         # autor / party / state por autor
         assert {row["author"] for row in rows} == {"Maria Silva", "João Souza"}
         assert {row["state"] for row in rows} == {"SP", "RJ"}
@@ -189,11 +191,12 @@ class TestDatasetEndpoint:
         body = b"".join(r.streaming_content).decode()
         lines = [ln for ln in body.splitlines() if ln]
         header = lines[0].split(",")
-        # `legacy_theme` entrou no FIM: as colunas anteriores não se deslocam
+        # `legacy_theme`/`comments` entraram no FIM: as colunas anteriores não se deslocam
         assert header == [
             "house", "id", "uri", "type_code", "name", "year", "summary",
             "full_text", "author", "author_index", "party", "state", "gender",
             "assessment", "relevance", "theme", "is_favorable", "legacy_theme",
+            "comments",
         ]
         assert len(lines) - 1 == 4  # header + 4 linhas (2 anotações × 2 autores)
 
