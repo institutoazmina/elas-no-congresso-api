@@ -44,7 +44,7 @@ router = Router()
 FIELDS = [
     "house", "id", "uri", "type_code", "name", "year", "summary", "full_text",
     "author", "author_index", "party", "state", "gender", "assessment",
-    "relevance", "theme", "is_favorable", "legacy_theme",
+    "relevance", "theme", "is_favorable", "legacy_theme", "comments",
 ]
 
 
@@ -67,6 +67,7 @@ class DatasetRowSchema(Schema):
     theme: str | None = Field(default=None, validation_alias="theme_label")
     is_favorable: bool | None = None
     legacy_theme: str | None = None
+    comments: str | None = None
 
 
 def _label_case(field: str, mapping: dict) -> Case:
@@ -96,6 +97,7 @@ def _dataset_qs(house: str | None, year: int | None, include_unlabeled: bool):
         # colunas do model saem com o próprio nome (alias com F() daria conflito)
         "is_favorable",  # bool cru
         "legacy_theme",  # "Tema (class humana)" da planilha, texto livre
+        "comments",  # observações da anotação humana
         house=F("proposition__house"),
         external_id=F("proposition__external_id"),
         uri=F("proposition__tramitation_url"),
@@ -148,6 +150,7 @@ def _row(d: dict) -> dict:
         "theme": d["theme_label"],
         "is_favorable": d["is_favorable"],
         "legacy_theme": d["legacy_theme"],
+        "comments": d["comments"],
     }
 
 
