@@ -35,6 +35,7 @@ jobs:
       # Mesmos secrets do deploy — o kamal renderiza toda a config (env.secret).
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      PARLIAMENTARIAN_ENRICHMENT_API_TOKEN: ${{ secrets.PARLIAMENTARIAN_ENRICHMENT_API_TOKEN }}
       POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
       POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
