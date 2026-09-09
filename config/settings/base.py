@@ -8,10 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-changeme-in-prod")
 
-PARLIAMENTARIAN_ENRICHMENT_API_TOKEN = config(
-    "PARLIAMENTARIAN_ENRICHMENT_API_TOKEN", default=""
-)
-
 
 def _tse_archive_urls(value):
     if not isinstance(value, dict):
