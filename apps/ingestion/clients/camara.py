@@ -50,9 +50,31 @@ class CamaraClient(BaseClient):
         """Detalhe de um deputado (traz ``sexo`` e ``ultimoStatus.siglaPartido``)."""
         return self.get_json(f"/deputados/{deputy_id}").get("dados", {})
 
+    def fetch_profile(self, deputy_id: int) -> dict:
+        """Perfil oficial de um deputado, sem o envelope ``dados``."""
+        return self.fetch_deputy(deputy_id)
+
+    def fetch_deputy_fronts(self, deputy_id: int) -> list[dict]:
+        """Frentes parlamentares de um deputado, como uma lista de registros."""
+        payload = self.get_json(f"/deputados/{deputy_id}/frentes")
+        return _as_list(payload.get("dados"))
+
+    def fetch_deputy_organs(self, deputy_id: int) -> list[dict]:
+        """Órgãos dos quais um deputado participa, como uma lista de registros."""
+        payload = self.get_json(f"/deputados/{deputy_id}/orgaos")
+        return _as_list(payload.get("dados"))
+
 
 def _next_link(links: list[dict]) -> str | None:
     for link in links:
         if link.get("rel") == "next":
             return link.get("href")
     return None
+
+
+def _as_list(value) -> list[dict]:
+    if isinstance(value, list):
+        return value
+    if isinstance(value, dict):
+        return [value]
+    return []

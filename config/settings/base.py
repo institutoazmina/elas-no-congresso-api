@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from celery.schedules import crontab
@@ -6,6 +7,38 @@ from decouple import Csv, config
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-changeme-in-prod")
+
+PARLIAMENTARIAN_ENRICHMENT_API_TOKEN = config(
+    "PARLIAMENTARIAN_ENRICHMENT_API_TOKEN", default=""
+)
+
+
+def _tse_archive_urls(value):
+    if not isinstance(value, dict):
+        value = json.loads(value)
+    if not isinstance(value, dict):
+        raise ValueError("TSE_CANDIDATES_ARCHIVE_URLS must be a JSON object")
+    return {int(year): str(url) for year, url in value.items()}
+
+
+TSE_CANDIDATES_ARCHIVE_URLS = config(
+    "TSE_CANDIDATES_ARCHIVE_URLS",
+    default=json.dumps(
+        {
+            "2018": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2018.zip",
+            "2022": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2022.zip",
+        }
+    ),
+    cast=_tse_archive_urls,
+)
+
+SENADO_FRONT_CATALOG_URL = (
+    "https://www25.senado.leg.br/web/atividade/conselhos/-/conselho/frentes-parlamentares"
+)
+SENADO_FRONT_MAX_BYTES = 2 * 1024 * 1024
+SENADO_FRONT_MAX_PAGES = 200
+SENADO_FRONT_MAX_FRONTS = 100
+SENADO_FRONT_MAX_REDIRECTS = 3
 
 DEBUG = config("DEBUG", default=True, cast=bool)
 
@@ -159,6 +192,10 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # Coleta diária (DatabaseScheduler sincroniza este dict para o banco no startup).
 CELERY_BEAT_SCHEDULE = {
+    "enrich-parliamentarian-profiles-daily": {
+        "task": "apps.ingestion.tasks.enrich_parliamentarian_profiles",
+        "schedule": crontab(hour=3, minute=0),
+    },
     "ingest-camara-daily": {
         "task": "apps.ingestion.tasks.ingest_camara",
         "schedule": crontab(hour=6, minute=0),
