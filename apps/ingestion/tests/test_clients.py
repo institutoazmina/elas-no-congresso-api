@@ -96,6 +96,26 @@ class TestCamaraClient:
         c = _client_for(CamaraClient, lambda r: httpx.Response(200, json={"dados": {"sexo": "F"}}))
         assert c.fetch_deputy(204554) == {"sexo": "F"}
 
+    def test_fetch_profile_uses_deputy_detail_endpoint(self):
+        requests = []
+
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(200, json={"dados": {"id": 204554}})
+
+        c = _client_for(CamaraClient, handler)
+        assert c.fetch_profile(204554) == {"id": 204554}
+        assert requests[0].url.path == "/api/v2/deputados/204554"
+
+    def test_fetch_deputy_fronts_and_organs_normalize_envelopes(self):
+        def handler(request):
+            if request.url.path.endswith("/frentes"):
+                return httpx.Response(200, json={"dados": {"id": 11, "titulo": "Frente"}})
+            return httpx.Response(200, json={"dados": [{"id": 22, "nome": "Comissão"}]})
+
+        c = _client_for(CamaraClient, handler)
+        assert c.fetch_deputy_fronts(204554) == [{"id": 11, "titulo": "Frente"}]
+        assert c.fetch_deputy_organs(204554) == [{"id": 22, "nome": "Comissão"}]
 
 class TestSenadoClient:
     def test_list_materias_normalizes_single(self):
@@ -166,3 +186,70 @@ class TestSenadoClient:
         assert c.fetch_authors(7) == [{"NomeAutor": "X"}]
         empty = _client_for(SenadoClient, lambda r: httpx.Response(200, json={}))
         assert empty.fetch_authors(7) == []
+
+    def test_fetch_profile_uses_senator_detail_endpoint(self):
+        requests = []
+
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(
+                200,
+                json={
+                    "DetalheParlamentar": {
+                        "Parlamentar": {"IdentificacaoParlamentar": {"CodigoParlamentar": "35"}}
+                    }
+                },
+            )
+
+        c = _client_for(SenadoClient, handler)
+        assert c.fetch_profile(35) == {
+            "IdentificacaoParlamentar": {"CodigoParlamentar": "35"}
+        }
+        assert requests[0].url.path == "/dadosabertos/senador/35"
+
+    def test_fetch_senator_institutional_links_normalize_envelopes(self):
+        requests = []
+        committee = {"CodigoComissao": "1", "NomeComissao": "CCJ", "DataInicio": "2024-02-01"}
+        affiliation = {"CodigoPartido": "MDB", "DataFiliacao": "2023-01-01"}
+        leadership = {"CodigoLideranca": "2", "DescricaoTipoLideranca": "Líder"}
+        post = {"CodigoCargo": "3", "DescricaoCargo": "Presidente", "DataInicio": "2024-02-01"}
+
+        def handler(request):
+            requests.append(request.url.path)
+            if request.url.path.endswith("/comissoes"):
+                body = {
+                    "ComissoesParlamentar": {
+                        "Parlamentar": {"Comissoes": {"Comissao": committee}}
+                    }
+                }
+            elif request.url.path.endswith("/filiacoes"):
+                body = {
+                    "FiliacoesPartidariasParlamentar": {
+                        "Parlamentar": {"Filiacoes": {"FiliacaoPartidaria": [affiliation]}}
+                    }
+                }
+            elif request.url.path.endswith("/liderancas"):
+                body = {
+                    "LiderancasParlamentar": {
+                        "Parlamentar": {"Liderancas": {"Lideranca": leadership}}
+                    }
+                }
+            else:
+                body = {
+                    "CargosParlamentar": {
+                        "Parlamentar": {"Cargos": {"Cargo": [post]}}
+                    }
+                }
+            return httpx.Response(200, json=body)
+
+        c = _client_for(SenadoClient, handler)
+        assert c.fetch_senator_committees(35) == [committee]
+        assert c.fetch_senator_party_affiliations(35) == [affiliation]
+        assert c.fetch_senator_leaderships(35) == [leadership]
+        assert c.fetch_senator_posts(35) == [post]
+        assert requests == [
+            "/dadosabertos/senador/35/comissoes",
+            "/dadosabertos/senador/35/filiacoes",
+            "/dadosabertos/senador/35/liderancas",
+            "/dadosabertos/senador/35/cargos",
+        ]

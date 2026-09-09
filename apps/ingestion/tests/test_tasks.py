@@ -1,11 +1,13 @@
 import contextlib
+from datetime import date, timedelta
+from types import SimpleNamespace
 
 import pytest
 from django.utils import timezone
 
 from apps.ingestion import tasks
 from apps.ingestion.models import IngestionRun
-from apps.legislatures.models import Party
+from apps.legislatures.models import Legislature, Parliamentarian, ParliamentarianTerm, Party
 from apps.propositions.models import Proposition
 from apps.taxonomy.models import PropositionTheme
 
@@ -75,6 +77,88 @@ def _camara_kwargs():
         "year": 2024,
         "presented_at": "2024-01-01",
         "ementa": "Sobre violência contra a mulher",
+    }
+
+
+def _make_term(*, external_id, house, start_date, end_date, parliamentarian=None, legislature=57):
+    parliamentarian = parliamentarian or Parliamentarian.objects.create(
+        full_name=f"Pessoa {house} {external_id}"
+    )
+    legislature_obj, _ = Legislature.objects.get_or_create(
+        number=legislature,
+        defaults={"start_date": date(2023, 2, 1), "end_date": date(2027, 1, 31)},
+    )
+    party = Party.objects.create(acronym=f"P{house}{external_id}{legislature}", name="Partido")
+    return ParliamentarianTerm.objects.create(
+        parliamentarian=parliamentarian,
+        legislature_number=legislature_obj,
+        party=party,
+        house=house,
+        role="Parlamentar",
+        state="SP",
+        external_id=external_id,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
+class _FakeProfileClient:
+    def __init__(self, profiles, failures=()):
+        self.profiles = profiles
+        self.failures = set(failures)
+        self.requested = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def fetch_profile(self, external_id):
+        self.requested.append(external_id)
+        if external_id in self.failures:
+            raise RuntimeError(f"profile {external_id} unavailable")
+        return self.profiles[external_id]
+
+    def fetch_deputy_fronts(self, _external_id):
+        return []
+
+    def fetch_deputy_organs(self, _external_id):
+        return []
+
+    def fetch_senator_committees(self, _external_id):
+        return []
+
+    def fetch_senator_party_affiliations(self, _external_id):
+        return []
+
+    def fetch_senator_leaderships(self, _external_id):
+        return []
+
+    def fetch_senator_posts(self, _external_id):
+        return []
+
+
+def _camara_profile(external_id):
+    return {
+        "id": external_id,
+        "uri": f"https://dadosabertos.camara.leg.br/api/v2/deputados/{external_id}",
+        "nomeCivil": "Nome Câmara",
+        "sexo": "F",
+        "ultimoStatus": {"nome": "Nome Público Câmara", "urlFoto": "https://camara/foto.jpg"},
+    }
+
+
+def _senado_profile(external_id):
+    return {
+        "IdentificacaoParlamentar": {
+            "CodigoParlamentar": str(external_id),
+            "NomeParlamentar": "Nome Público Senado",
+            "NomeCompletoParlamentar": "Nome Completo Senado",
+            "SexoParlamentar": "Masculino",
+            "UrlFotoParlamentar": "https://senado/foto.jpg",
+            "UrlPaginaParlamentar": f"https://senado/perfil/{external_id}",
+        },
     }
 
 
@@ -268,6 +352,183 @@ class TestIngestSenadoFlow:
         with contextlib.suppress(Exception):
             tasks.ingest_senado()
         assert IngestionRun.objects.filter(house="senado", status=IngestionRun.Status.FAILED).exists()
+
+
+@pytest.mark.django_db
+class TestEnrichParliamentarianProfiles:
+    def test_enriches_current_unique_terms_and_keeps_source_identity(self, monkeypatch):
+        today = timezone.localdate()
+        parliamentarian = Parliamentarian.objects.create(full_name="Pessoa Câmara")
+        _make_term(
+            external_id=101,
+            house="camara",
+            start_date=today - timedelta(days=10),
+            end_date=today,
+            parliamentarian=parliamentarian,
+            legislature=57,
+        )
+        _make_term(
+            external_id=101,
+            house="camara",
+            start_date=today - timedelta(days=20),
+            end_date=today + timedelta(days=10),
+            parliamentarian=parliamentarian,
+            legislature=56,
+        )
+        _make_term(
+            external_id=202,
+            house="senado",
+            start_date=today - timedelta(days=10),
+            end_date=None,
+            legislature=57,
+        )
+        _make_term(
+            external_id=303,
+            house="camara",
+            start_date=today - timedelta(days=20),
+            end_date=today - timedelta(days=1),
+            legislature=56,
+        )
+        _make_term(
+            external_id=404,
+            house="senado",
+            start_date=today + timedelta(days=1),
+            end_date=None,
+            legislature=57,
+        )
+
+        camara = _FakeProfileClient({101: _camara_profile(101)})
+        senado = _FakeProfileClient({202: _senado_profile(202)})
+        calls = []
+        monkeypatch.setattr(tasks, "CamaraClient", lambda: camara)
+        monkeypatch.setattr(tasks, "SenadoClient", lambda: senado)
+        monkeypatch.setattr(tasks, "_load_tse_index", lambda: ({}, 0))
+        monkeypatch.setattr(
+            tasks,
+            "_load_senado_front_snapshot",
+            lambda: SimpleNamespace(fronts=(), failed_fronts=0),
+        )
+        monkeypatch.setattr(tasks, "upsert_source_profile", lambda **kwargs: calls.append(kwargs))
+
+        result = tasks.enrich_parliamentarian_profiles()
+
+        assert result == {
+            "skipped": False,
+            "processed": 2,
+            "failed": 0,
+            "camara": {"processed": 1, "failed": 0},
+            "senado": {"processed": 1, "failed": 0},
+            "senado_fronts": {"processed": 0, "failed": 0, "memberships": 0},
+            "tse": {"processed": 0, "unresolved": 2, "ambiguous": 0, "failed": 0},
+        }
+        assert camara.requested == [101]
+        assert senado.requested == [202]
+        assert calls == [
+            {
+                "source": "camara",
+                "source_key": 101,
+                "house": "camara",
+                "profile_values": {
+                    "external_id": 101,
+                    "full_name": "Nome Câmara",
+                    "social_name": "Nome Público Câmara",
+                    "gender": "F",
+                    "photo_url": "https://camara/foto.jpg",
+                    "birthplace": None,
+                },
+                "source_url": "https://dadosabertos.camara.leg.br/api/v2/deputados/101",
+            },
+            {
+                "source": "senado",
+                "source_key": 202,
+                "house": "senado",
+                "profile_values": {
+                    "external_id": 202,
+                    "full_name": "Nome Completo Senado",
+                    "social_name": "Nome Público Senado",
+                    "gender": "M",
+                    "photo_url": "https://senado/foto.jpg",
+                    "birthplace": None,
+                },
+                "source_url": "https://senado/perfil/202",
+            },
+        ]
+
+    def test_failure_isolated_per_term(self, monkeypatch):
+        today = timezone.localdate()
+        _make_term(
+            external_id=301,
+            house="camara",
+            start_date=today - timedelta(days=1),
+            end_date=None,
+            legislature=57,
+        )
+        _make_term(
+            external_id=302,
+            house="camara",
+            start_date=today - timedelta(days=1),
+            end_date=None,
+            legislature=57,
+        )
+        _make_term(
+            external_id=401,
+            house="senado",
+            start_date=today - timedelta(days=1),
+            end_date=None,
+            legislature=57,
+        )
+        camara = _FakeProfileClient({302: _camara_profile(302)}, failures={301})
+        senado = _FakeProfileClient({401: _senado_profile(401)})
+        calls = []
+        monkeypatch.setattr(tasks, "CamaraClient", lambda: camara)
+        monkeypatch.setattr(tasks, "SenadoClient", lambda: senado)
+        monkeypatch.setattr(tasks, "_load_tse_index", lambda: ({}, 0))
+        monkeypatch.setattr(
+            tasks,
+            "_load_senado_front_snapshot",
+            lambda: SimpleNamespace(fronts=(), failed_fronts=0),
+        )
+        monkeypatch.setattr(tasks, "upsert_source_profile", lambda **kwargs: calls.append(kwargs))
+
+        result = tasks.enrich_parliamentarian_profiles()
+
+        assert result["processed"] == 2
+        assert result["failed"] == 1
+        assert result["camara"] == {"processed": 1, "failed": 1}
+        assert result["senado"] == {"processed": 1, "failed": 0}
+        assert camara.requested == [301, 302]
+        assert senado.requested == [401]
+        assert {call["source_key"] for call in calls} == {302, 401}
+
+    def test_lock_collision_returns_explicit_skipped_result(self, monkeypatch):
+        monkeypatch.setattr(tasks.cache, "add", lambda *args, **kwargs: False)
+        clients_called = []
+        monkeypatch.setattr(tasks, "CamaraClient", lambda: clients_called.append("camara"))
+        monkeypatch.setattr(tasks, "SenadoClient", lambda: clients_called.append("senado"))
+
+        result = tasks.enrich_parliamentarian_profiles()
+
+        assert result == {
+            "skipped": True,
+            "reason": "lock_held",
+            "processed": 0,
+            "failed": 0,
+            "camara": {"processed": 0, "failed": 0},
+            "senado": {"processed": 0, "failed": 0},
+            "senado_fronts": {"processed": 0, "failed": 0, "memberships": 0},
+            "tse": {"processed": 0, "unresolved": 0, "ambiguous": 0, "failed": 0},
+        }
+        assert clients_called == []
+
+
+def test_profile_enrichment_is_scheduled_at_03_brt():
+    from config.settings import base
+
+    schedule = base.CELERY_BEAT_SCHEDULE["enrich-parliamentarian-profiles-daily"]
+    assert schedule["task"] == "apps.ingestion.tasks.enrich_parliamentarian_profiles"
+    assert schedule["schedule"].hour == {3}
+    assert schedule["schedule"].minute == {0}
+    assert base.CELERY_TIMEZONE == "America/Sao_Paulo"
 
 
 @pytest.mark.django_db
