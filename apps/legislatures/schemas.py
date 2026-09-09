@@ -1,7 +1,21 @@
-
 from ninja import ModelSchema
 
 from .models import Legislature, Parliamentarian, Party
+
+PARLIAMENTARIAN_DETAIL_FIELDS = [
+    "id",
+    "full_name",
+    "social_name",
+    "photo_url",
+    "gender",
+    "birth_date",
+    "race",
+    "education",
+    "birthplace",
+    "profession",
+    "religion",
+    "bio",
+]
 
 
 class LegislatureSchema(ModelSchema):
@@ -25,4 +39,4 @@ class ParliamentarianSchema(ModelSchema):
 class ParliamentarianDetailSchema(ModelSchema):
     class Meta:
         model = Parliamentarian
-        exclude = ["created_at", "updated_at"]
+        fields = PARLIAMENTARIAN_DETAIL_FIELDS

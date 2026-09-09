@@ -49,6 +49,7 @@ services:
       POSTGRES_USER: elas
       POSTGRES_PASSWORD: elas
       REDIS_URL: redis://redis:6379/0
+      PARLIAMENTARIAN_ENRICHMENT_API_TOKEN: ${PARLIAMENTARIAN_ENRICHMENT_API_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy

@@ -9,6 +9,17 @@ Três saltos, idênticos ao spider original:
 
 from collections.abc import Iterator
 from datetime import date
+from urllib.parse import urljoin
+
+import httpx
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+
+from apps.ingestion.senado_fronts import (
+    SENADO_FRONT_MAX_BYTES,
+    SENADO_FRONT_MAX_REDIRECTS,
+    SenadoFrontPageLimitError,
+    validate_senado_front_url,
+)
 
 from .base import BaseClient
 
@@ -80,3 +91,109 @@ class SenadoClient(BaseClient):
         if isinstance(autores, dict):
             autores = [autores]
         return autores
+
+    def fetch_profile(self, senator_id: int) -> dict:
+        """Perfil oficial de um senador, sem os envelopes da resposta."""
+        payload = self.get_json(f"/senador/{senator_id}")
+        return payload.get("DetalheParlamentar", {}).get("Parlamentar", {})
+
+    @retry(
+        retry=retry_if_exception_type((httpx.TransportError, httpx.HTTPStatusError)),
+        wait=wait_exponential(multiplier=1, min=2, max=30),
+        stop=stop_after_attempt(3),
+        reraise=True,
+    )
+    def fetch_front_html(
+        self,
+        url: str,
+        *,
+        max_bytes: int = SENADO_FRONT_MAX_BYTES,
+        max_redirects: int = SENADO_FRONT_MAX_REDIRECTS,
+    ) -> str:
+        current_url = validate_senado_front_url(url)
+        for redirect_count in range(max_redirects + 1):
+            with self._client.stream(
+                "GET",
+                current_url,
+                follow_redirects=False,
+            ) as response:
+                if response.status_code in {301, 302, 303, 307, 308}:
+                    if redirect_count >= max_redirects:
+                        raise SenadoFrontPageLimitError("Senado front redirect limit exceeded")
+                    location = response.headers.get("location")
+                    if not location:
+                        raise ValueError("Senado front redirect has no location")
+                    current_url = validate_senado_front_url(urljoin(current_url, location))
+                    continue
+
+                response.raise_for_status()
+                content_length = response.headers.get("content-length")
+                if content_length:
+                    try:
+                        if int(content_length) > max_bytes:
+                            raise SenadoFrontPageLimitError(
+                                "Senado front response exceeds byte limit"
+                            )
+                    except ValueError:
+                        pass
+
+                payload = bytearray()
+                for chunk in response.iter_bytes():
+                    payload.extend(chunk)
+                    if len(payload) > max_bytes:
+                        raise SenadoFrontPageLimitError(
+                            "Senado front response exceeds byte limit"
+                        )
+                encoding = response.encoding or "utf-8"
+                return bytes(payload).decode(encoding, errors="replace")
+        raise SenadoFrontPageLimitError("Senado front redirect limit exceeded")
+
+    def fetch_senator_committees(self, senator_id: int) -> list[dict]:
+        """Comissões do senador, com a forma singleton/lista normalizada."""
+        return self._fetch_senator_collection(
+            senator_id, "comissoes", "ComissoesParlamentar", "Comissoes", "Comissao"
+        )
+
+    def fetch_senator_party_affiliations(self, senator_id: int) -> list[dict]:
+        """Filiações partidárias do senador, com a forma singleton/lista normalizada."""
+        return self._fetch_senator_collection(
+            senator_id,
+            "filiacoes",
+            "FiliacoesPartidariasParlamentar",
+            "Filiacoes",
+            "FiliacaoPartidaria",
+        )
+
+    def fetch_senator_leaderships(self, senator_id: int) -> list[dict]:
+        """Lideranças do senador, com a forma singleton/lista normalizada."""
+        return self._fetch_senator_collection(
+            senator_id, "liderancas", "LiderancasParlamentar", "Liderancas", "Lideranca"
+        )
+
+    def fetch_senator_posts(self, senator_id: int) -> list[dict]:
+        """Cargos/postos do senador, com a forma singleton/lista normalizada."""
+        return self._fetch_senator_collection(
+            senator_id, "cargos", "CargosParlamentar", "Cargos", "Cargo"
+        )
+
+    def _fetch_senator_collection(
+        self,
+        senator_id: int,
+        endpoint: str,
+        root: str,
+        collection: str,
+        item: str,
+    ) -> list[dict]:
+        payload = self.get_json(f"/senador/{senator_id}/{endpoint}")
+        root_payload = payload.get(root, {}) or {}
+        parliamentarian = root_payload.get("Parlamentar", {}) or {}
+        collection_payload = parliamentarian.get(collection, {}) or {}
+        return _as_list(collection_payload.get(item))
+
+
+def _as_list(value) -> list[dict]:
+    if isinstance(value, list):
+        return value
+    if isinstance(value, dict):
+        return [value]
+    return []
