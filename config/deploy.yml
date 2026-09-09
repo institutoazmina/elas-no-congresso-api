@@ -70,6 +70,7 @@ env:
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0
   secret:
     - SECRET_KEY
+    - PARLIAMENTARIAN_ENRICHMENT_API_TOKEN
     # Banco (RDS) — endpoint/credenciais não expostos no repo
     - POSTGRES_HOST
     - POSTGRES_PORT

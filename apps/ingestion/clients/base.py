@@ -27,12 +27,18 @@ class BaseClient:
 
     base_url: str = ""
 
-    def __init__(self, client: httpx.Client | None = None):
+    def __init__(
+        self,
+        client: httpx.Client | None = None,
+        *,
+        timeout: httpx.Timeout = _TIMEOUT,
+        accept: str = "application/json",
+    ):
         self._owns_client = client is None
         self._client = client or httpx.Client(
             base_url=self.base_url,
-            timeout=_TIMEOUT,
-            headers={"User-Agent": _USER_AGENT, "Accept": "application/json"},
+            timeout=timeout,
+            headers={"User-Agent": _USER_AGENT, "Accept": accept},
             follow_redirects=True,
         )
 

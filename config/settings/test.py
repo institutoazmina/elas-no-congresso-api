@@ -18,6 +18,15 @@ def _url_to_dict(url: str) -> dict:
 
 DEBUG = False
 
+PARLIAMENTARIAN_ENRICHMENT_API_TOKEN = "test-parliamentarian-enrichment-token"
+TSE_CANDIDATES_ARCHIVE_URLS = {
+    2018: "https://cdn.tse.test/consulta_cand_2018.zip",
+    2022: "https://cdn.tse.test/consulta_cand_2022.zip",
+}
+SENADO_FRONT_CATALOG_URL = (
+    "https://www25.senado.leg.br/web/atividade/conselhos/-/conselho/frentes-parlamentares"
+)
+
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL")
 
 if TEST_DB_URL:

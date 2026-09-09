@@ -63,6 +63,41 @@ class Parliamentarian(models.Model):
         return self.social_name or self.full_name
 
 
+class ParliamentarianProfileSource(models.Model):
+    """The latest normalized profile observed at one external source."""
+
+    parliamentarian = models.ForeignKey(
+        Parliamentarian, on_delete=models.CASCADE, related_name="profile_sources"
+    )
+    source = models.TextField()
+    source_key = models.TextField()
+    profile_values = models.JSONField(default=dict)
+    metadata = models.JSONField(default=dict, blank=True)
+    source_url = models.TextField(null=True, blank=True)
+    first_seen_at = models.DateTimeField(auto_now_add=True)
+    last_seen_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "parliamentarian_profile_sources"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["source", "source_key"],
+                name="parliamentarian_profile_sources_source_key_unique",
+            )
+        ]
+        indexes = [
+            models.Index(
+                fields=["parliamentarian", "source"],
+                name="idx_prof_src_parl_source",
+            )
+        ]
+
+
+# Both names are useful at call sites; keep one concrete Django model/table.
+ParliamentarianSourceProfile = ParliamentarianProfileSource
+SourceProfile = ParliamentarianProfileSource
+
+
 class ParliamentarianTerm(models.Model):
     parliamentarian = models.ForeignKey(
         Parliamentarian, on_delete=models.CASCADE, related_name="terms"
@@ -97,6 +132,55 @@ class ParliamentarianTerm(models.Model):
 
     def __str__(self):
         return f"{self.parliamentarian} — {self.house}/{self.state}"
+
+
+class ParliamentarianPost(models.Model):
+    parliamentarian = models.ForeignKey(
+        Parliamentarian, on_delete=models.CASCADE, related_name="posts"
+    )
+    house = models.CharField(max_length=10, choices=House.choices)
+    legislature = models.ForeignKey(
+        Legislature,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="parliamentarian_posts",
+    )
+    title = models.TextField()
+    organization_name = models.TextField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    is_observed_current = models.BooleanField(null=True, blank=True)
+    source = models.TextField()
+    source_key = models.TextField()
+    source_url = models.TextField(null=True, blank=True)
+    first_seen_at = models.DateTimeField(auto_now_add=True)
+    last_seen_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "parliamentarian_posts"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["source", "source_key"],
+                name="parl_posts_source_unique",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(start_date__isnull=True)
+                | models.Q(end_date__isnull=True)
+                | models.Q(end_date__gte=models.F("start_date")),
+                name="parliamentarian_posts_date_range",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["parliamentarian", "legislature", "start_date"],
+                name="idx_post_parl_leg_start",
+            ),
+            models.Index(
+                fields=["house", "legislature", "is_observed_current"],
+                name="idx_post_house_leg_obs",
+            ),
+        ]
 
 
 class ParliamentarianContact(models.Model):
