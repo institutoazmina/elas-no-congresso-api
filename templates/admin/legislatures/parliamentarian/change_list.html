@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    {% if perms.legislatures.change_parliamentarian %}
+        {% url "admin:legislatures_parliamentarian_enrich_profiles" as enrichment_url %}
+        {% include "unfold/components/button.html" with href=enrichment_url size="sm" icon="sync" variant="default" children="Atualizar perfis" %}
+    {% endif %}
+{% endblock %}
