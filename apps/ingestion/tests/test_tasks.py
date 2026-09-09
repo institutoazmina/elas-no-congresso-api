@@ -420,6 +420,14 @@ class TestEnrichParliamentarianProfiles:
             "senado": {"processed": 1, "failed": 0},
             "senado_fronts": {"processed": 0, "failed": 0, "memberships": 0},
             "tse": {"processed": 0, "unresolved": 2, "ambiguous": 0, "failed": 0},
+            "terms": {
+                "members": 0,
+                "created": 0,
+                "updated": 0,
+                "failed": 0,
+                "camara": {"members": 0, "created": 0, "updated": 0, "failed": 0},
+                "senado": {"members": 0, "created": 0, "updated": 0, "failed": 0},
+            },
         }
         assert camara.requested == [101]
         assert senado.requested == [202]
@@ -517,6 +525,14 @@ class TestEnrichParliamentarianProfiles:
             "senado": {"processed": 0, "failed": 0},
             "senado_fronts": {"processed": 0, "failed": 0, "memberships": 0},
             "tse": {"processed": 0, "unresolved": 0, "ambiguous": 0, "failed": 0},
+            "terms": {
+                "members": 0,
+                "created": 0,
+                "updated": 0,
+                "failed": 0,
+                "camara": {"members": 0, "created": 0, "updated": 0, "failed": 0},
+                "senado": {"members": 0, "created": 0, "updated": 0, "failed": 0},
+            },
         }
         assert clients_called == []
 

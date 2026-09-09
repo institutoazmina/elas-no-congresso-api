@@ -48,6 +48,13 @@ class SenadoClient(BaseClient):
             materias = [materias]
         yield from materias
 
+    def list_current_members(self) -> list[dict]:
+        """Lista os senadores em exercício no payload oficial do Senado."""
+        payload = self.get_json("/senador/lista/atual")
+        root = payload.get("ListaParlamentarEmExercicio", {}) or {}
+        parliamentarians = root.get("Parlamentares", {}) or {}
+        return _as_list(parliamentarians.get("Parlamentar"))
+
     def fetch_detail(self, materia_id: int) -> dict:
         """Detalhe da matéria (campo ``DetalheMateria.Materia``)."""
         payload = self.get_json(f"/materia/{materia_id}")

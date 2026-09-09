@@ -1,8 +1,10 @@
 
+from django.db.models import Exists, OuterRef, Q
+from django.utils import timezone
 from ninja import Router
 from ninja.pagination import LimitOffsetPagination, paginate
 
-from .models import Legislature, Parliamentarian, Party
+from .models import Legislature, Parliamentarian, ParliamentarianTerm, Party
 from .schemas import (
     LegislatureSchema,
     ParliamentarianDetailSchema,
@@ -35,7 +37,20 @@ def list_parliamentarians(
     current: bool | None = None,
 ):
     qs = Parliamentarian.objects.all()
-    if house or state or party or current is not None:
+    if current:
+        today = timezone.localdate()
+        current_term = ParliamentarianTerm.objects.filter(
+            parliamentarian_id=OuterRef("pk"),
+            start_date__lte=today,
+        ).filter(Q(end_date__isnull=True) | Q(end_date__gte=today))
+        if house:
+            current_term = current_term.filter(house=house)
+        if state:
+            current_term = current_term.filter(state__iexact=state)
+        if party:
+            current_term = current_term.filter(party__acronym__iexact=party)
+        qs = qs.filter(Exists(current_term))
+    elif house or state or party:
         term_filter = {}
         if house:
             term_filter["terms__house"] = house
@@ -43,8 +58,6 @@ def list_parliamentarians(
             term_filter["terms__state__iexact"] = state
         if party:
             term_filter["terms__party__acronym__iexact"] = party
-        if current:
-            term_filter["terms__end_date__isnull"] = True
         qs = qs.filter(**term_filter).distinct()
     if gender:
         qs = qs.filter(gender=gender)
