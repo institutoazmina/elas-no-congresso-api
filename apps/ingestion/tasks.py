@@ -11,8 +11,14 @@ Fluxo:
                 └─ classify_proposition.delay(id)  (ML desacoplado — hoje só loga)
 """
 
+import csv
 import logging
-from datetime import date, timedelta
+import re
+import unicodedata
+from collections.abc import Mapping
+from contextlib import ExitStack
+from datetime import date, datetime, timedelta
+from pathlib import Path
 
 from celery import shared_task
 from django.conf import settings
@@ -21,7 +27,13 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from apps.legislatures.models import ParliamentarianTerm
+from apps.legislatures.models import (
+    Legislature,
+    Parliamentarian,
+    ParliamentarianProfileSource,
+    ParliamentarianTerm,
+    Party,
+)
 from apps.legislatures.services.profile_enrichment import upsert_source_profile
 from apps.propositions.models import Proposition, PropositionAuthor, PropositionEvent
 from apps.taxonomy.models import PropositionTheme, Theme
@@ -126,6 +138,13 @@ _PROFILE_ENRICHMENT_LOCK_KEY = "ingestion:parliamentarian-profile-enrichment"
 _PROFILE_ENRICHMENT_LOCK_TIMEOUT = 60 * 60
 _CAMARA_PROFILE_BASE_URL = "https://dadosabertos.camara.leg.br/api/v2"
 _SENADO_PROFILE_BASE_URL = "https://legis.senado.leg.br/dadosabertos"
+_PARLIAMENTARIANS_CSV = Path(__file__).resolve().parents[2] / "data" / "parlamentares.csv"
+_IDENTITIES_CSV = Path(__file__).resolve().parents[2] / "data" / "parliamentarian_identities.csv"
+_EXPECTED_CURRENT_ROSTER = {"camara": 513, "senado": 81}
+
+
+class ReconciliationError(ValueError):
+    """Official identity evidence is ambiguous or contradictory."""
 
 
 def _current_profile_terms(today: date) -> list[ParliamentarianTerm]:
@@ -161,7 +180,527 @@ def _empty_profile_enrichment_result(*, skipped: bool = False) -> dict:
         "senado": {"processed": 0, "failed": 0},
         "senado_fronts": {"processed": 0, "failed": 0, "memberships": 0},
         "tse": {"processed": 0, "unresolved": 0, "ambiguous": 0, "failed": 0},
+        "terms": {
+            "members": 0,
+            "created": 0,
+            "updated": 0,
+            "failed": 0,
+            "camara": {"members": 0, "created": 0, "updated": 0, "failed": 0},
+            "senado": {"members": 0, "created": 0, "updated": 0, "failed": 0},
+        },
     }
+
+
+def _normalized_name(value: object) -> str:
+    if value is None:
+        return ""
+    value = unicodedata.normalize("NFKD", str(value))
+    value = "".join(char for char in value if not unicodedata.combining(char))
+    value = re.sub(r"[^\w\s]", " ", value, flags=re.UNICODE)
+    return " ".join(value.casefold().split())
+
+
+def _text(value: object) -> str | None:
+    if value is None:
+        return None
+    value = str(value).strip()
+    return value or None
+
+
+def _mapping(value: object) -> Mapping:
+    return value if isinstance(value, Mapping) else {}
+
+
+def _first_mapping(value: object) -> Mapping:
+    if isinstance(value, list):
+        return _mapping(value[0]) if value else {}
+    return _mapping(value)
+
+
+def _as_mappings(value: object) -> list[Mapping]:
+    if isinstance(value, list):
+        return [_mapping(item) for item in value]
+    mapped = _mapping(value)
+    return [mapped] if mapped else []
+
+
+def _official_date(value: object) -> date | None:
+    value = _text(value)
+    if not value:
+        return None
+    for candidate in (value, value.split(" ", 1)[0]):
+        try:
+            return date.fromisoformat(candidate)
+        except ValueError:
+            pass
+        for fmt in ("%d/%m/%Y", "%d-%m-%Y"):
+            try:
+                return datetime.strptime(candidate, fmt).date()
+            except ValueError:
+                pass
+    return None
+
+
+def _legislature_numbers(value: object) -> set[int]:
+    if isinstance(value, Mapping):
+        for key in (
+            "numero",
+            "Numero",
+            "numeroLegislatura",
+            "NumeroLegislatura",
+            "idLegislatura",
+            "IdLegislatura",
+        ):
+            if key in value:
+                return _legislature_numbers(value[key])
+        return set()
+    if isinstance(value, list):
+        numbers = set()
+        for item in value:
+            numbers.update(_legislature_numbers(item))
+        return numbers
+    return {int(token) for token in re.findall(r"\d+", str(value))}
+
+
+def _payload_legislature_numbers(member: Mapping, house: str) -> set[int]:
+    if house == "camara":
+        status = _mapping(member.get("ultimoStatus"))
+        values = [member.get("idLegislatura"), status.get("idLegislatura")]
+    else:
+        mandate = _first_mapping(member.get("Mandato"))
+        values = [
+            mandate.get("NumeroLegislatura"),
+            mandate.get("numeroLegislatura"),
+            mandate.get("CodigoLegislatura"),
+            mandate.get("Legislatura"),
+            mandate.get("PrimeiraLegislaturaDoMandato"),
+            mandate.get("SegundaLegislaturaDoMandato"),
+        ]
+    numbers = set()
+    for value in values:
+        numbers.update(_legislature_numbers(value))
+    return numbers
+
+
+def _senado_substitute_start(
+    mandate: Mapping, *, today: date, fallback: date
+) -> date:
+    # Ordinary terms represent the legislature; only an active substitute
+    # exercise has a reliable narrower start date in this payload.
+    role = _normalized_name(
+        mandate.get("DescricaoParticipacao") or mandate.get("TipoMandato")
+    )
+    if "suplente" not in role:
+        return fallback
+
+    exercises = _mapping(mandate.get("Exercicios"))
+    candidates = []
+    for exercise in _as_mappings(exercises.get("Exercicio")):
+        start = _official_date(exercise.get("DataInicio"))
+        if start is None or start > today:
+            continue
+        end = _official_date(exercise.get("DataFim"))
+        if end is None or end >= today:
+            candidates.append(start)
+    return max(fallback, max(candidates, default=fallback))
+
+
+def _integer(value: object) -> int:
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        raise ValueError(f"invalid official parliamentarian id: {value!r}") from None
+
+
+def _member_fields(
+    member: Mapping, house: str, *, legislature: Legislature, today: date
+) -> dict:
+    start_date = legislature.start_date
+    if house == "camara":
+        status = _mapping(member.get("ultimoStatus"))
+        external_id = _integer(member.get("id") or status.get("id"))
+        social_name = _text(
+            member.get("nome")
+            or member.get("nomeParlamentar")
+            or status.get("nome")
+            or status.get("nomeEleitoral")
+        )
+        full_name = _text(
+            member.get("nomeCivil")
+            or member.get("nomeCompleto")
+            or member.get("nomeCompletoParlamentar")
+        )
+        party = member.get("siglaPartido") or member.get("partido")
+        state = member.get("siglaUf") or member.get("uf")
+        role = member.get("cargo") or member.get("tipo") or "Deputado"
+    else:
+        identification = _first_mapping(member.get("IdentificacaoParlamentar"))
+        mandate = _first_mapping(member.get("Mandato"))
+        external_id = _integer(identification.get("CodigoParlamentar"))
+        social_name = _text(
+            identification.get("NomeParlamentar")
+            or identification.get("NomeSocialParlamentar")
+        )
+        full_name = _text(
+            identification.get("NomeCompletoParlamentar")
+            or identification.get("NomeCivilParlamentar")
+        )
+        party = (
+            identification.get("SiglaPartidoParlamentar")
+            or identification.get("SiglaPartido")
+            or mandate.get("SiglaPartido")
+        )
+        state = identification.get("UfParlamentar") or identification.get("Uf")
+        role = mandate.get("DescricaoParticipacao") or mandate.get("TipoMandato") or "Senador"
+        start_date = _senado_substitute_start(
+            mandate, today=today, fallback=legislature.start_date
+        )
+
+    party = _text(party)
+    state = (_text(state) or "NI").upper()
+    if len(state) > 2:
+        state = state[:2]
+    supplied_full_name = full_name
+    social_name = social_name or full_name
+    full_name = full_name or social_name
+    if not full_name:
+        raise ValueError(f"official member {external_id} has no name")
+    return {
+        "external_id": external_id,
+        "full_name": full_name,
+        "supplied_full_name": supplied_full_name,
+        "social_name": social_name,
+        "party": (party or "SEM PARTIDO").upper(),
+        "state": state,
+        "role": _text(role) or "Parlamentar",
+        "start_date": start_date,
+        "legislature_numbers": _payload_legislature_numbers(member, house),
+    }
+
+
+def _canonical_party_acronym(value: object) -> str:
+    acronym = (_text(value) or "SEM PARTIDO").strip()
+    folded = acronym.casefold()
+    if folded == "pode":
+        return "PODEMOS"
+    if folded == "pcdob":
+        return "PCdoB"
+    return acronym.upper()
+
+
+def _load_trusted_crosswalk() -> set[tuple[str, int, str]]:
+    if not _PARLIAMENTARIANS_CSV.is_file():
+        logger.warning("Crosswalk de parlamentares ausente: %s", _PARLIAMENTARIANS_CSV)
+        return set()
+
+    crosswalk = set()
+    try:
+        with _PARLIAMENTARIANS_CSV.open(encoding="utf-8", newline="") as source:
+            for row in csv.DictReader(source):
+                role = _normalized_name(row.get("cargo"))
+                photo = (_text(row.get("foto")) or "").casefold()
+                if "senador" in role and "camara.leg.br" in photo:
+                    house = "camara"
+                elif "senador" in role:
+                    house = "senado"
+                elif "deputado" in role:
+                    house = "camara"
+                else:
+                    house = None
+                name = _normalized_name(row.get("nome"))
+                try:
+                    external_id = int(row.get("numero", ""))
+                except (TypeError, ValueError):
+                    continue
+                if house and name:
+                    crosswalk.add((house, external_id, name))
+    except OSError:
+        logger.exception("Falha ao carregar crosswalk de parlamentares %s", _PARLIAMENTARIANS_CSV)
+        return set()
+
+    if not _IDENTITIES_CSV.is_file():
+        logger.warning("Crosswalk de transições ausente: %s", _IDENTITIES_CSV)
+        return crosswalk
+    try:
+        with _IDENTITIES_CSV.open(encoding="utf-8", newline="") as source:
+            for row in csv.DictReader(source):
+                name = _normalized_name(row.get("name"))
+                if not name:
+                    continue
+                for house, column in (("camara", "camara_id"), ("senado", "senado_id")):
+                    try:
+                        external_id = int(row.get(column, ""))
+                    except (TypeError, ValueError):
+                        continue
+                    crosswalk.add((house, external_id, name))
+    except OSError:
+        logger.exception("Falha ao carregar crosswalk de transições %s", _IDENTITIES_CSV)
+    return crosswalk
+
+
+class _BootstrapIndexes:
+    """Indexes loaded once so member reconciliation never scans the full tables."""
+
+    def __init__(self):
+        self.term_people: dict[tuple[str, int], set[int]] = {}
+        for row in ParliamentarianTerm.objects.values("house", "external_id", "parliamentarian_id"):
+            self.term_people.setdefault((row["house"], row["external_id"]), set()).add(
+                row["parliamentarian_id"]
+            )
+
+        self.source_people: dict[tuple[str, str], set[int]] = {}
+        for row in ParliamentarianProfileSource.objects.filter(
+            source__in=("camara", "senado")
+        ).values("source", "source_key", "parliamentarian_id"):
+            self.source_people.setdefault((row["source"], str(row["source_key"])), set()).add(
+                row["parliamentarian_id"]
+            )
+
+        self.people_by_name: dict[str, set[int]] = {}
+        for row in Parliamentarian.objects.values("id", "full_name", "social_name"):
+            self.add_person(row["id"], row["full_name"], row["social_name"])
+
+        self.crosswalk = _load_trusted_crosswalk()
+        self.parties = {}
+        for party in Party.objects.all():
+            key = party.acronym.casefold()
+            current = self.parties.get(key)
+            if current is None or party.acronym in {"PCdoB", "PODEMOS"}:
+                self.parties[key] = party
+
+    def add_person(self, person_id: int, full_name: object, social_name: object) -> None:
+        for name in (full_name, social_name):
+            normalized = _normalized_name(name)
+            if normalized:
+                self.people_by_name.setdefault(normalized, set()).add(person_id)
+
+    def add_term(self, term: ParliamentarianTerm) -> None:
+        self.term_people.setdefault((term.house, term.external_id), set()).add(
+            term.parliamentarian_id
+        )
+
+    def _evidence_person(self, *, house: str, external_id: int) -> int | None:
+        term_ids = self.term_people.get((house, external_id))
+        source_ids = self.source_people.get((house, str(external_id)))
+        if term_ids is not None and len(term_ids) != 1:
+            raise ReconciliationError(
+                f"ambiguous term identity for {house}/{external_id}: {sorted(term_ids)}"
+            )
+        if source_ids is not None and len(source_ids) != 1:
+            raise ReconciliationError(
+                f"ambiguous profile identity for {house}/{external_id}: {sorted(source_ids)}"
+            )
+        term_id = next(iter(term_ids), None) if term_ids is not None else None
+        source_id = next(iter(source_ids), None) if source_ids is not None else None
+        if term_id is not None and source_id is not None and term_id != source_id:
+            raise ReconciliationError(
+                f"conflicting identities for {house}/{external_id}: {term_id} != {source_id}"
+            )
+        return term_id or source_id
+
+    def resolve_person(self, *, house: str, external_id: int, fields: dict) -> int | None:
+        evidence_id = self._evidence_person(house=house, external_id=external_id)
+        if evidence_id is not None:
+            return evidence_id
+
+        for name in (fields["supplied_full_name"], fields["social_name"]):
+            normalized = _normalized_name(name)
+            if not normalized or (house, external_id, normalized) not in self.crosswalk:
+                continue
+            name_ids = self.people_by_name.get(normalized, set())
+            return next(iter(name_ids)) if len(name_ids) == 1 else None
+        return None
+
+    def validate_existing_person(self, *, house: str, external_id: int, person_id: int) -> None:
+        evidence_id = self._evidence_person(house=house, external_id=external_id)
+        if evidence_id is not None and evidence_id != person_id:
+            raise ReconciliationError(
+                f"current term identity conflicts for {house}/{external_id}: "
+                f"{person_id} != {evidence_id}"
+            )
+
+    def party(self, value: object) -> Party:
+        acronym = _canonical_party_acronym(value)
+        key = acronym.casefold()
+        party = self.parties.get(key)
+        if party is None:
+            party = Party.objects.create(acronym=acronym, name=acronym)
+            self.parties[key] = party
+        return party
+
+
+def _sync_current_member(
+    *, house: str, fields: dict, legislature: Legislature, indexes: _BootstrapIndexes
+) -> tuple[ParliamentarianTerm, bool]:
+    with transaction.atomic():
+        term = (
+            ParliamentarianTerm.objects.select_for_update()
+            .filter(
+                house=house,
+                external_id=fields["external_id"],
+                legislature_number=legislature,
+            )
+            .first()
+        )
+        created = term is None
+        if term is None:
+            parliamentarian_id = indexes.resolve_person(
+                house=house, external_id=fields["external_id"], fields=fields
+            )
+            if parliamentarian_id is None:
+                parliamentarian = Parliamentarian.objects.create(
+                    full_name=fields["full_name"], social_name=fields["social_name"]
+                )
+                parliamentarian_id = parliamentarian.pk
+            party = indexes.party(fields["party"])
+            term = ParliamentarianTerm.objects.create(
+                parliamentarian_id=parliamentarian_id,
+                legislature_number=legislature,
+                party=party,
+                house=house,
+                role=fields["role"],
+                state=fields["state"],
+                external_id=fields["external_id"],
+                start_date=fields["start_date"],
+                end_date=None,
+            )
+            indexes.add_person(parliamentarian_id, fields["full_name"], fields["social_name"])
+            indexes.add_term(term)
+            return term, created
+
+        indexes.validate_existing_person(
+            house=house,
+            external_id=fields["external_id"],
+            person_id=term.parliamentarian_id,
+        )
+        term.party = indexes.party(fields["party"])
+        term.role = fields["role"]
+        term.state = fields["state"]
+        term.end_date = None
+        term.save(update_fields=["party", "role", "state", "end_date"])
+        return term, created
+
+
+def _close_absent_terms(
+    *, house: str, legislature: Legislature, today: date, seen_external_ids: set[int]
+) -> int:
+    return ParliamentarianTerm.objects.filter(
+        house=house,
+        legislature_number=legislature,
+        start_date__lt=today,
+    ).filter(Q(end_date__isnull=True) | Q(end_date__gte=today)).exclude(
+        external_id__in=seen_external_ids
+    ).update(end_date=today - timedelta(days=1))
+
+
+def _sync_current_terms_for_house(
+    *, house: str, client, legislature: Legislature, today: date, result: dict, indexes
+) -> None:
+    list_members = getattr(client, "list_current_members", None)
+    if list_members is None:
+        return
+    house_counts = result["terms"][house]
+    seen_external_ids = set()
+    member_failures = 0
+    snapshot_failed = False
+    snapshot_failure_counted = False
+    try:
+        members = []
+        try:
+            for member in list_members():
+                members.append(member)
+        except Exception:
+            snapshot_failed = True
+            snapshot_failure_counted = True
+            result["terms"]["failed"] += 1
+            house_counts["failed"] += 1
+            logger.exception("Falha ao consumir roster atual da casa %s", house)
+
+        parsed_members = []
+        for member in members:
+            try:
+                fields = _member_fields(
+                    _mapping(member), house, legislature=legislature, today=today
+                )
+                parsed_members.append((member, fields))
+            except Exception:
+                member_failures += 1
+                result["terms"]["failed"] += 1
+                house_counts["failed"] += 1
+                logger.exception("Falha ao interpretar membro atual %s/%s", house, member)
+
+        external_ids = [fields["external_id"] for _, fields in parsed_members]
+        if (
+            len(members) != _EXPECTED_CURRENT_ROSTER[house]
+            or len(external_ids) != len(set(external_ids))
+            or any(
+                fields["legislature_numbers"]
+                and legislature.number not in fields["legislature_numbers"]
+                for _, fields in parsed_members
+            )
+        ):
+            snapshot_failed = True
+
+        if snapshot_failed and not snapshot_failure_counted:
+            snapshot_failure_counted = True
+            result["terms"]["failed"] += 1
+            house_counts["failed"] += 1
+            logger.warning(
+                "Roster atual da casa %s rejeitado para reconciliação: size=%d expected=%d",
+                house,
+                len(members),
+                _EXPECTED_CURRENT_ROSTER[house],
+            )
+
+        for member, fields in parsed_members:
+            try:
+                legislature_numbers = fields["legislature_numbers"]
+                if legislature_numbers and legislature.number not in legislature_numbers:
+                    logger.warning(
+                        "Membro %s/%s ignorado: legislatura atual %s ausente de %s",
+                        house,
+                        fields["external_id"],
+                        legislature.number,
+                        sorted(legislature_numbers),
+                    )
+                    continue
+                _, created = _sync_current_member(
+                    house=house,
+                    fields=fields,
+                    legislature=legislature,
+                    indexes=indexes,
+                )
+                seen_external_ids.add(fields["external_id"])
+                result["terms"]["members"] += 1
+                house_counts["members"] += 1
+                field = "created" if created else "updated"
+                result["terms"][field] += 1
+                house_counts[field] += 1
+            except Exception:
+                member_failures += 1
+                result["terms"]["failed"] += 1
+                house_counts["failed"] += 1
+                logger.exception("Falha ao sincronizar membro atual %s/%s", house, member)
+    except Exception:
+        member_failures += 1
+        if not snapshot_failure_counted:
+            result["terms"]["failed"] += 1
+            house_counts["failed"] += 1
+        logger.exception("Falha ao listar membros atuais da casa %s", house)
+    else:
+        if member_failures or snapshot_failed:
+            return
+        try:
+            _close_absent_terms(
+                house=house,
+                legislature=legislature,
+                today=today,
+                seen_external_ids=seen_external_ids,
+            )
+        except Exception:
+            result["terms"]["failed"] += 1
+            house_counts["failed"] += 1
+            logger.exception("Falha ao reconciliar termos ausentes da casa %s", house)
 
 
 def _load_tse_index():
@@ -245,6 +784,11 @@ def enrich_parliamentarian_profiles() -> dict:
         return result
 
     try:
+        today = timezone.localdate()
+        legislature = Legislature.for_date(today)
+        if legislature is None:
+            raise RuntimeError(f"no current legislature found for {today.isoformat()}")
+
         tse_index = None
         try:
             tse_index, failed_archives = _load_tse_index()
@@ -266,23 +810,46 @@ def enrich_parliamentarian_profiles() -> dict:
             result["senado_fronts"]["failed"] += 1
             logger.exception("Falha ao carregar catálogo de frentes parlamentares do Senado")
 
-        current_terms = _current_profile_terms(timezone.localdate())
-        if senado_front_snapshot is not None:
-            try:
-                front_counts = persist_senado_fronts(
-                    fronts=senado_front_snapshot.fronts,
-                    terms=current_terms,
-                )
-                result["senado_fronts"]["processed"] += front_counts["processed"]
-                result["senado_fronts"]["failed"] += front_counts["failed"]
-                result["senado_fronts"]["memberships"] += front_counts["memberships"]
-            except Exception:
-                result["senado_fronts"]["failed"] += 1
-                logger.exception("Falha ao persistir snapshot de frentes do Senado")
-
         clients = {}
-        with CamaraClient() as camara, SenadoClient() as senado:
-            clients = {"camara": camara, "senado": senado}
+        indexes = _BootstrapIndexes()
+        with ExitStack() as stack:
+            for house, client_class in (
+                ("camara", CamaraClient),
+                ("senado", SenadoClient),
+            ):
+                try:
+                    clients[house] = stack.enter_context(client_class())
+                except Exception:
+                    result["terms"]["failed"] += 1
+                    result["terms"][house]["failed"] += 1
+                    logger.exception("Falha ao abrir cliente da casa %s", house)
+
+            for house in ("camara", "senado"):
+                client = clients.get(house)
+                if client is not None:
+                    _sync_current_terms_for_house(
+                        house=house,
+                        client=client,
+                        legislature=legislature,
+                        today=today,
+                        result=result,
+                        indexes=indexes,
+                    )
+
+            current_terms = _current_profile_terms(today)
+            if senado_front_snapshot is not None:
+                try:
+                    front_counts = persist_senado_fronts(
+                        fronts=senado_front_snapshot.fronts,
+                        terms=current_terms,
+                    )
+                    result["senado_fronts"]["processed"] += front_counts["processed"]
+                    result["senado_fronts"]["failed"] += front_counts["failed"]
+                    result["senado_fronts"]["memberships"] += front_counts["memberships"]
+                except Exception:
+                    result["senado_fronts"]["failed"] += 1
+                    logger.exception("Falha ao persistir snapshot de frentes do Senado")
+
             for term in current_terms:
                 house = term.house
                 counts = result[house]
@@ -324,7 +891,11 @@ def enrich_parliamentarian_profiles() -> dict:
                         )
 
         result["processed"] = result["camara"]["processed"] + result["senado"]["processed"]
-        result["failed"] = result["camara"]["failed"] + result["senado"]["failed"]
+        result["failed"] = (
+            result["camara"]["failed"]
+            + result["senado"]["failed"]
+            + result["terms"]["failed"]
+        )
         return result
     finally:
         cache.delete(_PROFILE_ENRICHMENT_LOCK_KEY)

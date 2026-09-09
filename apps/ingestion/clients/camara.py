@@ -38,6 +38,20 @@ class CamaraClient(BaseClient):
             url = _next_link(payload.get("links", []))
             params = None  # o link `next` já carrega a querystring
 
+    def list_current_members(self) -> Iterator[dict]:
+        """Itera os deputados em exercício na lista oficial da Câmara.
+
+        A resposta de ``/deputados`` pode trazer um único objeto em ``dados``
+        e a paginação é indicada por ``rel=next`` nos links.
+        """
+        params = {"itens": 100, "ordem": "ASC", "ordenarPor": "id"}
+        url = "/deputados"
+        while url:
+            payload = self.get_json(url, params=params)
+            yield from _as_list(payload.get("dados"))
+            url = _next_link(payload.get("links", []))
+            params = None
+
     def fetch_detail(self, proposition_id: int) -> dict:
         """Detalhe completo da proposição (campo ``dados``)."""
         return self.get_json(f"/proposicoes/{proposition_id}").get("dados", {})
@@ -66,7 +80,7 @@ class CamaraClient(BaseClient):
 
 
 def _next_link(links: list[dict]) -> str | None:
-    for link in links:
+    for link in _as_list(links):
         if link.get("rel") == "next":
             return link.get("href")
     return None

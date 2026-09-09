@@ -39,9 +39,11 @@ coverage.xml
 ruff.toml
 .mypy_cache/
 
-# Seed / fixture data — not needed in production
+# Seed / fixture data — only the parliamentarian identity crosswalk is needed
 fixtures/
-data/
+data/*
+!data/parlamentares.csv
+!data/parliamentarian_identities.csv
 
 # Ops / infra scripts
 ops/
