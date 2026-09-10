@@ -27,6 +27,9 @@ def _archive(rows):
         "DS_CARGO",
         "SG_PARTIDO",
         "DS_COR_RACA",
+        "DT_NASCIMENTO",
+        "DS_GRAU_INSTRUCAO",
+        "DS_OCUPACAO",
         "ANO_ELEICAO",
     ]
     buffer = io.StringIO(newline="")
@@ -48,6 +51,9 @@ def _candidate(sq, name, uf, office, party, race, year=2022):
         "DS_CARGO": office,
         "SG_PARTIDO": party,
         "DS_COR_RACA": race,
+        "DT_NASCIMENTO": "13/02/1965",
+        "DS_GRAU_INSTRUCAO": "SUPERIOR INCOMPLETO",
+        "DS_OCUPACAO": "PROFESSORA",
         "ANO_ELEICAO": str(year),
     }
 
@@ -222,11 +228,19 @@ def test_task_projects_one_archive_match_per_current_term_and_is_idempotent(monk
     camara_term.parliamentarian.refresh_from_db()
     senado_term.parliamentarian.refresh_from_db()
     assert camara_term.parliamentarian.race == "preta"
+    assert camara_term.parliamentarian.birth_date == date(1965, 2, 13)
+    assert camara_term.parliamentarian.education == "SUPERIOR INCOMPLETO"
+    assert camara_term.parliamentarian.profession == "PROFESSORA"
     assert senado_term.parliamentarian.race == "parda"
     assert ParliamentarianProfileSource.objects.filter(source="tse").count() == 2
     assert ParliamentarianProfileSource.objects.filter(source="tse", source_key="9001").count() == 1
     snapshot = ParliamentarianProfileSource.objects.get(source="tse", source_key="9001")
-    assert snapshot.profile_values == {"race": "preta"}
+    assert snapshot.profile_values == {
+        "birth_date": "1965-02-13",
+        "race": "preta",
+        "education": "SUPERIOR INCOMPLETO",
+        "profession": "PROFESSORA",
+    }
     assert snapshot.source_url == archive_urls[2022]
     assert snapshot.metadata["sq_candidato"] == "9001"
     assert snapshot.metadata["raw_race"] == "PRETA"

@@ -107,6 +107,17 @@ class TestCamaraClient:
         assert c.fetch_profile(204554) == {"id": 204554}
         assert requests[0].url.path == "/api/v2/deputados/204554"
 
+    def test_fetch_deputy_professions_normalizes_envelope(self):
+        requests = []
+
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(200, json={"dados": {"titulo": "Advogada"}})
+
+        c = _client_for(CamaraClient, handler)
+        assert c.fetch_deputy_professions(204554) == [{"titulo": "Advogada"}]
+        assert requests[0].url.path == "/api/v2/deputados/204554/profissoes"
+
     def test_fetch_deputy_fronts_and_organs_normalize_envelopes(self):
         def handler(request):
             if request.url.path.endswith("/frentes"):
@@ -206,6 +217,35 @@ class TestSenadoClient:
             "IdentificacaoParlamentar": {"CodigoParlamentar": "35"}
         }
         assert requests[0].url.path == "/dadosabertos/senador/35"
+
+    def test_fetch_senator_professions_and_academic_history_normalize_envelopes(self):
+        requests = []
+
+        def handler(request):
+            requests.append(request.url.path)
+            if request.url.path.endswith("/profissao"):
+                body = {
+                    "HistoricoAcademicoParlamentar": {
+                        "Parlamentar": {"Profissoes": {"Profissao": {"NomeProfissao": "Advogado"}}}
+                    }
+                }
+            else:
+                body = {
+                    "HistoricoAcademicoParlamentar": {
+                        "Parlamentar": {
+                            "HistoricoAcademico": {"Curso": {"NomeCurso": "Direito"}}
+                        }
+                    }
+                }
+            return httpx.Response(200, json=body)
+
+        c = _client_for(SenadoClient, handler)
+        assert c.fetch_senator_professions(35) == [{"NomeProfissao": "Advogado"}]
+        assert c.fetch_senator_academic_history(35) == [{"NomeCurso": "Direito"}]
+        assert requests == [
+            "/dadosabertos/senador/35/profissao",
+            "/dadosabertos/senador/35/historicoAcademico",
+        ]
 
     def test_fetch_senator_institutional_links_normalize_envelopes(self):
         requests = []

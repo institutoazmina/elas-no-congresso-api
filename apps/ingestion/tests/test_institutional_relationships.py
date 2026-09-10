@@ -243,7 +243,9 @@ def test_camara_relationship_service_is_idempotent_and_preserves_known_values():
     committee = Committee.objects.get()
     assert caucus.name == "Frente pela Igualdade"
     assert caucus.start_date == date(2024, 1, 1)
-    assert CaucusMembership.objects.get().role is None
+    membership = CaucusMembership.objects.get()
+    assert membership.role == "Signatário"
+    assert membership.is_observed_current is None
     assert committee.name == "Comissão de Constituição"
     assert committee.acronym == "CCJC"
     assert CommitteeMembership.objects.get().role == "Titular"
@@ -271,7 +273,26 @@ def test_camara_relationship_service_reuses_same_front_with_different_provider_i
 
     assert Caucus.objects.count() == 1
     assert Caucus.objects.get().source_key == "front:700"
-    assert CaucusMembership.objects.count() == 2
+    assert CaucusMembership.objects.count() == 1
+    membership = CaucusMembership.objects.get()
+    assert membership.source_key == "front:700:member:101"
+    assert membership.role == "Signatário"
+    assert membership.is_observed_current is None
+
+
+@pytest.mark.django_db
+def test_camara_relationship_service_discards_inverted_provider_date_ranges():
+    term = _make_term(external_id=101, house="camara")
+    client = _camara_client()
+    client.organs[0]["dataInicio"] = "2024-02-01"
+    client.organs[0]["dataFim"] = "2024-01-01"
+
+    persist_official_relationships(term=term, client=client)
+
+    membership = CommitteeMembership.objects.get()
+    presidency = CommitteePresidency.objects.get()
+    assert (membership.start_date, membership.end_date) == (None, None)
+    assert (presidency.start_date, presidency.end_date) == (None, None)
 
 
 @pytest.mark.django_db

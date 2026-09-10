@@ -183,6 +183,26 @@ class SenadoClient(BaseClient):
             senator_id, "cargos", "CargosParlamentar", "Cargos", "Cargo"
         )
 
+    def fetch_senator_professions(self, senator_id: int) -> list[dict]:
+        """Profissões declaradas pelo senador."""
+        return self._fetch_senator_collection(
+            senator_id,
+            "profissao",
+            "HistoricoAcademicoParlamentar",
+            "Profissoes",
+            "Profissao",
+        )
+
+    def fetch_senator_academic_history(self, senator_id: int) -> list[dict]:
+        """Histórico acadêmico declarado pelo senador."""
+        return self._fetch_senator_collection(
+            senator_id,
+            "historicoAcademico",
+            "HistoricoAcademicoParlamentar",
+            "HistoricoAcademico",
+            "Curso",
+        )
+
     def _fetch_senator_collection(
         self,
         senator_id: int,

@@ -62,6 +62,18 @@ def _date_from(record: Mapping, *keys: str) -> date | None:
     return None
 
 
+def _date_range(
+    record: Mapping,
+    start_keys: tuple[str, ...],
+    end_keys: tuple[str, ...],
+) -> tuple[date | None, date | None]:
+    start_date = _date_from(record, *start_keys)
+    end_date = _date_from(record, *end_keys)
+    if start_date is not None and end_date is not None and end_date < start_date:
+        return None, None
+    return start_date, end_date
+
+
 def _stable_component(*values: object) -> str:
     value = "|".join(_text(item) or "" for item in values)
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
@@ -240,15 +252,18 @@ def _committee_membership(
     fallback_url: str,
 ) -> CommitteeMembership:
     role = _role(record) or "membro"
+    start_date, end_date = _date_range(
+        record,
+        ("dataInicio", "DataInicio", "dataEntrada", "DataEntrada"),
+        ("dataFim", "DataFim", "dataSaida", "DataSaida"),
+    )
     defaults = {
         "committee": committee,
         "parliamentarian": term.parliamentarian,
         "legislature": term.legislature_number,
-        "role": _role(record),
-        "start_date": _date_from(
-            record, "dataInicio", "DataInicio", "dataEntrada", "DataEntrada"
-        ),
-        "end_date": _date_from(record, "dataFim", "DataFim", "dataSaida", "DataSaida"),
+        "role": role,
+        "start_date": start_date,
+        "end_date": end_date,
         "is_observed_current": True,
         "source_url": _url(record, fallback_url),
     }
@@ -269,14 +284,17 @@ def _committee_presidency(
     record: Mapping,
     fallback_url: str,
 ) -> CommitteePresidency:
+    start_date, end_date = _date_range(
+        record,
+        ("dataInicio", "DataInicio", "dataEntrada", "DataEntrada"),
+        ("dataFim", "DataFim", "dataSaida", "DataSaida"),
+    )
     defaults = {
         "committee": committee,
         "parliamentarian": term.parliamentarian,
         "legislature": term.legislature_number,
-        "start_date": _date_from(
-            record, "dataInicio", "DataInicio", "dataEntrada", "DataEntrada"
-        ),
-        "end_date": _date_from(record, "dataFim", "DataFim", "dataSaida", "DataSaida"),
+        "start_date": start_date,
+        "end_date": end_date,
         "is_observed_current": True,
         "source_url": _url(record, fallback_url),
     }
@@ -302,6 +320,11 @@ def _caucus(
     fallback_url: str,
 ) -> Caucus:
     legislature = term.legislature_number if term is not None else None
+    start_date, end_date = _date_range(
+        record,
+        ("dataInicio", "DataInicio", "dataFiliacao", "DataFiliacao"),
+        ("dataFim", "DataFim", "dataDesfiliacao", "DataDesfiliacao"),
+    )
     defaults = {
         "house": house,
         "kind": kind,
@@ -309,10 +332,8 @@ def _caucus(
         "legislature": legislature,
         "description": _first(record, "status", "Status", "situacao", "Situacao"),
         "source_url": _url(record, fallback_url),
-        "start_date": _date_from(
-            record, "dataInicio", "DataInicio", "dataFiliacao", "DataFiliacao"
-        ),
-        "end_date": _date_from(record, "dataFim", "DataFim", "dataDesfiliacao", "DataDesfiliacao"),
+        "start_date": start_date,
+        "end_date": end_date,
         "is_active": True,
     }
     source_identity = {"source": source, "source_key": source_key}
@@ -336,16 +357,21 @@ def _caucus_membership(
     term: ParliamentarianTerm,
     record: Mapping,
     fallback_url: str,
+    role: str | None = None,
+    is_observed_current: bool | None = True,
 ) -> CaucusMembership:
+    start_date, end_date = _date_range(
+        record,
+        ("dataInicio", "DataInicio", "dataFiliacao", "DataFiliacao"),
+        ("dataFim", "DataFim", "dataDesfiliacao", "DataDesfiliacao"),
+    )
     defaults = {
         "caucus": caucus,
         "parliamentarian": term.parliamentarian,
-        "role": _caucus_role(record),
-        "start_date": _date_from(
-            record, "dataInicio", "DataInicio", "dataFiliacao", "DataFiliacao"
-        ),
-        "end_date": _date_from(record, "dataFim", "DataFim", "dataDesfiliacao", "DataDesfiliacao"),
-        "is_observed_current": True,
+        "role": role or _caucus_role(record),
+        "start_date": start_date,
+        "end_date": end_date,
+        "is_observed_current": is_observed_current,
         "source_url": _url(record, fallback_url),
     }
     return _touch(
@@ -365,6 +391,11 @@ def _post(
     record: Mapping,
     fallback_url: str,
 ) -> ParliamentarianPost:
+    start_date, end_date = _date_range(
+        record,
+        ("dataInicio", "DataInicio", "dataEntrada", "DataEntrada"),
+        ("dataFim", "DataFim", "dataSaida", "DataSaida"),
+    )
     defaults = {
         "parliamentarian": term.parliamentarian,
         "house": house,
@@ -380,10 +411,8 @@ def _post(
             "orgao",
             "Orgao",
         ),
-        "start_date": _date_from(
-            record, "dataInicio", "DataInicio", "dataEntrada", "DataEntrada"
-        ),
-        "end_date": _date_from(record, "dataFim", "DataFim", "dataSaida", "DataSaida"),
+        "start_date": start_date,
+        "end_date": end_date,
         "is_observed_current": True,
         "source_url": _url(record, fallback_url),
     }
@@ -419,13 +448,20 @@ def _persist_camara(term: ParliamentarianTerm, client) -> dict[str, int]:
             record=front,
             fallback_url=entity_url,
         )
+        membership_key = (
+            caucus.source_key
+            if caucus.source == source and caucus.source_key
+            else key
+        )
         _caucus_membership(
             source=source,
-            source_key=f"{key}:member:{external_id}",
+            source_key=f"{membership_key}:member:{external_id}",
             caucus=caucus,
             term=term,
             record=front,
             fallback_url=entity_url,
+            role="Signatário",
+            is_observed_current=None,
         )
         counts["caucuses"] += 1
         counts["memberships"] += 1
@@ -556,9 +592,14 @@ def _persist_senado(term: ParliamentarianTerm, client) -> dict[str, int]:
             record=group_record,
             fallback_url=entity_url,
         )
+        membership_key = (
+            caucus.source_key
+            if caucus.source == source and caucus.source_key
+            else key
+        )
         _caucus_membership(
             source=source,
-            source_key=f"{key}:member:{external_id}",
+            source_key=f"{membership_key}:member:{external_id}",
             caucus=caucus,
             term=term,
             record=group_record,
@@ -673,6 +714,11 @@ def persist_senado_fronts(*, fronts, terms: list[ParliamentarianTerm]) -> dict[s
                     record=record,
                     fallback_url=front.council_url,
                 )
+                membership_key = (
+                    caucus.source_key
+                    if caucus.source == "senado" and caucus.source_key
+                    else str(front.codcol)
+                )
                 for member in front.members:
                     if member.house != "senado":
                         continue
@@ -682,7 +728,7 @@ def persist_senado_fronts(*, fronts, terms: list[ParliamentarianTerm]) -> dict[s
                     _caucus_membership(
                         source="senado",
                         source_key=(
-                            f"{front.codcol}:member:{member.house}:{member.external_id}"
+                            f"{membership_key}:member:{member.house}:{member.external_id}"
                         ),
                         caucus=caucus,
                         term=term,

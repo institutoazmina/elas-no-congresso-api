@@ -78,6 +78,11 @@ class CamaraClient(BaseClient):
         payload = self.get_json(f"/deputados/{deputy_id}/orgaos")
         return _as_list(payload.get("dados"))
 
+    def fetch_deputy_professions(self, deputy_id: int) -> list[dict]:
+        """Profissões declaradas pelo deputado à Câmara."""
+        payload = self.get_json(f"/deputados/{deputy_id}/profissoes")
+        return _as_list(payload.get("dados"))
+
 
 def _next_link(links: list[dict]) -> str | None:
     for link in _as_list(links):

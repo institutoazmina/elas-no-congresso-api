@@ -744,7 +744,22 @@ def _load_senado_front_snapshot():
         )
 
 
-def _persist_tse_race(term, index) -> str:
+def _optional_profile_collection(client, method_name: str, external_id: int) -> list[dict]:
+    method = getattr(client, method_name, None)
+    if method is None:
+        return []
+    try:
+        return method(external_id)
+    except Exception:
+        logger.exception(
+            "Falha ao carregar campo complementar %s/%s",
+            method_name,
+            external_id,
+        )
+        return []
+
+
+def _persist_tse_profile(term, index) -> str:
     match = match_tse_candidate(index, term)
     if match.status != "matched":
         return match.status
@@ -753,16 +768,24 @@ def _persist_tse_race(term, index) -> str:
     if candidate is None:
         return "failed"
     race = normalize_race_label(candidate.raw_race)
+    profile_values = {
+        "birth_date": candidate.birth_date,
+        "race": race,
+        "education": candidate.education,
+        "profession": candidate.occupation,
+    }
     upsert_source_profile(
         source="tse",
         source_key=candidate.sq_candidato,
         external_id=term.external_id,
         house=term.house,
-        profile_values={"race": race} if race is not None else {},
+        profile_values={key: value for key, value in profile_values.items() if value is not None},
         source_url=candidate.archive_url,
         metadata={
             "sq_candidato": candidate.sq_candidato,
             "raw_race": candidate.raw_race,
+            "raw_education": candidate.education,
+            "raw_occupation": candidate.occupation,
             "election_year": candidate.election_year,
             "term_external_id": term.external_id,
         },
@@ -856,9 +879,31 @@ def enrich_parliamentarian_profiles() -> dict:
                 try:
                     profile = clients[house].fetch_profile(term.external_id)
                     if house == "camara":
-                        normalized = normalize_camara_profile(profile)
+                        professions = _optional_profile_collection(
+                            clients[house],
+                            "fetch_deputy_professions",
+                            term.external_id,
+                        )
+                        normalized = normalize_camara_profile(
+                            profile,
+                            professions=professions,
+                        )
                     else:
-                        normalized = normalize_senado_profile(profile)
+                        professions = _optional_profile_collection(
+                            clients[house],
+                            "fetch_senator_professions",
+                            term.external_id,
+                        )
+                        academic_history = _optional_profile_collection(
+                            clients[house],
+                            "fetch_senator_academic_history",
+                            term.external_id,
+                        )
+                        normalized = normalize_senado_profile(
+                            profile,
+                            professions=professions,
+                            academic_history=academic_history,
+                        )
                     upsert_source_profile(
                         source=house,
                         source_key=term.external_id,
@@ -880,7 +925,7 @@ def enrich_parliamentarian_profiles() -> dict:
                     )
                 if tse_index is not None:
                     try:
-                        tse_status = _persist_tse_race(term, tse_index)
+                        tse_status = _persist_tse_profile(term, tse_index)
                         result["tse"][tse_status] += 1
                     except Exception:
                         result["tse"]["failed"] += 1

@@ -160,7 +160,9 @@ def build_document(proposition_id: int) -> dict[str, Any]:
             """
             SELECT DISTINCT c.name
             FROM proposition_authors pa
-            JOIN caucus_memberships cm ON cm.parliamentarian_id = pa.parliamentarian_id AND cm.end_date IS NULL
+            JOIN caucus_memberships cm ON cm.parliamentarian_id = pa.parliamentarian_id
+                AND cm.end_date IS NULL
+                AND cm.is_observed_current IS TRUE
             JOIN caucuses c ON c.id = cm.caucus_id
             WHERE pa.proposition_id = %s AND c.kind = 'frente'
             """,
@@ -174,7 +176,9 @@ def build_document(proposition_id: int) -> dict[str, Any]:
             """
             SELECT DISTINCT c.name
             FROM proposition_authors pa
-            JOIN caucus_memberships cm ON cm.parliamentarian_id = pa.parliamentarian_id AND cm.end_date IS NULL
+            JOIN caucus_memberships cm ON cm.parliamentarian_id = pa.parliamentarian_id
+                AND cm.end_date IS NULL
+                AND cm.is_observed_current IS TRUE
             JOIN caucuses c ON c.id = cm.caucus_id
             WHERE pa.proposition_id = %s AND c.kind = 'bancada'
             """,

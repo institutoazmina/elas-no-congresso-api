@@ -1,15 +1,23 @@
+from datetime import date
+
 from apps.ingestion.parliamentarians import normalize_camara_profile, normalize_senado_profile
 
 
 class TestNormalizeCamaraProfile:
     def test_maps_official_profile_fields(self, camara_payload):
-        assert normalize_camara_profile(camara_payload["deputy"]) == {
+        assert normalize_camara_profile(
+            camara_payload["deputy"],
+            professions=[{"titulo": "Professor"}, {"titulo": "Advogado"}],
+        ) == {
             "external_id": 204554,
             "full_name": "JOSE ABILIO SILVA DE SANTANA",
             "social_name": "Abílio Santana",
             "gender": "M",
             "photo_url": "https://www.camara.leg.br/internet/deputado/bandep/204554.jpg",
             "birthplace": "Salvador, BA",
+            "birth_date": date(1965, 2, 13),
+            "education": "Superior Incompleto",
+            "profession": "Professor; Advogado",
         }
 
     def test_maps_missing_values_to_none(self):
@@ -20,6 +28,9 @@ class TestNormalizeCamaraProfile:
             "gender": None,
             "photo_url": None,
             "birthplace": None,
+            "birth_date": None,
+            "education": None,
+            "profession": None,
         }
 
     def test_limits_gender_to_existing_values(self):
@@ -40,16 +51,30 @@ class TestNormalizeSenadoProfile:
             "DadosBasicosParlamentar": {
                 "Naturalidade": "Caxias do Sul",
                 "UfNaturalidade": "RS",
+                "DataNascimento": "27/10/1944",
             },
         }
 
-        assert normalize_senado_profile(profile) == {
+        assert normalize_senado_profile(
+            profile,
+            professions=[{"NomeProfissao": "Advogado"}],
+            academic_history=[
+                {
+                    "NomeCurso": "Direito",
+                    "GrauInstrucao": "Superior",
+                    "Estabelecimento": "UFPA",
+                }
+            ],
+        ) == {
             "external_id": 35,
             "full_name": "Jader Fontenelle Barbalho",
             "social_name": "Jader Barbalho",
             "gender": "M",
             "photo_url": "http://www.senado.leg.br/senadores/img/fotos-oficiais/senador35.jpg",
             "birthplace": "Caxias do Sul, RS",
+            "birth_date": date(1944, 10, 27),
+            "education": "Superior",
+            "profession": "Advogado",
         }
 
     def test_maps_missing_values_to_none(self):
@@ -60,6 +85,9 @@ class TestNormalizeSenadoProfile:
             "gender": None,
             "photo_url": None,
             "birthplace": None,
+            "birth_date": None,
+            "education": None,
+            "profession": None,
         }
 
     def test_limits_gender_to_existing_values(self):

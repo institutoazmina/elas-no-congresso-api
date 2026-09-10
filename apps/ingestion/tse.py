@@ -7,6 +7,7 @@ import unicodedata
 from collections import defaultdict
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from datetime import date, datetime
 from zipfile import BadZipFile, ZipFile
 
 TSE_MAX_MEMBERS = 1_000
@@ -21,6 +22,9 @@ _TSE_FIELDS = {
     "DS_CARGO",
     "SG_PARTIDO",
     "DS_COR_RACA",
+    "DT_NASCIMENTO",
+    "DS_GRAU_INSTRUCAO",
+    "DS_OCUPACAO",
     "ANO_ELEICAO",
 }
 
@@ -39,6 +43,9 @@ class TSECandidate:
     party: str | None
     raw_race: str | None
     election_year: int
+    birth_date: date | None = None
+    education: str | None = None
+    occupation: str | None = None
     archive_url: str | None = None
 
 
@@ -95,9 +102,24 @@ def _row_candidate(
         office=office,
         party=_text(row.get("SG_PARTIDO")),
         raw_race=_text(row.get("DS_COR_RACA")),
+        birth_date=parse_tse_date(row.get("DT_NASCIMENTO")),
+        education=_text(row.get("DS_GRAU_INSTRUCAO")),
+        occupation=_text(row.get("DS_OCUPACAO")),
         election_year=year,
         archive_url=archive_url,
     )
+
+
+def parse_tse_date(value: object) -> date | None:
+    value = _text(value)
+    if value is None:
+        return None
+    for date_format in ("%d/%m/%Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(value[:10], date_format).date()
+        except ValueError:
+            continue
+    return None
 
 
 def parse_tse_archive(

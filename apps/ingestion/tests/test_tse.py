@@ -1,5 +1,6 @@
 import csv
 import io
+from datetime import date
 from types import SimpleNamespace
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -26,6 +27,9 @@ CSV_FIELDS = [
     "DS_CARGO",
     "SG_PARTIDO",
     "DS_COR_RACA",
+    "DT_NASCIMENTO",
+    "DS_GRAU_INSTRUCAO",
+    "DS_OCUPACAO",
     "ANO_ELEICAO",
     "NR_CPF_CANDIDATO",
 ]
@@ -61,6 +65,9 @@ def _row(
         "DS_CARGO": office,
         "SG_PARTIDO": party,
         "DS_COR_RACA": race,
+        "DT_NASCIMENTO": "13/02/1965",
+        "DS_GRAU_INSTRUCAO": "SUPERIOR INCOMPLETO",
+        "DS_OCUPACAO": "PROFESSOR DE ENSINO MÉDIO",
         "ANO_ELEICAO": "2022",
         "NR_CPF_CANDIDATO": "must-not-be-read",
     }
@@ -83,6 +90,9 @@ def test_parser_retains_only_matching_and_provenance_fields_from_latin1_csv():
             party="PT",
             raw_race="INDÍGENA",
             election_year=2022,
+            birth_date=date(1965, 2, 13),
+            education="SUPERIOR INCOMPLETO",
+            occupation="PROFESSOR DE ENSINO MÉDIO",
             archive_url=ARCHIVE_URL,
         )
     ]
