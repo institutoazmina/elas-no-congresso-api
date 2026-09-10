@@ -301,11 +301,12 @@ def _caucus(
     record: Mapping,
     fallback_url: str,
 ) -> Caucus:
+    legislature = term.legislature_number if term is not None else None
     defaults = {
         "house": house,
         "kind": kind,
         "name": name,
-        "legislature": term.legislature_number if term is not None else None,
+        "legislature": legislature,
         "description": _first(record, "status", "Status", "situacao", "Situacao"),
         "source_url": _url(record, fallback_url),
         "start_date": _date_from(
@@ -314,7 +315,17 @@ def _caucus(
         "end_date": _date_from(record, "dataFim", "DataFim", "dataDesfiliacao", "DataDesfiliacao"),
         "is_active": True,
     }
-    return _touch(Caucus, {"source": source, "source_key": source_key}, defaults)
+    source_identity = {"source": source, "source_key": source_key}
+    caucus = Caucus.objects.filter(**source_identity).first()
+    if caucus is None:
+        caucus = Caucus.objects.filter(
+            kind=kind,
+            name=name,
+            legislature=legislature,
+        ).first()
+    if caucus is not None:
+        return _touch(Caucus, {"pk": caucus.pk}, defaults)
+    return _touch(Caucus, source_identity, defaults)
 
 
 def _caucus_membership(

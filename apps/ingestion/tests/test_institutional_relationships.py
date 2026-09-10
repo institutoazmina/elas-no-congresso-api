@@ -256,6 +256,25 @@ def test_camara_relationship_service_is_idempotent_and_preserves_known_values():
 
 
 @pytest.mark.django_db
+def test_camara_relationship_service_reuses_same_front_with_different_provider_ids():
+    term = _make_term(external_id=101, house="camara")
+    client = _camara_client()
+    client.fronts.append(
+        {
+            **client.fronts[0],
+            "id": 701,
+            "uri": f"{CAMARA_BASE_URL}/frentes/701",
+        }
+    )
+
+    persist_official_relationships(term=term, client=client)
+
+    assert Caucus.objects.count() == 1
+    assert Caucus.objects.get().source_key == "front:700"
+    assert CaucusMembership.objects.count() == 2
+
+
+@pytest.mark.django_db
 def test_enrichment_task_persists_camara_and_senado_institutional_relationships(monkeypatch):
     camara_term = _make_term(external_id=101, house="camara")
     senado_term = _make_term(external_id=202, house="senado")
