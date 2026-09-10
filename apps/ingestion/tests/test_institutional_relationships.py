@@ -296,6 +296,26 @@ def test_camara_relationship_service_discards_inverted_provider_date_ranges():
 
 
 @pytest.mark.django_db
+def test_camara_relationship_service_clears_stale_end_date_for_current_period():
+    term = _make_term(external_id=101, house="camara")
+    client = _camara_client()
+    client.organs.append(
+        {
+            **client.organs[0],
+            "dataInicio": "2024-02-01",
+            "dataFim": None,
+        }
+    )
+
+    persist_official_relationships(term=term, client=client)
+
+    membership = CommitteeMembership.objects.get()
+    presidency = CommitteePresidency.objects.get()
+    assert (membership.start_date, membership.end_date) == (date(2024, 2, 1), None)
+    assert (presidency.start_date, presidency.end_date) == (date(2024, 2, 1), None)
+
+
+@pytest.mark.django_db
 def test_enrichment_task_persists_camara_and_senado_institutional_relationships(monkeypatch):
     camara_term = _make_term(external_id=101, house="camara")
     senado_term = _make_term(external_id=202, house="senado")

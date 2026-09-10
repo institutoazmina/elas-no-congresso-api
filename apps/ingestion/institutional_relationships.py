@@ -170,6 +170,7 @@ def _touch(
     defaults: Mapping[str, object],
     *,
     create_defaults: Mapping[str, object] | None = None,
+    clear_null_fields: tuple[str, ...] = (),
 ):
     now = timezone.now()
     obj = model.objects.filter(**identity).first()
@@ -183,7 +184,7 @@ def _touch(
 
     changed_fields = []
     for field, value in defaults.items():
-        if value is None or value == "":
+        if value == "" or (value is None and field not in clear_null_fields):
             continue
         if getattr(obj, field) != value:
             setattr(obj, field, value)
@@ -272,6 +273,7 @@ def _committee_membership(
         {"source": source, "source_key": source_key},
         defaults,
         create_defaults={"role": role},
+        clear_null_fields=("end_date",) if start_date is not None else (),
     )
 
 
@@ -305,6 +307,7 @@ def _committee_presidency(
             "source_key": f"{membership_source_key}:presidency",
         },
         defaults,
+        clear_null_fields=("end_date",) if start_date is not None else (),
     )
 
 
@@ -345,8 +348,18 @@ def _caucus(
             legislature=legislature,
         ).first()
     if caucus is not None:
-        return _touch(Caucus, {"pk": caucus.pk}, defaults)
-    return _touch(Caucus, source_identity, defaults)
+        return _touch(
+            Caucus,
+            {"pk": caucus.pk},
+            defaults,
+            clear_null_fields=("end_date",) if start_date is not None else (),
+        )
+    return _touch(
+        Caucus,
+        source_identity,
+        defaults,
+        clear_null_fields=("end_date",) if start_date is not None else (),
+    )
 
 
 def _caucus_membership(
@@ -378,6 +391,7 @@ def _caucus_membership(
         CaucusMembership,
         {"source": source, "source_key": source_key},
         defaults,
+        clear_null_fields=("end_date",) if start_date is not None else (),
     )
 
 
@@ -416,7 +430,12 @@ def _post(
         "is_observed_current": True,
         "source_url": _url(record, fallback_url),
     }
-    return _touch(ParliamentarianPost, {"source": source, "source_key": source_key}, defaults)
+    return _touch(
+        ParliamentarianPost,
+        {"source": source, "source_key": source_key},
+        defaults,
+        clear_null_fields=("end_date",) if start_date is not None else (),
+    )
 
 
 def _persist_camara(term: ParliamentarianTerm, client) -> dict[str, int]:
