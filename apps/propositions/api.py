@@ -1,6 +1,9 @@
 
 
-from ninja import Router
+import unicodedata
+from typing import Annotated
+
+from ninja import Query, Router
 from ninja.pagination import LimitOffsetPagination, paginate
 
 from .models import Proposition
@@ -17,7 +20,16 @@ def list_propositions(
     year: int | None = None,
     theme: str | None = None,
     active: bool | None = None,
-    q: str | None = None,
+    q: Annotated[
+        str | None,
+        Query(  # type: ignore[operator]
+            description=(
+                "Busca parcial por ementa, número da proposição ou nome completo ou social "
+                "de autores e coautores. A busca por autor ignora maiúsculas, minúsculas "
+                "e acentos."
+            )
+        ),
+    ] = None,
 ):
     qs = Proposition.objects.all()
     if house:
@@ -30,8 +42,18 @@ def list_propositions(
         qs = qs.filter(is_active=active)
     if q:
         from django.db.models import Q
+
+        normalized_q = "".join(
+            character
+            for character in unicodedata.normalize("NFKD", q)
+            if not unicodedata.combining(character)
+        )
         qs = qs.filter(
-            Q(number_label__icontains=q) | Q(ementa__icontains=q) | Q(keywords__icontains=q)
+            Q(number_label__icontains=q)
+            | Q(ementa__icontains=q)
+            | Q(keywords__icontains=q)
+            | Q(authors__parliamentarian__full_name__unaccent__icontains=normalized_q)
+            | Q(authors__parliamentarian__social_name__unaccent__icontains=normalized_q)
         ).order_by("-presented_at")
     else:
         qs = qs.order_by("-presented_at")

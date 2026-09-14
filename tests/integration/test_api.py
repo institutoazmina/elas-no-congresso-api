@@ -61,13 +61,119 @@ class TestPropositionsEndpoints:
         alvo = self.proposition.number_label
 
         por_ementa = self.client.get("/api/v1/propositions/?q=women")
-        por_numero = self.client.get("/api/v1/propositions/?q=PL 123")
+        por_numero_simples = self.client.get("/api/v1/propositions/?q=123")
+        por_numero = self.client.get("/api/v1/propositions/", {"q": "PL 123/2024"})
         sem_relacao = self.client.get("/api/v1/propositions/?q=zzz-nao-existe")
 
         assert por_ementa.status_code == 200
         assert [p["number_label"] for p in por_ementa.json()["items"]] == [alvo]
+        assert [p["number_label"] for p in por_numero_simples.json()["items"]] == [alvo]
         assert [p["number_label"] for p in por_numero.json()["items"]] == [alvo]
         assert sem_relacao.json()["items"] == []
+
+    def test_busca_por_nome_completo_e_social_do_autor(self):
+        author = Parliamentarian.objects.create(
+            full_name="Érika Santos Hilton",
+            social_name="Erika Hilton",
+        )
+        PropositionAuthor.objects.create(
+            proposition=self.proposition,
+            parliamentarian=author,
+            order_index=1,
+        )
+
+        por_nome_completo = self.client.get("/api/v1/propositions/", {"q": "santos hil"})
+        por_nome_social = self.client.get("/api/v1/propositions/", {"q": "ERIKA HILTON"})
+        sem_acento = self.client.get("/api/v1/propositions/", {"q": "erika santos"})
+
+        assert [p["id"] for p in por_nome_completo.json()["items"]] == [self.proposition.pk]
+        assert [p["id"] for p in por_nome_social.json()["items"]] == [self.proposition.pk]
+        assert [p["id"] for p in sem_acento.json()["items"]] == [self.proposition.pk]
+
+    def test_busca_por_parlamentar_inclui_coautoria(self):
+        coauthor = Parliamentarian.objects.create(full_name="João da Silva")
+        PropositionAuthor.objects.create(
+            proposition=self.proposition,
+            parliamentarian=coauthor,
+            order_index=2,
+        )
+
+        response = self.client.get("/api/v1/propositions/", {"q": "joao da sil"})
+
+        assert response.status_code == 200
+        assert [p["id"] for p in response.json()["items"]] == [self.proposition.pk]
+
+    def test_busca_por_autor_pagina_proposicoes_distintas_na_ordem_atual(self):
+        erika = Parliamentarian.objects.create(full_name="Érika Hilton")
+        erika_coauthor = Parliamentarian.objects.create(full_name="Erika Souza")
+        newest = Proposition.objects.create(
+            external_id=2,
+            house="camara",
+            type_code="pl",
+            number_label="PL 124/2024",
+            number=124,
+            year=2024,
+            presented_at="2024-02-01",
+            ementa="Another proposition",
+        )
+        PropositionAuthor.objects.create(
+            proposition=self.proposition,
+            parliamentarian=erika,
+            order_index=1,
+        )
+        PropositionAuthor.objects.create(
+            proposition=self.proposition,
+            parliamentarian=erika_coauthor,
+            order_index=2,
+        )
+        PropositionAuthor.objects.create(
+            proposition=newest,
+            parliamentarian=erika,
+            order_index=2,
+        )
+
+        first_page = self.client.get(
+            "/api/v1/propositions/",
+            {"q": "erika", "limit": 1, "offset": 0},
+        ).json()
+        second_page = self.client.get(
+            "/api/v1/propositions/",
+            {"q": "erika", "limit": 1, "offset": 1},
+        ).json()
+
+        assert first_page["count"] == 2
+        assert second_page["count"] == 2
+        assert [p["id"] for p in first_page["items"]] == [newest.pk]
+        assert [p["id"] for p in second_page["items"]] == [self.proposition.pk]
+
+    def test_busca_por_autor_preserva_os_demais_filtros(self):
+        author = Parliamentarian.objects.create(full_name="Érika Hilton")
+        PropositionAuthor.objects.create(
+            proposition=self.proposition,
+            parliamentarian=author,
+        )
+
+        matching = self.client.get(
+            "/api/v1/propositions/",
+            {"q": "erika", "house": "camara", "year": 2024, "active": "true"},
+        ).json()
+        excluded = self.client.get(
+            "/api/v1/propositions/",
+            {"q": "erika", "house": "senado"},
+        ).json()
+
+        assert matching["count"] == 1
+        assert [p["id"] for p in matching["items"]] == [self.proposition.pk]
+        assert excluded == {"items": [], "count": 0}
+
+    def test_openapi_descreve_todos_os_campos_pesquisados_por_q(self):
+        schema = self.client.get("/api/v1/openapi.json").json()
+        parameters = schema["paths"]["/api/v1/propositions/"]["get"]["parameters"]
+        q_parameter = next(parameter for parameter in parameters if parameter["name"] == "q")
+
+        assert "ementa" in q_parameter["description"]
+        assert "número" in q_parameter["description"]
+        assert "nome completo ou social" in q_parameter["description"]
 
     def test_list_propositions_pagination(self):
         response = self.client.get("/api/v1/propositions/?limit=10&offset=0")
