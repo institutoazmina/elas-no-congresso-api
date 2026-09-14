@@ -1,5 +1,5 @@
 
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.utils import timezone
 from ninja import Router
 from ninja.pagination import LimitOffsetPagination, paginate
@@ -13,6 +13,21 @@ from .schemas import (
 )
 
 router = Router()
+
+
+def _parliamentarians_with_proposition_counts():
+    return Parliamentarian.objects.annotate(
+        favorable_propositions_count=Count(
+            "authored_propositions__proposition",
+            distinct=True,
+            filter=Q(authored_propositions__proposition__annotations__is_favorable=True),
+        ),
+        unfavorable_propositions_count=Count(
+            "authored_propositions__proposition",
+            distinct=True,
+            filter=Q(authored_propositions__proposition__annotations__is_favorable=False),
+        ),
+    )
 
 
 @router.get("/legislatures", response=list[LegislatureSchema])
@@ -36,7 +51,7 @@ def list_parliamentarians(
     gender: str | None = None,
     current: bool | None = None,
 ):
-    qs = Parliamentarian.objects.prefetch_related("terms")
+    qs = _parliamentarians_with_proposition_counts().prefetch_related("terms")
     if current:
         today = timezone.localdate()
         current_term = ParliamentarianTerm.objects.filter(
@@ -68,6 +83,6 @@ def list_parliamentarians(
 def get_parliamentarian(request, parliamentarian_id: int):
     from django.shortcuts import get_object_or_404
     return get_object_or_404(
-        Parliamentarian.objects.prefetch_related("terms", "contacts"),
+        _parliamentarians_with_proposition_counts().prefetch_related("terms", "contacts"),
         pk=parliamentarian_id,
     )

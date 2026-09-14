@@ -283,6 +283,8 @@ class TestParliamentariansEndpoints:
             "profession": None,
             "religion": None,
             "bio": None,
+            "favorable_propositions_count": 0,
+            "unfavorable_propositions_count": 0,
             "terms": [
                 {
                     "id": self.term.pk,
@@ -304,6 +306,83 @@ class TestParliamentariansEndpoints:
             f"/api/v1/legislatures/parliamentarians/{self.parliamentarian.pk}"
         )
         assert response.status_code == 200
+        assert response.json()["favorable_propositions_count"] == 0
+        assert response.json()["unfavorable_propositions_count"] == 0
+
+    def test_proposition_counts_for_list_and_detail(self):
+        coauthor = Parliamentarian.objects.create(full_name="João Souza", gender="M")
+        no_classified_propositions = Parliamentarian.objects.create(full_name="Ana Costa")
+        proposition = Proposition.objects.create(
+            external_id=1,
+            house="camara",
+            type_code="pl",
+            number_label="PL 123/2024",
+            number=123,
+            year=2024,
+            presented_at="2024-01-01",
+            ementa="Test proposition",
+        )
+        unlabeled_proposition = Proposition.objects.create(
+            external_id=2,
+            house="camara",
+            type_code="pl",
+            number_label="PL 124/2024",
+            number=124,
+            year=2024,
+            presented_at="2024-01-02",
+            ementa="Unlabeled proposition",
+        )
+        PropositionAuthor.objects.create(
+            proposition=proposition, parliamentarian=self.parliamentarian
+        )
+        PropositionAuthor.objects.create(proposition=proposition, parliamentarian=coauthor)
+        PropositionAuthor.objects.create(
+            proposition=unlabeled_proposition,
+            parliamentarian=no_classified_propositions,
+        )
+        first_organization = AssessmentOrganization.objects.create(name="Anis")
+        second_organization = AssessmentOrganization.objects.create(name="Themis")
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=first_organization,
+            is_favorable=True,
+            category="saude",
+        )
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=second_organization,
+            is_favorable=True,
+            category="saude",
+        )
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=AssessmentOrganization.objects.create(name="Cfemea"),
+            is_favorable=False,
+            category="saude",
+        )
+        PropositionAnnotation.objects.create(
+            proposition=unlabeled_proposition,
+            organization=AssessmentOrganization.objects.create(name="Instituto"),
+            is_favorable=None,
+            category="saude",
+        )
+
+        response = self.client.get("/api/v1/legislatures/parliamentarians")
+        assert response.status_code == 200
+        items = {item["id"]: item for item in response.json()["items"]}
+        assert items[self.parliamentarian.pk]["favorable_propositions_count"] == 1
+        assert items[self.parliamentarian.pk]["unfavorable_propositions_count"] == 1
+        assert items[coauthor.pk]["favorable_propositions_count"] == 1
+        assert items[coauthor.pk]["unfavorable_propositions_count"] == 1
+        assert items[no_classified_propositions.pk]["favorable_propositions_count"] == 0
+        assert items[no_classified_propositions.pk]["unfavorable_propositions_count"] == 0
+
+        detail = self.client.get(
+            f"/api/v1/legislatures/parliamentarians/{self.parliamentarian.pk}"
+        )
+        assert detail.status_code == 200
+        assert detail.json()["favorable_propositions_count"] == 1
+        assert detail.json()["unfavorable_propositions_count"] == 1
 
 
 @pytest.mark.django_db

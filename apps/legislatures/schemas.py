@@ -38,6 +38,8 @@ class ParliamentarianTermSchema(ModelSchema):
 
 class ParliamentarianSchema(ModelSchema):
     terms: list[ParliamentarianTermSchema]
+    favorable_propositions_count: int
+    unfavorable_propositions_count: int
 
     class Meta:
         model = Parliamentarian
@@ -45,6 +47,9 @@ class ParliamentarianSchema(ModelSchema):
 
 
 class ParliamentarianDetailSchema(ModelSchema):
+    favorable_propositions_count: int
+    unfavorable_propositions_count: int
+
     class Meta:
         model = Parliamentarian
         fields = PARLIAMENTARIAN_DETAIL_FIELDS
