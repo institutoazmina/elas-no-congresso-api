@@ -220,7 +220,10 @@ PUBLIC_SITE_URL = config("PUBLIC_SITE_URL", default="http://localhost:4321")
 
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
-    default="https://www.elasnocongresso.com.br,https://elasnocongresso.com.br,http://localhost:4321",
+    default=(
+        "https://www.elasnocongresso.com.br,https://elasnocongresso.com.br,"
+        "https://homologacao.elasnocongresso.com.br,http://localhost:4321"
+    ),
     cast=Csv(),
 )
 # O modal faz duas coisas no browser: buscar proposições e postar a inscrição.

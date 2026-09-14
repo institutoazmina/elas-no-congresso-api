@@ -9,6 +9,7 @@ from django.test import Client
 from apps.subscriptions.models import Subscription
 
 SITE_ORIGIN = "https://www.elasnocongresso.com.br"
+HOMOLOGATION_ORIGIN = "https://homologacao.elasnocongresso.com.br"
 
 
 @pytest.fixture(autouse=True)
@@ -43,6 +44,17 @@ def test_preflight_do_site_e_liberado(client):
 
     assert response.status_code == 200
     assert response["Access-Control-Allow-Origin"] == SITE_ORIGIN
+
+
+@pytest.mark.django_db
+def test_requisicao_da_homologacao_e_liberada(client):
+    response = client.get(
+        "/api/v1/propositions/?q=saude",
+        HTTP_ORIGIN=HOMOLOGATION_ORIGIN,
+    )
+
+    assert response.status_code == 200
+    assert response["Access-Control-Allow-Origin"] == HOMOLOGATION_ORIGIN
 
 
 @pytest.mark.django_db
