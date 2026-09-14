@@ -1,6 +1,6 @@
 from ninja import ModelSchema
 
-from .models import Legislature, Parliamentarian, Party
+from .models import Legislature, Parliamentarian, ParliamentarianTerm, Party
 
 PARLIAMENTARIAN_DETAIL_FIELDS = [
     "id",
@@ -30,10 +30,18 @@ class PartySchema(ModelSchema):
         fields = ["id", "acronym", "name", "ideology"]
 
 
+class ParliamentarianTermSchema(ModelSchema):
+    class Meta:
+        model = ParliamentarianTerm
+        fields = "__all__"
+
+
 class ParliamentarianSchema(ModelSchema):
+    terms: list[ParliamentarianTermSchema]
+
     class Meta:
         model = Parliamentarian
-        fields = ["id", "full_name", "social_name", "photo_url", "gender"]
+        fields = "__all__"
 
 
 class ParliamentarianDetailSchema(ModelSchema):

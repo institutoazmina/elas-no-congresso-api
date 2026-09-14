@@ -36,7 +36,7 @@ def list_parliamentarians(
     gender: str | None = None,
     current: bool | None = None,
 ):
-    qs = Parliamentarian.objects.all()
+    qs = Parliamentarian.objects.prefetch_related("terms")
     if current:
         today = timezone.localdate()
         current_term = ParliamentarianTerm.objects.filter(

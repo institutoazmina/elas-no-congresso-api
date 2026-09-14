@@ -1,5 +1,6 @@
 import io
 import json
+from datetime import datetime
 
 import pytest
 from django.test import Client
@@ -260,7 +261,43 @@ class TestParliamentariansEndpoints:
 
     def test_list_parliamentarians(self):
         response = self.client.get("/api/v1/legislatures/parliamentarians")
+
         assert response.status_code == 200
+        item = response.json()["items"][0]
+        assert datetime.fromisoformat(item.pop("created_at")) == self.parliamentarian.created_at.replace(
+            microsecond=self.parliamentarian.created_at.microsecond // 1000 * 1000
+        )
+        assert datetime.fromisoformat(item.pop("updated_at")) == self.parliamentarian.updated_at.replace(
+            microsecond=self.parliamentarian.updated_at.microsecond // 1000 * 1000
+        )
+        assert item == {
+            "id": self.parliamentarian.pk,
+            "full_name": "Maria Silva",
+            "social_name": None,
+            "photo_url": None,
+            "gender": "F",
+            "birth_date": None,
+            "race": None,
+            "education": None,
+            "birthplace": None,
+            "profession": None,
+            "religion": None,
+            "bio": None,
+            "terms": [
+                {
+                    "id": self.term.pk,
+                    "parliamentarian": self.parliamentarian.pk,
+                    "legislature_number": 57,
+                    "party": self.term.party_id,
+                    "house": "camara",
+                    "role": "Titular",
+                    "state": "SP",
+                    "external_id": 1,
+                    "start_date": "2023-02-01",
+                    "end_date": None,
+                }
+            ],
+        }
 
     def test_get_parliamentarian_detail(self):
         response = self.client.get(

@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
 
-from apps.legislatures.schemas import ParliamentarianSchema
+from apps.legislatures.schemas import ParliamentarianSchema, ParliamentarianTermSchema
 from apps.propositions.schemas import PropositionSchema
 from apps.taxonomy.schemas import ThemeSchema
 
@@ -31,9 +31,37 @@ class TestPropositionSchema:
 class TestParliamentarianSchema:
     def test_model_schema_creation(self):
         schema = ParliamentarianSchema.model_fields
-        assert "id" in schema
-        assert "full_name" in schema
-        assert "gender" in schema
+        assert set(schema) == {
+            "id",
+            "full_name",
+            "social_name",
+            "photo_url",
+            "gender",
+            "birth_date",
+            "race",
+            "education",
+            "birthplace",
+            "profession",
+            "religion",
+            "bio",
+            "created_at",
+            "updated_at",
+            "terms",
+        }
+
+    def test_term_schema_includes_all_join_table_fields(self):
+        assert set(ParliamentarianTermSchema.model_fields) == {
+            "id",
+            "parliamentarian",
+            "legislature_number",
+            "party",
+            "house",
+            "role",
+            "state",
+            "external_id",
+            "start_date",
+            "end_date",
+        }
 
 
 @pytest.mark.django_db
