@@ -175,6 +175,118 @@ class TestPropositionsEndpoints:
         assert "número" in q_parameter["description"]
         assert "nome completo ou social" in q_parameter["description"]
 
+    def test_ordenacao_por_data_nas_duas_direcoes_e_desempate_por_id(self):
+        same_date = Proposition.objects.create(
+            external_id=2,
+            house="camara",
+            type_code="pl",
+            number_label="PL 124/2024",
+            number=124,
+            year=2024,
+            presented_at="2024-01-01",
+            ementa="Same-date proposition",
+        )
+        newest = Proposition.objects.create(
+            external_id=3,
+            house="camara",
+            type_code="pl",
+            number_label="PL 125/2024",
+            number=125,
+            year=2024,
+            presented_at="2024-02-01",
+            ementa="Newest proposition",
+        )
+
+        default = self.client.get("/api/v1/propositions/").json()
+        descending = self.client.get("/api/v1/propositions/", {"sort": "newest"}).json()
+        ascending = self.client.get("/api/v1/propositions/", {"sort": "oldest"}).json()
+
+        expected_newest = [newest.pk, same_date.pk, self.proposition.pk]
+        assert [item["id"] for item in default["items"]] == expected_newest
+        assert [item["id"] for item in descending["items"]] == expected_newest
+        assert [item["id"] for item in ascending["items"]] == [
+            self.proposition.pk,
+            same_date.pk,
+            newest.pk,
+        ]
+
+    def test_ordenacao_acontece_antes_da_paginacao(self):
+        middle = Proposition.objects.create(
+            external_id=2,
+            house="camara",
+            type_code="pl",
+            number_label="PL 124/2024",
+            number=124,
+            year=2024,
+            presented_at="2024-02-01",
+            ementa="Middle proposition",
+        )
+        Proposition.objects.create(
+            external_id=3,
+            house="camara",
+            type_code="pl",
+            number_label="PL 125/2024",
+            number=125,
+            year=2024,
+            presented_at="2024-03-01",
+            ementa="Newest proposition",
+        )
+
+        page = self.client.get(
+            "/api/v1/propositions/",
+            {"sort": "oldest", "limit": 1, "offset": 1},
+        ).json()
+
+        assert page["count"] == 3
+        assert [item["id"] for item in page["items"]] == [middle.pk]
+
+    def test_ordenacao_funciona_com_busca_por_autor(self):
+        author = Parliamentarian.objects.create(full_name="Érika Hilton")
+        oldest = Proposition.objects.create(
+            external_id=2,
+            house="camara",
+            type_code="pl",
+            number_label="PL 122/2023",
+            number=122,
+            year=2023,
+            presented_at="2023-12-01",
+            ementa="Older authored proposition",
+        )
+        PropositionAuthor.objects.create(
+            proposition=self.proposition,
+            parliamentarian=author,
+        )
+        PropositionAuthor.objects.create(
+            proposition=oldest,
+            parliamentarian=author,
+        )
+
+        response = self.client.get(
+            "/api/v1/propositions/",
+            {"q": "erika", "sort": "oldest"},
+        )
+
+        assert response.status_code == 200
+        assert [item["id"] for item in response.json()["items"]] == [
+            oldest.pk,
+            self.proposition.pk,
+        ]
+
+    def test_ordenacao_invalida_retorna_422(self):
+        response = self.client.get("/api/v1/propositions/", {"sort": "recent"})
+
+        assert response.status_code == 422
+        assert response.json()["detail"][0]["loc"] == ["query", "sort"]
+
+    def test_openapi_documenta_valores_e_padrao_da_ordenacao(self):
+        schema = self.client.get("/api/v1/openapi.json").json()
+        parameters = schema["paths"]["/api/v1/propositions/"]["get"]["parameters"]
+        sort_parameter = next(parameter for parameter in parameters if parameter["name"] == "sort")
+
+        assert sort_parameter["schema"]["enum"] == ["newest", "oldest"]
+        assert sort_parameter["schema"]["default"] == "newest"
+        assert "presented_at" in sort_parameter["description"]
+
     def test_list_propositions_pagination(self):
         response = self.client.get("/api/v1/propositions/?limit=10&offset=0")
         assert response.status_code == 200

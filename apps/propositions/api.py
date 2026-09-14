@@ -1,7 +1,7 @@
 
 
 import unicodedata
-from typing import Annotated
+from typing import Annotated, Literal
 
 from ninja import Query, Router
 from ninja.pagination import LimitOffsetPagination, paginate
@@ -30,6 +30,15 @@ def list_propositions(
             )
         ),
     ] = None,
+    sort: Annotated[
+        Literal["newest", "oldest"],
+        Query(  # type: ignore[operator]
+            description=(
+                "Ordena por presented_at: newest do mais recente para o mais antigo; "
+                "oldest do mais antigo para o mais recente."
+            )
+        ),
+    ] = "newest",
 ):
     qs = Proposition.objects.all()
     if house:
@@ -54,10 +63,9 @@ def list_propositions(
             | Q(keywords__icontains=q)
             | Q(authors__parliamentarian__full_name__unaccent__icontains=normalized_q)
             | Q(authors__parliamentarian__social_name__unaccent__icontains=normalized_q)
-        ).order_by("-presented_at")
-    else:
-        qs = qs.order_by("-presented_at")
-    return qs.distinct()
+        )
+    ordering = ("-presented_at", "-id") if sort == "newest" else ("presented_at", "id")
+    return qs.order_by(*ordering).distinct()
 
 
 @router.get("/{proposition_id}", response=PropositionDetailSchema)
