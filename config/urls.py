@@ -2,6 +2,7 @@ from decouple import config
 from django.contrib import admin
 from django.urls import path
 
+from apps.subscriptions.assets import email_asset
 from config.api import api
 from config.health import liveness, readiness
 
@@ -10,6 +11,7 @@ ADMIN_URL = config("ADMIN_URL", default="admin/")
 
 urlpatterns = [
     path(ADMIN_URL, admin.site.urls),
+    path("api/v1/assets/emails/<str:name>", email_asset, name="email-asset"),
     path("api/v1/", api.urls),
     path("health/", liveness),
     path("health/ready/", readiness),

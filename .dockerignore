@@ -49,6 +49,7 @@ data/*
 ops/
 
 # Dev tooling
+node_modules/
 Makefile
 .python-version
 

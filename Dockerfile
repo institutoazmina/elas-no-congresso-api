@@ -1,5 +1,16 @@
 # syntax=docker/dockerfile:1
 
+# ---- Email templates: compile MJML outside the runtime image ----
+FROM node:22-bookworm-slim AS email_templates
+
+WORKDIR /app/apps/subscriptions/emails
+
+COPY apps/subscriptions/emails/package.json apps/subscriptions/emails/package-lock.json ./
+RUN npm ci
+
+COPY apps/subscriptions/emails/ ./
+RUN npm run build
+
 # ---- Builder: managed standalone Python + deps venv (both relocatable) ----
 FROM ghcr.io/astral-sh/uv:0.7-bookworm-slim AS builder
 
@@ -50,6 +61,7 @@ RUN set -eux; \
 # runtime has neither. Bake the whitenoise manifest here, copy it into runtime.
 # Build-time SECRET_KEY is a throwaway (collectstatic never touches DB/secrets). ----
 COPY . .
+COPY --from=email_templates /app/apps/subscriptions/emails/dist ./apps/subscriptions/emails/dist
 RUN DJANGO_SETTINGS_MODULE=config.settings.prod SECRET_KEY=build-only-collectstatic \
     /app/.venv/bin/python manage.py collectstatic --noinput --clear
 
@@ -79,6 +91,9 @@ WORKDIR /app
 
 # Application code, owned by the distroless nonroot user (uid 65532)
 COPY --chown=65532:65532 . .
+
+# MJML output is ignored in the build context and is produced in the builder.
+COPY --from=builder --chown=65532:65532 /app/apps/subscriptions/emails/dist /app/apps/subscriptions/emails/dist
 
 # Pre-built static manifest (whitenoise ManifestStorage); runtime can't collectstatic
 COPY --from=builder --chown=65532:65532 /app/staticfiles /app/staticfiles

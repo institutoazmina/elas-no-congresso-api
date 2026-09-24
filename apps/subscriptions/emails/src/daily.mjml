@@ -1,0 +1,94 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" color="#373732" />
+      <mj-text font-size="16px" line-height="1.35" padding="0" />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body>
+    <mj-section padding="0">
+      <mj-column padding="0">
+        <mj-image
+          src="{{ daily_header_url }}"
+          alt="Radar Urgente — Instituto AzMina"
+          width="600px"
+          padding="0"
+        />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="76px 56px 0">
+      <mj-column padding="0">
+        <mj-text font-size="18px" font-weight="700" line-height="1.2">Olá,</mj-text>
+
+        <mj-text font-size="18px" line-height="1.28" padding="36px 0 0">
+          Uma proposição que você acompanha acaba de ter uma movimentação importante.
+        </mj-text>
+
+        <mj-text font-size="16px" font-weight="700" line-height="1.25" padding="35px 0 0">
+          {{ titulo_curto }}
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
+          {{ tipo }} {{ numero }}
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
+          Ementa: {{ ementa }}.
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
+          Autoria: {{ autor }} {{ partido_uf }}.
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
+          <span style="color: #373732; font-size: 20px; line-height: 0; vertical-align: -1px;">■</span>
+          Pronta para votação em: {{ orgao }}.
+        </mj-text>
+
+        <mj-text font-size="16px" line-height="1.28" padding="38px 0 0">
+          <span style="color: #373732; font-size: 20px; line-height: 0; vertical-align: -1px;">■</span>
+          Você pode ler e acompanhar cada passo da tramitação por aqui:<br />
+          <a href="{{ link_tramitacao }}" style="color: #373732; text-decoration: none;">{{ link_tramitacao }}</a>
+        </mj-text>
+
+        <mj-text font-size="16px" line-height="1.3" padding="57px 0 0">
+          Até breve,<br />
+          <strong>Elas no Congresso</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="67px 56px 0">
+      <mj-column padding="0">
+        <mj-divider border-color="#1E2546" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="43px 56px 0">
+      <mj-column padding="0">
+        <mj-text align="center" font-size="18px" font-weight="700" line-height="1.3">
+          Você pode acompanhar essas e outras<br />
+          proposições no nosso site.
+        </mj-text>
+        <mj-button
+          href="{{ link_acompanhar }}"
+          background-color="#1E2546"
+          border-radius="10px"
+          color="#FFFFFF"
+          font-size="16px"
+          inner-padding="12px 24px"
+          padding="28px 0 0"
+        >
+          Acompanhar proposições
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="51px 56px 64px">
+      <mj-column padding="0">
+        <mj-text align="center" color="#1E2546" font-size="16px" line-height="1.2">
+          Elas no Congresso&nbsp; {{ ano }}&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="{{ link_descadastro }}" style="color: #1E2546; text-decoration: underline;">Descadastrar-se</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

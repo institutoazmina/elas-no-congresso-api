@@ -84,6 +84,21 @@ def test_admin_nao_responde_cross_origin(client):
     assert "Access-Control-Allow-Origin" not in response
 
 
+def test_asset_do_email_e_publico_e_cacheavel(client):
+    response = client.get("/api/v1/assets/emails/daily-header.png")
+
+    assert response.status_code == 200
+    assert response["Content-Type"] == "image/png"
+    assert response["Cache-Control"] == "public, max-age=31536000, immutable"
+    assert b"".join(response.streaming_content).startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_asset_de_email_desconhecido_retorna_404(client):
+    response = client.get("/api/v1/assets/emails/inexistente.png")
+
+    assert response.status_code == 404
+
+
 @pytest.mark.django_db
 def test_clicar_no_link_de_confirmacao_ativa_e_devolve_ao_site(client, settings):
     settings.PUBLIC_SITE_URL = SITE_ORIGIN

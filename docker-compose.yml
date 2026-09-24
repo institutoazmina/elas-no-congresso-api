@@ -37,6 +37,13 @@ services:
       timeout: 3s
       retries: 5
 
+  mailpit:
+    image: axllent/mailpit:v1.26
+    container_name: elas-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
   api:
     build: .
     container_name: elas-api
@@ -49,11 +56,14 @@ services:
       POSTGRES_USER: elas
       POSTGRES_PASSWORD: elas
       REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: mailpit
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     # Runtime é distroless (sem shell): não dá para usar `sh -c`.
     # O entrypoint em Python migra e sobe o uvicorn.
     command: ["python", "scripts/start_api.py"]
@@ -67,11 +77,14 @@ services:
       POSTGRES_USER: elas
       POSTGRES_PASSWORD: elas
       REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: mailpit
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     command: celery -A config worker -l info --concurrency=2
 
   beat:

@@ -6,6 +6,8 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 
+from .email_templates import render_daily_alert, render_weekly_digest
+
 logger = logging.getLogger(__name__)
 
 
@@ -51,13 +53,7 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
         f"Ver detalhes: {prop_url}\n\n"
         f"Cancelar inscrição: {unsubscribe_url}"
     )
-    body_html = (
-        f"<h2>{prop.number_label} ({prop.year})</h2>"
-        f"<p><strong>Casa:</strong> {prop.house}</p>"
-        f"<p><strong>Ementa:</strong> {prop.ementa[:500]}</p>"
-        f"<p><a href='{prop_url}'>Ver detalhes</a></p>"
-        f"<hr><p><small><a href='{unsubscribe_url}'>Cancelar inscrição</a></small></p>"
-    )
+    body_html = render_daily_alert(sub, prop)
 
     message_id = _send(subject, body_text, body_html, sub.email)
     logger.info("Alert sent to %s for proposition %d", sub.email, proposition_id)
@@ -161,15 +157,7 @@ def send_digest_email(self, subscription_id: int, proposition_ids: list[int]):
         for p in props
     ]
     body_text = "\n\n".join(["O que entrou no Congresso esta semana:", *lines, f"Cancelar inscrição: {unsubscribe_url}"])
-    items = "".join(
-        f"<li><strong>{p.number_label}</strong> ({p.house}): {p.ementa[:200]} "
-        f"<a href='{base_url}/api/v1/propositions/{p.pk}'>ver detalhes</a></li>"
-        for p in props
-    )
-    body_html = (
-        f"<h2>O que entrou no Congresso esta semana</h2><ul>{items}</ul>"
-        f"<hr><p><small><a href='{unsubscribe_url}'>Cancelar inscrição</a></small></p>"
-    )
+    body_html = render_weekly_digest(sub, props)
 
     message_id = _send(subject, body_text, body_html, sub.email)
     logger.info("Weekly digest sent to %s with %d propositions", sub.email, len(props))

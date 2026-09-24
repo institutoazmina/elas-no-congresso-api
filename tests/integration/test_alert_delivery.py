@@ -67,9 +67,13 @@ class TestAlertaImediato:
     def test_inscricao_diaria_recebe_assim_que_a_proposicao_entra(self, outbox):
         _make_subscription(frequency="daily")
 
-        _make_proposition(external_id=200)  # o post_save já enfileira o match
+        prop = _make_proposition(external_id=200)  # o post_save já enfileira o match
 
         assert [m.to for m in outbox] == [["leitora@example.com"]]
+        html = outbox[0].alternatives[0][0]
+        assert "Radar Urgente" in html
+        assert prop.number_label in html
+        assert "/api/v1/assets/emails/daily-header.png" in html
 
     def test_inscricao_semanal_nao_recebe_alerta_imediato(self, outbox):
         _make_subscription(frequency="weekly")
@@ -143,6 +147,10 @@ class TestDigestSemanal:
         assert len(outbox) == 1
         assert "PL 10/2024" in outbox[0].body
         assert "PL 11/2024" in outbox[0].body
+        html = outbox[0].alternatives[0][0]
+        assert "Radar Semanal" in html
+        assert "Proposições acompanhadas" in html
+        assert "/api/v1/assets/emails/weekly-header.png" in html
 
     def test_semana_sem_novidade_nao_gera_email(self, outbox):
         _make_subscription(frequency="weekly")

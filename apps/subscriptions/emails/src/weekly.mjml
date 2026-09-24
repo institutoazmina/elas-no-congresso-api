@@ -1,0 +1,90 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" color="#000000" />
+      <mj-text font-size="16px" line-height="1.3" padding="0" />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body>
+    <mj-section padding="0">
+      <mj-column padding="0">
+        <mj-image
+          src="{{ weekly_header_url }}"
+          alt="Radar Semanal — Instituto AzMina"
+          width="600px"
+          height="207px"
+          padding="0"
+        />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="39px 64px 0">
+      <mj-column padding="0">
+        <mj-text color="#373732" font-size="16px" font-weight="700" line-height="1.2">
+          Edição #{{ edicao }}
+        </mj-text>
+        <mj-text color="#9C929A" font-size="16px" line-height="1.2" padding="6px 0 0">
+          {{ data }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="27px 64px 0">
+      <mj-column padding="0">
+        <mj-divider border-color="#DFE4F8" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="29px 64px 0">
+      <mj-column padding="0">
+        <mj-text font-size="18px" font-weight="700" line-height="1.2">Olá,</mj-text>
+        <mj-text font-size="18px" line-height="1.3" padding="34px 0 0">
+          Esse é seu Radar da semana com todas as atualizações sobre as proposições e temas que você escolheu acompanhar.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="57px 64px 0">
+      <mj-column padding="0">
+        <!-- O conteúdo agrupado por tema é montado pelo remetente. -->
+        <mj-text font-size="16px" line-height="1.3">{{ temas_html }}</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="65px 64px 0">
+      <mj-column padding="0">
+        <mj-divider border-color="#DFE4F8" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="37px 64px 0">
+      <mj-column padding="0">
+        <mj-text align="center" font-size="18px" font-weight="700" line-height="1.3">
+          Você pode acompanhar essas e outras<br />
+          proposições no nosso site.
+        </mj-text>
+        <mj-button
+          href="{{ link_acompanhar }}"
+          background-color="#1E2546"
+          border-radius="10px"
+          color="#FFFFFF"
+          font-size="16px"
+          inner-padding="15px 32px"
+          padding="28px 0 0"
+        >
+          Acompanhar proposições
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="61px 64px 64px">
+      <mj-column padding="0">
+        <mj-text align="center" color="#000000" font-size="16px" line-height="1.2">
+          Elas no Congresso&nbsp; {{ ano }}&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="{{ link_descadastro }}" style="color: #000000; text-decoration: underline;">Descadastrar-se</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
