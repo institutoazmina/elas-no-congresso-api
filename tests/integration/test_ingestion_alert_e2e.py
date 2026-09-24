@@ -1,13 +1,15 @@
 """Fluxo completo: Câmara → preparação para análise → categoria → alerta diário."""
 
 import pytest
+from django.test import override_settings
 
-from apps.core.enums import PropositionCategory
 from apps.ingestion import tasks as ingestion_tasks
 from apps.ingestion.models import IngestionRun
-from apps.propositions.models import AssessmentOrganization, Proposition, PropositionAnnotation
+from apps.propositions.models import Proposition
+from apps.propositions.quiteria import QuiteriaPrediction
 from apps.subscriptions.models import AlertDelivery, Subscription
 from apps.subscriptions.service import register_subscriptions
+from apps.subscriptions.tasks import match_and_notify
 
 
 class _CamaraComUmaProposicao:
@@ -62,8 +64,9 @@ def _activate_daily_subscription(email: str, ast: dict) -> int:
 
 
 @pytest.mark.django_db(transaction=True)
+@override_settings(QUITERIA_ENABLED=True)
 def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch, outbox):
-    """Somente os filtros de categoria do modal recebem a PL categorizada."""
+    """Ingestão → QuitérIA → matching → e-mail, sem anotação humana."""
     no_match_educacao = _activate_daily_subscription(
         "educacao-e2e@example.com",
         {"field": "categoria", "op": "in", "value": ["educacao_cultura"]},
@@ -90,6 +93,18 @@ def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch,
         "apps.ingestion.fulltext.extract_pdf_text",
         lambda url: "Inteiro teor preparado para a análise da IA.",
     )
+    monkeypatch.setattr(
+        "apps.propositions.quiteria.classify_proposition",
+        lambda proposition: QuiteriaPrediction(
+            input_text="texto de e2e",
+            theme_category="saude",
+            theme_confidence=0.97,
+            theme_scores={"LABEL_7": 0.97},
+            favorability_probability=0.3,
+            favorability_scores={"LABEL_0": 0.7, "LABEL_1": 0.3},
+            favorability_label=1,
+        ),
+    )
 
     run = IngestionRun.objects.get(pk=ingestion_tasks.ingest_camara())
     proposition = Proposition.objects.get(house="camara", external_id=990001)
@@ -97,7 +112,11 @@ def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch,
     assert run.status == IngestionRun.Status.SUCCESS
     assert run.upserted_count == 1
     assert proposition.full_text == "Inteiro teor preparado para a análise da IA."
-    assert outbox == []
+    assert proposition.analysis.theme_category == "saude"
+    assert {message.to[0] for message in outbox} == {
+        "saude-e2e@example.com",
+        "multicategoria-e2e@example.com",
+    }
 
     # O caso de borda do modal: acompanha uma categoria, mas só uma PL já
     # conhecida. A categorização chega depois de a pessoa ter se inscrito.
@@ -112,15 +131,12 @@ def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch,
         },
     )
 
-    organization = AssessmentOrganization.objects.create(name="Análise E2E")
-    annotation = PropositionAnnotation.objects.create(
-        proposition=proposition,
-        organization=organization,
-        category=PropositionCategory.SAUDE,
-    )
+    match_and_notify(proposition.pk)
 
     delivered_subscriptions = set(
-        AlertDelivery.objects.filter(proposition=proposition).values_list("subscription_id", flat=True)
+        AlertDelivery.objects.filter(proposition=proposition).values_list(
+            "subscription_id", flat=True
+        )
     )
     assert delivered_subscriptions == {
         match_exclusivo,
@@ -135,8 +151,7 @@ def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch,
     }
     assert all(proposition.number_label in message.alternatives[0][0] for message in outbox)
 
-    annotation.comments = "Anotação revisada sem mudar a categoria."
-    annotation.save(update_fields=["comments"])
+    match_and_notify(proposition.pk)
 
     assert len(outbox) == 3
     assert AlertDelivery.objects.filter(proposition=proposition).count() == 3

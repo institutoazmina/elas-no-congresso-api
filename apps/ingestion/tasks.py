@@ -35,7 +35,12 @@ from apps.legislatures.models import (
     Party,
 )
 from apps.legislatures.services.profile_enrichment import upsert_source_profile
-from apps.propositions.models import Proposition, PropositionAuthor, PropositionEvent
+from apps.propositions.models import (
+    Proposition,
+    PropositionAnalysis,
+    PropositionAuthor,
+    PropositionEvent,
+)
 from apps.taxonomy.models import PropositionTheme, Theme
 
 from .clients.camara import CamaraClient
@@ -65,7 +70,10 @@ logger = logging.getLogger(__name__)
 
 # ── persistência compartilhada ───────────────────────────────────────────────
 
-def _persist(prop_kwargs: dict, event_kwargs: dict | None, authors: list[dict], temas: list[str]) -> int:
+
+def _persist(
+    prop_kwargs: dict, event_kwargs: dict | None, authors: list[dict], temas: list[str]
+) -> int:
     """Upsert idempotente de uma proposição + evento + autores + temas.
 
     Retorna o pk da Proposition. Toda a escrita roda numa transação.
@@ -95,9 +103,7 @@ def _persist(prop_kwargs: dict, event_kwargs: dict | None, authors: list[dict], 
                 from apps.legislatures.models import Party
 
                 sigla = a["party"].strip().upper()
-                party, _ = Party.objects.get_or_create(
-                    acronym=sigla, defaults={"name": sigla}
-                )
+                party, _ = Party.objects.get_or_create(acronym=sigla, defaults={"name": sigla})
             PropositionAuthor.objects.create(
                 proposition=prop,
                 parliamentarian=parl,
@@ -282,14 +288,10 @@ def _payload_legislature_numbers(member: Mapping, house: str) -> set[int]:
     return numbers
 
 
-def _senado_substitute_start(
-    mandate: Mapping, *, today: date, fallback: date
-) -> date:
+def _senado_substitute_start(mandate: Mapping, *, today: date, fallback: date) -> date:
     # Ordinary terms represent the legislature; only an active substitute
     # exercise has a reliable narrower start date in this payload.
-    role = _normalized_name(
-        mandate.get("DescricaoParticipacao") or mandate.get("TipoMandato")
-    )
+    role = _normalized_name(mandate.get("DescricaoParticipacao") or mandate.get("TipoMandato"))
     if "suplente" not in role:
         return fallback
 
@@ -312,9 +314,7 @@ def _integer(value: object) -> int:
         raise ValueError(f"invalid official parliamentarian id: {value!r}") from None
 
 
-def _member_fields(
-    member: Mapping, house: str, *, legislature: Legislature, today: date
-) -> dict:
+def _member_fields(member: Mapping, house: str, *, legislature: Legislature, today: date) -> dict:
     start_date = legislature.start_date
     if house == "camara":
         status = _mapping(member.get("ultimoStatus"))
@@ -338,8 +338,7 @@ def _member_fields(
         mandate = _first_mapping(member.get("Mandato"))
         external_id = _integer(identification.get("CodigoParlamentar"))
         social_name = _text(
-            identification.get("NomeParlamentar")
-            or identification.get("NomeSocialParlamentar")
+            identification.get("NomeParlamentar") or identification.get("NomeSocialParlamentar")
         )
         full_name = _text(
             identification.get("NomeCompletoParlamentar")
@@ -352,9 +351,7 @@ def _member_fields(
         )
         state = identification.get("UfParlamentar") or identification.get("Uf")
         role = mandate.get("DescricaoParticipacao") or mandate.get("TipoMandato") or "Senador"
-        start_date = _senado_substitute_start(
-            mandate, today=today, fallback=legislature.start_date
-        )
+        start_date = _senado_substitute_start(mandate, today=today, fallback=legislature.start_date)
 
     party = _text(party)
     state = (_text(state) or "NI").upper()
@@ -584,13 +581,16 @@ def _sync_current_member(
 def _close_absent_terms(
     *, house: str, legislature: Legislature, today: date, seen_external_ids: set[int]
 ) -> int:
-    return ParliamentarianTerm.objects.filter(
-        house=house,
-        legislature_number=legislature,
-        start_date__lt=today,
-    ).filter(Q(end_date__isnull=True) | Q(end_date__gte=today)).exclude(
-        external_id__in=seen_external_ids
-    ).update(end_date=today - timedelta(days=1))
+    return (
+        ParliamentarianTerm.objects.filter(
+            house=house,
+            legislature_number=legislature,
+            start_date__lt=today,
+        )
+        .filter(Q(end_date__isnull=True) | Q(end_date__gte=today))
+        .exclude(external_id__in=seen_external_ids)
+        .update(end_date=today - timedelta(days=1))
+    )
 
 
 def _sync_current_terms_for_house(
@@ -920,9 +920,7 @@ def enrich_parliamentarian_profiles() -> dict:
                     counts["processed"] += 1
                 except Exception:
                     counts["failed"] += 1
-                    logger.exception(
-                        "Falha ao enriquecer perfil %s/%s", house, term.external_id
-                    )
+                    logger.exception("Falha ao enriquecer perfil %s/%s", house, term.external_id)
                 if tse_index is not None:
                     try:
                         tse_status = _persist_tse_profile(term, tse_index)
@@ -937,9 +935,7 @@ def enrich_parliamentarian_profiles() -> dict:
 
         result["processed"] = result["camara"]["processed"] + result["senado"]["processed"]
         result["failed"] = (
-            result["camara"]["failed"]
-            + result["senado"]["failed"]
-            + result["terms"]["failed"]
+            result["camara"]["failed"] + result["senado"]["failed"] + result["terms"]["failed"]
         )
         return result
     finally:
@@ -948,12 +944,11 @@ def enrich_parliamentarian_profiles() -> dict:
 
 # ── Câmara ───────────────────────────────────────────────────────────────────
 
+
 @shared_task(bind=True, max_retries=2, default_retry_delay=300)
 def ingest_camara(self):
     start, end = _daily_window()
-    run = IngestionRun.objects.create(
-        house="camara", window_start=start, window_end=end
-    )
+    run = IngestionRun.objects.create(house="camara", window_start=start, window_end=end)
     try:
         with CamaraClient() as client:
             for summary in client.list_propositions(start, end):
@@ -997,12 +992,11 @@ def ingest_camara(self):
 
 # ── Senado ───────────────────────────────────────────────────────────────────
 
+
 @shared_task(bind=True, max_retries=2, default_retry_delay=300)
 def ingest_senado(self):
     start, end = _daily_window()
-    run = IngestionRun.objects.create(
-        house="senado", window_start=start, window_end=end
-    )
+    run = IngestionRun.objects.create(house="senado", window_start=start, window_end=end)
     try:
         with SenadoClient() as client:
             for summary in client.list_materias(end - timedelta(days=1)):
@@ -1046,42 +1040,111 @@ def _finish(run: IngestionRun, status: str, error: str | None = None):
     run.save()
     logger.info(
         "Coleta %s %s: fetched=%d relevant=%d upserted=%d errors=%d",
-        run.house, status, run.fetched_count, run.relevant_count,
-        run.upserted_count, run.error_count,
+        run.house,
+        status,
+        run.fetched_count,
+        run.relevant_count,
+        run.upserted_count,
+        run.error_count,
     )
 
 
-# ── classificação (ML) — TBD, hoje só loga ───────────────────────────────────
+# ── classificação (QuitérIA 2.0) ─────────────────────────────────────────────
 
-@shared_task
-def classify_proposition(proposition_id: int):
-    """Classificação (ML) — onde rodar o modelo está pendente (HF endpoint /
-    fila dedicada / local). Por ora: prepara o inteiro teor (download + extração
-    de texto do PDF) e apenas loga; a inferência em si é um stub.
-    """
+
+@shared_task(bind=True, autoretry_for=(OSError,), retry_backoff=True, max_retries=3, queue="ml")
+def classify_proposition(self, proposition_id: int):
+    """Classifica uma proposição e só então libera o matching de alertas."""
     prop = Proposition.objects.filter(pk=proposition_id).first()
     if not prop:
         logger.warning("[ML] proposição id=%s não encontrada", proposition_id)
         return
 
-    full_text = None
-    if prop.full_text_url:
+    analysis = None
+    if settings.QUITERIA_ENABLED:
+        analysis, _ = PropositionAnalysis.objects.get_or_create(proposition=prop)
+        analysis.analysis_status = PropositionAnalysis.Status.PENDING
+        analysis.analysis_error = None
+        analysis.save(update_fields=["analysis_status", "analysis_error"])
+
+    if prop.full_text_url and not prop.full_text:
         from .fulltext import extract_pdf_text
 
-        full_text = extract_pdf_text(prop.full_text_url)
+        try:
+            full_text = extract_pdf_text(prop.full_text_url)
+        except OSError:
+            # Erros transitórios de download/OCR devem ser reexecutados pelo Celery.
+            if analysis:
+                analysis.analysis_status = PropositionAnalysis.Status.FAILED
+                analysis.analysis_error = "Falha ao extrair o inteiro teor"
+                analysis.save(update_fields=["analysis_status", "analysis_error"])
+            raise
         if full_text:
             prop.full_text = full_text
             prop.save(update_fields=["full_text"])
 
+    if not settings.QUITERIA_ENABLED:
+        logger.info("[ML] QuitérIA desabilitada; proposição id=%s não classificada", proposition_id)
+        return
+
+    try:
+        from apps.propositions.quiteria import classify_proposition as classify_with_quiteria
+
+        prediction = classify_with_quiteria(prop)
+    except OSError:
+        analysis.analysis_status = PropositionAnalysis.Status.FAILED
+        analysis.analysis_error = "Falha transitória ao carregar ou executar a QuitérIA"
+        analysis.save(update_fields=["analysis_status", "analysis_error"])
+        raise
+    except Exception as error:
+        analysis.analysis_status = PropositionAnalysis.Status.FAILED
+        analysis.analysis_error = str(error)
+        analysis.save(update_fields=["analysis_status", "analysis_error"])
+        logger.exception("[ML] QuitérIA falhou para proposição id=%s", proposition_id)
+        return
+
+    analysis.theme_category = prediction.theme_category
+    analysis.theme_confidence = prediction.theme_confidence
+    analysis.theme_scores = prediction.theme_scores
+    analysis.classification = prediction.favorability_label
+    analysis.classification_probability = prediction.favorability_probability
+    analysis.favorability_scores = prediction.favorability_scores
+    analysis.model_id = settings.QUITERIA_MODEL_ID
+    analysis.model_revision = settings.QUITERIA_MODEL_REVISION
+    analysis.input_hash = prediction.input_hash
+    analysis.analysis_status = PropositionAnalysis.Status.SUCCEEDED
+    analysis.analysis_error = None
+    analysis.completed_at = timezone.now()
+    analysis.save(
+        update_fields=[
+            "theme_category",
+            "theme_confidence",
+            "theme_scores",
+            "classification",
+            "classification_probability",
+            "favorability_scores",
+            "model_id",
+            "model_revision",
+            "input_hash",
+            "analysis_status",
+            "analysis_error",
+            "completed_at",
+        ]
+    )
+
+    from apps.subscriptions.tasks import match_and_notify
+
+    transaction.on_commit(lambda: match_and_notify.delay(proposition_id))
     logger.info(
-        "[ML pendente] classificar proposição id=%s %s — inteiro teor: %s chars",
+        "[ML] QuitérIA classificou proposição id=%s em %s (%.4f)",
         proposition_id,
-        prop.number_label,
-        len(full_text) if full_text else 0,
+        prediction.theme_category,
+        prediction.theme_confidence,
     )
 
 
 # ── carga retroativa de anotações — JOB TEMPORÁRIO (remover após a carga) ─────
+
 
 @shared_task(bind=True)
 def backfill_annotations(self, reset: bool = True, start: int = 0, limit: int | None = None):

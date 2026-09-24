@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from types import SimpleNamespace
 
 import pytest
+from django.test import override_settings
 from django.utils import timezone
 
 from apps.ingestion import tasks
@@ -12,6 +13,7 @@ from apps.propositions.models import Proposition
 from apps.taxonomy.models import PropositionTheme
 
 # ── fake clients ──────────────────────────────────────────────────────────────
+
 
 class _FakeCamara:
     def __init__(self, summary, detail, authors, deputy=None):
@@ -66,6 +68,7 @@ class _FakeSenado:
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
+
 
 def _camara_kwargs():
     return {
@@ -169,7 +172,15 @@ class TestPersist:
         pk = tasks._persist(
             _camara_kwargs(),
             {"event_at": timezone.now(), "situation": "Em pauta"},
-            [{"name": "Jader Barbalho", "kind": "parlamentar", "party": "MDB", "state": "PA", "order": 1}],
+            [
+                {
+                    "name": "Jader Barbalho",
+                    "kind": "parlamentar",
+                    "party": "MDB",
+                    "state": "PA",
+                    "order": 1,
+                }
+            ],
             ["violência contra a mulher"],
         )
         prop = Proposition.objects.get(pk=pk)
@@ -191,7 +202,9 @@ class TestPersist:
         assert Proposition.objects.get(pk=pk).authors.count() == 0
 
     def test_slugify(self):
-        assert tasks._slugify("Direitos Sexuais e Reprodutivos") == "direitos-sexuais-e-reprodutivos"
+        assert (
+            tasks._slugify("Direitos Sexuais e Reprodutivos") == "direitos-sexuais-e-reprodutivos"
+        )
         assert tasks._slugify("!!!") == "tema"
 
 
@@ -201,7 +214,9 @@ class TestClassifyProposition:
         assert tasks.classify_proposition(123456789) is None
 
     def test_fetches_full_text(self, monkeypatch):
-        pk = tasks._persist({**_camara_kwargs(), "full_text_url": "https://x/doc.pdf"}, None, [], [])
+        pk = tasks._persist(
+            {**_camara_kwargs(), "full_text_url": "https://x/doc.pdf"}, None, [], []
+        )
         captured = {}
         monkeypatch.setattr(
             "apps.ingestion.fulltext.extract_pdf_text",
@@ -215,14 +230,45 @@ class TestClassifyProposition:
         # full_text_url ausente → não chama extração; apenas loga.
         assert tasks.classify_proposition(pk) is None
 
+    @override_settings(QUITERIA_ENABLED=True)
+    def test_persists_quiteria_prediction_and_enqueues_matching(self, monkeypatch):
+        from apps.propositions.models import PropositionAnalysis
+        from apps.propositions.quiteria import QuiteriaPrediction
+
+        pk = tasks._persist(_camara_kwargs(), None, [], [])
+        monkeypatch.setattr(
+            "apps.propositions.quiteria.classify_proposition",
+            lambda proposition: QuiteriaPrediction(
+                input_text="texto de teste",
+                theme_category="saude",
+                theme_confidence=0.9,
+                theme_scores={"LABEL_7": 0.9},
+                favorability_probability=0.3,
+                favorability_scores={"LABEL_0": 0.7, "LABEL_1": 0.3},
+                favorability_label=1,
+            ),
+        )
+
+        tasks.classify_proposition(pk)
+
+        analysis = PropositionAnalysis.objects.get(proposition_id=pk)
+        assert analysis.analysis_status == PropositionAnalysis.Status.SUCCEEDED
+        assert analysis.theme_category == "saude"
+        assert float(analysis.theme_confidence) == 0.9
+        assert analysis.classification == 1
+        assert float(analysis.classification_probability) == 0.3
+
 
 @pytest.mark.django_db
 class TestIngestCamaraFlow:
     def test_full_flow(self, monkeypatch, camara_payload):
         # autor deputado real (com sexo/partido) para exercitar fetch_deputy/enrich
         authors = [
-            {"nome": "Deputada X", "tipo": "Deputado(a)",
-             "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/204554"}
+            {
+                "nome": "Deputada X",
+                "tipo": "Deputado(a)",
+                "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/204554",
+            }
         ]
         sigla = camara_payload["deputy"]["ultimoStatus"]["siglaPartido"]
         Party.objects.get_or_create(acronym=sigla, defaults={"name": sigla})
@@ -231,7 +277,10 @@ class TestIngestCamaraFlow:
             tasks,
             "CamaraClient",
             lambda: _FakeCamara(
-                camara_payload["summary"], camara_payload["detail"], authors, camara_payload["deputy"]
+                camara_payload["summary"],
+                camara_payload["detail"],
+                authors,
+                camara_payload["deputy"],
             ),
         )
         run_pk = tasks.ingest_camara()
@@ -277,7 +326,9 @@ class TestIngestCamaraFlow:
         # eager + retry: a task marca o run como FAILED antes de relançar.
         with contextlib.suppress(Exception):
             tasks.ingest_camara()
-        assert IngestionRun.objects.filter(house="camara", status=IngestionRun.Status.FAILED).exists()
+        assert IngestionRun.objects.filter(
+            house="camara", status=IngestionRun.Status.FAILED
+        ).exists()
 
 
 @pytest.mark.django_db
@@ -351,7 +402,9 @@ class TestIngestSenadoFlow:
         monkeypatch.setattr(tasks, "SenadoClient", lambda: _Dead())
         with contextlib.suppress(Exception):
             tasks.ingest_senado()
-        assert IngestionRun.objects.filter(house="senado", status=IngestionRun.Status.FAILED).exists()
+        assert IngestionRun.objects.filter(
+            house="senado", status=IngestionRun.Status.FAILED
+        ).exists()
 
 
 @pytest.mark.django_db

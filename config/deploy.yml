@@ -29,11 +29,20 @@ servers:
   worker:
     hosts:
       - <%= ENV["DEPLOY_HOST"] %>
-    cmd: celery -A config worker -l INFO --concurrency 1
+    cmd: celery -A config worker -l INFO --concurrency 1 -Q celery
     # Celery não serve HTTP; desliga o HEALTHCHECK HTTP herdado da imagem.
     options:
       no-healthcheck: true
       memory: 512m
+  ml_worker:
+    hosts:
+      - <%= ENV["DEPLOY_HOST"] %>
+    # Os dois BERTs da QuitérIA somam ~870 MB de pesos; esta fila não pode
+    # dividir o limite de 512 MB do worker de ingestão/e-mail.
+    cmd: celery -A config worker -l INFO --concurrency 1 -Q ml
+    options:
+      no-healthcheck: true
+      memory: 1536m
   beat:
     hosts:
       - <%= ENV["DEPLOY_HOST"] %>
@@ -68,6 +77,7 @@ env:
     # Redis = accessory isolado no mesmo host (NÃO reusar o redis_elasnacamera).
     REDIS_URL: redis://elas-no-congresso-redis:6379/0
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0
+    QUITERIA_ENABLED: "True"
   secret:
     - SECRET_KEY
     # Banco (RDS) — endpoint/credenciais não expostos no repo

@@ -85,7 +85,24 @@ services:
         condition: service_healthy
       mailpit:
         condition: service_started
-    command: celery -A config worker -l info --concurrency=2
+    command: celery -A config worker -l info --concurrency=2 -Q celery
+
+  ml-worker:
+    build: .
+    container_name: elas-ml-worker
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: elas
+      POSTGRES_USER: elas
+      POSTGRES_PASSWORD: elas
+      REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: mailpit
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config worker -l info --concurrency=1 -Q ml
 
   beat:
     build: .

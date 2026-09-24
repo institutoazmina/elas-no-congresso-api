@@ -118,7 +118,10 @@ def send_weekly_digest():
 
     cutoff = timezone.now() - timedelta(days=7)
     recent = list(
-        Proposition.objects.filter(created_at__gte=cutoff).order_by("presented_at", "pk")
+        Proposition.objects.filter(
+            created_at__gte=cutoff,
+            analysis__analysis_status="succeeded",
+        ).order_by("presented_at", "pk")
     )
     if not recent:
         logger.info("Weekly digest: nothing new this week")
@@ -156,7 +159,9 @@ def send_digest_email(self, subscription_id: int, proposition_ids: list[int]):
         f"- {p.number_label} ({p.house}): {p.ementa[:200]}\n  {base_url}/api/v1/propositions/{p.pk}"
         for p in props
     ]
-    body_text = "\n\n".join(["O que entrou no Congresso esta semana:", *lines, f"Cancelar inscrição: {unsubscribe_url}"])
+    body_text = "\n\n".join(
+        ["O que entrou no Congresso esta semana:", *lines, f"Cancelar inscrição: {unsubscribe_url}"]
+    )
     body_html = render_weekly_digest(sub, props)
 
     message_id = _send(subject, body_text, body_html, sub.email)

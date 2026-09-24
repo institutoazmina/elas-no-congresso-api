@@ -1,6 +1,4 @@
-from django.contrib.postgres.search import SearchVectorField
 from django.db import models
-from django.db.models import GeneratedField
 
 from apps.core.enums import House, HumanRelevance, PropositionCategory
 from apps.legislatures.models import InstitutionalAuthor, Parliamentarian, Party
@@ -35,7 +33,9 @@ class Proposition(models.Model):
     class Meta:
         db_table = "propositions"
         constraints = [
-            models.UniqueConstraint(fields=["house", "external_id"], name="propositions_house_external_id")
+            models.UniqueConstraint(
+                fields=["house", "external_id"], name="propositions_house_external_id"
+            )
         ]
         indexes = [
             models.Index(fields=["house", "-year"], name="idx_prop_house_year"),
@@ -48,9 +48,7 @@ class Proposition(models.Model):
 
 
 class PropositionEvent(models.Model):
-    proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="events"
-    )
+    proposition = models.ForeignKey(Proposition, on_delete=models.CASCADE, related_name="events")
     event_at = models.DateTimeField()
     sequence = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -68,17 +66,27 @@ class PropositionEvent(models.Model):
 
 
 class PropositionAuthor(models.Model):
-    proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="authors"
-    )
+    proposition = models.ForeignKey(Proposition, on_delete=models.CASCADE, related_name="authors")
     parliamentarian = models.ForeignKey(
-        Parliamentarian, on_delete=models.SET_NULL, null=True, blank=True, related_name="authored_propositions"
+        Parliamentarian,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="authored_propositions",
     )
     institutional_author = models.ForeignKey(
-        InstitutionalAuthor, on_delete=models.SET_NULL, null=True, blank=True, related_name="authored_propositions"
+        InstitutionalAuthor,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="authored_propositions",
     )
     party = models.ForeignKey(
-        Party, on_delete=models.SET_NULL, null=True, blank=True, related_name="authored_propositions"
+        Party,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="authored_propositions",
     )
     state_at_authorship = models.CharField(max_length=2, null=True, blank=True)
     order_index = models.SmallIntegerField(default=1)
@@ -127,23 +135,52 @@ class PropositionRapporteur(models.Model):
 
 
 class PropositionAnalysis(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pendente"
+        SUCCEEDED = "succeeded", "Concluída"
+        FAILED = "failed", "Falhou"
+
     proposition = models.OneToOneField(
         Proposition, on_delete=models.CASCADE, primary_key=True, related_name="analysis"
     )
+    # Resultado do modelo ``tema``. A categoria usa exatamente a taxonomia
+    # editorial do produto; os scores brutos ficam guardados para auditoria.
+    theme_category = models.CharField(
+        max_length=32, choices=PropositionCategory.choices, null=True, blank=True
+    )
+    theme_confidence = models.DecimalField(max_digits=5, decimal_places=4, null=True, blank=True)
+    theme_scores = models.JSONField(default=dict, blank=True)
+    # Resultado do modelo ``favorabilidade``. ``classification`` mantém o
+    # índice decidido pelo cutoff e ``classification_probability`` é P(classe 1
+    # = desfavorável), preservando os campos já existentes.
     classification = models.SmallIntegerField(null=True, blank=True)
-    classification_probability = models.DecimalField(max_digits=5, decimal_places=4, null=True, blank=True)
+    classification_probability = models.DecimalField(
+        max_digits=5, decimal_places=4, null=True, blank=True
+    )
+    favorability_scores = models.JSONField(default=dict, blank=True)
     llm_position = models.SmallIntegerField(null=True, blank=True)
-    final_position_score = models.DecimalField(max_digits=5, decimal_places=4, null=True, blank=True)
+    final_position_score = models.DecimalField(
+        max_digits=5, decimal_places=4, null=True, blank=True
+    )
     expert_opinion = models.TextField(null=True, blank=True)
     expert_id = models.BigIntegerField(null=True, blank=True)
     ai_summary = models.TextField(null=True, blank=True)
     quiterometer_score = models.FloatField(null=True, blank=True)
+    model_id = models.CharField(max_length=128, null=True, blank=True)
+    model_revision = models.CharField(max_length=64, null=True, blank=True)
+    input_hash = models.CharField(max_length=64, null=True, blank=True)
+    analysis_status = models.CharField(
+        max_length=16, choices=Status.choices, default=Status.PENDING
+    )
+    analysis_error = models.TextField(null=True, blank=True)
     analyzed_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "proposition_analysis"
         indexes = [
             models.Index(fields=["quiterometer_score"], name="idx_analysis_quitero"),
+            models.Index(fields=["analysis_status"], name="idx_analysis_status"),
         ]
 
 

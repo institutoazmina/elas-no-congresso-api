@@ -12,12 +12,6 @@ def _enqueue(proposition_id: int):
     transaction.on_commit(lambda: match_and_notify.delay(proposition_id))
 
 
-@receiver(post_save, sender="propositions.Proposition")
-def enqueue_match_on_save(sender, instance, created, **kwargs):
-    if created:
-        _enqueue(instance.pk)
-
-
 @receiver(post_save, sender="propositions.PropositionAnnotation")
 def enqueue_match_on_annotation(sender, instance, **kwargs):
     """A categoria ("Categorias 2026") é a anotação humana, e chega dias depois

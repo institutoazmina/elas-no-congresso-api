@@ -44,6 +44,11 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv python install 3.12 && \
     uv sync --frozen --no-dev --no-install-project
 
+# QuitérIA é pública, mas baixar os pesos no build torna o runtime imutável e
+# evita depender de rede/cache gravável no container distroless.
+RUN --mount=type=cache,target=/root/.cache/huggingface \
+    HF_HUB_DISABLE_XET=1 /app/.venv/bin/python -c "from huggingface_hub import snapshot_download; snapshot_download('azmina/quiteria-2.0', revision='6f258ee80c0ac410ce60317a4e31460590d7e594', local_dir='/models/quiteria-2.0')"
+
 # Slim the artifacts that get copied into the runtime image.
 # NOTE: no `strip` on vendored *.libs — manylinux wheels ship pre-stripped and
 # binutils corrupts large-alignment libs (e.g. numpy's openblas → page-align error).
@@ -84,6 +89,7 @@ COPY --from=builder /usr/lib/*-linux-gnu/libz.so.1 /usr/lib/libz.so.1
 COPY --from=builder /ocr/bin/tesseract /usr/bin/tesseract
 COPY --from=builder /ocr/lib/ /usr/lib/
 COPY --from=builder /ocr/tessdata/ /usr/share/tessdata/
+COPY --from=builder --chown=65532:65532 /models/quiteria-2.0 /models/quiteria-2.0
 ENV TESSERACT_CMD=/usr/bin/tesseract \
     TESSDATA_PREFIX=/usr/share/tessdata
 

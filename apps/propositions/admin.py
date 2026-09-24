@@ -15,7 +15,13 @@ from .models import (
 class AuthorInline(TabularInline):
     model = PropositionAuthor
     extra = 0
-    fields = ["parliamentarian", "institutional_author", "party", "state_at_authorship", "order_index"]
+    fields = [
+        "parliamentarian",
+        "institutional_author",
+        "party",
+        "state_at_authorship",
+        "order_index",
+    ]
     autocomplete_fields = ["parliamentarian", "party"]
 
 
@@ -30,7 +36,17 @@ class RapporteurInline(TabularInline):
 class AnalysisInline(TabularInline):
     model = PropositionAnalysis
     extra = 0
-    fields = ["classification", "quiterometer_score", "llm_position", "ai_summary"]
+    fields = [
+        "analysis_status",
+        "theme_category",
+        "theme_confidence",
+        "classification",
+        "classification_probability",
+        "quiterometer_score",
+        "llm_position",
+        "ai_summary",
+    ]
+
 
 class AnnotationInline(TabularInline):
     model = PropositionAnnotation
@@ -61,21 +77,41 @@ class PropositionEventAdmin(ModelAdmin):
 
 @admin.register(PropositionAnalysis)
 class PropositionAnalysisAdmin(ModelAdmin):
-    list_display = ["proposition", "classification", "quiterometer_score", "analyzed_at"]
-    readonly_fields = ["analyzed_at"]
+    list_display = [
+        "proposition",
+        "analysis_status",
+        "theme_category",
+        "classification",
+        "quiterometer_score",
+        "analyzed_at",
+    ]
+    readonly_fields = ["analyzed_at", "completed_at", "model_id", "model_revision", "input_hash"]
+
 
 @admin.register(AssessmentOrganization)
 class AssessmentOrganizationAdmin(ModelAdmin):
     list_display = ["name", "created_at"]
     search_fields = ["name"]
 
+
 @admin.register(PropositionAnnotation)
 class PropositionAnnotationAdmin(ModelAdmin):
-    list_display = ["proposition", "organization", "category", "is_favorable", "has_caveats", "relevance"]
+    list_display = [
+        "proposition",
+        "organization",
+        "category",
+        "is_favorable",
+        "has_caveats",
+        "relevance",
+    ]
     # full_text é da Proposition, não da anotação: filtra as anotações cuja
     # proposição está sem inteiro teor (linhas inúteis para o dataset de treino).
     list_filter = [
-        "category", "organization", "is_favorable", "has_caveats", "relevance",
+        "category",
+        "organization",
+        "is_favorable",
+        "has_caveats",
+        "relevance",
         ("proposition__full_text", admin.EmptyFieldListFilter),
     ]
     search_fields = ["legacy_theme", "comments"]

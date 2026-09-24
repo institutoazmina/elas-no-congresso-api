@@ -185,6 +185,20 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 6 * 60 * 60}  # 6h
 CELERY_TASK_COMPRESSION = "gzip"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_TASK_ROUTES = {
+    "apps.ingestion.tasks.classify_proposition": {"queue": "ml"},
+}
+
+# QuitérIA 2.0: os artefatos são baixados na imagem de runtime e carregados
+# apenas pelo worker da fila ``ml``. A revisão é fixa para que um deploy seja
+# reprodutível mesmo se o repositório do Hub receber novos pesos.
+QUITERIA_ENABLED = config("QUITERIA_ENABLED", default=True, cast=bool)
+QUITERIA_MODEL_DIR = config("QUITERIA_MODEL_DIR", default="/models/quiteria-2.0")
+QUITERIA_MODEL_ID = "azmina/quiteria-2.0"
+QUITERIA_MODEL_REVISION = "6f258ee80c0ac410ce60317a4e31460590d7e594"
+QUITERIA_FAVORABILITY_THRESHOLD = config(
+    "QUITERIA_FAVORABILITY_THRESHOLD", default=0.2254, cast=float
+)
 
 # Coleta diária (DatabaseScheduler sincroniza este dict para o banco no startup).
 CELERY_BEAT_SCHEDULE = {

@@ -1,4 +1,5 @@
 """Build flat document from Django ORM for tsquery matching (adapted from POC4)."""
+
 from __future__ import annotations
 
 import re
@@ -115,6 +116,24 @@ def build_document(proposition_id: int) -> dict[str, Any]:
         )
         for row in cur.fetchall():
             doc["categoria"].append(row[0])
+
+    # A avaliação humana é a fonte editorial autoritativa. Enquanto ela ainda
+    # não chegou, a categoria prevista pela QuitérIA permite alertas imediatos.
+    if not doc["categoria"]:
+        with connection.cursor() as cur:
+            cur.execute(
+                """
+                SELECT theme_category
+                FROM proposition_analysis
+                WHERE proposition_id = %s
+                  AND analysis_status = 'succeeded'
+                  AND theme_category IS NOT NULL
+                """,
+                [proposition_id],
+            )
+            analysis_category = cur.fetchone()
+            if analysis_category:
+                doc["categoria"].append(analysis_category[0])
 
     with connection.cursor() as cur:
         cur.execute(
