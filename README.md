@@ -109,14 +109,16 @@ Variáveis obrigatórias:
 - `DEBUG=False` — modo produção
 - `DATABASE_URL` — conexão PostgreSQL
 - `REDIS_URL` — conexão Redis
-- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` — credenciais AWS
 - `AWS_SES_FROM_EMAIL` — e-mail verificado no SES
 
 ### SES Produção
 
 1. Sair do [sandbox SES](https://docs.aws.amazon.com/ses/latest/developer-guide/sandbox.html)
 2. Configurar `SES_CONFIGURATION_SET` para tracking
-3. Ajustar `AWS_SES_ENDPOINT_URL` para `None` em produção
+3. Em produção no EC2, associar uma instance role com `ses:SendEmail` e
+   `ses:SendRawEmail` à identidade SES verificada. O Boto3 obtém e renova as
+   credenciais temporárias automaticamente; não configure access keys estáticas.
+4. Ajustar `AWS_SES_ENDPOINT_URL` para `None` em produção
 
 ## Performance
 

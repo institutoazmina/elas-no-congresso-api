@@ -6,7 +6,7 @@ from django.http import FileResponse, Http404, HttpRequest
 from django.views.decorators.http import require_GET
 
 EMAIL_ASSETS_DIR = Path(__file__).resolve().parent / "emails" / "assets"
-EMAIL_ASSETS = {"daily-header.png", "weekly-header.png"}
+EMAIL_ASSETS = {"daily-header.png", "weekly-header.png", "header.png"}
 
 
 @require_GET

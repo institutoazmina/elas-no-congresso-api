@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 
-from .email_templates import render_daily_alert, render_weekly_digest
+from .email_templates import render_confirmation_email, render_daily_alert, render_weekly_digest
 
 logger = logging.getLogger(__name__)
 
@@ -77,11 +77,7 @@ def send_confirmation_email(self, subscription_id: int):
         f"Clique no link abaixo para confirmar sua inscricao:\n\n{confirm_url}\n\n"
         "O link expira em 48 horas."
     )
-    body_html = (
-        f"<p>Clique no link abaixo para confirmar sua inscricao:</p>"
-        f"<p><a href='{confirm_url}'>{confirm_url}</a></p>"
-        "<p>O link expira em 48 horas.</p>"
-    )
+    body_html = render_confirmation_email(sub)
 
     message_id = _send(subject, body_text, body_html, sub.email)
     logger.info("Confirmation sent to %s", sub.email)

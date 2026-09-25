@@ -118,7 +118,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": config("POSTGRES_DB", default="elas"),
         "USER": config("POSTGRES_USER", default="elas"),
-"PASSWORD": config("POSTGRES_PASSWORD", default="elas"),
+        "PASSWORD": config("POSTGRES_PASSWORD", default="elas"),
         "HOST": config("POSTGRES_HOST", default="localhost"),
         "PORT": config("POSTGRES_PORT", default="5432"),
         "CONN_MAX_AGE": 60,
@@ -245,24 +245,31 @@ CORS_ALLOWED_ORIGINS = config(
 CORS_URLS_REGEX = r"^/api/.*$"
 
 # AWS SES
-AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="test")
-AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="test")
+# Em produção, Boto3 obtém credenciais temporárias da instance role do EC2.
+# As chaves explícitas só existem para ambientes que não oferecem uma role
+# (como o mock SES dos testes).
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default=None)
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default=None)
 AWS_DEFAULT_REGION = config("AWS_DEFAULT_REGION", default="us-east-1")
 AWS_SES_ENDPOINT_URL = config("AWS_SES_ENDPOINT_URL", default=None)
 AWS_SES_FROM_EMAIL = config("AWS_SES_FROM_EMAIL", default="alertas@elasnocongresso.local")
 
-# Email via django-anymail (Amazon SES v2 backend). dev/test point the SES
-# client at a local mock by patching ANYMAIL["AMAZON_SES_CLIENT_PARAMS"].
+# Email via django-anymail (Amazon SES v2 backend). Sem credenciais explícitas,
+# Boto3 usa sua credential provider chain (incluindo a instance role do EC2).
+# dev/test apontam o cliente SES para um mock e injetam chaves fictícias.
 EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
 DEFAULT_FROM_EMAIL = AWS_SES_FROM_EMAIL
 SERVER_EMAIL = AWS_SES_FROM_EMAIL
 ANYMAIL = {
     "AMAZON_SES_CLIENT_PARAMS": {
         "region_name": AWS_DEFAULT_REGION,
-        "aws_access_key_id": AWS_ACCESS_KEY_ID,
-        "aws_secret_access_key": AWS_SECRET_ACCESS_KEY,
     },
 }
+if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+    ANYMAIL["AMAZON_SES_CLIENT_PARAMS"].update(
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    )
 if AWS_SES_ENDPOINT_URL:
     ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = AWS_SES_ENDPOINT_URL
 

@@ -13,7 +13,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import SafeString
 
 EMAIL_DIST_DIR = Path(__file__).resolve().parent / "emails" / "dist"
-EMAIL_ASSETS = {"daily-header.png", "weekly-header.png"}
+EMAIL_ASSETS = {"daily-header.png", "weekly-header.png", "header.png"}
 
 
 def _absolute_url(path: str) -> str:
@@ -109,14 +109,14 @@ def _weekly_cards(propositions) -> SafeString:
         item = _proposition_context(proposition)
         cards.append(
             format_html(
-                "<div style=\"margin-top: 26px; font-size: 16px; line-height: 1.3;\">"
+                '<div style="margin-top: 26px; font-size: 16px; line-height: 1.3;">'
                 "<strong>{}</strong><br>"
                 "{} {}<br>"
                 "Ementa: {}.<br>"
                 "Autoria: {} {}.<br>"
-                "<span style=\"font-size: 20px; line-height: 0; vertical-align: -1px;\">■</span> "
+                '<span style="font-size: 20px; line-height: 0; vertical-align: -1px;">■</span> '
                 "Você pode ler e acompanhar cada passo da tramitação por aqui:<br>"
-                "<a href=\"{}\" style=\"color: #000000; text-decoration: none;\">{}</a>"
+                '<a href="{}" style="color: #000000; text-decoration: none;">{}</a>'
                 "</div>",
                 item["titulo_curto"],
                 item["tipo"],
@@ -134,11 +134,11 @@ def _weekly_cards(propositions) -> SafeString:
 def _weekly_themes_html(propositions) -> SafeString:
     cards = _weekly_cards(propositions)
     return format_html(
-        "<div style=\"font-size: 16px; line-height: 1.3;\">"
-        "<div style=\"font-size: 18px; font-weight: 700; line-height: 1.2;\">"
+        '<div style="font-size: 16px; line-height: 1.3;">'
+        '<div style="font-size: 18px; font-weight: 700; line-height: 1.2;">'
         "Proposições acompanhadas</div>"
-        "<div style=\"margin-top: 23px; font-weight: 700;\">"
-        "<span style=\"font-size: 20px; line-height: 0; vertical-align: -1px;\">■</span> "
+        '<div style="margin-top: 23px; font-weight: 700;">'
+        '<span style="font-size: 20px; line-height: 0; vertical-align: -1px;">■</span> '
         "Atualizações que chegaram nesta semana:</div>{}</div>",
         cards,
     )
@@ -155,3 +155,13 @@ def render_weekly_digest(subscription, propositions) -> str:
         }
     )
     return _render_email("weekly.html", context)
+
+
+def render_confirmation_email(subscription) -> str:
+    base_url = settings.SITE_BASE_URL.rstrip("/")
+    context = {
+        "ano": timezone.localdate().year,
+        "confirmation_header_url": _header_url("header.png"),
+        "link_confirmacao": f"{base_url}/api/v1/subscriptions/confirm/{subscription.confirm_token}",
+    }
+    return _render_email("confirmation.html", context)

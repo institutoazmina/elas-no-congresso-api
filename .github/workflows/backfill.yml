@@ -42,8 +42,6 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
       SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      AWS_SES_FROM_EMAIL: ${{ secrets.AWS_SES_FROM_EMAIL }}
       KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -72,9 +70,6 @@ jobs:
       # --reuse roda no container web já vivo (não sobe container novo → sem
       # colisão na porta 8010, igual ao step de migrate do deploy).
       - name: Enfileirar backfill (worker roda async)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           ARGS="--start ${{ inputs.start }}"
           if [ "${{ inputs.reset }}" != "true" ]; then ARGS="$ARGS --no-reset"; fi

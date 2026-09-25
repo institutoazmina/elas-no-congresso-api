@@ -13,7 +13,14 @@ router = Router()
 def _back_to_site(page: str, status: str) -> HttpResponseRedirect:
     """Devolve o usuário ao site estático — o clique veio de um link de e-mail,
     então quem está do outro lado é uma pessoa num browser, não um cliente HTTP."""
-    return HttpResponseRedirect(f"{settings.PUBLIC_SITE_URL.rstrip('/')}/alertas/{page}?status={status}")
+    return HttpResponseRedirect(
+        f"{settings.PUBLIC_SITE_URL.rstrip('/')}/alertas/{page}?status={status}"
+    )
+
+
+def _back_home(status: str) -> HttpResponseRedirect:
+    """A confirmação é o fim do fluxo: devolve a pessoa à página inicial."""
+    return HttpResponseRedirect(f"{settings.PUBLIC_SITE_URL.rstrip('/')}/?subscription={status}")
 
 
 @router.post(
@@ -37,14 +44,14 @@ def confirm_subscription(request, token: str):
     try:
         sub = Subscription.objects.get(confirm_token=token, is_active=False)
     except Subscription.DoesNotExist:
-        return _back_to_site("confirmado", "invalido")
+        return _back_home("invalido")
 
     # Quem confirma confirma o endereço, não a linha: um clique vale para as
     # duas frequências criadas no mesmo envio.
     Subscription.objects.filter(email=sub.email, is_active=False).update(
         is_active=True, confirmed_at=timezone.now()
     )
-    return _back_to_site("confirmado", "ok")
+    return _back_home("confirmado")
 
 
 @router.get("/unsubscribe/{token}", auth=None, include_in_schema=False)

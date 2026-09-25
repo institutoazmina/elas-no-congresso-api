@@ -28,8 +28,6 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
       SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      AWS_SES_FROM_EMAIL: ${{ secrets.AWS_SES_FROM_EMAIL }}
       # Registry: o próprio token do Actions tem write:packages pro repo
       KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
@@ -66,9 +64,6 @@ jobs:
       # Para o web atual antes do boot p/ liberar a porta (também limpa container órfão de
       # deploy anterior que falhou). Downtime de ~segundos, OK p/ API atrás do CF Tunnel.
       - name: Liberar porta do web (proxy:false usa porta fixa)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: kamal app stop --roles web || true
 
       # kamal setup = bootstrap (no-op: Docker já vem na AMI) + boot accessories + deploy.
@@ -78,18 +73,11 @@ jobs:
       # Build amd64 -> push GHCR -> pull + run no EC2 (web/worker/beat) + redis accessory.
       # Host compartilhado: deploy é proxy:false, publica web em 172.17.0.1:8010.
       # A borda (api.elasnocongresso.com.br) é o Cloudflare Tunnel — ver ops/colocation-setup.md.
-      # AWS_* (SES) setados aqui no step p/ não vazarem p/ outros steps.
       - name: Kamal setup (boot accessories + deploy)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: kamal setup
 
       # Migrations rodam no EC2 (único nó que alcança o RDS). --roles web evita 3x.
       # --reuse: roda no container web já vivo. Sem --reuse, o exec sobe um container
       # novo herdando publish 172.17.0.1:8010 e colide com o web → "port already allocated".
       - name: Migrate (on server)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: kamal app exec --reuse --roles web "python manage.py migrate --noinput"

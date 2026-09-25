@@ -3,10 +3,13 @@
 O site é estático e vive em outro domínio, então tudo aqui é exercitado como o
 browser faria: cross-origin, com o payload que o modal monta.
 """
+
 import pytest
 from django.test import Client
 
+from apps.propositions.models import Proposition
 from apps.subscriptions.models import Subscription
+from apps.subscriptions.tasks import match_and_notify
 
 SITE_ORIGIN = "https://www.elasnocongresso.com.br"
 HOMOLOGATION_ORIGIN = "https://homologacao.elasnocongresso.com.br"
@@ -28,7 +31,12 @@ def client():
 
 
 def _make_subscription(**kwargs):
-    defaults = {"email": "alguem@example.com", "ast": {}, "query": "casa_camara", "is_active": False}
+    defaults = {
+        "email": "alguem@example.com",
+        "ast": {},
+        "query": "casa_camara",
+        "is_active": False,
+    }
     defaults.update(kwargs)
     return Subscription.objects.create(**defaults)
 
@@ -84,8 +92,9 @@ def test_admin_nao_responde_cross_origin(client):
     assert "Access-Control-Allow-Origin" not in response
 
 
-def test_asset_do_email_e_publico_e_cacheavel(client):
-    response = client.get("/api/v1/assets/emails/daily-header.png")
+@pytest.mark.parametrize("name", ["daily-header.png", "header.png"])
+def test_asset_do_email_e_publico_e_cacheavel(client, name):
+    response = client.get(f"/api/v1/assets/emails/{name}")
 
     assert response.status_code == 200
     assert response["Content-Type"] == "image/png"
@@ -107,7 +116,7 @@ def test_clicar_no_link_de_confirmacao_ativa_e_devolve_ao_site(client, settings)
     response = client.get(f"/api/v1/subscriptions/confirm/{sub.confirm_token}")
 
     assert response.status_code == 302
-    assert response["Location"] == f"{SITE_ORIGIN}/alertas/confirmado?status=ok"
+    assert response["Location"] == f"{SITE_ORIGIN}/?subscription=confirmado"
     sub.refresh_from_db()
     assert sub.is_active
     assert sub.confirmed_at is not None
@@ -120,7 +129,7 @@ def test_link_de_confirmacao_invalido_devolve_ao_site_sinalizando_erro(client, s
     response = client.get("/api/v1/subscriptions/confirm/token-que-nao-existe")
 
     assert response.status_code == 302
-    assert response["Location"] == f"{SITE_ORIGIN}/alertas/confirmado?status=invalido"
+    assert response["Location"] == f"{SITE_ORIGIN}/?subscription=invalido"
 
 
 @pytest.mark.django_db
@@ -186,6 +195,58 @@ def test_assinar_as_duas_frequencias_cria_duas_inscricoes_e_um_email(client, out
     assert not any(s.is_active for s in subs)
     assert len(outbox) == 1
     assert outbox[0].to == ["leitora@example.com"]
+    html = outbox[0].alternatives[0][0]
+    assert "Confirmar inscrição" in html
+    assert "/api/v1/assets/emails/header.png" in html
+    assert f"/api/v1/subscriptions/confirm/{subs.first().confirm_token}" in html
+
+
+@pytest.mark.django_db(transaction=True)
+def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
+    settings.PUBLIC_SITE_URL = SITE_ORIGIN
+    _post(
+        client,
+        email="confirmacao@example.org",
+        alerts=[{"frequency": "daily", "ast": {"field": "casa", "op": "eq", "value": "camara"}}],
+    )
+    subscription = Subscription.objects.get(email="confirmacao@example.org")
+
+    before_confirmation = Proposition.objects.create(
+        house="camara",
+        external_id=910001,
+        type_code="pl",
+        number_label="PL 1/2026",
+        number=1,
+        year=2026,
+        presented_at="2026-01-01",
+        ementa="Proposição antes da confirmação.",
+        current_status="Em tramitação",
+    )
+    match_and_notify.delay(before_confirmation.pk)
+
+    # O único e-mail é a confirmação enviada no cadastro; ainda não há alerta.
+    assert len(outbox) == 1
+    assert "Confirme sua inscricao" in outbox[0].subject
+
+    response = client.get(f"/api/v1/subscriptions/confirm/{subscription.confirm_token}")
+    assert response["Location"] == f"{SITE_ORIGIN}/?subscription=confirmado"
+
+    after_confirmation = Proposition.objects.create(
+        house="camara",
+        external_id=910002,
+        type_code="pl",
+        number_label="PL 2/2026",
+        number=2,
+        year=2026,
+        presented_at="2026-01-02",
+        ementa="Proposição após a confirmação.",
+        current_status="Em tramitação",
+    )
+    match_and_notify.delay(after_confirmation.pk)
+
+    assert len(outbox) == 2
+    assert outbox[1].to == ["confirmacao@example.org"]
+    assert "PL 2/2026" in outbox[1].subject
 
 
 @pytest.mark.django_db
@@ -208,7 +269,10 @@ def test_um_clique_confirma_todas_as_frequencias_do_mesmo_email(client, outbox, 
 
 @pytest.mark.django_db
 def test_reinscrever_substitui_as_preferencias_anteriores(client, outbox):
-    _post(client, alerts=[{"frequency": "weekly", "ast": {"field": "tema", "op": "eq", "value": "saude"}}])
+    _post(
+        client,
+        alerts=[{"frequency": "weekly", "ast": {"field": "tema", "op": "eq", "value": "saude"}}],
+    )
 
     _post(
         client,
@@ -288,7 +352,10 @@ def test_aceite_dos_termos_fica_registrado(client, outbox):
 
 @pytest.mark.django_db
 def test_frequencia_desconhecida_e_recusada(client, outbox):
-    response = _post(client, alerts=[{"frequency": "mensal", "ast": {"field": "tema", "op": "eq", "value": "saude"}}])
+    response = _post(
+        client,
+        alerts=[{"frequency": "mensal", "ast": {"field": "tema", "op": "eq", "value": "saude"}}],
+    )
 
     assert response.status_code == 422
     assert not Subscription.objects.exists()

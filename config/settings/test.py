@@ -60,6 +60,10 @@ QUITERIA_ENABLED = False
 
 AWS_SES_ENDPOINT_URL = "http://localhost:4566"
 ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = AWS_SES_ENDPOINT_URL  # noqa: F405
+ANYMAIL["AMAZON_SES_CLIENT_PARAMS"].update(  # noqa: F405
+    aws_access_key_id="test",
+    aws_secret_access_key="test",
+)
 
 CACHES = {
     "default": {

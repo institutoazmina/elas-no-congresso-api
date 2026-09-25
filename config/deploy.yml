@@ -78,6 +78,9 @@ env:
     REDIS_URL: redis://elas-no-congresso-redis:6379/0
     CELERY_BROKER_URL: redis://elas-no-congresso-redis:6379/0
     QUITERIA_ENABLED: "True"
+    # SES usa a instance role do EC2; região e remetente não são segredos.
+    AWS_DEFAULT_REGION: us-east-2
+    AWS_SES_FROM_EMAIL: alertas@elasnocongresso.azmina.com.br
   secret:
     - SECRET_KEY
     # Banco (RDS) — endpoint/credenciais não expostos no repo
@@ -89,11 +92,6 @@ env:
     # Rede / host
     - ALLOWED_HOSTS
     - SITE_BASE_URL
-    # AWS / SES
-    - AWS_DEFAULT_REGION
-    - AWS_SES_FROM_EMAIL
-    - AWS_ACCESS_KEY_ID
-    - AWS_SECRET_ACCESS_KEY
 
 # ---- Redis accessory (no servidor), isolado por nome próprio ----
 accessories:
