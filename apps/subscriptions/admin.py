@@ -1,5 +1,3 @@
-import json
-
 from django import forms
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied
@@ -14,10 +12,25 @@ from .tasks import send_test_alert_email
 
 
 class SendTestAlertForm(forms.Form):
-    proposition_id = forms.IntegerField(label="ID da proposição", min_value=1)
+    proposition_id = forms.IntegerField(
+        label="ID da proposição",
+        min_value=1,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "border border-base-200 bg-white dark:bg-base-900 dark:border-base-700 "
+                "rounded-default px-3 py-2 w-full",
+            }
+        ),
+    )
     ast = forms.JSONField(
         label="Critérios (AST JSON)",
-        widget=forms.Textarea(attrs={"rows": 14, "class": "font-mono w-full"}),
+        widget=forms.Textarea(
+            attrs={
+                "rows": 14,
+                "class": "border border-base-200 bg-white dark:bg-base-900 dark:border-base-700 "
+                "rounded-default px-3 py-2 w-full font-mono",
+            }
+        ),
         help_text="Os critérios são usados apenas neste teste e não serão salvos na inscrição.",
     )
     confirm_send = forms.BooleanField(
@@ -68,7 +81,7 @@ class SubscriptionAdmin(ModelAdmin):
             )
             return redirect("admin:subscriptions_subscription_change", subscription.pk)
 
-        initial = {"ast": json.dumps(subscription.ast, ensure_ascii=False, indent=2)}
+        initial = {"ast": subscription.ast}
         if request.method == "POST":
             form = SendTestAlertForm(request.POST)
             if form.is_valid():

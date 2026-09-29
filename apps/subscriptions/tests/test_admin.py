@@ -80,7 +80,8 @@ def test_test_alert_form_is_prefilled_with_subscription_criteria():
 
     assert response.status_code == 200
     assert subscription.email in response.content.decode()
-    assert json.loads(response.context["form"].initial["ast"]) == subscription.ast
+    assert response.context["form"].initial["ast"] == subscription.ast
+    assert "Validar e enviar teste" in response.content.decode()
 
 
 def test_matching_criteria_queue_a_test_without_creating_delivery():

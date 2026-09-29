@@ -4,6 +4,9 @@
 {% block object-tools-items %}
     {{ block.super }}
     {% if send_test_alert_url %}
-        {% include "unfold/components/button.html" with href=send_test_alert_url size="sm" icon="send" variant="default" children="Enviar alerta de teste" %}
+        <a href="{{ send_test_alert_url }}" class="font-medium inline-flex items-center gap-1 rounded-default px-2.5 py-1.5 border border-base-200 bg-white shadow-xs text-important dark:border-base-700 dark:bg-transparent">
+            <span class="material-symbols-outlined -ml-0.5">send</span>
+            Enviar alerta de teste
+        </a>
     {% endif %}
 {% endblock %}
