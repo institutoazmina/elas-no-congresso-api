@@ -28,6 +28,7 @@ class ActivityEventSchema(Schema):
     event_at: datetime
     title: str | None = None
     description: str | None = None
+    url: str | None = None
     situation: str | None = None
     committee_acronym: str | None = None
     committee_name: str | None = None
@@ -109,8 +110,9 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
         "events": [
             {
                 "event_at": event.event_at,
-                "title": event.title,
-                "description": event.description,
+                "title": event.title or event.description,
+                "description": event.dispatch or event.description,
+                "url": event.raw_payload.get("url") if event.raw_payload else None,
                 "situation": event.situation,
                 "committee_acronym": event.committee_acronym,
                 "committee_name": event.committee_name,

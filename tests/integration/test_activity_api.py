@@ -37,7 +37,9 @@ def test_activity_endpoints_return_celerity_preview_and_full_history():
             event_at=event_at,
             title="Em pauta",
             description="Matéria incluída em pauta.",
+            dispatch="Matéria incluída em pauta para votação.",
             committee_acronym="CCJ",
+            raw_payload={"url": "https://www.camara.leg.br/propostas-legislativas/777"},
         )
 
     client = Client()
@@ -47,14 +49,23 @@ def test_activity_endpoints_return_celerity_preview_and_full_history():
         "/api/v1/activity/by-number",
         {"house": proposition.house, "number_label": proposition.number_label},
     )
+    cors_by_number = client.get(
+        "/api/v1/activity/by-number",
+        {"house": proposition.house, "number_label": proposition.number_label},
+        HTTP_ORIGIN="https://www.elasnocongresso.com.br",
+    )
 
     assert listing.status_code == 200
     assert listing.json()[0]["celerity"]["label"] == "Tá voando"
     assert len(listing.json()[0]["events"]) == 3
     assert detail.status_code == 200
     assert detail.json()["events"][0]["committee_acronym"] == "CCJ"
+    assert detail.json()["events"][0]["title"] == "Em pauta"
+    assert detail.json()["events"][0]["description"] == "Matéria incluída em pauta para votação."
+    assert detail.json()["events"][0]["url"] == "https://www.camara.leg.br/propostas-legislativas/777"
     assert by_number.status_code == 200
     assert by_number.json()["id"] == proposition.pk
+    assert cors_by_number["Access-Control-Allow-Origin"] == "https://www.elasnocongresso.com.br"
 
 
 @pytest.mark.django_db
