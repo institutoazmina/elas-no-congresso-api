@@ -12,6 +12,7 @@ from .models import Proposition
 
 router = Router()
 ACTIVITY_CACHE_TIMEOUT = 5 * 60
+FAST_CELERITY_LABELS = {"Rápida", "Tá voando"}
 
 
 class ActivityAuthorSchema(Schema):
@@ -141,6 +142,11 @@ def _cache_activity(proposition_id: int, activity: dict) -> dict:
     return activity
 
 
+def _cache_activity_collection(cache_key: str, activity: list[dict]) -> list[dict]:
+    cache.set(cache_key, activity, ACTIVITY_CACHE_TIMEOUT)
+    return activity
+
+
 def _activity_for_proposition(proposition_id: int) -> dict:
     cached = _cached_activity(proposition_id)
     if cached is not None:
@@ -167,6 +173,34 @@ def list_activity(request, limit: int = 5000):
     activity = [_serialize(proposition, event_limit=5) for proposition in _queryset().order_by("-presented_at")[:limit]]
     cache.set(cache_key, activity, ACTIVITY_CACHE_TIMEOUT)
     return activity
+
+
+@router.get("/fast-unfavorable", response=list[ActivityPropositionSchema])
+def list_fast_unfavorable_activity(request):
+    """Todas as desfavoráveis com tramitação rápida e movimentos nos últimos 90 dias."""
+    cache_key = "activity:fast-unfavorable"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    activity = []
+    propositions = _queryset().filter(annotations__is_favorable=False).distinct()
+    for proposition in propositions:
+        serialized = _serialize(proposition, event_limit=0)
+        if (
+            serialized["celerity"]["label"] in FAST_CELERITY_LABELS
+            and serialized["celerity"]["movements_last_90_days"] > 0
+        ):
+            activity.append(serialized)
+
+    activity.sort(
+        key=lambda item: (
+            item["celerity"]["label"] == "Tá voando",
+            item["celerity"]["movements_last_90_days"],
+        ),
+        reverse=True,
+    )
+    return _cache_activity_collection(cache_key, activity)
 
 
 @router.get("/by-number", response=ActivityPropositionSchema)

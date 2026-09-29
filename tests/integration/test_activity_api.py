@@ -5,7 +5,12 @@ from django.core.cache import cache
 from django.test import Client
 from django.utils import timezone
 
-from apps.propositions.models import Proposition, PropositionEvent
+from apps.propositions.models import (
+    AssessmentOrganization,
+    Proposition,
+    PropositionAnnotation,
+    PropositionEvent,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -103,3 +108,82 @@ def test_activity_by_number_is_cached():
     assert first.status_code == 200
     assert cached.status_code == 200
     assert len(cached.json()["events"]) == 1
+
+
+@pytest.mark.django_db
+def test_fast_unfavorable_activity_only_returns_fast_unfavorable_propositions():
+    organization = AssessmentOrganization.objects.create(name="AzMina")
+    fast_unfavorable = Proposition.objects.create(
+        external_id=779,
+        house="camara",
+        type_code="PL",
+        number_label="PL 779/2026",
+        number=779,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Proteção das mulheres",
+    )
+    flying_unfavorable = Proposition.objects.create(
+        external_id=780,
+        house="camara",
+        type_code="PL",
+        number_label="PL 780/2026",
+        number=780,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Proteção das mulheres",
+    )
+    slow_unfavorable = Proposition.objects.create(
+        external_id=781,
+        house="camara",
+        type_code="PL",
+        number_label="PL 781/2026",
+        number=781,
+        year=2026,
+        presented_at=timezone.localdate() - timedelta(days=100),
+        ementa="Proteção das mulheres",
+    )
+    favorable = Proposition.objects.create(
+        external_id=782,
+        house="camara",
+        type_code="PL",
+        number_label="PL 782/2026",
+        number=782,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Proteção das mulheres",
+    )
+    for proposition, is_favorable in ((fast_unfavorable, False), (flying_unfavorable, False), (slow_unfavorable, False), (favorable, True)):
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=organization,
+            is_favorable=is_favorable,
+            category="saude",
+        )
+    PropositionEvent.objects.create(proposition=fast_unfavorable, event_at=timezone.now())
+    for sequence in range(3):
+        PropositionEvent.objects.create(
+            proposition=flying_unfavorable,
+            event_at=timezone.now() - timedelta(days=sequence),
+        )
+    PropositionEvent.objects.create(
+        proposition=slow_unfavorable,
+        event_at=timezone.now() - timedelta(days=100),
+    )
+    for sequence in range(3):
+        PropositionEvent.objects.create(
+            proposition=favorable,
+            event_at=timezone.now() - timedelta(days=sequence),
+        )
+
+    response = Client().get("/api/v1/activity/fast-unfavorable")
+
+    assert response.status_code == 200
+    assert [item["number_label"] for item in response.json()] == ["PL 780/2026", "PL 779/2026"]
+    assert {item["celerity"]["label"] for item in response.json()} == {"Rápida", "Tá voando"}
+    assert all(item["is_favorable"] is False for item in response.json())
+
+    fast_unfavorable.delete()
+    cached = Client().get("/api/v1/activity/fast-unfavorable")
+
+    assert cached.json() == response.json()
