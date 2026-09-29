@@ -14,6 +14,7 @@ from .models import Proposition
 router = Router()
 ACTIVITY_CACHE_TIMEOUT = 5 * 60
 FAST_CELERITY_LABELS = {"Rápida", "Tá voando"}
+SLOW_CELERITY_LABELS = {"Lenta", "Travada"}
 
 
 def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
@@ -23,7 +24,7 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
         delete_pattern("activity:*")
     else:
         # LocMemCache used in tests does not implement ``delete_pattern``.
-        for cache_key in ("activity:list:5000", "activity:fast-unfavorable"):
+        for cache_key in ("activity:list:5000", "activity:fast-unfavorable", "activity:slow-favorable"):
             cache.delete(cache_key)
 
     for proposition in propositions:
@@ -217,6 +218,25 @@ def list_fast_unfavorable_activity(request):
         reverse=True,
     )
     return _cache_activity_collection(cache_key, activity)
+
+
+@router.get("/slow-favorable", response=list[ActivityPropositionSchema])
+def list_slow_favorable_activity(request):
+    """As 50 favoráveis mais paradas, sem incluir as esquecidas."""
+    cache_key = "activity:slow-favorable"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    activity = []
+    propositions = _queryset().filter(annotations__is_favorable=True).distinct()
+    for proposition in propositions:
+        serialized = _serialize(proposition, event_limit=0)
+        if serialized["celerity"]["label"] in SLOW_CELERITY_LABELS:
+            activity.append(serialized)
+
+    activity.sort(key=lambda item: item["celerity"]["days_without_movement"], reverse=True)
+    return _cache_activity_collection(cache_key, activity[:50])
 
 
 @router.get("/by-number", response=ActivityPropositionSchema)

@@ -233,3 +233,76 @@ def test_fast_unfavorable_activity_only_returns_fast_unfavorable_propositions():
     cached = Client().get("/api/v1/activity/fast-unfavorable")
 
     assert cached.json() == response.json()
+
+
+@pytest.mark.django_db
+def test_slow_favorable_activity_returns_the_50_most_inactive_qualifying_propositions():
+    organization = AssessmentOrganization.objects.create(name="AzMina")
+    slow_favorable = []
+    for sequence in range(51):
+        proposition = Proposition.objects.create(
+            external_id=800 + sequence,
+            house="camara",
+            type_code="PL",
+            number_label=f"PL {800 + sequence}/2026",
+            number=800 + sequence,
+            year=2026,
+            presented_at=timezone.localdate() - timedelta(days=90 + sequence),
+            ementa="Proteção das mulheres",
+        )
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=organization,
+            is_favorable=True,
+            category="saude",
+        )
+        slow_favorable.append(proposition)
+
+    blocked = Proposition.objects.create(
+        external_id=899,
+        house="camara",
+        type_code="PL",
+        number_label="PL 899/2026",
+        number=899,
+        year=2026,
+        presented_at=timezone.localdate() - timedelta(days=200),
+        ementa="Proteção das mulheres",
+    )
+    forgotten = Proposition.objects.create(
+        external_id=900,
+        house="camara",
+        type_code="PL",
+        number_label="PL 900/2026",
+        number=900,
+        year=2026,
+        presented_at=timezone.localdate() - timedelta(days=360),
+        ementa="Proteção das mulheres",
+    )
+    unfavorable = Proposition.objects.create(
+        external_id=901,
+        house="camara",
+        type_code="PL",
+        number_label="PL 901/2026",
+        number=901,
+        year=2026,
+        presented_at=timezone.localdate() - timedelta(days=200),
+        ementa="Proteção das mulheres",
+    )
+    for proposition, is_favorable in ((blocked, True), (forgotten, True), (unfavorable, False)):
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=organization,
+            is_favorable=is_favorable,
+            category="saude",
+        )
+
+    response = Client().get("/api/v1/activity/slow-favorable")
+
+    assert response.status_code == 200
+    assert len(response.json()) == 50
+    assert [item["number_label"] for item in response.json()] == [
+        blocked.number_label,
+        *(proposition.number_label for proposition in reversed(slow_favorable[2:])),
+    ]
+    assert {item["celerity"]["label"] for item in response.json()} == {"Lenta", "Travada"}
+    assert all(item["is_favorable"] is True for item in response.json())
