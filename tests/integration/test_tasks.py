@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 
 import pytest
 from django.utils import timezone
@@ -8,6 +9,7 @@ from apps.subscriptions.tasks import (
     match_and_notify,
     send_alert_email,
     send_confirmation_email,
+    send_test_alert_email,
 )
 
 
@@ -83,6 +85,41 @@ class TestSendAlertEmail:
 
 
 @pytest.mark.django_db
+class TestSendTestAlertEmail:
+    def test_sends_daily_template_without_creating_delivery(self):
+        from apps.subscriptions.models import AlertDelivery
+
+        sub = _make_subscription(email="test-alert@example.com", is_active=True)
+        prop = _make_proposition(external_id=102)
+
+        with patch("apps.subscriptions.tasks._send", return_value="test-message-id") as send:
+            result = send_test_alert_email.delay(sub.pk, prop.pk)
+
+        assert result.get() == "test-message-id"
+        subject, _text, _html, recipient = send.call_args.args
+        assert subject == "[TESTE] [Elas no Congresso] Nova proposição: PL 1/2024"
+        assert recipient == sub.email
+        assert not AlertDelivery.objects.filter(subscription=sub, proposition=prop).exists()
+
+    def test_uses_weekly_template_for_weekly_subscription(self):
+        from apps.subscriptions.models import Frequency
+
+        sub = _make_subscription(
+            email="weekly-test-alert@example.com", is_active=True, frequency=Frequency.WEEKLY
+        )
+        prop = _make_proposition(external_id=103)
+
+        with patch("apps.subscriptions.tasks._send", return_value="test-message-id") as send:
+            result = send_test_alert_email.delay(sub.pk, prop.pk)
+
+        assert result.get() == "test-message-id"
+        assert (
+            send.call_args.args[0]
+            == "[TESTE] [Elas no Congresso] Resumo da semana: 1 nova proposição"
+        )
+
+
+@pytest.mark.django_db
 class TestMatchAndNotify:
     def test_matches_and_notifies(self, verified_sender):
         # token: casa_camara → subscription query must equal that token
@@ -106,8 +143,7 @@ class TestCleanupUnconfirmedSubscriptions:
         from apps.subscriptions.models import Subscription
 
         subs = [
-            _make_subscription(email=f"expired{i}@example.com", is_active=False)
-            for i in range(3)
+            _make_subscription(email=f"expired{i}@example.com", is_active=False) for i in range(3)
         ]
         old_time = timezone.now() - datetime.timedelta(hours=49)
         ids = [s.pk for s in subs]

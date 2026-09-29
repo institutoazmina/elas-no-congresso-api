@@ -61,6 +61,45 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
 
 
 @shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
+def send_test_alert_email(self, subscription_id: int, proposition_id: int):
+    """Envia a renderização real sem registrar uma entrega de produção.
+
+    Esta tarefa só é acionada pela ferramenta restrita do Django Admin. Ela
+    permite repetir o teste para a mesma proposição sem afetar `AlertDelivery`
+    nem o histórico de notificações.
+    """
+    from apps.propositions.models import Proposition
+    from apps.subscriptions.models import Frequency, Subscription
+
+    try:
+        sub = Subscription.objects.get(pk=subscription_id, is_active=True)
+        prop = Proposition.objects.get(pk=proposition_id)
+    except (Subscription.DoesNotExist, Proposition.DoesNotExist):
+        return
+
+    if sub.frequency == Frequency.WEEKLY:
+        subject = "[TESTE] [Elas no Congresso] Resumo da semana: 1 nova proposição"
+        body_text = (
+            "E-mail de teste do resumo semanal.\n\n"
+            f"- {prop.number_label} ({prop.house}): {prop.ementa[:200]}"
+        )
+        body_html = render_weekly_digest(sub, [prop])
+    else:
+        subject = f"[TESTE] [Elas no Congresso] Nova proposição: {prop.number_label}"
+        body_text = (
+            "E-mail de teste do alerta diário.\n\n"
+            f"Proposição: {prop.number_label} ({prop.year})\n"
+            f"Casa: {prop.house}\n"
+            f"Ementa: {prop.ementa[:500]}"
+        )
+        body_html = render_daily_alert(sub, prop)
+
+    message_id = _send(subject, body_text, body_html, sub.email)
+    logger.info("Test alert sent to %s for proposition %d", sub.email, proposition_id)
+    return message_id
+
+
+@shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
 def send_confirmation_email(self, subscription_id: int):
     from apps.subscriptions.models import Subscription
 

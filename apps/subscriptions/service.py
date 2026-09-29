@@ -1,4 +1,5 @@
 """Subscription matching service (adapted from POC4 for Django)."""
+
 from __future__ import annotations
 
 import json
@@ -73,6 +74,36 @@ def match_document(doc: dict, frequency: str | None = None) -> list[int]:
             matches.append(sub_id)
 
     return sorted(matches)
+
+
+def ast_matches_document(ast: dict, doc: dict) -> bool:
+    """Avalia um AST avulso com a mesma semântica do match de inscrições.
+
+    É usado pelo disparo manual do admin. Assim a pessoa pode experimentar um
+    critério sem criar uma inscrição de teste que poderia receber alertas
+    futuros.
+    """
+    if not doc:
+        return False
+
+    tokens = document_to_tsvector_tokens(doc)
+    if not tokens:
+        return False
+
+    query, needs_revalidation = ast_to_tsquery(ast)
+    with connection.cursor() as cur:
+        cur.execute(
+            "SELECT array_to_tsvector(%s::text[]) @@ %s::tsquery",
+            [sorted(set(tokens)), query],
+        )
+        (matched,) = cur.fetchone()
+
+    return bool(matched) and (not needs_revalidation or reference_matches(ast, doc))
+
+
+def ast_matches_proposition(ast: dict, proposition_id: int) -> bool:
+    """Atalho para testar um AST contra o documento de uma proposição."""
+    return ast_matches_document(ast, build_document(proposition_id))
 
 
 def match_proposition(proposition_id: int, frequency: str | None = None) -> list[int]:
