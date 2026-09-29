@@ -92,6 +92,10 @@ class TestCamaraClient:
         assert c.fetch_detail(9) == {"id": 9}
         assert c.fetch_authors(9) == [{"nome": "X"}]
 
+    def test_fetch_tramitations(self):
+        c = _client_for(CamaraClient, lambda r: httpx.Response(200, json={"dados": [{"sequencia": 1}]}))
+        assert c.fetch_tramitations(9) == [{"sequencia": 1}]
+
     def test_fetch_deputy(self):
         c = _client_for(CamaraClient, lambda r: httpx.Response(200, json={"dados": {"sexo": "F"}}))
         assert c.fetch_deputy(204554) == {"sexo": "F"}
@@ -162,6 +166,17 @@ class TestSenadoClient:
         c = _client_for(SenadoClient, handler)
         assert c.fetch_detail(5) == {"d": 1}
         assert c.fetch_movements(5) == {"Materia": {"m": 1}}
+
+    def test_fetch_process_uses_successor_endpoint(self):
+        requests = []
+
+        def handler(request):
+            requests.append(request.url.path)
+            return httpx.Response(200, json={"id": 99})
+
+        c = _client_for(SenadoClient, handler)
+        assert c.fetch_process(99) == {"id": 99}
+        assert requests == ["/dadosabertos/processo/99"]
 
     def test_fetch_texts_normalizes_single(self):
         def handler(request):

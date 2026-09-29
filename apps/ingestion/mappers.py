@@ -4,8 +4,10 @@ Substitui rename_cols_camara.py / rename_cols_senado.py / df_config.py do bot.
 Cada ``map_*`` devolve dicts prontos para ``update_or_create``/``create``.
 """
 
+import json
 import re
 from datetime import date, datetime
+from hashlib import sha256
 
 from django.utils import timezone
 
@@ -102,13 +104,45 @@ def map_camara_event(detail: dict) -> dict | None:
     if not event_at:
         return None
     return {
+        "source_event_id": _source_id("camara", status.get("sequencia"), status),
+        "source_kind": "tramitation",
         "event_at": event_at,
         "sequence": _to_int(status.get("sequencia")),
+        "title": status.get("descricaoTramitacao"),
         "description": status.get("descricaoTramitacao"),
         "situation": status.get("descricaoSituacao"),
         "dispatch": status.get("despacho"),
+        "committee_acronym": status.get("siglaOrgao"),
+        "committee_name": status.get("nomeOrgao"),
         "raw_payload": status,
     }
+
+
+def map_camara_events(tramitations: list[dict]) -> list[dict]:
+    """Normaliza todas as tramitações oficiais da Câmara."""
+    events = []
+    for tramitation in tramitations:
+        event_at = _parse_datetime(tramitation.get("dataHora"))
+        if not event_at:
+            continue
+        events.append(
+            {
+                "source_event_id": _source_id(
+                    "camara", tramitation.get("sequencia"), tramitation
+                ),
+                "source_kind": "tramitation",
+                "event_at": event_at,
+                "sequence": _to_int(tramitation.get("sequencia")),
+                "title": tramitation.get("descricaoTramitacao"),
+                "description": tramitation.get("descricaoTramitacao"),
+                "situation": tramitation.get("descricaoSituacao"),
+                "dispatch": tramitation.get("despacho"),
+                "committee_acronym": tramitation.get("siglaOrgao"),
+                "committee_name": tramitation.get("nomeOrgao"),
+                "raw_payload": tramitation,
+            }
+        )
+    return events
 
 
 def parse_camara_authors(authors: list[dict]) -> list[dict]:
@@ -169,7 +203,7 @@ def map_senado_proposition(
         "keywords": dados.get("IndexacaoMateria"),
         "full_text_url": full_text_url,
         "tramitation_url": f"https://www25.senado.leg.br/web/atividade/materias/-/materia/{external_id}",
-        "raw_payload": detail,
+        "raw_payload": {**detail, "_senado_process_id": ident.get("IdentificacaoProcesso")},
     }
 
 
@@ -220,11 +254,69 @@ def map_senado_event(movements: dict) -> dict | None:
         return None
     event_at = _parse_datetime(situacao.get("DataSituacao")) or timezone.now()
     return {
+        "source_event_id": _source_id("senado-status", situacao.get("CodigoSituacao"), situacao),
+        "source_kind": "status",
         "event_at": event_at,
+        "title": desc,
         "description": desc,
         "situation": desc,
         "raw_payload": situacao,
     }
+
+
+def map_senado_process_events(process: dict) -> list[dict]:
+    """Normaliza informes legislativos do serviço atual de processos do Senado.
+
+    Cada informe possui identificador próprio e é a unidade mais detalhada de
+    movimentação. As situações continuam no payload para contexto, mas não são
+    gravadas em paralelo para não duplicar a mesma alteração na celeridade.
+    """
+    situation_titles = {}
+    for autuacao in process.get("autuacoes", []) or []:
+        for situation in autuacao.get("situacoes", []) or []:
+            situation_titles[situation.get("idTipo")] = situation.get("descricao")
+
+    events = []
+    for autuacao in process.get("autuacoes", []) or []:
+        for report in autuacao.get("informesLegislativos", []) or []:
+            event_at = _parse_datetime(report.get("data"))
+            report_id = report.get("id")
+            if not event_at or report_id is None:
+                continue
+            committee = report.get("colegiado", {}) or {}
+            entity = report.get("enteAdministrativo", {}) or {}
+            situation_id = report.get("idSituacaoIniciada")
+            title = situation_titles.get(situation_id) or report.get("siglaSituacaoIniciada")
+            events.append(
+                {
+                    "source_event_id": f"senado-informe:{report_id}",
+                    "source_kind": "legislative_report",
+                    "event_at": event_at,
+                    "title": title or "Movimentação legislativa",
+                    "description": report.get("descricao"),
+                    "situation": title,
+                    "committee_id": _to_int(committee.get("codigo")),
+                    "committee_acronym": committee.get("sigla") or entity.get("sigla"),
+                    "committee_name": committee.get("nome") or entity.get("nome"),
+                    "raw_payload": report,
+                }
+            )
+    return events
+
+
+def map_senado_process_status(process: dict) -> dict:
+    """Campos atuais da matéria expostos pelo serviço substituto do Senado."""
+    return {
+        "current_status": process.get("situacaoAtual"),
+        "is_active": process.get("tramitando") != "Não",
+    }
+
+
+def _source_id(prefix: str, source_id, payload: dict) -> str:
+    if source_id not in (None, ""):
+        return f"{prefix}:{source_id}"
+    serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str).encode()
+    return f"{prefix}:{sha256(serialized).hexdigest()[:24]}"
 
 
 _SENADO_AUTHOR_RE = re.compile(r"^(.*?)\s*\(([^/]+)/([A-Z]{2})\)\s*$")

@@ -155,7 +155,6 @@ def send_weekly_digest():
     recent = list(
         Proposition.objects.filter(
             created_at__gte=cutoff,
-            analysis__analysis_status="succeeded",
         ).order_by("presented_at", "pk")
     )
     if not recent:

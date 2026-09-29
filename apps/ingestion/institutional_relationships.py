@@ -252,7 +252,7 @@ def _committee_membership(
     record: Mapping,
     fallback_url: str,
 ) -> CommitteeMembership:
-    role = _role(record) or "membro"
+    role = _role(record)
     start_date, end_date = _date_range(
         record,
         ("dataInicio", "DataInicio", "dataEntrada", "DataEntrada"),
@@ -262,17 +262,18 @@ def _committee_membership(
         "committee": committee,
         "parliamentarian": term.parliamentarian,
         "legislature": term.legislature_number,
-        "role": role,
         "start_date": start_date,
         "end_date": end_date,
         "is_observed_current": True,
         "source_url": _url(record, fallback_url),
     }
+    if role is not None:
+        defaults["role"] = role
     return _touch(
         CommitteeMembership,
         {"source": source, "source_key": source_key},
         defaults,
-        create_defaults={"role": role},
+        create_defaults={"role": role or "membro"},
         clear_null_fields=("end_date",) if start_date is not None else (),
     )
 

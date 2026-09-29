@@ -50,8 +50,11 @@ from .institutional_relationships import persist_official_relationships, persist
 from .mappers import (
     enrich_camara_author,
     map_camara_event,
+    map_camara_events,
     map_camara_proposition,
     map_senado_event,
+    map_senado_process_events,
+    map_senado_process_status,
     map_senado_proposition,
     parse_camara_authors,
     parse_senado_authors,
@@ -72,12 +75,13 @@ logger = logging.getLogger(__name__)
 
 
 def _persist(
-    prop_kwargs: dict, event_kwargs: dict | None, authors: list[dict], temas: list[str]
+    prop_kwargs: dict, event_kwargs: dict | list[dict] | None, authors: list[dict], temas: list[str]
 ) -> int:
-    """Upsert idempotente de uma proposição + evento + autores + temas.
+    """Upsert idempotente de uma proposição + histórico + autores + temas.
 
     Retorna o pk da Proposition. Toda a escrita roda numa transação.
     """
+    prop_kwargs = prop_kwargs.copy()
     house = prop_kwargs["house"]
     external_id = prop_kwargs.pop("external_id")
     with transaction.atomic():
@@ -85,12 +89,7 @@ def _persist(
             house=house, external_id=external_id, defaults=prop_kwargs
         )
 
-        if event_kwargs:
-            PropositionEvent.objects.update_or_create(
-                proposition=prop,
-                event_at=event_kwargs.pop("event_at"),
-                defaults=event_kwargs,
-            )
+        _persist_events(prop, event_kwargs)
 
         # Autores: substitui o conjunto a cada coleta (fonte da verdade é a API).
         prop.authors.all().delete()
@@ -123,6 +122,41 @@ def _persist(
             )
 
     return prop.pk
+
+
+def _persist_events(prop: Proposition, event_kwargs: dict | list[dict] | None) -> None:
+    """Upsert source events without rewriting proposition metadata or authors."""
+    events = event_kwargs if isinstance(event_kwargs, list) else [event_kwargs]
+    for event_kwargs in events:
+        if not event_kwargs:
+            continue
+        event_kwargs = event_kwargs.copy()
+        event_at = event_kwargs.pop("event_at")
+        source_event_id = event_kwargs.get("source_event_id")
+        if source_event_id:
+            # Eventos gravados antes do backfill não tinham chave da fonte.
+            # Reaproveita o registro idêntico para não criar um duplicado.
+            legacy = PropositionEvent.objects.filter(
+                proposition=prop,
+                source_event_id__isnull=True,
+                event_at=event_at,
+            ).first()
+            if legacy:
+                for field, value in event_kwargs.items():
+                    setattr(legacy, field, value)
+                legacy.save()
+            else:
+                PropositionEvent.objects.update_or_create(
+                    proposition=prop,
+                    source_event_id=source_event_id,
+                    defaults={"event_at": event_at, **event_kwargs},
+                )
+        else:
+            PropositionEvent.objects.update_or_create(
+                proposition=prop,
+                event_at=event_at,
+                defaults=event_kwargs,
+            )
 
 
 def _slugify(value: str) -> str:
@@ -908,7 +942,11 @@ def enrich_parliamentarian_profiles() -> dict:
                         source=house,
                         source_key=term.external_id,
                         house=house,
-                        profile_values=normalized,
+                        profile_values={
+                            key: value
+                            for key, value in normalized.items()
+                            if value is not None or key not in {"birth_date", "education", "profession"}
+                        },
                         source_url=_profile_source_url(
                             house,
                             profile,
@@ -972,9 +1010,16 @@ def ingest_camara(self):
                     for author in authors:
                         if author["external_id"]:  # deputado → busca sexo/partido/UF
                             enrich_camara_author(author, client.fetch_deputy(author["external_id"]))
+                    fetch_tramitations = getattr(client, "fetch_tramitations", None)
+                    events = map_camara_events(fetch_tramitations(prop_id)) if fetch_tramitations else []
+                    # A API pode excepcionalmente não devolver a timeline; o
+                    # status do detalhe ainda preserva a última movimentação.
+                    if not events:
+                        event = map_camara_event(detail)
+                        events = [event] if event else []
                     pk = _persist(
                         map_camara_proposition(summary, detail),
-                        map_camara_event(detail),
+                        events,
                         authors,
                         result["temas"],
                     )
@@ -1009,15 +1054,27 @@ def ingest_senado(self):
                     ident = summary.get("IdentificacaoMateria", {}) or {}
                     materia_id = int(ident.get("CodigoMateria") or summary["CodigoMateria"])
                     detail = client.fetch_detail(materia_id)
-                    movements = client.fetch_movements(materia_id)
+                    process_id = ident.get("IdentificacaoProcesso")
+                    fetch_process = getattr(client, "fetch_process", None)
+                    process = fetch_process(int(process_id)) if process_id and fetch_process else None
                     full_text_url = pick_senado_full_text_url(client.fetch_texts(materia_id))
                     # Autoria traz sexo/partido/UF; cai no texto livre se vazio.
                     authors = parse_senado_authors_from_autoria(
                         client.fetch_authors(materia_id)
                     ) or parse_senado_authors(detail, summary)
+                    prop_kwargs = map_senado_proposition(summary, detail, full_text_url)
+                    events = None
+                    if process:
+                        prop_kwargs.update(map_senado_process_status(process))
+                        events = map_senado_process_events(process)
+                    if not events:
+                        # Compatibilidade temporária para matérias sem processo
+                        # identificado no resumo legado.
+                        event = map_senado_event(client.fetch_movements(materia_id))
+                        events = [event] if event else []
                     pk = _persist(
-                        map_senado_proposition(summary, detail, full_text_url),
-                        map_senado_event(movements),
+                        prop_kwargs,
+                        events,
                         authors,
                         result["temas"],
                     )

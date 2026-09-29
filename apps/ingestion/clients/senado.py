@@ -65,6 +65,10 @@ class SenadoClient(BaseClient):
         payload = self.get_json(f"/materia/movimentacoes/{materia_id}")
         return payload.get("MovimentacaoMateria", {})
 
+    def fetch_process(self, process_id: int) -> dict:
+        """Linha do tempo da matéria no serviço substituto do Senado."""
+        return self.get_json(f"/processo/{process_id}")
+
     def fetch_texts(self, materia_id: int) -> list[dict]:
         """Documentos da matéria (inteiro teor, avulsos, relatórios…).
 

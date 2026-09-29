@@ -60,6 +60,10 @@ class CamaraClient(BaseClient):
         """Lista de autores da proposição."""
         return self.get_json(f"/proposicoes/{proposition_id}/autores").get("dados", [])
 
+    def fetch_tramitations(self, proposition_id: int) -> list[dict]:
+        """Retorna a linha do tempo oficial completa da proposição."""
+        return self.get_json(f"/proposicoes/{proposition_id}/tramitacoes").get("dados", [])
+
     def fetch_deputy(self, deputy_id: int) -> dict:
         """Detalhe de um deputado (traz ``sexo`` e ``ultimoStatus.siglaPartido``)."""
         return self.get_json(f"/deputados/{deputy_id}").get("dados", {})

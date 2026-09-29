@@ -13,6 +13,7 @@ def register_routers() -> None:
     from apps.committees.api import router as committees_router
     from apps.legislatures.api import router as legislatures_router
     from apps.norms.api import router as norms_router
+    from apps.propositions.activity import router as activity_router
     from apps.propositions.api import router as propositions_router
     from apps.propositions.dataset import router as dataset_router
     from apps.propositions.stats import router as stats_router
@@ -20,6 +21,7 @@ def register_routers() -> None:
     from apps.taxonomy.api import router as taxonomy_router
 
     api.add_router("/legislatures/", legislatures_router, tags=["Legislaturas"])
+    api.add_router("/activity/", activity_router, tags=["Atividade legislativa"])
     api.add_router("/propositions/", propositions_router, tags=["Proposições"])
     api.add_router("/dataset/", dataset_router, tags=["Dataset"])
     api.add_router("/stats/propositions/", stats_router, tags=["Estatísticas"])

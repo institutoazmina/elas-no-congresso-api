@@ -49,12 +49,20 @@ class Proposition(models.Model):
 
 class PropositionEvent(models.Model):
     proposition = models.ForeignKey(Proposition, on_delete=models.CASCADE, related_name="events")
+    # Identificador estável da API de origem. Evita duplicar o histórico em
+    # reprocessamentos diários e no backfill inicial.
+    source_event_id = models.CharField(max_length=128, null=True, blank=True)
+    source_kind = models.CharField(max_length=32, default="status")
     event_at = models.DateTimeField()
     sequence = models.IntegerField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     situation = models.TextField(null=True, blank=True)
     dispatch = models.TextField(null=True, blank=True)
     committee_id = models.BigIntegerField(null=True, blank=True)
+    committee_acronym = models.CharField(max_length=32, null=True, blank=True)
+    committee_name = models.TextField(null=True, blank=True)
+    is_countable = models.BooleanField(default=True)
     raw_payload = models.JSONField(null=True, blank=True)
 
     class Meta:
@@ -62,6 +70,14 @@ class PropositionEvent(models.Model):
         indexes = [
             models.Index(fields=["proposition", "-event_at"], name="idx_events_prop_date"),
             models.Index(fields=["-event_at"], name="idx_events_date"),
+            models.Index(fields=["proposition", "source_event_id"], name="idx_events_prop_source"),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["proposition", "source_event_id"],
+                condition=models.Q(source_event_id__isnull=False),
+                name="proposition_events_source_id",
+            )
         ]
 
 

@@ -59,6 +59,14 @@ class TestCamaraMappers:
         assert mappers.map_camara_event({"statusProposicao": {}}) is None
         assert mappers.map_camara_event({}) is None
 
+    def test_events_preserve_complete_timeline(self):
+        events = mappers.map_camara_events([
+            {"sequencia": 1, "dataHora": "2026-01-01T10:00:00", "descricaoTramitacao": "Apresentação"},
+            {"sequencia": 2, "dataHora": "2026-02-01T10:00:00", "descricaoTramitacao": "Em pauta", "siglaOrgao": "CCJ"},
+        ])
+        assert [event["source_event_id"] for event in events] == ["camara:1", "camara:2"]
+        assert events[1]["committee_acronym"] == "CCJ"
+
     def test_authors_extracts_deputy_id(self):
         authors = mappers.parse_camara_authors(
             [
@@ -109,6 +117,27 @@ class TestSenadoMappers:
     def test_event_none_when_empty(self):
         assert mappers.map_senado_event({}) is None
         assert mappers.map_senado_event({"Materia": {}}) is None
+
+    def test_process_events_use_legislative_reports_without_status_duplicates(self):
+        process = {
+            "situacaoAtual": "PRONTA PARA A PAUTA",
+            "tramitando": "Sim",
+            "autuacoes": [{
+                "situacoes": [{"idTipo": 42, "descricao": "PRONTA PARA A PAUTA"}],
+                "informesLegislativos": [{
+                    "id": 123,
+                    "data": "2026-06-12 18:04:39",
+                    "idSituacaoIniciada": 42,
+                    "descricao": "Matéria incluída em pauta.",
+                    "colegiado": {"codigo": 40, "sigla": "CAS", "nome": "Comissão de Assuntos Sociais"},
+                }],
+            }],
+        }
+        events = mappers.map_senado_process_events(process)
+        assert len(events) == 1
+        assert events[0]["source_event_id"] == "senado-informe:123"
+        assert events[0]["title"] == "PRONTA PARA A PAUTA"
+        assert mappers.map_senado_process_status(process)["current_status"] == "PRONTA PARA A PAUTA"
 
     def test_authors_parses_party_and_state(self, senado_payload):
         authors = mappers.parse_senado_authors(senado_payload["detail"], senado_payload["summary"])
