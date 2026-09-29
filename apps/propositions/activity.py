@@ -1,5 +1,6 @@
 """Public read model for legislative monitoring and celerity."""
 
+from collections.abc import Iterable
 from datetime import date, datetime
 from hashlib import sha256
 
@@ -13,6 +14,21 @@ from .models import Proposition
 router = Router()
 ACTIVITY_CACHE_TIMEOUT = 5 * 60
 FAST_CELERITY_LABELS = {"Rápida", "Tá voando"}
+
+
+def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
+    """Expire every activity response after changing data it serializes."""
+    delete_pattern = getattr(cache, "delete_pattern", None)
+    if callable(delete_pattern):
+        delete_pattern("activity:*")
+    else:
+        # LocMemCache used in tests does not implement ``delete_pattern``.
+        for cache_key in ("activity:list:5000", "activity:fast-unfavorable"):
+            cache.delete(cache_key)
+
+    for proposition in propositions:
+        cache.delete(f"activity:proposition:{proposition.pk}")
+        cache.delete(_public_identifier_cache_key(proposition.house, proposition.number_label))
 
 
 class ActivityAuthorSchema(Schema):

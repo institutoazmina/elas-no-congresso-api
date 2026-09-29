@@ -81,3 +81,6 @@ jobs:
       # novo herdando publish 172.17.0.1:8010 e colide com o web → "port already allocated".
       - name: Migrate (on server)
         run: kamal app exec --reuse --roles web "python manage.py migrate --noinput"
+
+      - name: Sync historical parliamentarian photos (on server)
+        run: kamal app exec --reuse --roles web "python manage.py sync_legacy_parliamentarian_profiles"

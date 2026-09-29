@@ -2,13 +2,16 @@ from datetime import timedelta
 
 import pytest
 from django.core.cache import cache
+from django.core.management import call_command
 from django.test import Client
 from django.utils import timezone
 
+from apps.legislatures.models import Parliamentarian
 from apps.propositions.models import (
     AssessmentOrganization,
     Proposition,
     PropositionAnnotation,
+    PropositionAuthor,
     PropositionEvent,
 )
 
@@ -108,6 +111,49 @@ def test_activity_by_number_is_cached():
     assert first.status_code == 200
     assert cached.status_code == 200
     assert len(cached.json()["events"]) == 1
+
+
+@pytest.mark.django_db
+def test_legacy_profile_sync_adds_missing_author_photo_to_activity(tmp_path):
+    photo_url = "https://www.camara.leg.br/internet/deputado/bandep/74052.jpg"
+    csv_path = tmp_path / "parlamentares.csv"
+    csv_path.write_text(
+        "nome,numero,foto,genero,partido,cargo,estado,legislatura\n"
+        f'"Bosco Costa",74052,{photo_url},M,PROS,Deputado,SE,56.57\n',
+        encoding="utf-8",
+    )
+    parliamentarian = Parliamentarian.objects.create(full_name="Bosco Costa", gender="M")
+    proposition = Proposition.objects.create(
+        external_id=505,
+        house="camara",
+        type_code="PL",
+        number_label="PL 505/2020",
+        number=505,
+        year=2020,
+        presented_at=timezone.localdate(),
+        ementa="Proteção das mulheres",
+    )
+    PropositionAuthor.objects.create(proposition=proposition, parliamentarian=parliamentarian)
+
+    initial = Client().get(f"/api/v1/activity/{proposition.pk}")
+    assert initial.json()["authors"][0]["photo_url"] is None
+
+    call_command("sync_legacy_parliamentarian_profiles", csv_path=str(csv_path))
+
+    response = Client().get(f"/api/v1/activity/{proposition.pk}")
+
+    assert response.status_code == 200
+    assert response.json()["authors"] == [
+        {
+            "id": parliamentarian.pk,
+            "name": "Bosco Costa",
+            "party": None,
+            "state": None,
+            "gender": "M",
+            "photo_url": photo_url,
+            "role": None,
+        }
+    ]
 
 
 @pytest.mark.django_db
