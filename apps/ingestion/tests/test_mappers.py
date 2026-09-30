@@ -87,6 +87,26 @@ class TestCamaraMappers:
         assert author["party"] == "PT"
         assert author["state"] == "SP"
 
+    def test_enactment_uses_terminal_status_and_timeline_law(self):
+        detail = {
+            "statusProposicao": {
+                "codSituacao": 1140,
+                "dataHora": "2026-08-07T12:00:00",
+            }
+        }
+        tramitations = [{
+            "codSituacao": 1140,
+            "dataHora": "2026-08-07T12:00:00",
+            "descricaoTramitacao": "Transformado na Lei Ordinária 15.421/2026.",
+        }]
+
+        assert mappers.map_camara_enactment(detail, tramitations) == {
+            "enacted_law_type": "Lei Ordinária",
+            "enacted_law_number": 15421,
+            "enacted_law_year": 2026,
+            "enacted_at": date(2026, 8, 7),
+        }
+
 
 class TestMapGender:
     def test_variants(self):
@@ -139,6 +159,38 @@ class TestSenadoMappers:
         assert events[0]["title"] == "PRONTA PARA A PAUTA"
         assert mappers.map_senado_process_status(process)["current_status"] == "PRONTA PARA A PAUTA"
 
+    def test_process_status_and_enactment_use_official_senado_status(self):
+        process = {
+            "situacaoAtual": "TRANSFORMADA EM NORMA JURÍDICA COM VETO PARCIAL",
+            "tramitando": "Não",
+            "autuacoes": [{
+                "situacoes": [{
+                    "idTipo": 92,
+                    "descricao": "TRANSFORMADA EM NORMA JURÍDICA COM VETO PARCIAL",
+                }],
+                "informesLegislativos": [{
+                    "id": 456,
+                    "data": "2026-08-07 12:00:00",
+                    "idSituacaoIniciada": 92,
+                    "descricao": "Transformada na Lei Ordinária nº 15.421, de 2026.",
+                }],
+            }],
+        }
+
+        assert mappers.map_senado_process_status(process) == {
+            "current_status": "TRANSFORMADA EM NORMA JURÍDICA COM VETO PARCIAL",
+            "current_status_code": 92,
+            "is_active": False,
+        }
+        assert mappers.map_senado_enactment(process) == {
+            "enacted_law_type": "Lei Ordinária",
+            "enacted_law_number": 15421,
+            "enacted_law_year": 2026,
+            "enacted_at": date(2026, 8, 7),
+        }
+
+
+class TestSenadoAuthorMappers:
     def test_authors_parses_party_and_state(self, senado_payload):
         authors = mappers.parse_senado_authors(senado_payload["detail"], senado_payload["summary"])
         assert len(authors) == 1

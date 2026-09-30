@@ -64,6 +64,34 @@ def _parse_datetime(val: str | None) -> datetime | None:
 
 
 _DEPUTY_ID_RE = re.compile(r"/deputados/(\d+)")
+_LAW_RE = re.compile(
+    r"\b(?P<type>lei(?:\s+(?:complementar|ordin[áa]ria))?)\s*"
+    r"(?:n[ºo°.]?\s*)?(?P<number>\d[\d.]*)\s*(?:/|,?\s+de\s+)(?P<year>\d{4})",
+    re.IGNORECASE,
+)
+_SENADO_ENACTED_STATUS_CODES = {64, 92}
+
+
+def _law_metadata(texts: list[object], enacted_at: date | None) -> dict | None:
+    """Extract a law identifier explicitly present in an official event."""
+    for text in texts:
+        if not isinstance(text, str):
+            continue
+        match = _LAW_RE.search(text)
+        if not match:
+            continue
+        number = _to_int(match.group("number").replace(".", ""))
+        year = _to_int(match.group("year"))
+        if number is None or year is None or enacted_at is None:
+            continue
+        law_type = " ".join(match.group("type").split()).title()
+        return {
+            "enacted_law_type": law_type,
+            "enacted_law_number": number,
+            "enacted_law_year": year,
+            "enacted_at": enacted_at,
+        }
+    return None
 
 
 # ── Câmara ───────────────────────────────────────────────────────────────────
@@ -143,6 +171,31 @@ def map_camara_events(tramitations: list[dict]) -> list[dict]:
             }
         )
     return events
+
+
+def map_camara_enactment(detail: dict, tramitations: list[dict]) -> dict | None:
+    """Extract confirmed enactment metadata from the official Câmara timeline."""
+    status = detail.get("statusProposicao", {}) or {}
+    if _to_int(status.get("codSituacao")) != 1140:
+        return None
+
+    terminal = next(
+        (
+            tramitation
+            for tramitation in reversed(tramitations)
+            if _to_int(tramitation.get("codSituacao")) == 1140
+        ),
+        status,
+    )
+    enacted_at = _parse_date(terminal.get("dataHora") or status.get("dataHora"))
+    return _law_metadata(
+        [
+            terminal.get("descricaoTramitacao"),
+            terminal.get("despacho"),
+            terminal.get("descricaoSituacao"),
+        ],
+        enacted_at,
+    )
 
 
 def parse_camara_authors(authors: list[dict]) -> list[dict]:
@@ -304,12 +357,49 @@ def map_senado_process_events(process: dict) -> list[dict]:
     return events
 
 
+def _senado_current_situation(process: dict) -> dict:
+    current_status = process.get("situacaoAtual")
+    if not current_status:
+        return {}
+    normalized_status = " ".join(str(current_status).split()).casefold()
+    for autuacao in process.get("autuacoes", []) or []:
+        for situation in autuacao.get("situacoes", []) or []:
+            description = " ".join(str(situation.get("descricao") or "").split()).casefold()
+            if description == normalized_status:
+                return situation
+    return {}
+
+
 def map_senado_process_status(process: dict) -> dict:
     """Campos atuais da matéria expostos pelo serviço substituto do Senado."""
+    situation = _senado_current_situation(process)
     return {
         "current_status": process.get("situacaoAtual"),
+        "current_status_code": _to_int(situation.get("idTipo")),
         "is_active": process.get("tramitando") != "Não",
     }
+
+
+def map_senado_enactment(process: dict) -> dict | None:
+    """Extract confirmed enactment metadata from the official Senado process."""
+    situation = _senado_current_situation(process)
+    status_code = _to_int(situation.get("idTipo"))
+    if status_code not in _SENADO_ENACTED_STATUS_CODES:
+        return None
+
+    reports = []
+    for autuacao in process.get("autuacoes", []) or []:
+        for report in autuacao.get("informesLegislativos", []) or []:
+            if _to_int(report.get("idSituacaoIniciada")) == status_code:
+                reports.append(report)
+    if not reports:
+        return None
+
+    report = max(reports, key=lambda item: item.get("data") or "")
+    return _law_metadata(
+        [report.get("descricao"), report.get("siglaSituacaoIniciada")],
+        _parse_date(report.get("data")),
+    )
 
 
 def _source_id(prefix: str, source_id, payload: dict) -> str:

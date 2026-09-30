@@ -23,6 +23,10 @@ class Proposition(models.Model):
     scope = models.TextField(null=True, blank=True)
     appreciation_mode = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    enacted_law_type = models.TextField(null=True, blank=True)
+    enacted_law_number = models.IntegerField(null=True, blank=True)
+    enacted_law_year = models.SmallIntegerField(null=True, blank=True)
+    enacted_at = models.DateField(null=True, blank=True)
     originating_house = models.CharField(
         max_length=10, choices=House.choices, null=True, blank=True
     )

@@ -214,6 +214,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.ingestion.tasks.ingest_senado",
         "schedule": crontab(hour=6, minute=10),
     },
+    "refresh-enacted-proposition-statuses-daily": {
+        "task": "apps.ingestion.tasks.refresh_enacted_proposition_statuses",
+        "schedule": crontab(hour=6, minute=30),
+    },
     # Depois das duas coletas, para o resumo já sair com a semana inteira.
     "weekly-digest": {
         "task": "apps.subscriptions.tasks.send_weekly_digest",

@@ -306,3 +306,94 @@ def test_slow_favorable_activity_returns_the_50_most_inactive_qualifying_proposi
     ]
     assert {item["celerity"]["label"] for item in response.json()} == {"Lenta", "Travada"}
     assert all(item["is_favorable"] is True for item in response.json())
+
+
+@pytest.mark.django_db
+def test_enacted_projects_returns_a_shared_complete_contract_for_both_houses():
+    organization = AssessmentOrganization.objects.create(name="AzMina")
+    propositions = [
+        Proposition.objects.create(
+            external_id=1001,
+            house="camara",
+            type_code="PL",
+            number_label="PL 1001/2026",
+            number=1001,
+            year=2026,
+            presented_at=timezone.localdate(),
+            ementa="Proteção das mulheres",
+            current_status="Transformado em Norma Jurídica",
+            current_status_code=1140,
+            enacted_law_type="Lei Ordinária",
+            enacted_law_number=15421,
+            enacted_law_year=2026,
+            enacted_at=timezone.localdate(),
+        ),
+        Proposition.objects.create(
+            external_id=1002,
+            house="senado",
+            type_code="PLS",
+            number_label="PLS 1002/2026",
+            number=1002,
+            year=2026,
+            presented_at=timezone.localdate(),
+            ementa="Combate à violência contra a mulher",
+            current_status="TRANSFORMADA EM NORMA JURÍDICA COM VETO PARCIAL",
+            current_status_code=92,
+            enacted_law_type="Lei Ordinária",
+            enacted_law_number=15420,
+            enacted_law_year=2026,
+            enacted_at=timezone.localdate() - timedelta(days=1),
+        ),
+    ]
+    for proposition, is_favorable in zip(propositions, (True, False), strict=True):
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=organization,
+            is_favorable=is_favorable,
+            category="saude",
+        )
+
+    response = Client().get("/api/v1/activity/enacted-projects", {"limit": 1})
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "id": propositions[0].pk,
+            "house": "camara",
+            "number_label": "PL 1001/2026",
+            "ementa": "Proteção das mulheres",
+            "presented_at": timezone.localdate().isoformat(),
+            "current_status": "Transformado em Norma Jurídica",
+            "tramitation_url": None,
+            "category": "saude",
+            "is_favorable": True,
+            "assessment_organization": "AzMina",
+            "assessment_comments": None,
+            "relevance": "relevante",
+            "authors": [],
+            "celerity": {
+                "label": "Rápida",
+                "days_without_movement": 0,
+                "movements_last_90_days": 0,
+                "last_event_at": None,
+            },
+            "events": [],
+            "assessment_label": "favorável",
+            "enactment": {
+                "status_code": 1140,
+                "status": "Transformado em Norma Jurídica",
+                "law_label": "Lei Ordinária 15.421/2026",
+                "law_type": "Lei Ordinária",
+                "law_number": 15421,
+                "law_year": 2026,
+                "enacted_at": timezone.localdate().isoformat(),
+            },
+        }
+    ]
+
+    response = Client().get("/api/v1/activity/enacted-projects")
+    items = response.json()
+    assert [item["house"] for item in items] == ["camara", "senado"]
+    assert set(items[0]) == set(items[1])
+    assert items[1]["assessment_label"] == "desfavorável"
+    assert items[1]["enactment"]["status_code"] == 92

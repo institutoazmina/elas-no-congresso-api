@@ -49,9 +49,11 @@ from .clients.tse import TSEClient
 from .institutional_relationships import persist_official_relationships, persist_senado_fronts
 from .mappers import (
     enrich_camara_author,
+    map_camara_enactment,
     map_camara_event,
     map_camara_events,
     map_camara_proposition,
+    map_senado_enactment,
     map_senado_event,
     map_senado_process_events,
     map_senado_process_status,
@@ -1104,6 +1106,90 @@ def _finish(run: IngestionRun, status: str, error: str | None = None):
         run.upserted_count,
         run.error_count,
     )
+
+
+# ── atualização de promulgações ──────────────────────────────────────────────
+
+_ENACTMENT_FIELDS = (
+    "enacted_law_type",
+    "enacted_law_number",
+    "enacted_law_year",
+    "enacted_at",
+)
+
+
+def _enactment_fields(enactment: dict | None) -> dict:
+    return enactment or dict.fromkeys(_ENACTMENT_FIELDS)
+
+
+def refresh_enacted_propositions(queryset=None) -> dict:
+    """Refresh official statuses for every proposition with a human assessment.
+
+    The daily Senate listing excludes closed matters, so this refresh follows the
+    saved process identifier instead of relying on ``/materia/tramitando``.
+    """
+    if queryset is None:
+        queryset = (
+            Proposition.objects.filter(annotations__is_favorable__isnull=False)
+            .distinct()
+            .order_by("pk")
+        )
+
+    stats = {"processed": 0, "enacted": 0, "events": 0, "failed": 0}
+    changed = []
+    with CamaraClient() as camara, SenadoClient() as senado:
+        for proposition in queryset:
+            try:
+                if proposition.house == "camara":
+                    detail = camara.fetch_detail(proposition.external_id)
+                    tramitations = camara.fetch_tramitations(proposition.external_id)
+                    fields = map_camara_proposition({}, detail)
+                    fields = {
+                        "current_status": fields["current_status"],
+                        "current_status_code": fields["current_status_code"],
+                        "is_active": fields.get("is_active", proposition.is_active),
+                        **_enactment_fields(map_camara_enactment(detail, tramitations)),
+                    }
+                    events = map_camara_events(tramitations)
+                else:
+                    process_id = (proposition.raw_payload or {}).get("_senado_process_id")
+                    if not process_id:
+                        logger.warning("Matéria Senado sem processo: proposition=%s", proposition.pk)
+                        stats["failed"] += 1
+                        continue
+                    process = senado.fetch_process(int(process_id))
+                    fields = {
+                        **map_senado_process_status(process),
+                        **_enactment_fields(map_senado_enactment(process)),
+                    }
+                    events = map_senado_process_events(process)
+
+                with transaction.atomic():
+                    for field, value in fields.items():
+                        setattr(proposition, field, value)
+                    proposition.save(update_fields=[*fields, "updated_at"])
+                    _persist_events(proposition, events)
+
+                stats["processed"] += 1
+                stats["events"] += len(events)
+                if fields["enacted_at"]:
+                    stats["enacted"] += 1
+                changed.append(proposition)
+            except Exception:
+                stats["failed"] += 1
+                logger.exception("Falha ao atualizar promulgação da proposição %s", proposition.pk)
+
+    if changed:
+        from apps.propositions.activity import invalidate_activity_cache
+
+        invalidate_activity_cache(changed)
+    return stats
+
+
+@shared_task
+def refresh_enacted_proposition_statuses() -> dict:
+    """Scheduled official refresh for monitored propositions, including closed Senate matters."""
+    return refresh_enacted_propositions()
 
 
 # ── classificação (QuitérIA 2.0) ─────────────────────────────────────────────

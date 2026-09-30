@@ -5,6 +5,7 @@ from datetime import date, datetime
 from hashlib import sha256
 
 from django.core.cache import cache
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from ninja import Router, Schema
 
@@ -26,6 +27,8 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
         # LocMemCache used in tests does not implement ``delete_pattern``.
         for cache_key in ("activity:list:5000", "activity:fast-unfavorable", "activity:slow-favorable"):
             cache.delete(cache_key)
+        for limit in range(1, 51):
+            cache.delete(f"activity:enacted-projects:{limit}")
 
     for proposition in propositions:
         cache.delete(f"activity:proposition:{proposition.pk}")
@@ -75,6 +78,21 @@ class ActivityPropositionSchema(Schema):
     authors: list[ActivityAuthorSchema]
     celerity: CeleritySchema
     events: list[ActivityEventSchema]
+
+
+class EnactmentSchema(Schema):
+    status_code: int
+    status: str
+    law_label: str
+    law_type: str
+    law_number: int
+    law_year: int
+    enacted_at: date
+
+
+class EnactedProjectSchema(ActivityPropositionSchema):
+    assessment_label: str
+    enactment: EnactmentSchema
 
 
 def _selected_annotation(proposition):
@@ -138,6 +156,26 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
             for event in shown_events
         ],
     }
+
+
+def _law_label(proposition: Proposition) -> str:
+    number = f"{proposition.enacted_law_number:,}".replace(",", ".")
+    return f"{proposition.enacted_law_type} {number}/{proposition.enacted_law_year}"
+
+
+def _serialize_enacted(proposition: Proposition) -> dict:
+    activity = _serialize(proposition, event_limit=0)
+    activity["assessment_label"] = "favorável" if activity["is_favorable"] else "desfavorável"
+    activity["enactment"] = {
+        "status_code": proposition.current_status_code,
+        "status": proposition.current_status,
+        "law_label": _law_label(proposition),
+        "law_type": proposition.enacted_law_type,
+        "law_number": proposition.enacted_law_number,
+        "law_year": proposition.enacted_law_year,
+        "enacted_at": proposition.enacted_at,
+    }
+    return activity
 
 
 def _queryset():
@@ -237,6 +275,36 @@ def list_slow_favorable_activity(request):
 
     activity.sort(key=lambda item: item["celerity"]["days_without_movement"], reverse=True)
     return _cache_activity_collection(cache_key, activity[:50])
+
+
+@router.get("/enacted-projects", response=list[EnactedProjectSchema])
+def list_enacted_projects(request, limit: int = 50):
+    """Up to 50 assessed propositions officially transformed into a complete law."""
+    limit = min(max(limit, 1), 50)
+    cache_key = f"activity:enacted-projects:{limit}"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    enacted_statuses = Q(house="camara", current_status_code=1140) | Q(
+        house="senado", current_status_code__in=(64, 92)
+    )
+    propositions = (
+        _queryset()
+        .filter(enacted_statuses, annotations__is_favorable__isnull=False)
+        .filter(
+            enacted_law_type__isnull=False,
+            enacted_law_number__isnull=False,
+            enacted_law_year__isnull=False,
+            enacted_at__isnull=False,
+        )
+        .distinct()
+        .order_by("-enacted_at", "-pk")[:limit]
+    )
+    return _cache_activity_collection(
+        cache_key,
+        [_serialize_enacted(proposition) for proposition in propositions],
+    )
 
 
 @router.get("/by-number", response=ActivityPropositionSchema)

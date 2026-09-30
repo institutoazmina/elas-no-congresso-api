@@ -9,7 +9,7 @@ from django.utils import timezone
 from apps.ingestion import tasks
 from apps.ingestion.models import IngestionRun
 from apps.legislatures.models import Legislature, Parliamentarian, ParliamentarianTerm, Party
-from apps.propositions.models import Proposition
+from apps.propositions.models import AssessmentOrganization, Proposition, PropositionAnnotation
 from apps.taxonomy.models import PropositionTheme
 
 # ── fake clients ──────────────────────────────────────────────────────────────
@@ -81,6 +81,54 @@ def _camara_kwargs():
         "presented_at": "2024-01-01",
         "ementa": "Sobre violência contra a mulher",
     }
+
+
+class _RefreshCamara:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def fetch_detail(self, _external_id):
+        return {
+            "statusProposicao": {
+                "codSituacao": 1140,
+                "descricaoSituacao": "Transformado em Norma Jurídica",
+                "dataHora": "2026-08-07T12:00:00",
+            }
+        }
+
+    def fetch_tramitations(self, _external_id):
+        return [{
+            "sequencia": 1,
+            "codSituacao": 1140,
+            "dataHora": "2026-08-07T12:00:00",
+            "descricaoTramitacao": "Transformado na Lei Ordinária 15.421/2026.",
+        }]
+
+
+class _RefreshSenado:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def fetch_process(self, _process_id):
+        return {
+            "situacaoAtual": "TRANSFORMADA EM NORMA JURÍDICA",
+            "tramitando": "Não",
+            "autuacoes": [{
+                "situacoes": [{"idTipo": 64, "descricao": "TRANSFORMADA EM NORMA JURÍDICA"}],
+                "informesLegislativos": [{
+                    "id": 2,
+                    "data": "2026-08-08 12:00:00",
+                    "idSituacaoIniciada": 64,
+                    "descricao": "Transformada na Lei Ordinária nº 15.422, de 2026.",
+                }],
+            }],
+        }
 
 
 def _make_term(*, external_id, house, start_date, end_date, parliamentarian=None, legislature=57):
@@ -598,6 +646,41 @@ def test_profile_enrichment_is_scheduled_at_03_brt():
     assert schedule["schedule"].hour == {3}
     assert schedule["schedule"].minute == {0}
     assert base.CELERY_TIMEZONE == "America/Sao_Paulo"
+
+
+@pytest.mark.django_db
+def test_refresh_enacted_propositions_updates_camara_and_closed_senado(monkeypatch):
+    organization = AssessmentOrganization.objects.create(name="AzMina")
+    camara = Proposition.objects.create(**_camara_kwargs())
+    senado = Proposition.objects.create(
+        house="senado",
+        external_id=777002,
+        type_code="PLS",
+        number_label="PLS 2/2024",
+        number=2,
+        year=2024,
+        presented_at="2024-01-01",
+        ementa="Sobre violência contra a mulher",
+        raw_payload={"_senado_process_id": 99},
+    )
+    for proposition in (camara, senado):
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=organization,
+            is_favorable=True,
+            category="saude",
+        )
+
+    monkeypatch.setattr(tasks, "CamaraClient", _RefreshCamara)
+    monkeypatch.setattr(tasks, "SenadoClient", _RefreshSenado)
+    result = tasks.refresh_enacted_propositions([camara, senado])
+
+    camara.refresh_from_db()
+    senado.refresh_from_db()
+    assert result == {"processed": 2, "enacted": 2, "events": 2, "failed": 0}
+    assert (camara.current_status_code, camara.enacted_law_number) == (1140, 15421)
+    assert (senado.current_status_code, senado.enacted_law_number) == (64, 15422)
+    assert senado.is_active is False
 
 
 @pytest.mark.django_db
