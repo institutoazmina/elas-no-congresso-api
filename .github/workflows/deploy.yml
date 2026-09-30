@@ -82,8 +82,8 @@ jobs:
       - name: Migrate (on server)
         run: kamal app exec --reuse --roles web "python manage.py migrate --noinput"
 
-      - name: Refresh enacted propositions (on server)
-        run: kamal app exec --reuse --roles web "python manage.py refresh_enacted_propositions"
+      - name: Queue enacted-proposition refresh (on server)
+        run: kamal app exec --reuse --roles web "python manage.py shell -c 'from apps.ingestion.tasks import refresh_enacted_proposition_statuses; refresh_enacted_proposition_statuses.delay()'"
 
       - name: Sync historical parliamentarian photos (on server)
         run: kamal app exec --reuse --roles web "python manage.py sync_legacy_parliamentarian_profiles"
