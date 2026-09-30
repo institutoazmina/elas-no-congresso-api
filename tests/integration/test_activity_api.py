@@ -52,6 +52,7 @@ def test_activity_endpoints_return_celerity_preview_and_full_history():
 
     client = Client()
     listing = client.get("/api/v1/activity/")
+    compact_listing = client.get("/api/v1/activity/", {"include_events": "false"})
     detail = client.get(f"/api/v1/activity/{proposition.pk}")
     by_number = client.get(
         "/api/v1/activity/by-number",
@@ -66,6 +67,9 @@ def test_activity_endpoints_return_celerity_preview_and_full_history():
     assert listing.status_code == 200
     assert listing.json()[0]["celerity"]["label"] == "Tá voando"
     assert len(listing.json()[0]["events"]) == 3
+    assert compact_listing.status_code == 200
+    assert compact_listing.json()[0]["events"] == []
+    assert len(compact_listing.content) < len(listing.content)
     assert detail.status_code == 200
     assert detail.json()["events"][0]["committee_acronym"] == "CCJ"
     assert detail.json()["events"][0]["title"] == "Em pauta"

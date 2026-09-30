@@ -25,7 +25,13 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
         delete_pattern("activity:*")
     else:
         # LocMemCache used in tests does not implement ``delete_pattern``.
-        for cache_key in ("activity:list:5000", "activity:fast-unfavorable", "activity:slow-favorable"):
+        for cache_key in (
+            "activity:list:5000",
+            _activity_list_cache_key(5000, include_events=True),
+            _activity_list_cache_key(5000, include_events=False),
+            "activity:fast-unfavorable",
+            "activity:slow-favorable",
+        ):
             cache.delete(cache_key)
         for limit in range(1, 51):
             cache.delete(f"activity:enacted-projects:{limit}")
@@ -202,6 +208,10 @@ def _cache_activity_collection(cache_key: str, activity: list[dict]) -> list[dic
     return activity
 
 
+def _activity_list_cache_key(limit: int, *, include_events: bool) -> str:
+    return f"activity:list:{limit}:events:{int(include_events)}"
+
+
 def _activity_for_proposition(proposition_id: int) -> dict:
     cached = _cached_activity(proposition_id)
     if cached is not None:
@@ -217,15 +227,16 @@ def _public_identifier_cache_key(house: str, number_label: str) -> str:
 
 
 @router.get("", response=list[ActivityPropositionSchema])
-def list_activity(request, limit: int = 5000):
-    """All monitored proposals with celerity and their five latest events."""
+def list_activity(request, limit: int = 5000, include_events: bool = True):
+    """All monitored proposals; event history is optional for compact listings."""
     limit = min(max(limit, 1), 5000)
-    cache_key = f"activity:list:{limit}"
+    cache_key = _activity_list_cache_key(limit, include_events=include_events)
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
-    activity = [_serialize(proposition, event_limit=5) for proposition in _queryset().order_by("-presented_at")[:limit]]
+    event_limit = 5 if include_events else 0
+    activity = [_serialize(proposition, event_limit=event_limit) for proposition in _queryset().order_by("-presented_at")[:limit]]
     cache.set(cache_key, activity, ACTIVITY_CACHE_TIMEOUT)
     return activity
 
