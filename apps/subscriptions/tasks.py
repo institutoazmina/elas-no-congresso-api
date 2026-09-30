@@ -45,7 +45,8 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
     unsubscribe_url = f"{base_url}/api/v1/subscriptions/unsubscribe/{sub.unsubscribe_token}"
     prop_url = f"{base_url}/api/v1/propositions/{prop.pk}"
 
-    subject = f"[Elas no Congresso] Nova proposição: {prop.number_label}"
+    pl_identifier = prop.number_label.removeprefix("PL ")
+    subject = f"O PL {pl_identifier} que vc acompanha tem novidade"
     body_text = (
         f"Proposição: {prop.number_label} ({prop.year})\n"
         f"Casa: {prop.house}\n"
@@ -111,7 +112,7 @@ def send_confirmation_email(self, subscription_id: int):
     base_url = settings.SITE_BASE_URL.rstrip("/")
     confirm_url = f"{base_url}/api/v1/subscriptions/confirm/{sub.confirm_token}"
 
-    subject = "[Elas no Congresso] Confirme sua inscricao de alertas"
+    subject = "Confirme sua inscrição em nossos alertas"
     body_text = (
         f"Clique no link abaixo para confirmar sua inscricao:\n\n{confirm_url}\n\n"
         "O link expira em 48 horas."

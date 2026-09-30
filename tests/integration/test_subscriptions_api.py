@@ -226,7 +226,8 @@ def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
 
     # O único e-mail é a confirmação enviada no cadastro; ainda não há alerta.
     assert len(outbox) == 1
-    assert "Confirme sua inscricao" in outbox[0].subject
+    assert outbox[0].subject == "Confirme sua inscrição em nossos alertas"
+    assert outbox[0].from_email == "Elas no Congresso <alertas@elasnocongresso.local>"
 
     response = client.get(f"/api/v1/subscriptions/confirm/{subscription.confirm_token}")
     assert response["Location"] == f"{SITE_ORIGIN}/?subscription=confirmado"
@@ -246,7 +247,7 @@ def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
 
     assert len(outbox) == 2
     assert outbox[1].to == ["confirmacao@example.org"]
-    assert "PL 2/2026" in outbox[1].subject
+    assert outbox[1].subject == "O PL 2/2026 que vc acompanha tem novidade"
 
 
 @pytest.mark.django_db

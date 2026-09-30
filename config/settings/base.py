@@ -262,8 +262,8 @@ AWS_SES_FROM_EMAIL = config("AWS_SES_FROM_EMAIL", default="alertas@elasnocongres
 # Boto3 usa sua credential provider chain (incluindo a instance role do EC2).
 # dev/test apontam o cliente SES para um mock e injetam chaves fictícias.
 EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
-DEFAULT_FROM_EMAIL = AWS_SES_FROM_EMAIL
-SERVER_EMAIL = AWS_SES_FROM_EMAIL
+DEFAULT_FROM_EMAIL = f"Elas no Congresso <{AWS_SES_FROM_EMAIL}>"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ANYMAIL = {
     "AMAZON_SES_CLIENT_PARAMS": {
         "region_name": AWS_DEFAULT_REGION,
