@@ -1,0 +1,58 @@
+name: Enrich parliamentarian religions
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Simular sem atualizar a base"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enrich-parliamentarian-religions-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+      SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+      KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+      KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install Kamal
+        run: gem install kamal -v 2.12.0
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Trust EC2 host key
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          ssh-keygen -R "$DEPLOY_HOST" 2>/dev/null || true
+          ssh-keyscan "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Enrich religions
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="--dry-run"; fi
+          echo "Executando: python manage.py import_parliamentarian_religions $ARGS"
+          kamal app exec --reuse --roles web "python manage.py import_parliamentarian_religions $ARGS"
