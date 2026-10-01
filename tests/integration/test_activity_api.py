@@ -10,15 +10,23 @@ from apps.legislatures.models import Parliamentarian
 from apps.propositions.models import (
     AssessmentOrganization,
     Proposition,
+    PropositionAnalysis,
     PropositionAnnotation,
     PropositionAuthor,
     PropositionEvent,
 )
+from apps.taxonomy.models import PropositionTheme, Theme
 
 
 @pytest.fixture(autouse=True)
 def clear_activity_cache():
     cache.clear()
+
+
+@pytest.fixture(autouse=True)
+def published_activity_fixture_defaults(monkeypatch):
+    """Os cenários legados deste módulo descrevem proposições já publicadas."""
+    monkeypatch.setattr(Proposition._meta.get_field("is_approved"), "default", True)
     yield
     cache.clear()
 
@@ -78,6 +86,83 @@ def test_activity_endpoints_return_celerity_preview_and_full_history():
     assert by_number.status_code == 200
     assert by_number.json()["id"] == proposition.pk
     assert cors_by_number["Access-Control-Allow-Origin"] == "https://www.elasnocongresso.com.br"
+
+
+@pytest.mark.django_db
+def test_activity_only_exposes_approved_supported_types_and_automatic_quiteria_assessment():
+    visible = Proposition.objects.create(
+        external_id=7799,
+        house="camara",
+        type_code="PL",
+        number_label="PL 7799/2026",
+        number=7799,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Proteção contra violência de gênero",
+        is_approved=True,
+    )
+    PropositionAnalysis.objects.create(
+        proposition=visible,
+        analysis_status=PropositionAnalysis.Status.SUCCEEDED,
+        classification=1,
+        theme_category="violencias_de_genero",
+    )
+    theme = Theme.objects.create(slug="violencia-domestica", name="Violência Doméstica")
+    PropositionTheme.objects.create(proposition=visible, theme=theme)
+    pending = Proposition.objects.create(
+        external_id=7800,
+        house="camara",
+        type_code="PL",
+        number_label="PL 7800/2026",
+        number=7800,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Ainda sem curadoria",
+        is_approved=False,
+    )
+    unsupported = Proposition.objects.create(
+        external_id=7801,
+        house="camara",
+        type_code="SBT",
+        number_label="SBT 1/2026",
+        number=1,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Documento acessório",
+        is_approved=True,
+    )
+
+    response = Client().get("/api/v1/activity/", {"include_events": "false"})
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "id": visible.pk,
+            "house": "camara",
+            "number_label": "PL 7799/2026",
+            "ementa": "Proteção contra violência de gênero",
+            "presented_at": timezone.localdate().isoformat(),
+            "current_status": None,
+            "tramitation_url": None,
+            "category": "violencias_de_genero",
+            "category_label": "Violências de Gênero",
+            "themes": ["Violência Doméstica"],
+            "is_favorable": False,
+            "assessment_organization": "QuitérIA",
+            "assessment_comments": None,
+            "relevance": None,
+            "authors": [],
+            "celerity": {
+                "label": "Rápida",
+                "days_without_movement": 0,
+                "movements_last_90_days": 0,
+                "last_event_at": None,
+            },
+            "events": [],
+        }
+    ]
+    assert Client().get(f"/api/v1/activity/{pending.pk}").status_code == 404
+    assert Client().get(f"/api/v1/activity/{unsupported.pk}").status_code == 404
 
 
 @pytest.mark.django_db
@@ -370,6 +455,8 @@ def test_enacted_projects_returns_a_shared_complete_contract_for_both_houses():
             "current_status": "Transformado em Norma Jurídica",
             "tramitation_url": None,
             "category": "saude",
+            "category_label": "Saúde",
+            "themes": [],
             "is_favorable": True,
             "assessment_organization": "AzMina",
             "assessment_comments": None,

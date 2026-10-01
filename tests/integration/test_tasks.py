@@ -16,17 +16,18 @@ from apps.subscriptions.tasks import (
 def _make_proposition(**kwargs):
     from apps.propositions.models import Proposition
 
-    defaults = dict(
-        house="camara",
-        external_id=1,
-        type_code="pl",
-        number_label="PL 1/2024",
-        number=1,
-        year=2024,
-        presented_at=datetime.date(2024, 1, 1),
-        ementa="Ementa de teste",
-        current_status="Em tramitação",
-    )
+    defaults = {
+        "house": "camara",
+        "external_id": 1,
+        "type_code": "pl",
+        "number_label": "PL 1/2024",
+        "number": 1,
+        "year": 2024,
+        "presented_at": datetime.date(2024, 1, 1),
+        "ementa": "Ementa de teste",
+        "current_status": "Em tramitação",
+        "is_approved": True,
+    }
     defaults.update(kwargs)
     return Proposition.objects.create(**defaults)
 
@@ -34,12 +35,12 @@ def _make_proposition(**kwargs):
 def _make_subscription(**kwargs):
     from apps.subscriptions.models import Subscription
 
-    defaults = dict(
-        email="test@example.com",
-        ast={},
-        query="casa_camara",
-        is_active=True,
-    )
+    defaults = {
+        "email": "test@example.com",
+        "ast": {},
+        "query": "casa_camara",
+        "is_active": True,
+    }
     defaults.update(kwargs)
     return Subscription.objects.create(**defaults)
 
@@ -77,6 +78,14 @@ class TestSendAlertEmail:
         sub = _make_subscription(email="inactive@example.com", is_active=False)
         prop = _make_proposition(external_id=101)
         result = send_alert_email.delay(sub.pk, prop.pk)
+        assert result.get() is None
+
+    def test_skips_unapproved_proposition(self, verified_sender):
+        sub = _make_subscription(email="pending@example.com", is_active=True)
+        prop = _make_proposition(external_id=102, is_approved=False)
+
+        result = send_alert_email.delay(sub.pk, prop.pk)
+
         assert result.get() is None
 
     def test_missing_ids_are_noop(self, verified_sender):

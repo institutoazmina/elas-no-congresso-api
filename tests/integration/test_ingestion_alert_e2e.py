@@ -65,8 +65,8 @@ def _activate_daily_subscription(email: str, ast: dict) -> int:
 
 @pytest.mark.django_db(transaction=True)
 @override_settings(QUITERIA_ENABLED=True)
-def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch, outbox):
-    """Ingestão → QuitérIA → matching → e-mail, sem anotação humana."""
+def test_ingestao_exige_aprovacao_antes_de_entregar_alerta(monkeypatch, outbox):
+    """Ingestão → QuitérIA → aprovação → matching → e-mail, sem anotação humana."""
     no_match_educacao = _activate_daily_subscription(
         "educacao-e2e@example.com",
         {"field": "categoria", "op": "in", "value": ["educacao_cultura"]},
@@ -113,6 +113,12 @@ def test_ingestao_e_categorizacao_entregam_alerta_do_filtro_do_site(monkeypatch,
     assert run.upserted_count == 1
     assert proposition.full_text == "Inteiro teor preparado para a análise da IA."
     assert proposition.analysis.theme_category == "saude"
+    assert proposition.is_approved is False
+    assert outbox == []
+
+    proposition.is_approved = True
+    proposition.save(update_fields=["is_approved"])
+
     assert {message.to[0] for message in outbox} == {
         "saude-e2e@example.com",
         "multicategoria-e2e@example.com",

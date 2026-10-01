@@ -31,7 +31,7 @@ def send_alert_email(self, subscription_id: int, proposition_id: int):
 
     try:
         sub = Subscription.objects.get(pk=subscription_id, is_active=True)
-        prop = Proposition.objects.get(pk=proposition_id)
+        prop = Proposition.objects.get(pk=proposition_id, is_approved=True)
     except (Subscription.DoesNotExist, Proposition.DoesNotExist):
         return
 
@@ -127,8 +127,14 @@ def send_confirmation_email(self, subscription_id: int):
 @shared_task
 def match_and_notify(proposition_id: int):
     """Só a fila diária dispara e-mail na hora; a semanal espera o digest."""
+    from apps.propositions.models import Proposition
+
     from .models import Frequency
     from .service import match_proposition
+
+    if not Proposition.objects.filter(pk=proposition_id, is_approved=True).exists():
+        logger.info("Proposition %d is not approved; daily alert skipped", proposition_id)
+        return
 
     matched_ids = match_proposition(proposition_id, frequency=Frequency.DAILY)
     for sub_id in matched_ids:
@@ -156,6 +162,7 @@ def send_weekly_digest():
     recent = list(
         Proposition.objects.filter(
             created_at__gte=cutoff,
+            is_approved=True,
         ).order_by("presented_at", "pk")
     )
     if not recent:
@@ -182,7 +189,11 @@ def send_digest_email(self, subscription_id: int, proposition_ids: list[int]):
     except Subscription.DoesNotExist:
         return
 
-    props = list(Proposition.objects.filter(pk__in=proposition_ids).order_by("presented_at", "pk"))
+    props = list(
+        Proposition.objects.filter(pk__in=proposition_ids, is_approved=True).order_by(
+            "presented_at", "pk"
+        )
+    )
     if not props:
         return
 

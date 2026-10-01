@@ -1,4 +1,6 @@
 
+from typing import Literal
+
 from django.db.models import Count, Exists, OuterRef, Q
 from django.utils import timezone
 from ninja import Router
@@ -16,16 +18,50 @@ router = Router()
 
 
 def _parliamentarians_with_proposition_counts():
+    # Os totais que chegam ao site devem obedecer à mesma curadoria da API de
+    # atividade: somente proposições aprovadas e tipos legislativos públicos.
+    # Quando não há avaliação humana, a classificação concluída pela QuitérIA
+    # passa a compor os totais de favorabilidade.
+    from apps.propositions.activity import PUBLIC_LEGISLATIVE_TYPE_CODES
+    from apps.propositions.models import PropositionAnalysis
+
+    public_proposition = Q(
+        authored_propositions__proposition__is_approved=True,
+        authored_propositions__proposition__type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES,
+    )
+    automatic_favorable = Q(
+        authored_propositions__proposition__annotations__isnull=True,
+        authored_propositions__proposition__analysis__analysis_status=PropositionAnalysis.Status.SUCCEEDED,
+        authored_propositions__proposition__analysis__classification=0,
+    )
+    automatic_unfavorable = Q(
+        authored_propositions__proposition__annotations__isnull=True,
+        authored_propositions__proposition__analysis__analysis_status=PropositionAnalysis.Status.SUCCEEDED,
+        authored_propositions__proposition__analysis__classification=1,
+    )
     return Parliamentarian.objects.annotate(
+        public_propositions_count=Count(
+            "authored_propositions__proposition",
+            distinct=True,
+            filter=public_proposition,
+        ),
         favorable_propositions_count=Count(
             "authored_propositions__proposition",
             distinct=True,
-            filter=Q(authored_propositions__proposition__annotations__is_favorable=True),
+            filter=public_proposition
+            & (
+                Q(authored_propositions__proposition__annotations__is_favorable=True)
+                | automatic_favorable
+            ),
         ),
         unfavorable_propositions_count=Count(
             "authored_propositions__proposition",
             distinct=True,
-            filter=Q(authored_propositions__proposition__annotations__is_favorable=False),
+            filter=public_proposition
+            & (
+                Q(authored_propositions__proposition__annotations__is_favorable=False)
+                | automatic_unfavorable
+            ),
         ),
     )
 
@@ -50,6 +86,8 @@ def list_parliamentarians(
     party: str | None = None,
     gender: str | None = None,
     current: bool | None = None,
+    rank: Literal["unfavorable"] | None = None,
+    min_propositions: int = 0,
 ):
     qs = _parliamentarians_with_proposition_counts().prefetch_related("terms")
     if current:
@@ -76,6 +114,12 @@ def list_parliamentarians(
         qs = qs.filter(**term_filter).distinct()
     if gender:
         qs = qs.filter(gender=gender)
+    if min_propositions > 0:
+        qs = qs.filter(public_propositions_count__gte=min_propositions)
+    if rank == "unfavorable":
+        return qs.order_by(
+            "-unfavorable_propositions_count", "-public_propositions_count", "full_name"
+        )
     return qs.order_by("full_name")
 
 

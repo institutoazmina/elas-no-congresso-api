@@ -43,6 +43,7 @@ def _make_proposition(**kwargs):
         "presented_at": datetime.date(2024, 1, 1),
         "ementa": "Ementa de teste",
         "current_status": "Em tramitação",
+        "is_approved": True,
     }
     defaults.update(kwargs)
     return Proposition.objects.create(**defaults)
@@ -81,6 +82,17 @@ class TestAlertaImediato:
         _make_proposition(external_id=201)
 
         assert outbox == []
+
+    def test_proposicao_pendente_nao_dispara_alerta_ate_ser_aprovada(self, outbox):
+        _make_subscription(frequency="daily")
+        prop = _make_proposition(external_id=202, is_approved=False)
+
+        assert outbox == []
+
+        prop.is_approved = True
+        prop.save(update_fields=["is_approved"])
+
+        assert [message.to for message in outbox] == [["leitora@example.com"]]
 
     def test_filtro_por_proposicao_so_alerta_daquela(self, outbox):
         acompanhada = _make_proposition(external_id=210, number_label="PL 7/2024")

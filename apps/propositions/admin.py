@@ -59,10 +59,25 @@ class AnnotationInline(TabularInline):
 
 @admin.register(Proposition)
 class PropositionAdmin(ModelAdmin):
-    list_display = ["number_label", "year", "house", "type_code", "is_active", "presented_at"]
+    list_display = [
+        "number_label",
+        "year",
+        "house",
+        "type_code",
+        "is_approved",
+        "is_active",
+        "presented_at",
+    ]
+    list_editable = ["is_approved"]
     # EmptyFieldListFilter cobre NULL e '' — os dois estados de "sem inteiro
     # teor" (ex.: OCR que não rodou ou falhou).
-    list_filter = ["house", "is_active", "type_code", ("full_text", admin.EmptyFieldListFilter)]
+    list_filter = [
+        "house",
+        "is_approved",
+        "is_active",
+        "type_code",
+        ("full_text", admin.EmptyFieldListFilter),
+    ]
     search_fields = ["number_label", "ementa", "keywords"]
     readonly_fields = ["created_at", "updated_at"]
     inlines = [AuthorInline, RapporteurInline, AnalysisInline, AnnotationInline]

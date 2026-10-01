@@ -221,6 +221,7 @@ def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
         presented_at="2026-01-01",
         ementa="Proposição antes da confirmação.",
         current_status="Em tramitação",
+        is_approved=True,
     )
     match_and_notify.delay(before_confirmation.pk)
 
@@ -242,6 +243,7 @@ def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
         presented_at="2026-01-02",
         ementa="Proposição após a confirmação.",
         current_status="Em tramitação",
+        is_approved=True,
     )
     match_and_notify.delay(after_confirmation.pk)
 

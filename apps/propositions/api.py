@@ -40,7 +40,11 @@ def list_propositions(
         ),
     ] = "newest",
 ):
-    qs = Proposition.objects.all()
+    # A API pública nunca expõe itens ainda não curados, nem documentos fora
+    # do escopo editorial. O gerenciador continua vendo ambos para revisão.
+    from .activity import PUBLIC_LEGISLATIVE_TYPE_CODES
+
+    qs = Proposition.objects.filter(is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES)
     if house:
         qs = qs.filter(house=house)
     if year:
@@ -71,8 +75,13 @@ def list_propositions(
 @router.get("/{proposition_id}", response=PropositionDetailSchema)
 def get_proposition(request, proposition_id: int):
     from django.shortcuts import get_object_or_404
+
+    from .activity import PUBLIC_LEGISLATIVE_TYPE_CODES
+
     return get_object_or_404(
-        Proposition.objects.prefetch_related(
+        Proposition.objects.filter(
+            is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
+        ).prefetch_related(
             "authors__parliamentarian",
             "authors__institutional_author",
             "rapporteurs__parliamentarian",

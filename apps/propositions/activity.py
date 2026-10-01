@@ -10,12 +10,21 @@ from django.shortcuts import get_object_or_404
 from ninja import Router, Schema
 
 from .celerity import calculate_celerity
-from .models import Proposition
+from .models import Proposition, PropositionAnalysis
 
 router = Router()
 ACTIVITY_CACHE_TIMEOUT = 5 * 60
 FAST_CELERITY_LABELS = {"Rápida", "Tá voando"}
 SLOW_CELERITY_LABELS = {"Lenta", "Travada"}
+# Tipos legislativos que compõem o escopo editorial do Elas no Congresso.
+# Não derivar a lista do texto de ``number_label``: a fonte oficial já fornece
+# ``type_code`` normalizado e há documentos acessórios (REQ, SBT, pareceres)
+# que não devem vazar para o painel.
+PUBLIC_LEGISLATIVE_TYPES = {"PEC", "PL", "PLP", "PLV", "PDC", "PRC", "PLS", "PLN", "PRS", "PDS"}
+PUBLIC_LEGISLATIVE_TYPE_CODES = PUBLIC_LEGISLATIVE_TYPES | {
+    type_code.lower() for type_code in PUBLIC_LEGISLATIVE_TYPES
+}
+QUITERIA_ORGANIZATION_NAME = "QuitérIA"
 
 
 def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
@@ -77,6 +86,8 @@ class ActivityPropositionSchema(Schema):
     current_status: str | None = None
     tramitation_url: str | None = None
     category: str | None = None
+    category_label: str | None = None
+    themes: list[str]
     is_favorable: bool | None = None
     assessment_organization: str | None = None
     assessment_comments: str | None = None
@@ -129,6 +140,21 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
         )
     celerity = calculate_celerity(proposition, events)
     shown_events = events[:event_limit] if event_limit is not None else events
+    category = annotation.category if annotation else getattr(analysis, "theme_category", None)
+    # A anotação humana sempre prevalece. Na sua ausência, uma classificação
+    # concluída pela QuitérIA é a avaliação automática exibida no painel.
+    has_quiteria_assessment = (
+        annotation is None
+        and analysis is not None
+        and analysis.analysis_status == PropositionAnalysis.Status.SUCCEEDED
+        and analysis.classification in (0, 1)
+    )
+    # O rótulo editorial vem da enumeração de categorias, sem transformar o
+    # slug em texto aproximado no cliente.
+    from apps.core.enums import PropositionCategory
+
+    category_label = dict(PropositionCategory.choices).get(category, category) if category else None
+
     return {
         "id": proposition.pk,
         "house": proposition.house,
@@ -137,9 +163,22 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
         "presented_at": proposition.presented_at,
         "current_status": proposition.current_status,
         "tramitation_url": proposition.tramitation_url,
-        "category": annotation.category if annotation else getattr(analysis, "theme_category", None),
-        "is_favorable": annotation.is_favorable if annotation else None,
-        "assessment_organization": annotation.organization.name if annotation else None,
+        "category": category,
+        "category_label": category_label,
+        "themes": [
+            relation.theme.name
+            for relation in proposition.proposition_themes.all()
+        ],
+        "is_favorable": (
+            annotation.is_favorable
+            if annotation
+            else (analysis.classification == 0 if has_quiteria_assessment else None)
+        ),
+        "assessment_organization": (
+            annotation.organization.name
+            if annotation
+            else (QUITERIA_ORGANIZATION_NAME if has_quiteria_assessment else None)
+        ),
         "assessment_comments": annotation.comments if annotation else None,
         "relevance": annotation.relevance if annotation else None,
         "authors": authors,
@@ -185,12 +224,16 @@ def _serialize_enacted(proposition: Proposition) -> dict:
 
 
 def _queryset():
-    return Proposition.objects.select_related("analysis").prefetch_related(
+    return Proposition.objects.filter(
+        is_approved=True,
+        type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES,
+    ).select_related("analysis").prefetch_related(
         "events",
         "annotations__organization",
         "authors__parliamentarian",
         "authors__institutional_author",
         "authors__party",
+        "proposition_themes__theme",
     )
 
 

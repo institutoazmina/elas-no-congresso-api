@@ -10,6 +10,7 @@ from apps.propositions.dataset import FIELDS
 from apps.propositions.models import (
     AssessmentOrganization,
     Proposition,
+    PropositionAnalysis,
     PropositionAnnotation,
     PropositionAuthor,
 )
@@ -43,6 +44,7 @@ class TestPropositionsEndpoints:
             external_id=1,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 123/2024",
             number=123,
             year=2024,
@@ -110,6 +112,7 @@ class TestPropositionsEndpoints:
             external_id=2,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 124/2024",
             number=124,
             year=2024,
@@ -180,6 +183,7 @@ class TestPropositionsEndpoints:
             external_id=2,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 124/2024",
             number=124,
             year=2024,
@@ -190,6 +194,7 @@ class TestPropositionsEndpoints:
             external_id=3,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 125/2024",
             number=125,
             year=2024,
@@ -215,6 +220,7 @@ class TestPropositionsEndpoints:
             external_id=2,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 124/2024",
             number=124,
             year=2024,
@@ -225,6 +231,7 @@ class TestPropositionsEndpoints:
             external_id=3,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 125/2024",
             number=125,
             year=2024,
@@ -246,6 +253,7 @@ class TestPropositionsEndpoints:
             external_id=2,
             house="camara",
             type_code="pl",
+            is_approved=True,
             number_label="PL 122/2023",
             number=122,
             year=2023,
@@ -501,6 +509,7 @@ class TestParliamentariansEndpoints:
             "profession": None,
             "religion": None,
             "bio": None,
+            "public_propositions_count": 0,
             "favorable_propositions_count": 0,
             "unfavorable_propositions_count": 0,
             "terms": [
@@ -524,6 +533,7 @@ class TestParliamentariansEndpoints:
             f"/api/v1/legislatures/parliamentarians/{self.parliamentarian.pk}"
         )
         assert response.status_code == 200
+        assert response.json()["public_propositions_count"] == 0
         assert response.json()["favorable_propositions_count"] == 0
         assert response.json()["unfavorable_propositions_count"] == 0
 
@@ -539,6 +549,7 @@ class TestParliamentariansEndpoints:
             year=2024,
             presented_at="2024-01-01",
             ementa="Test proposition",
+            is_approved=True,
         )
         unlabeled_proposition = Proposition.objects.create(
             external_id=2,
@@ -549,6 +560,7 @@ class TestParliamentariansEndpoints:
             year=2024,
             presented_at="2024-01-02",
             ementa="Unlabeled proposition",
+            is_approved=True,
         )
         PropositionAuthor.objects.create(
             proposition=proposition, parliamentarian=self.parliamentarian
@@ -590,6 +602,7 @@ class TestParliamentariansEndpoints:
         items = {item["id"]: item for item in response.json()["items"]}
         assert items[self.parliamentarian.pk]["favorable_propositions_count"] == 1
         assert items[self.parliamentarian.pk]["unfavorable_propositions_count"] == 1
+        assert items[self.parliamentarian.pk]["public_propositions_count"] == 1
         assert items[coauthor.pk]["favorable_propositions_count"] == 1
         assert items[coauthor.pk]["unfavorable_propositions_count"] == 1
         assert items[no_classified_propositions.pk]["favorable_propositions_count"] == 0
@@ -599,8 +612,100 @@ class TestParliamentariansEndpoints:
             f"/api/v1/legislatures/parliamentarians/{self.parliamentarian.pk}"
         )
         assert detail.status_code == 200
+        assert detail.json()["public_propositions_count"] == 1
         assert detail.json()["favorable_propositions_count"] == 1
         assert detail.json()["unfavorable_propositions_count"] == 1
+
+    def test_ranking_unfavorable_requires_minimum_public_propositions(self):
+        second = Parliamentarian.objects.create(full_name="João Souza", gender="M")
+        below_minimum = Parliamentarian.objects.create(full_name="Ana Costa", gender="F")
+        for person, external_id, state in ((second, 2, "RJ"), (below_minimum, 3, "MG")):
+            ParliamentarianTerm.objects.create(
+                parliamentarian=person,
+                legislature_number=self.term.legislature_number,
+                party=self.term.party,
+                house="camara",
+                role="Titular",
+                state=state,
+                external_id=external_id,
+                start_date="2023-02-01",
+            )
+
+        unfavorable_org = AssessmentOrganization.objects.create(name="Anis")
+
+        def create_proposition(external_id, author, *, unfavorable=False, automatic=False):
+            proposition = Proposition.objects.create(
+                external_id=external_id,
+                house="camara",
+                type_code="PL",
+                number_label=f"PL {external_id}/2026",
+                number=external_id,
+                year=2026,
+                presented_at="2026-01-01",
+                ementa="Proposição aprovada sobre direitos de gênero",
+                is_approved=True,
+            )
+            PropositionAuthor.objects.create(proposition=proposition, parliamentarian=author)
+            if automatic:
+                PropositionAnalysis.objects.create(
+                    proposition=proposition,
+                    analysis_status=PropositionAnalysis.Status.SUCCEEDED,
+                    classification=1 if unfavorable else 0,
+                )
+            else:
+                PropositionAnnotation.objects.create(
+                    proposition=proposition,
+                    organization=unfavorable_org,
+                    is_favorable=not unfavorable,
+                    category="saude",
+                )
+
+        for external_id in range(10, 16):
+            create_proposition(external_id, self.parliamentarian, unfavorable=True)
+        for external_id in range(20, 25):
+            create_proposition(external_id, second, unfavorable=external_id < 22, automatic=True)
+        for external_id in range(30, 34):
+            create_proposition(external_id, below_minimum, unfavorable=True)
+        unapproved = Proposition.objects.create(
+            external_id=40,
+            house="camara",
+            type_code="PL",
+            number_label="PL 40/2026",
+            number=40,
+            year=2026,
+            presented_at="2026-01-01",
+            ementa="Proposição ainda pendente de curadoria",
+            is_approved=False,
+        )
+        PropositionAuthor.objects.create(proposition=unapproved, parliamentarian=below_minimum)
+        PropositionAnalysis.objects.create(
+            proposition=unapproved,
+            analysis_status=PropositionAnalysis.Status.SUCCEEDED,
+            classification=1,
+        )
+        unsupported = Proposition.objects.create(
+            external_id=41,
+            house="camara",
+            type_code="SBT",
+            number_label="SBT 41/2026",
+            number=41,
+            year=2026,
+            presented_at="2026-01-01",
+            ementa="Documento fora do escopo",
+            is_approved=True,
+        )
+        PropositionAuthor.objects.create(proposition=unsupported, parliamentarian=below_minimum)
+
+        response = self.client.get(
+            "/api/v1/legislatures/parliamentarians",
+            {"current": "true", "rank": "unfavorable", "min_propositions": 5},
+        )
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        assert [item["id"] for item in items] == [self.parliamentarian.pk, second.pk]
+        assert [item["unfavorable_propositions_count"] for item in items] == [6, 2]
+        assert [item["public_propositions_count"] for item in items] == [6, 5]
 
 
 @pytest.mark.django_db
