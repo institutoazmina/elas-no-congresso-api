@@ -616,10 +616,15 @@ class TestParliamentariansEndpoints:
         assert detail.json()["favorable_propositions_count"] == 1
         assert detail.json()["unfavorable_propositions_count"] == 1
 
-    def test_ranking_unfavorable_requires_minimum_public_propositions(self):
+    def test_ranking_unfavorable_rate_requires_five_public_propositions(self):
         second = Parliamentarian.objects.create(full_name="João Souza", gender="M")
-        below_minimum = Parliamentarian.objects.create(full_name="Ana Costa", gender="F")
-        for person, external_id, state in ((second, 2, "RJ"), (below_minimum, 3, "MG")):
+        all_unfavorable = Parliamentarian.objects.create(full_name="Ana Costa", gender="F")
+        below_threshold = Parliamentarian.objects.create(full_name="Bruna Lima", gender="F")
+        for person, external_id, state in (
+            (second, 2, "RJ"),
+            (all_unfavorable, 3, "MG"),
+            (below_threshold, 4, "BA"),
+        ):
             ParliamentarianTerm.objects.create(
                 parliamentarian=person,
                 legislature_number=self.term.legislature_number,
@@ -665,7 +670,14 @@ class TestParliamentariansEndpoints:
         for external_id in range(20, 25):
             create_proposition(external_id, second, unfavorable=external_id < 22, automatic=True)
         for external_id in range(30, 34):
-            create_proposition(external_id, below_minimum, unfavorable=True)
+            create_proposition(external_id, all_unfavorable, unfavorable=True)
+        for external_id in range(50, 53):
+            create_proposition(
+                external_id,
+                below_threshold,
+                unfavorable=external_id == 50,
+                automatic=True,
+            )
         unapproved = Proposition.objects.create(
             external_id=40,
             house="camara",
@@ -677,7 +689,7 @@ class TestParliamentariansEndpoints:
             ementa="Proposição ainda pendente de curadoria",
             is_approved=False,
         )
-        PropositionAuthor.objects.create(proposition=unapproved, parliamentarian=below_minimum)
+        PropositionAuthor.objects.create(proposition=unapproved, parliamentarian=all_unfavorable)
         PropositionAnalysis.objects.create(
             proposition=unapproved,
             analysis_status=PropositionAnalysis.Status.SUCCEEDED,
@@ -694,16 +706,24 @@ class TestParliamentariansEndpoints:
             ementa="Documento fora do escopo",
             is_approved=True,
         )
-        PropositionAuthor.objects.create(proposition=unsupported, parliamentarian=below_minimum)
+        PropositionAuthor.objects.create(proposition=unsupported, parliamentarian=all_unfavorable)
 
         response = self.client.get(
             "/api/v1/legislatures/parliamentarians",
-            {"current": "true", "rank": "unfavorable", "min_propositions": 5},
+            {
+                "current": "true",
+                "rank": "unfavorable_rate",
+                "min_propositions": 5,
+                "min_unfavorable_rate": 0.4,
+            },
         )
 
         assert response.status_code == 200
         items = response.json()["items"]
-        assert [item["id"] for item in items] == [self.parliamentarian.pk, second.pk]
+        assert [item["id"] for item in items] == [
+            self.parliamentarian.pk,
+            second.pk,
+        ]
         assert [item["unfavorable_propositions_count"] for item in items] == [6, 2]
         assert [item["public_propositions_count"] for item in items] == [6, 5]
 

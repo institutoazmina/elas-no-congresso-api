@@ -1,7 +1,8 @@
 
 from typing import Literal
 
-from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models import Count, Exists, ExpressionWrapper, F, FloatField, OuterRef, Q
+from django.db.models.functions import Cast
 from django.utils import timezone
 from ninja import Router
 from ninja.pagination import LimitOffsetPagination, paginate
@@ -86,8 +87,9 @@ def list_parliamentarians(
     party: str | None = None,
     gender: str | None = None,
     current: bool | None = None,
-    rank: Literal["unfavorable"] | None = None,
+    rank: Literal["unfavorable", "unfavorable_rate"] | None = None,
     min_propositions: int = 0,
+    min_unfavorable_rate: float = 0,
 ):
     qs = _parliamentarians_with_proposition_counts().prefetch_related("terms")
     if current:
@@ -116,6 +118,17 @@ def list_parliamentarians(
         qs = qs.filter(gender=gender)
     if min_propositions > 0:
         qs = qs.filter(public_propositions_count__gte=min_propositions)
+    if rank == "unfavorable_rate":
+        qs = qs.annotate(
+            unfavorable_rate=ExpressionWrapper(
+                Cast(F("unfavorable_propositions_count"), FloatField())
+                / Cast(F("public_propositions_count"), FloatField()),
+                output_field=FloatField(),
+            )
+        ).filter(unfavorable_rate__gte=min_unfavorable_rate)
+        return qs.order_by(
+            "-unfavorable_rate", "-unfavorable_propositions_count", "-public_propositions_count", "full_name"
+        )
     if rank == "unfavorable":
         return qs.order_by(
             "-unfavorable_propositions_count", "-public_propositions_count", "full_name"
