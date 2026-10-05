@@ -1,5 +1,5 @@
 import csv
-from datetime import timedelta
+from datetime import date, timedelta
 from io import StringIO
 
 import pytest
@@ -114,6 +114,99 @@ def get_explorer(**params):
     response = Client().get("/api/v1/activity/explorer", params)
     assert response.status_code == 200, response.content
     return response.json()
+
+
+@pytest.fixture
+def year_range_data(activity_data, monkeypatch):
+    years = {
+        activity_data["missing"].pk: 2020,
+        activity_data["shared"].pk: 2021,
+        activity_data["older"].pk: 2022,
+        activity_data["institutional"].pk: 2023,
+    }
+    source = [
+        {**item, "presented_at": date(years[item["id"]], 6, 15)}
+        for item in explorer._all_activity()
+    ]
+    monkeypatch.setattr(explorer, "_all_activity", lambda: source)
+    return activity_data
+
+
+@pytest.mark.parametrize(
+    ("params", "years"),
+    [
+        ({}, {2020, 2021, 2022, 2023}),
+        ({"year_start": 2021}, {2021, 2022, 2023}),
+        ({"year_end": 2022}, {2020, 2021, 2022}),
+        ({"year_start": 2021, "year_end": 2022}, {2021, 2022}),
+        ({"year_start": 2021, "year_end": 2021}, {2021}),
+        ({"year_start": "", "year_end": ""}, {2020, 2021, 2022, 2023}),
+        ({"year_start": 2021, "year_end": ""}, {2021, 2022, 2023}),
+        ({"year_start": "", "year_end": 2022}, {2020, 2021, 2022}),
+        ({"year_start": 2024}, set()),
+        ({"year_end": 2019}, set()),
+        ({"year": 2022}, {2022}),
+    ],
+)
+def test_inclusive_year_ranges_and_open_ends(year_range_data, params, years):
+    result = get_explorer(**params)
+    assert result["total"] == len(years)
+    assert {int(item["presented_at"][:4]) for item in result["items"]} == years
+    assert result["summary"]["active_filter_count"] == int(bool(years != {2020, 2021, 2022, 2023}))
+    assert [option["value"] for option in result["options"]["year"]] == [
+        "2023",
+        "2022",
+        "2021",
+        "2020",
+    ]
+
+
+def test_year_range_summary_dashboard_and_export_cover_all_pages(year_range_data):
+    params = {"year_start": 2021, "year_end": 2022, "page_size": 1}
+    result = get_explorer(**params)
+    assert result["total"] == 2
+    assert result["page_count"] == 2
+    assert len(result["items"]) == 1
+    assert result["summary"] == {
+        "favorable": 1,
+        "unfavorable": 1,
+        "favorable_share": 50.0,
+        "active_filter_count": 1,
+    }
+    assert result["dashboard"]["house"][0]["favorable"] == 1
+    assert result["dashboard"]["house"][0]["unfavorable"] == 1
+    second = get_explorer(**params, page=2)
+    assert second["summary"] == result["summary"]
+    assert second["items"][0]["id"] != result["items"][0]["id"]
+    response = Client().get("/api/v1/activity/explorer/export", params)
+    assert response.status_code == 200
+    rows = list(csv.reader(StringIO(response.content.decode("utf-8-sig")), delimiter=";"))
+    assert {int(row[2]) for row in rows[1:]} == {2021, 2022}
+    assert len(rows) == 3
+
+
+def test_year_range_combines_with_religion_and_legacy_year(year_range_data):
+    result = get_explorer(year_start=2022, year_end=2023, religion="Católica")
+    assert [item["id"] for item in result["items"]] == [year_range_data["older"].pk]
+    assert result["summary"]["active_filter_count"] == 2
+    exact = get_explorer(year=2022, year_start=2021, year_end=2023)
+    assert exact["total"] == 1
+    assert exact["summary"]["active_filter_count"] == 1
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        {"year_start": 2023, "year_end": 2021},
+        {"year_start": "invalid"},
+        {"year_end": "invalid"},
+        {"year_start": 0},
+        {"year_end": 10000},
+    ],
+)
+def test_invalid_year_ranges_return_validation_error(params):
+    for endpoint in ("/api/v1/activity/explorer", "/api/v1/activity/explorer/export"):
+        assert Client().get(endpoint, params).status_code == 422
 
 
 def test_religion_facets_only_use_complete_public_collection(activity_data):

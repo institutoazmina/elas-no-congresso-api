@@ -11,6 +11,7 @@ from typing import Literal
 from django.core.cache import cache
 from django.http import HttpResponse
 from ninja import Field, Schema
+from pydantic import field_validator, model_validator
 
 SOURCE_CACHE_KEY = "activity:explorer:source:v1"
 UNKNOWN_RELIGION = "__unknown__"
@@ -49,6 +50,8 @@ class ExplorerQuery(Schema):
     search: str = ""
     house: str = ""
     year: int | None = None
+    year_start: int | None = Field(None, ge=1, le=9999)
+    year_end: int | None = Field(None, ge=1, le=9999)
     party: str = ""
     category: str = ""
     assessment: Literal["", "favorable", "unfavorable", "unrated"] = ""
@@ -68,6 +71,21 @@ class ExplorerQuery(Schema):
     party_sort: Literal["unfavorable", "favorable", "total"] = "unfavorable"
     author_sort: Literal["unfavorable", "favorable", "total"] = "unfavorable"
     author_minimum: int = Field(5, ge=1)
+
+    @field_validator("year_start", "year_end", mode="before")
+    @classmethod
+    def blank_year_bound(cls, value):
+        return None if isinstance(value, str) and not value.strip() else value
+
+    @model_validator(mode="after")
+    def validate_year_range(self):
+        if (
+            self.year_start is not None
+            and self.year_end is not None
+            and self.year_start > self.year_end
+        ):
+            raise ValueError("O ano inicial deve ser menor ou igual ao ano final.")
+        return self
 
 
 class FilterOptionSchema(Schema):
@@ -158,6 +176,8 @@ def _matches(item, query):
         (not query.search.strip() or _normalized(query.search) in _normalized(search_text))
         and (not house or item["house"] == house)
         and (query.year is None or _year(item) == query.year)
+        and (query.year_start is None or _year(item) >= query.year_start)
+        and (query.year_end is None or _year(item) <= query.year_end)
         and (not query.party or any(author["party"] == query.party for author in authors))
         and (not query.category or _normalized(item["category"]) == _normalized(query.category))
         and (not query.assessment or _assessment(item) == query.assessment)
@@ -417,7 +437,6 @@ def explore_activity(query):
     filter_names = (
         "search",
         "house",
-        "year",
         "party",
         "category",
         "assessment",
@@ -441,7 +460,10 @@ def explore_activity(query):
             "favorable_share": favorable / (favorable + unfavorable) * 100
             if favorable + unfavorable
             else 0,
-            "active_filter_count": sum(bool(getattr(query, name)) for name in filter_names),
+            "active_filter_count": sum(bool(getattr(query, name)) for name in filter_names)
+            + int(
+                query.year is not None or query.year_start is not None or query.year_end is not None
+            ),
         },
         "dashboard": _dashboard(items, query),
     }
