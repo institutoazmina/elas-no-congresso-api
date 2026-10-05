@@ -77,8 +77,14 @@ class PartyStatsSchema(Schema):
     parties: list[GroupCountSchema]
 
 
+class StateCountSchema(GroupCountSchema):
+    total: int
+    favorable_percentage: int
+    unfavorable_percentage: int
+
+
 class StateStatsSchema(Schema):
-    states: list[GroupCountSchema]
+    states: list[StateCountSchema]
 
 
 # ── endpoints ─────────────────────────────────────────────────────────────────
@@ -178,9 +184,8 @@ def stance_by_gender(request):
     return {"women": ratio(Gender.F), "men": ratio(Gender.M)}
 
 
-def _by_author_group(field: str, stance: Stance, limit: int) -> list[dict]:
-    """Ranking de grupos de autoria (partido, estado) por favoráveis/desfavoráveis."""
-    return list(
+def _author_group_counts(field: str):
+    return (
         PropositionAuthor.objects.exclude(**{f"{field}__isnull": True})
         .exclude(**{field: ""})
         .values(label=F(field))
@@ -188,8 +193,42 @@ def _by_author_group(field: str, stance: Stance, limit: int) -> list[dict]:
             favorable=Count("proposition", distinct=True, filter=BY_AUTHOR_FAVORABLE),
             unfavorable=Count("proposition", distinct=True, filter=BY_AUTHOR_UNFAVORABLE),
         )
-        .order_by(f"-{stance}", "label")[:limit]
     )
+
+
+def _by_author_group(field: str, stance: Stance, limit: int) -> list[dict]:
+    """Ranking de grupos de autoria (partido, estado) por contagem."""
+    return list(_author_group_counts(field).order_by(f"-{stance}", "label")[:limit])
+
+
+def _state_percentage_ranking(stance: Stance, limit: int) -> list[dict]:
+    """Ranking canônico das UFs pela proporção de propostas avaliadas.
+
+    O percentual é calculado no BFF para que mapa e tabela apresentem a mesma
+    ordenação. Em empates, a maior contagem da métrica selecionada vem primeiro.
+    """
+    states = []
+    for row in _author_group_counts("state_at_authorship"):
+        total = row["favorable"] + row["unfavorable"]
+        favorable_percentage = round(row["favorable"] / total * 100) if total else 0
+        unfavorable_percentage = round(row["unfavorable"] / total * 100) if total else 0
+        states.append(
+            {
+                **row,
+                "total": total,
+                "favorable_percentage": favorable_percentage,
+                "unfavorable_percentage": unfavorable_percentage,
+            }
+        )
+
+    states.sort(
+        key=lambda state: (
+            -(state[stance] / state["total"] * 100) if state["total"] else 0,
+            -state[stance],
+            state["label"],
+        )
+    )
+    return states[:limit]
 
 
 @router.get("/parties", response=PartyStatsSchema)
@@ -200,5 +239,5 @@ def stance_by_party(request, stance: Stance = "unfavorable", limit: int = 5):
 
 @router.get("/states", response=StateStatsSchema)
 def stance_by_state(request, stance: Stance = "unfavorable", limit: int = 5):
-    """Top N estados (UF do parlamentar na autoria), ranqueados por ``stance``."""
-    return {"states": _by_author_group("state_at_authorship", stance, limit)}
+    """Top N UFs por percentual de propostas favoráveis/desfavoráveis."""
+    return {"states": _state_percentage_ranking(stance, limit)}

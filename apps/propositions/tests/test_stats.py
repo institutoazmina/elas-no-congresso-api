@@ -146,7 +146,73 @@ def test_by_party_ranks_by_stance(client, scenario):
 
 
 def test_by_state(client, scenario):
-    assert client.get(f"{BASE}/states").json()["states"] == [
-        {"label": "RJ", "favorable": 0, "unfavorable": 2},
-        {"label": "SP", "favorable": 1, "unfavorable": 1},
+    ana = Parliamentarian.objects.get(full_name="Ana")
+    pt = Party.objects.get(acronym="PT")
+    azmina = AssessmentOrganization.objects.get(name="AzMina")
+
+    # MG tem mais propostas desfavoráveis em números absolutos (5), mas só
+    # 50% delas são desfavoráveis. ES tem uma única proposta, 100%
+    # desfavorável. O ranking da API deve privilegiar o percentual, não a
+    # contagem bruta — assim mapa e tabela consomem a mesma ordem canônica.
+    for number in range(4, 14):
+        proposition = _proposition(number, date(2022, 1, 1))
+        PropositionAuthor.objects.create(
+            proposition=proposition,
+            parliamentarian=ana,
+            party=pt,
+            state_at_authorship="MG",
+            order_index=1,
+        )
+        PropositionAnnotation.objects.create(
+            proposition=proposition,
+            organization=azmina,
+            is_favorable=number % 2 == 0,
+            category=PropositionCategory.SAUDE,
+        )
+
+    es_proposition = _proposition(14, date(2022, 1, 1))
+    PropositionAuthor.objects.create(
+        proposition=es_proposition,
+        parliamentarian=ana,
+        party=pt,
+        state_at_authorship="ES",
+        order_index=1,
+    )
+    PropositionAnnotation.objects.create(
+        proposition=es_proposition,
+        organization=azmina,
+        is_favorable=False,
+        category=PropositionCategory.SAUDE,
+    )
+
+    unfavorable = client.get(f"{BASE}/states?stance=unfavorable&limit=2").json()["states"]
+    assert unfavorable == [
+        {
+            "label": "RJ",
+            "favorable": 0,
+            "unfavorable": 2,
+            "total": 2,
+            "favorable_percentage": 0,
+            "unfavorable_percentage": 100,
+        },
+        {
+            "label": "ES",
+            "favorable": 0,
+            "unfavorable": 1,
+            "total": 1,
+            "favorable_percentage": 0,
+            "unfavorable_percentage": 100,
+        },
+    ]
+
+    favorable = client.get(f"{BASE}/states?stance=favorable&limit=1").json()["states"]
+    assert favorable == [
+        {
+            "label": "MG",
+            "favorable": 5,
+            "unfavorable": 5,
+            "total": 10,
+            "favorable_percentage": 50,
+            "unfavorable_percentage": 50,
+        }
     ]
