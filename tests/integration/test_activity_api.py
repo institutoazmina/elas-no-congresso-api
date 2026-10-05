@@ -326,6 +326,50 @@ def test_fast_unfavorable_activity_only_returns_fast_unfavorable_propositions():
 
 
 @pytest.mark.django_db
+def test_fast_unfavorable_activity_orders_by_recent_countable_movements():
+    organization = AssessmentOrganization.objects.create(name="AzMina")
+    today = timezone.localdate()
+    now = timezone.now()
+    proposals = []
+    for number, movement_count in enumerate([1, 3, 20, 6, 20], start=790):
+        proposition = Proposition.objects.create(
+            external_id=number,
+            house="camara",
+            type_code="PL",
+            number_label=f"PL {number}/2026",
+            number=number,
+            year=2026,
+            presented_at=today,
+            ementa="Proposição desfavorável em tramitação",
+        )
+        PropositionAnnotation.objects.create(
+            proposition=proposition, organization=organization, is_favorable=False, category="saude"
+        )
+        PropositionEvent.objects.bulk_create([
+            PropositionEvent(proposition=proposition, event_at=now - timedelta(days=sequence))
+            for sequence in range(movement_count)
+        ])
+        proposals.append(proposition)
+
+    # Neither older movements nor administrative events should promote the 1-movement PL.
+    PropositionEvent.objects.bulk_create([
+        PropositionEvent(proposition=proposals[0], event_at=now - timedelta(days=100 + sequence))
+        for sequence in range(30)
+    ] + [
+        PropositionEvent(proposition=proposals[0], event_at=now, is_countable=False)
+        for _ in range(30)
+    ])
+    response = Client().get("/api/v1/activity/fast-unfavorable")
+    assert response.status_code == 200
+    items = response.json()
+    assert [item["id"] for item in items] == [
+        proposals[index].pk for index in [2, 4, 3, 1, 0]
+    ]
+    assert [item["celerity"]["movements_last_90_days"] for item in items] == [20, 20, 6, 3, 1]
+    assert Client().get("/api/v1/activity/fast-unfavorable").json() == items
+
+
+@pytest.mark.django_db
 def test_slow_favorable_activity_returns_the_50_most_inactive_qualifying_propositions():
     organization = AssessmentOrganization.objects.create(name="AzMina")
     slow_favorable = []

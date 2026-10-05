@@ -23,6 +23,7 @@ from .models import Proposition, PropositionAnalysis
 
 router = Router()
 ACTIVITY_CACHE_TIMEOUT = 5 * 60
+FAST_UNFAVORABLE_CACHE_KEY = "activity:fast-unfavorable:v2"
 FAST_CELERITY_LABELS = {"Rápida", "Tá voando"}
 SLOW_CELERITY_LABELS = {"Lenta", "Travada"}
 # Tipos legislativos que compõem o escopo editorial do Elas no Congresso.
@@ -48,7 +49,7 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
             "activity:list:5000",
             _activity_list_cache_key(5000, include_events=True),
             _activity_list_cache_key(5000, include_events=False),
-            "activity:fast-unfavorable",
+            FAST_UNFAVORABLE_CACHE_KEY,
             "activity:slow-favorable",
         ):
             cache.delete(cache_key)
@@ -311,7 +312,7 @@ def list_activity(request, limit: int = 5000, include_events: bool = True):
 @router.get("/fast-unfavorable", response=list[ActivityPropositionSchema])
 def list_fast_unfavorable_activity(request):
     """Todas as desfavoráveis com tramitação rápida e movimentos nos últimos 90 dias."""
-    cache_key = "activity:fast-unfavorable"
+    cache_key = FAST_UNFAVORABLE_CACHE_KEY
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
@@ -327,11 +328,8 @@ def list_fast_unfavorable_activity(request):
             activity.append(serialized)
 
     activity.sort(
-        key=lambda item: (
-            item["celerity"]["label"] == "Tá voando",
-            item["celerity"]["movements_last_90_days"],
-        ),
-        reverse=True,
+        # The busiest proposals lead; ID keeps ties stable across requests.
+        key=lambda item: (-item["celerity"]["movements_last_90_days"], item["id"]),
     )
     return _cache_activity_collection(cache_key, activity)
 
