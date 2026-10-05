@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from ninja import Field, Schema
 from pydantic import field_validator, model_validator
 
-SOURCE_CACHE_KEY = "activity:explorer:source:v1"
+SOURCE_CACHE_KEY = "activity:explorer:source:v2"
 UNKNOWN_RELIGION = "__unknown__"
 UFS = [
     "AC",
@@ -52,16 +52,16 @@ class ExplorerQuery(Schema):
     year: int | None = None
     year_start: int | None = Field(None, ge=1, le=9999)
     year_end: int | None = Field(None, ge=1, le=9999)
-    party: str = ""
-    category: str = ""
+    party: list[str] = Field(default_factory=list)
+    category: list[str] = Field(default_factory=list)
     assessment: Literal["", "favorable", "unfavorable", "unrated"] = ""
-    celerity: str = ""
+    celerity: list[str] = Field(default_factory=list)
     movements: Literal["", "with", "without"] = ""
     gender: str = ""
-    state: str = ""
-    religion: str = ""
+    state: list[str] = Field(default_factory=list)
+    religion: list[str] = Field(default_factory=list)
     comments: Literal["", "yes", "no"] = ""
-    evaluator: str = ""
+    evaluator: list[str] = Field(default_factory=list)
     page: int = Field(1, ge=1)
     page_size: int = Field(10, ge=1, le=100)
     sort: Literal[
@@ -71,6 +71,16 @@ class ExplorerQuery(Schema):
     party_sort: Literal["unfavorable", "favorable", "total"] = "unfavorable"
     author_sort: Literal["unfavorable", "favorable", "total"] = "unfavorable"
     author_minimum: int = Field(5, ge=1)
+
+    @field_validator(
+        "party", "category", "celerity", "state", "religion", "evaluator", mode="before"
+    )
+    @classmethod
+    def multiple_values(cls, value):
+        # Repeated query parameters represent OR; a legacy scalar still works.
+        # Do not split on commas: an option may contain punctuation in its name.
+        values = [value] if isinstance(value, str) else value
+        return list(dict.fromkeys(entry.strip() for entry in values if entry.strip()))
 
     @field_validator("year_start", "year_end", mode="before")
     @classmethod
@@ -140,20 +150,44 @@ def _assessment(item):
     return "unrated" if value is None else "favorable" if value else "unfavorable"
 
 
-def _author_matches(author, query):
+def _author_filter_matches(author, query):
     religion = str(author.get("religion") or "").strip()
-    return (
-        (not query.gender or _gender(author["gender"]) == query.gender)
-        and (not query.state or _state(author["state"]) == query.state)
-        and (
-            not query.religion
-            or (query.religion == UNKNOWN_RELIGION and author["id"] is not None and not religion)
-            or (
-                query.religion != UNKNOWN_RELIGION
-                and _normalized(religion) == _normalized(query.religion)
-            )
+    checks = {}
+    if query.gender:
+        checks["gender"] = _gender(author["gender"]) == query.gender
+    if query.state:
+        checks["state"] = _state(author["state"]) in query.state
+    if query.religion:
+        checks["religion"] = any(
+            (value == UNKNOWN_RELIGION and author["id"] is not None and not religion)
+            or (value != UNKNOWN_RELIGION and _normalized(religion) == _normalized(value))
+            for value in query.religion
         )
-    )
+    return checks
+
+
+def _is_pl(item):
+    return str(item.get("type_code", "")).strip().lower() == "pl"
+
+
+def _authors_match(item, query):
+    checks = [_author_filter_matches(author, query) for author in item["authors"]]
+    active = [name for name in ("gender", "state", "religion") if getattr(query, name)]
+    if not active:
+        return True
+    if _is_pl(item):
+        # Different coauthors may satisfy different criteria for a PL.
+        return all(any(check[name] for check in checks) for name in active)
+    return any(all(check.values()) for check in checks)
+
+
+def _dashboard_author_matches(author, item, query):
+    checks = _author_filter_matches(author, query)
+    if _is_pl(item) and checks:
+        # Include contributing coauthors even when no single signer satisfies
+        # every criterion; unrelated coauthors remain outside the author panels.
+        return any(checks.values())
+    return all(checks.values())
 
 
 def _matches(item, query):
@@ -170,7 +204,6 @@ def _matches(item, query):
             ),
         ]
     )
-    author_filter = query.gender or query.state or query.religion
     movements = item["celerity"]["movements_last_90_days"]
     return (
         (not query.search.strip() or _normalized(query.search) in _normalized(search_text))
@@ -178,18 +211,23 @@ def _matches(item, query):
         and (query.year is None or _year(item) == query.year)
         and (query.year_start is None or _year(item) >= query.year_start)
         and (query.year_end is None or _year(item) <= query.year_end)
-        and (not query.party or any(author["party"] == query.party for author in authors))
-        and (not query.category or _normalized(item["category"]) == _normalized(query.category))
+        and (not query.party or any(author["party"] in query.party for author in authors))
+        and (
+            not query.category
+            or any(_normalized(item["category"]) == _normalized(value) for value in query.category)
+        )
         and (not query.assessment or _assessment(item) == query.assessment)
-        and (not query.celerity or item["celerity"]["label"].strip() == query.celerity.strip())
+        and (not query.celerity or item["celerity"]["label"].strip() in query.celerity)
         and (
             not query.movements or (movements > 0 if query.movements == "with" else movements == 0)
         )
-        # A combined author filter must match one signer, not unrelated coauthors.
-        and (not author_filter or any(_author_matches(author, query) for author in authors))
+        and _authors_match(item, query)
         and (
             not query.evaluator
-            or _normalized(item["assessment_organization"]) == _normalized(query.evaluator)
+            or any(
+                _normalized(item["assessment_organization"]) == _normalized(value)
+                for value in query.evaluator
+            )
         )
         and (
             not query.comments
@@ -344,7 +382,7 @@ def _dashboard(items, query):
         seen = set()
         for author in item["authors"]:
             key = _person_key(author)
-            if key in seen or not _author_matches(author, query):
+            if key in seen or not _dashboard_author_matches(author, item, query):
                 continue
             seen.add(key)
             author_counts[key] += 1

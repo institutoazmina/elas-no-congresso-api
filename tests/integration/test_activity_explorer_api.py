@@ -259,10 +259,149 @@ def test_religion_combines_with_existing_filters(activity_data, filters):
     )
 
 
-def test_combined_author_filters_match_one_signer(activity_data):
+def test_pl_author_filters_can_match_different_coauthors(activity_data):
+    assert get_explorer(religion="Católica", gender="M")["total"] == 1
+    assert get_explorer(religion="Católica", state="BA")["total"] == 1
+    assert get_explorer(religion="Evangélica", gender="M", state="BA")["total"] == 1
+
+
+def test_other_proposition_types_keep_same_signer_matching(activity_data):
+    shared = activity_data["shared"]
+    shared.type_code = "PEC"
+    shared.save(update_fields=["type_code"])
     assert get_explorer(religion="Católica", gender="M")["total"] == 0
     assert get_explorer(religion="Católica", state="BA")["total"] == 0
     assert get_explorer(religion="Evangélica", gender="M", state="BA")["total"] == 1
+
+
+@pytest.fixture
+def multiple_filter_data(activity_data):
+    older = activity_data["older"]
+    older.presented_at = timezone.localdate() - timedelta(days=200)
+    older.save(update_fields=["presented_at"])
+    annotation = older.annotations.get()
+    annotation.category = "educacao_cultura"
+    annotation.save(update_fields=["category"])
+    return activity_data
+
+
+@pytest.mark.parametrize(
+    ("name", "values", "matching"),
+    [
+        ("party", ["PT", "PL"], ["shared", "older"]),
+        ("religion", ["Católica", "Evangélica"], ["shared", "older"]),
+        ("religion", ["Evangélica", "__unknown__"], ["shared", "missing"]),
+        ("state", ["SP", "RJ"], ["shared", "older", "missing"]),
+        ("celerity", ["Rápida", "Travada"], ["shared", "older", "institutional"]),
+        ("category", ["saude", "educacao_cultura"], ["shared", "older"]),
+        ("evaluator", ["AzMina", "Themis"], ["shared", "older"]),
+    ],
+)
+def test_repeated_filter_values_match_any_selected_option(
+    multiple_filter_data, name, values, matching
+):
+    result = get_explorer(**{name: values})
+    assert {item["id"] for item in result["items"]} == {
+        multiple_filter_data[key].pk for key in matching
+    }
+    assert result["total"] == len(matching)
+    # Several values in one control count as one active filter.
+    assert result["summary"]["active_filter_count"] == 1
+
+
+@pytest.mark.parametrize(
+    ("name", "value", "matching"),
+    [
+        ("party", "PT", ["shared", "older"]),
+        ("religion", "catolica", ["shared", "older"]),
+        ("state", "SP", ["shared", "older"]),
+        ("celerity", "Rápida", ["shared", "institutional"]),
+        ("category", "saude", ["shared"]),
+        ("evaluator", "azmina", ["shared"]),
+    ],
+)
+def test_multiple_filters_preserve_legacy_scalars_and_ignore_blank_duplicates(
+    multiple_filter_data, name, value, matching
+):
+    legacy = get_explorer(**{name: value})
+    multiple = get_explorer(**{name: ["", f" {value} ", value, "does-not-exist"]})
+    expected = {multiple_filter_data[key].pk for key in matching}
+    assert {item["id"] for item in legacy["items"]} == expected
+    assert {item["id"] for item in multiple["items"]} == expected
+    assert multiple["total"] == len(expected)
+    assert multiple["summary"]["active_filter_count"] == 1
+    assert get_explorer(**{name: ["", " "]})["summary"]["active_filter_count"] == 0
+
+
+def test_multiple_values_combine_with_and_and_keep_coauthor_dashboards(multiple_filter_data):
+    params = {
+        "party": ["PT", "nonexistent"],
+        "state": ["BA", "RJ"],
+        "religion": ["catolica", "nonexistent"],
+        "category": ["saude", "educacao_cultura"],
+        "evaluator": ["AzMina", "Themis"],
+        "celerity": ["Rápida", "Travada"],
+        "author_minimum": 1,
+    }
+    result = get_explorer(**params)
+    assert [item["id"] for item in result["items"]] == [multiple_filter_data["shared"].pk]
+    assert result["summary"]["active_filter_count"] == 6
+    # Católica comes from Álice, BA from Bruno; both contributors appear once.
+    assert {row["label"] for row in result["dashboard"]["author"]} == {"Álice Silva", "Bruno Souza"}
+    assert all(row["favorable"] == 1 for row in result["dashboard"]["author"])
+    assert get_explorer(**{**params, "party": ["nonexistent"]})["total"] == 0
+
+
+def test_multiple_values_share_pagination_summary_and_export(multiple_filter_data):
+    params = {
+        "religion": ["Católica", "Evangélica"],
+        "category": ["saude", "educacao_cultura"],
+        "evaluator": ["AzMina", "Themis"],
+        "page_size": 1,
+        "sort": "number",
+        "direction": "ascending",
+    }
+    first = get_explorer(**params)
+    second = get_explorer(**params, page=2)
+    assert first["total"] == first["page_count"] == 2
+    assert first["summary"] == second["summary"]
+    assert first["dashboard"] == second["dashboard"]
+    assert {first["items"][0]["id"], second["items"][0]["id"]} == {
+        multiple_filter_data["shared"].pk,
+        multiple_filter_data["older"].pk,
+    }
+    response = Client().get("/api/v1/activity/explorer/export", params)
+    assert response.status_code == 200
+    rows = list(csv.reader(StringIO(response.content.decode("utf-8-sig")), delimiter=";"))
+    assert [row[0] for row in rows[1:]] == ["PL 2/2026", "PL 10/2026"]
+
+
+def test_multiple_evaluator_and_category_filters_use_only_displayed_assessment(activity_data):
+    shared = activity_data["shared"]
+    themis = AssessmentOrganization.objects.get(name="Themis")
+    PropositionAnnotation.objects.create(
+        proposition=shared, organization=themis, is_favorable=False, category="educacao_cultura"
+    )
+    displayed = get_explorer(
+        evaluator=["Themis", "unavailable"], category=["educacao_cultura", "unavailable"]
+    )
+    assert [item["id"] for item in displayed["items"]] == [shared.pk]
+    assert displayed["items"][0]["assessment_organization"] == "Themis"
+    assert shared.pk not in [
+        item["id"] for item in get_explorer(evaluator=["AzMina", "unavailable"])["items"]
+    ]
+    assert shared.pk not in [
+        item["id"] for item in get_explorer(category=["saude", "unavailable"])["items"]
+    ]
+
+
+def test_option_names_containing_commas_are_not_split(activity_data):
+    organization = activity_data["shared"].annotations.get().organization
+    organization.name = "Instituto Mulher, Política e Sociedade"
+    organization.save(update_fields=["name"])
+    cache.clear()
+    result = get_explorer(evaluator=[organization.name, "Themis"])
+    assert result["total"] == 2
 
 
 def test_missing_religion_excludes_institutional_authorship(activity_data):
@@ -331,7 +470,9 @@ def test_religion_profile_updates_expire_source_facets_and_details(activity_data
 
 
 def test_religion_sql_import_expires_activity_cache(activity_data, tmp_path):
-    legislature = Legislature.objects.get(pk=57)
+    legislature, _ = Legislature.objects.get_or_create(
+        number=57, defaults={"start_date": "2023-02-01", "end_date": "2027-01-31"}
+    )
     ParliamentarianTerm.objects.create(
         parliamentarian=activity_data["alice"],
         legislature_number=legislature,

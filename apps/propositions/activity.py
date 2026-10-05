@@ -11,6 +11,7 @@ from ninja import Query, Router, Schema
 
 from .celerity import calculate_celerity
 from .explorer import (
+    SOURCE_CACHE_KEY,
     DashboardRowSchema,
     ExplorerQuery,
     ExplorerSummarySchema,
@@ -43,7 +44,7 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
     else:
         # LocMemCache used in tests does not implement ``delete_pattern``.
         for cache_key in (
-            "activity:explorer:source:v1",
+            SOURCE_CACHE_KEY,
             "activity:list:5000",
             _activity_list_cache_key(5000, include_events=True),
             _activity_list_cache_key(5000, include_events=False),
@@ -178,6 +179,8 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
 
     return {
         "id": proposition.pk,
+        # Internal explorer metadata distinguishes PL coauthorship semantics.
+        "type_code": proposition.type_code,
         "house": proposition.house,
         "number_label": proposition.number_label,
         "ementa": proposition.ementa,
