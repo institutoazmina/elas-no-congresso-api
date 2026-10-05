@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -50,6 +50,22 @@ def enqueue_match_on_annotation(sender, instance, **kwargs):
 @receiver(post_save, sender="propositions.PropositionAnalysis")
 def invalidate_activity_after_quiteria_analysis(sender, instance, **kwargs):
     """A conclusão da QuitérIA altera categoria, avaliação e avaliadora públicas."""
+    from .activity import invalidate_activity_cache
+
+    invalidate_activity_cache([instance.proposition])
+
+
+@receiver(post_save, sender="legislatures.Parliamentarian")
+def invalidate_activity_after_author_profile(sender, instance, **kwargs):
+    from .activity import invalidate_activity_cache
+    from .models import Proposition
+
+    invalidate_activity_cache(Proposition.objects.filter(authors__parliamentarian=instance).distinct())
+
+
+@receiver(post_save, sender="propositions.PropositionAuthor")
+@receiver(post_delete, sender="propositions.PropositionAuthor")
+def invalidate_activity_after_authorship(sender, instance, **kwargs):
     from .activity import invalidate_activity_cache
 
     invalidate_activity_cache([instance.proposition])

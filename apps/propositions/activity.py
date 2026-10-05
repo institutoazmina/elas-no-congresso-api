@@ -7,9 +7,17 @@ from hashlib import sha256
 from django.core.cache import cache
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from ninja import Router, Schema
+from ninja import Query, Router, Schema
 
 from .celerity import calculate_celerity
+from .explorer import (
+    DashboardRowSchema,
+    ExplorerQuery,
+    ExplorerSummarySchema,
+    FilterOptionSchema,
+    explore_activity,
+    export_activity,
+)
 from .models import Proposition, PropositionAnalysis
 
 router = Router()
@@ -35,6 +43,7 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
     else:
         # LocMemCache used in tests does not implement ``delete_pattern``.
         for cache_key in (
+            "activity:explorer:source:v1",
             "activity:list:5000",
             _activity_list_cache_key(5000, include_events=True),
             _activity_list_cache_key(5000, include_events=False),
@@ -56,6 +65,7 @@ class ActivityAuthorSchema(Schema):
     party: str | None = None
     state: str | None = None
     gender: str | None = None
+    religion: str | None = None
     photo_url: str | None = None
     role: str | None = None
 
@@ -107,6 +117,16 @@ class EnactmentSchema(Schema):
     enacted_at: date
 
 
+class ActivityExplorerSchema(Schema):
+    items: list[ActivityPropositionSchema]
+    total: int
+    page: int
+    page_count: int
+    options: dict[str, list[FilterOptionSchema]]
+    summary: ExplorerSummarySchema
+    dashboard: dict[str, list[DashboardRowSchema]]
+
+
 class EnactedProjectSchema(ActivityPropositionSchema):
     assessment_label: str
     enactment: EnactmentSchema
@@ -134,6 +154,7 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
                 "party": author.party.acronym if author.party else None,
                 "state": author.state_at_authorship,
                 "gender": person.gender if person else None,
+                "religion": person.religion if person else None,
                 "photo_url": person.photo_url if person else None,
                 "role": None,
             }
@@ -377,6 +398,18 @@ def get_activity_by_number(request, house: str, number_label: str):
     activity = _activity_for_proposition(proposition.pk)
     cache.set(cache_key, activity, ACTIVITY_CACHE_TIMEOUT)
     return activity
+
+
+@router.get("/explorer", response=ActivityExplorerSchema)
+def get_activity_explorer(request, filters: ExplorerQuery = Query(...)):
+    """API-owned filtering, available options and statistics over all public proposals."""
+    return explore_activity(filters)
+
+
+@router.get("/explorer/export")
+def get_activity_explorer_export(request, filters: ExplorerQuery = Query(...)):
+    """Export the full filtered collection, independently of the displayed page."""
+    return export_activity(filters)
 
 
 @router.get("/{proposition_id}", response=ActivityPropositionSchema)

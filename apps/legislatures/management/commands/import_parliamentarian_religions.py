@@ -93,6 +93,12 @@ class Command(BaseCommand):
                     )
                 counts["updated"] += 1
 
+        if not dry_run and counts["updated"]:
+            from apps.propositions.activity import invalidate_activity_cache
+            from apps.propositions.models import Proposition
+
+            invalidate_activity_cache(Proposition.objects.filter(authors__parliamentarian__isnull=False).distinct())
+
         action = "Atualizaria" if dry_run else "Atualizou"
         self.stdout.write(
             self.style.SUCCESS(

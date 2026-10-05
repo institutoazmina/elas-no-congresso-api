@@ -239,6 +239,7 @@ def test_legacy_profile_sync_adds_missing_author_photo_to_activity(tmp_path):
             "party": None,
             "state": None,
             "gender": "M",
+            "religion": None,
             "photo_url": photo_url,
             "role": None,
         }
