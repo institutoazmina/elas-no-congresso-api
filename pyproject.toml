@@ -31,6 +31,8 @@ dependencies = [
     "transformers==5.7.0",
     "django-cors-headers>=4.9.0",
     "email-validator>=2.3.0",
+    "python-substack==0.9.1",
+    "markdown-it-py>=3,<5",
 ]
 
 [dependency-groups]

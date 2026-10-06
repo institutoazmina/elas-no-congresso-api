@@ -58,6 +58,9 @@ services:
       REDIS_URL: redis://redis:6379/0
       EMAIL_HOST: mailpit
       DAILY_DIGEST_TIME: ${DAILY_DIGEST_TIME:-09:00}
+      WEEKLY_NEWSLETTER_ENABLED: ${WEEKLY_NEWSLETTER_ENABLED:-False}
+      SUBSTACK_PUBLICATION_URL: ${SUBSTACK_PUBLICATION_URL:-https://elasnocongresso.substack.com}
+      SUBSTACK_COOKIES_STRING: ${SUBSTACK_COOKIES_STRING:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -80,6 +83,10 @@ services:
       REDIS_URL: redis://redis:6379/0
       EMAIL_HOST: mailpit
       DAILY_DIGEST_TIME: ${DAILY_DIGEST_TIME:-09:00}
+      WEEKLY_NEWSLETTER_ENABLED: ${WEEKLY_NEWSLETTER_ENABLED:-False}
+      WEEKLY_NEWSLETTER_BATCH_SIZE: ${WEEKLY_NEWSLETTER_BATCH_SIZE:-5}
+      SUBSTACK_PUBLICATION_URL: ${SUBSTACK_PUBLICATION_URL:-https://elasnocongresso.substack.com}
+      SUBSTACK_COOKIES_STRING: ${SUBSTACK_COOKIES_STRING:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -116,6 +123,8 @@ services:
       POSTGRES_PASSWORD: elas
       REDIS_URL: redis://redis:6379/0
       DAILY_DIGEST_TIME: ${DAILY_DIGEST_TIME:-09:00}
+      WEEKLY_NEWSLETTER_ENABLED: ${WEEKLY_NEWSLETTER_ENABLED:-False}
+      SUBSTACK_PUBLICATION_URL: ${SUBSTACK_PUBLICATION_URL:-https://elasnocongresso.substack.com}
     depends_on:
       postgres:
         condition: service_healthy

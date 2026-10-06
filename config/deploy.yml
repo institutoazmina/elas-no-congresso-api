@@ -70,6 +70,9 @@ env:
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DEBUG: "False"
     DAILY_DIGEST_TIME: "<%= ENV.fetch('DAILY_DIGEST_TIME', '09:00') %>"
+    WEEKLY_NEWSLETTER_ENABLED: "<%= ENV.fetch('WEEKLY_NEWSLETTER_ENABLED', 'False') %>"
+    WEEKLY_NEWSLETTER_BATCH_SIZE: "<%= ENV.fetch('WEEKLY_NEWSLETTER_BATCH_SIZE', '5') %>"
+    SUBSTACK_PUBLICATION_URL: "<%= ENV.fetch('SUBSTACK_PUBLICATION_URL', 'https://elasnocongresso.substack.com') %>"
     # Site estático (domínio público, nada sensível): destino do redirect depois
     # de confirmar/cancelar alerta, e origem liberada no CORS do modal. Sem isto
     # o default de dev (localhost:4321) vazaria para produção.
@@ -93,6 +96,9 @@ env:
     # Rede / host
     - ALLOWED_HOSTS
     - SITE_BASE_URL
+<% if ENV.fetch('WEEKLY_NEWSLETTER_ENABLED', 'False').downcase == 'true' || !ENV.fetch('SUBSTACK_COOKIES_STRING', '').strip.empty? %>
+    - SUBSTACK_COOKIES_STRING
+<% end %>
 
 # ---- Redis accessory (no servidor), isolado por nome próprio ----
 accessories:

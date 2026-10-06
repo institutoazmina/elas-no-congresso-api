@@ -28,6 +28,10 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
       SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+      WEEKLY_NEWSLETTER_ENABLED: ${{ vars.WEEKLY_NEWSLETTER_ENABLED || 'False' }}
+      WEEKLY_NEWSLETTER_BATCH_SIZE: ${{ vars.WEEKLY_NEWSLETTER_BATCH_SIZE || '5' }}
+      SUBSTACK_PUBLICATION_URL: ${{ vars.SUBSTACK_PUBLICATION_URL || 'https://elasnocongresso.substack.com' }}
+      SUBSTACK_COOKIES_STRING: ${{ secrets.SUBSTACK_COOKIES_STRING }}
       # Registry: o próprio token do Actions tem write:packages pro repo
       KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}

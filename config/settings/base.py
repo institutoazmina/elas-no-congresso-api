@@ -72,6 +72,7 @@ LOCAL_APPS = [
     "apps.norms",
     "apps.subscriptions",
     "apps.ingestion",
+    "apps.newsletters",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -235,6 +236,35 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=4, minute=0),
     },
 }
+
+# Disabled until a draft-only smoke test has passed on the target publication.
+WEEKLY_NEWSLETTER_ENABLED = config("WEEKLY_NEWSLETTER_ENABLED", default=False, cast=bool)
+WEEKLY_NEWSLETTER_BATCH_SIZE = config("WEEKLY_NEWSLETTER_BATCH_SIZE", default=5, cast=int)
+if WEEKLY_NEWSLETTER_BATCH_SIZE < 1:
+    raise ValueError("WEEKLY_NEWSLETTER_BATCH_SIZE must be positive")
+SUBSTACK_PUBLICATION_URL = config(
+    "SUBSTACK_PUBLICATION_URL", default="https://elasnocongresso.substack.com"
+)
+SUBSTACK_COOKIES_STRING = config("SUBSTACK_COOKIES_STRING", default="")
+if WEEKLY_NEWSLETTER_ENABLED:
+    CELERY_BEAT_SCHEDULE.update({
+        "weekly-newsletter-prepare": {
+            "task": "apps.newsletters.tasks.prepare_weekly_report",
+            "schedule": crontab(day_of_week=1, hour=4, minute=0),
+        },
+        "weekly-newsletter-finish-collection": {
+            "task": "apps.newsletters.tasks.finish_weekly_collection",
+            "schedule": crontab(day_of_week=1, hour=6, minute=35),
+        },
+        "weekly-newsletter-deliver": {
+            "task": "apps.newsletters.tasks.deliver_weekly_report",
+            "schedule": crontab(day_of_week=1, hour=6, minute=45),
+        },
+        "weekly-newsletter-deadline": {
+            "task": "apps.newsletters.tasks.check_weekly_deadline",
+            "schedule": crontab(day_of_week=1, hour=7, minute=0),
+        },
+    })
 
 # Public base URL used to build links inside outgoing emails
 SITE_BASE_URL = config("SITE_BASE_URL", default="http://localhost:8000")

@@ -125,6 +125,10 @@ uv run ./manage.py shell
 
 ## Deploy
 
+O [Radar semanal no Substack](docs/newsletters.md) prepara rascunhos para revisão
+humana, com LEGENDA, destaques e Radars por casa. Está desativado por padrão e
+nunca publica ou envia e-mails.
+
 Variáveis obrigatórias:
 
 - `SECRET_KEY` — chave secreta Django
