@@ -29,6 +29,12 @@ leituras e criação de rascunho após autenticação. Desativar explicitamente 
 opções de publicação, agendamento, envio e compartilhamento. Usar segredo de
 sessão renovável e manter automação desativada até validar um rascunho real.
 
+Permitir disparos manuais por GitHub Actions com datas inclusivas, inclusive até
+o dia atual. Reutilizar o host e o acesso SSH do deploy Kamal, sem descoberta de
+conta AWS, e compartilhar a trava do deploy para preservar o container durante
+a coleta. A mesma data inicial não pode reutilizar silenciosamente um relatório
+com outra data final; períodos congelados continuam imutáveis.
+
 ## Alternativas
 
 - HTTP direto: exige manter autenticação e documento do editor internamente.

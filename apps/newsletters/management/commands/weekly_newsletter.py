@@ -20,6 +20,14 @@ class Command(BaseCommand):
             "--week-start", type=date.fromisoformat, help="Segunda-feira YYYY-MM-DD"
         )
         parser.add_argument(
+            "--start-date",
+            type=date.fromisoformat,
+            help="Início inclusivo YYYY-MM-DD (uso manual).",
+        )
+        parser.add_argument(
+            "--end-date", type=date.fromisoformat, help="Fim inclusivo YYYY-MM-DD, até hoje."
+        )
+        parser.add_argument(
             "--dry-run",
             action="store_true",
             help="Somente leitura: imprime o relatório, sem coletar ou criar rascunho.",
@@ -41,6 +49,13 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        custom_period = options["start_date"] is not None or options["end_date"] is not None
+        if custom_period and (options["week_start"] or options["report_id"]):
+            raise CommandError(
+                "Datas manuais não podem ser usadas com --week-start ou --report-id."
+            )
+        if custom_period and (options["start_date"] is None or options["end_date"] is None):
+            raise CommandError("Informar --start-date e --end-date juntos.")
         if options["dry_run"] and (
             options["refresh"]
             or options["deliver"]
@@ -68,20 +83,30 @@ class Command(BaseCommand):
         else:
             if options["attach_draft_id"]:
                 raise CommandError("--attach-draft-id exige --report-id.")
-            start = (
-                options["week_start"]
-                or reporting_week(timezone.now().astimezone(REPORT_TZ).date())[0]
-            )
-            if start.weekday() != 0:
-                raise CommandError("--week-start deve ser uma segunda-feira.")
-            end = start + timedelta(days=7)
-            if end > timezone.now().astimezone(REPORT_TZ).date():
-                raise CommandError("A semana deve estar encerrada.")
+            today = timezone.now().astimezone(REPORT_TZ).date()
+            if custom_period:
+                start = options["start_date"]
+                last_day = options["end_date"]
+                if start > last_day:
+                    raise CommandError("A data inicial deve ser anterior ou igual à final.")
+                if last_day > today:
+                    raise CommandError("A data final não pode estar no futuro.")
+                end = last_day + timedelta(days=1)
+            else:
+                start = options["week_start"] or reporting_week(today)[0]
+                if start.weekday() != 0:
+                    raise CommandError("--week-start deve ser uma segunda-feira.")
+                end = start + timedelta(days=7)
+                if end > today:
+                    raise CommandError("A semana deve estar encerrada.")
             if options["dry_run"]:
                 markdown, html = render(build_snapshot(start, end))
                 self.stdout.write(html if options["format"] == "html" else markdown)
                 return
-            report = get_report(start, end)
+            try:
+                report = get_report(start, end)
+            except ValueError as exc:
+                raise CommandError(str(exc)) from exc
             if report.status == WeeklyReport.Status.COLLECTING:
                 results = {}
                 ids = list(Proposition.objects.order_by("pk").values_list("pk", flat=True))
@@ -92,6 +117,10 @@ class Command(BaseCommand):
                                 ids[offset : offset + settings.WEEKLY_NEWSLETTER_BATCH_SIZE]
                             )
                         )
+                        processed = min(offset + settings.WEEKLY_NEWSLETTER_BATCH_SIZE, len(ids))
+                        if processed % 50 == 0 or processed == len(ids):
+                            self.stdout.write(f"Históricos atualizados: {processed}/{len(ids)}")
+                            self.stdout.flush()
                 report.collection = {"targets": ids, "results": results, "manual": True}
                 report.save(update_fields=["collection", "updated_at"])
                 complete = bool(options["refresh"]) and all(
@@ -105,5 +134,7 @@ class Command(BaseCommand):
                     f"Relatório {report.pk}: {report.get_status_display()}. Exportação preservada no admin."
                 )
         self.stdout.write(
-            f"Relatório {report.pk}: {report.get_status_display()} {report.draft_url}"
+            f"Relatório {report.pk}: {report.get_status_display()} {report.draft_url}\n"
+            f"{len(report.snapshot)} proposições; coleta "
+            f"{'completa' if report.is_complete else 'incompleta'}."
         )

@@ -17,7 +17,7 @@ def publication_url():
 
 
 def get_report(start, end):
-    return WeeklyReport.objects.get_or_create(
+    report = WeeklyReport.objects.get_or_create(
         publication_url=publication_url(),
         week_start=start,
         defaults={
@@ -25,6 +25,12 @@ def get_report(start, end):
             "title": f"Elas no Congresso — Radar {start:%d/%m/%Y} a {end - timedelta(days=1):%d/%m/%Y}",
         },
     )[0]
+    if report.week_end != end:
+        raise ValueError(
+            f"Relatório {report.pk} já usa este início com outra data final; "
+            "usar --report-id para consultar/entregar o período original."
+        )
+    return report
 
 
 def freeze_report(report_id, complete):

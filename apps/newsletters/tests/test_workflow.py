@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 from django.contrib.auth.models import Permission, User
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.db import IntegrityError, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -121,6 +121,98 @@ def test_dry_run_never_persists_or_calls_external_services(monkeypatch):
     assert "Radar da Câmara" in output.getvalue()
     assert WeeklyReport.objects.count() == 0
     refresh.assert_not_called()
+
+
+@pytest.mark.django_db
+def test_manual_period_includes_both_tuesdays_and_reuses_frozen_report(monkeypatch, settings):
+    settings.WEEKLY_NEWSLETTER_ENABLED = False
+    monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 6, 13, tzinfo=REPORT_TZ))
+    start = prop(11)
+    start.presented_at = date(2026, 9, 29)
+    start.save()
+    end = prop(12)
+    end.presented_at = date(2026, 10, 6)
+    end.save()
+    for number, day in [(13, date(2026, 9, 28)), (14, date(2026, 10, 7))]:
+        outside = prop(number)
+        outside.presented_at = day
+        outside.save()
+    command_module = "apps.newsletters.management.commands.weekly_newsletter"
+    refresh = Mock(side_effect=lambda ids: {str(pk): "ok" for pk in ids})
+    monkeypatch.setattr(f"{command_module}.refresh_batch", refresh)
+
+    def mark_delivered(pk):
+        report = WeeklyReport.objects.get(pk=pk)
+        report.status = WeeklyReport.Status.DELIVERED
+        report.draft_url = "https://elasnocongresso.substack.com/publish/post/123"
+        report.save()
+        return report
+
+    delivery = Mock(side_effect=mark_delivered)
+    monkeypatch.setattr(f"{command_module}.deliver_report", delivery)
+    args = {
+        "start_date": date(2026, 9, 29),
+        "end_date": date(2026, 10, 6),
+        "refresh": True,
+        "deliver": True,
+    }
+    output = StringIO()
+    call_command("weekly_newsletter", **args, stdout=output)
+    report = WeeklyReport.objects.get()
+    assert report.week_end == date(2026, 10, 7)
+    assert report.title.endswith("29/09/2026 a 06/10/2026")
+    assert report.is_complete
+    assert {entry["id"] for entry in report.snapshot} == {start.pk, end.pk}
+    assert report.draft_url in output.getvalue()
+    assert "2 proposições; coleta completa" in output.getvalue()
+    refresh.reset_mock()
+    call_command("weekly_newsletter", **args, stdout=StringIO())
+    refresh.assert_not_called()
+    assert WeeklyReport.objects.count() == 1
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"start_date": date(2026, 9, 29)},
+        {"end_date": date(2026, 10, 6)},
+        {"start_date": date(2026, 10, 6), "end_date": date(2026, 9, 29)},
+        {"start_date": date(2026, 9, 29), "end_date": date(2026, 10, 7)},
+        {
+            "start_date": date(2026, 9, 29),
+            "end_date": date(2026, 10, 6),
+            "week_start": date(2026, 9, 28),
+        },
+        {"start_date": date(2026, 9, 29), "end_date": date(2026, 10, 6), "report_id": 1},
+        {"week_start": date(2026, 9, 29)},
+        {"week_start": date(2026, 10, 5)},
+    ],
+)
+def test_invalid_dates_fail_before_external_calls_or_database_writes(monkeypatch, options):
+    monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 6, 13, tzinfo=REPORT_TZ))
+    with pytest.raises(CommandError):
+        call_command("weekly_newsletter", **options, stdout=StringIO())
+
+
+@pytest.mark.django_db
+def test_same_start_with_different_end_is_rejected_without_delivery(monkeypatch):
+    monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 6, 13, tzinfo=REPORT_TZ))
+    original = get_report(date(2026, 9, 29), date(2026, 10, 6))
+    delivery = Mock()
+    monkeypatch.setattr(
+        "apps.newsletters.management.commands.weekly_newsletter.deliver_report", delivery
+    )
+    with pytest.raises(CommandError, match="outra data final"):
+        call_command(
+            "weekly_newsletter",
+            start_date=date(2026, 9, 29),
+            end_date=date(2026, 10, 6),
+            deliver=True,
+        )
+    delivery.assert_not_called()
+    original.refresh_from_db()
+    assert original.week_end == date(2026, 10, 6)
+    assert WeeklyReport.objects.count() == 1
 
 
 @pytest.mark.django_db

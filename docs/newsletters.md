@@ -13,6 +13,10 @@ promulgação nessa janela, inclusive as não aprovadas no gerenciador. Alteraç
 de `updated_at` não são movimentações. Eventos antigos descobertos depois não
 entram na semana seguinte.
 
+No uso manual, também é possível informar um período personalizado, com ambas
+as datas inclusivas. A data final pode ser hoje: nesse caso o relatório inclui
+os dados disponíveis no momento da execução, sem esperar o encerramento do dia.
+
 O rascunho contém LEGENDA, destaques 📃, Radar da Câmara e Radar do Senado.
 Cada entrada tem ementa oficial, identificador real, estágio e link oficial.
 Não há resumo por IA, autores ou texto editorial. Destaques não são repetidos
@@ -42,9 +46,29 @@ uv run python manage.py migrate
 | `SUBSTACK_PUBLICATION_URL` | `https://elasnocongresso.substack.com` |
 | `SUBSTACK_COOKIES_STRING` | vazio; segredo obrigatório para entrega |
 
-Copiar o cabeçalho **Cookie** de uma requisição do navegador após entrar na
-conta autorizada. Armazenar em um segredo de implantação, nunca no repositório,
-em logs ou em argumentos de comando. O segredo equivale a uma sessão autenticada.
+Entrar na conta autorizada e abrir DevTools → Application → Cookies →
+`https://substack.com`. Procurar o cookie de sessão **`substack.sid`** ou
+**`connect.sid`**; o nome pode variar entre sessões/versões. Copiar o nome e o
+valor exatamente como aparecem, mantendo o nome original. Se ambos estiverem
+presentes na requisição autenticada, incluir os dois com seus respectivos valores.
+
+O segredo recebe uma string `nome=valor`, não apenas o valor:
+
+```env
+SUBSTACK_COOKIES_STRING=substack.sid=<valor-do-cookie>
+# Ou, se esse for o nome encontrado:
+SUBSTACK_COOKIES_STRING=connect.sid=<valor-do-cookie>
+```
+
+Também é possível copiar o valor inteiro do cabeçalho **Cookie** de uma
+requisição autenticada em DevTools → Network → Headers → Request Headers.
+Esse é o método recomendado pela [documentação da biblioteca](https://github.com/ma2za/python-substack/blob/main/docs/authentication.md):
+a string já contém os pares `nome=valor` separados por ponto e vírgula. Não
+incluir o prefixo `Cookie:` nem atributos como `Path`, `Domain` ou `HttpOnly`.
+Os nomes de sessão também aparecem na [referência de autenticação](https://github.com/AnthonyDavidAdams/substack-api-reference/blob/main/AUTH.md).
+
+Armazenar em um segredo de implantação, nunca no repositório, em logs ou em
+argumentos de comando. O segredo equivale a uma sessão autenticada.
 Não há chave da API oficial para criar esses rascunhos. `python-substack==0.9.1`
 usa endpoints internos e pode precisar de atualização se eles mudarem.
 
@@ -81,6 +105,43 @@ o rascunho está sem agendamento, com as seções e links corretos. Ele nunca
 publica ou apaga conteúdo. Sem `--refresh`, a preparação fica marcada como
 coleta incompleta; sem `--deliver`, apenas persiste o relatório e suas exportações.
 Uma semana já preparada nunca é regenerada silenciosamente.
+
+### Pipeline manual no GitHub Actions
+
+Abrir **Actions → Create Substack draft → Run workflow**, selecionar `main` e
+informar `start_date` e `end_date` em `YYYY-MM-DD`. As duas datas são inclusivas,
+no fuso de São Paulo, e a data final não pode estar no futuro. Por exemplo:
+`2026-09-29` a `2026-10-06` cobre da terça-feira anterior até a terça-feira atual.
+
+`refresh=true` atualiza os históricos oficiais antes de congelar o relatório.
+`dry_run=true` apenas mostra o conteúdo disponível, sem coletar, persistir ou
+criar rascunho, independentemente de `refresh`. Com `dry_run=false`, o workflow
+cria um rascunho e informa o link, a quantidade de proposições e a cobertura da
+coleta no resumo da execução. Falhas de autenticação fazem o job falhar, mantendo
+o relatório exportável no admin.
+
+O pipeline reutiliza `DEPLOY_HOST` e `SSH_PRIVATE_KEY` do deploy via Kamal;
+não consulta perfis, contas ou instâncias AWS. Executa no container web já
+implantado, usando a sessão Substack configurada nele. Compartilha a trava de
+concorrência do deploy para não trocar o container durante a coleta. Não faz
+deploy por conta própria: implantar o suporte às datas antes do primeiro disparo.
+Não habilita a agenda semanal.
+
+```sh
+gh workflow run newsletter-draft.yml --ref main \
+  -f start_date=2026-09-29 -f end_date=2026-10-06 \
+  -f refresh=true -f dry_run=false
+```
+
+O comando equivalente no servidor é:
+
+```sh
+python manage.py weekly_newsletter --start-date 2026-09-29 --end-date 2026-10-06 --refresh --deliver
+```
+
+Repetir o mesmo período preserva o snapshot e o rascunho existentes, incluindo
+edições humanas. Um início já registrado com outra data final é recusado;
+usar `--report-id` para consultar ou entregar aquele período original.
 
 Após a validação, habilitar `WEEKLY_NEWSLETTER_ENABLED=True` no worker e Beat.
 
