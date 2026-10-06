@@ -85,16 +85,17 @@ class DraftOnlyClient:
             raise ValueError("Formato inesperado na verificação de acesso aos rascunhos.")
 
     def find(self, title):
+        page_size = 25
         offset = 0
         matches = []
         while True:
-            drafts = self._call(self.api.get_drafts, offset=offset, limit=100)
+            drafts = self._call(self.api.get_drafts, offset=offset, limit=page_size)
             if not isinstance(drafts, list):
                 raise ValueError("Formato inesperado da lista de rascunhos.")
             matches.extend(d for d in drafts if (d.get("draft_title") or d.get("title")) == title)
-            if len(drafts) < 100:
+            if len(drafts) < page_size:
                 break
-            offset += 100
+            offset += page_size
         if len(matches) > 1:
             raise ValueError(
                 "Mais de um rascunho corresponde a esta semana; reconciliar manualmente."

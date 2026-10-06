@@ -75,6 +75,9 @@ def test_pinned_sdk_conversion_creates_only_one_draft_request(monkeypatch, setti
             assert "LEGENDA" in kwargs["json"]["draft_body"]
             data = draft
         elif url.endswith("/drafts"):
+            # The live endpoint rejects pages of 100 with HTTP 400.
+            if kwargs["params"]["limit"] > 25:
+                return SimpleNamespace(status_code=400, text='{"error":"Invalid value"}')
             data = []
         elif url.endswith("/drafts/123"):
             data = draft
@@ -100,6 +103,26 @@ def test_pinned_sdk_conversion_creates_only_one_draft_request(monkeypatch, setti
     assert [url for method, url, _ in calls if method != "GET"] == [
         "https://example.substack.com/api/v1/drafts"
     ]
+
+
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_find_checks_later_pages_for_matches_and_duplicates(duplicate):
+    drafts = [{"id": index, "draft_title": f"Other {index}"} for index in range(25)]
+    if duplicate:
+        drafts[0]["draft_title"] = "Weekly Radar"
+    drafts.append({"id": 123, "draft_title": "Weekly Radar"})
+
+    def page(*, offset, limit):
+        if limit > 25:
+            raise ValueError("Substack rejects oversized draft pages")
+        return drafts[offset : offset + limit]
+
+    adapter = DraftOnlyClient("https://example.substack.com", SimpleNamespace(get_drafts=page))
+    if duplicate:
+        with pytest.raises(ValueError, match="Mais de um rascunho"):
+            adapter.find("Weekly Radar")
+    else:
+        assert adapter.find("Weekly Radar") == 123
 
 
 @pytest.mark.django_db
