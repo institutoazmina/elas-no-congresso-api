@@ -9,7 +9,7 @@ from django.db import IntegrityError, transaction
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.ingestion.models import IngestionRun
+from apps.ingestion.models import IngestionCheckpoint, IngestionRun
 from apps.newsletters import collection, tasks
 from apps.newsletters.models import WeeklyReport
 from apps.newsletters.report import REPORT_TZ
@@ -40,50 +40,52 @@ def prop(number=1, **extra):
     )
 
 
+def fresh_sources():
+    Proposition.objects.update(reconciled_at=timezone.now())
+    for house in ("camara", "senado"):
+        run = IngestionRun.objects.create(
+            house=house,
+            window_start=date(2026, 9, 28),
+            window_end=date(2026, 10, 6),
+            status="success",
+        )
+        IngestionCheckpoint.objects.create(
+            house=house,
+            covered_since=date(2026, 9, 28),
+            covered_until=timezone.now(),
+            baseline_complete=True,
+            active_run=run,
+        )
+
+
 @pytest.mark.django_db
-def test_batched_collection_includes_unapproved_and_morning_additions(clock, monkeypatch, settings):
+def test_database_snapshot_includes_unapproved_and_morning_additions(clock, monkeypatch):
     first = prop(is_approved=False, is_active=False)
     report_id = tasks.prepare_weekly_report()
     assert tasks.prepare_weekly_report() == report_id
-    settings.WEEKLY_NEWSLETTER_BATCH_SIZE = 1
-    refresh = Mock(return_value={str(first.pk): "ok"})
-    monkeypatch.setattr(tasks, "refresh_batch", refresh)
-    tasks.refresh_weekly_batch(report_id)
-    refresh.assert_called_once_with([first.pk])
     second = prop(2)
     monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 5, 6, 36, tzinfo=REPORT_TZ))
-    for house in ("camara", "senado"):
-        IngestionRun.objects.create(
-            house=house,
-            window_start=date(2026, 10, 4),
-            window_end=date(2026, 10, 6),
-            status="success",
-            error_count=0,
-        )
+    fresh_sources()
+    # A source refresh must never be reached by newsletter jobs.
+    monkeypatch.setattr(
+        collection, "refresh_batch", Mock(side_effect=AssertionError("unexpected HTTP"))
+    )
     tasks.finish_weekly_collection()
     report = WeeklyReport.objects.get(pk=report_id)
-    assert second.pk in report.collection["targets"]
-    assert all(item["ok"] for item in report.collection["discovery"].values())
-    refresh.return_value = {str(second.pk): "ok"}
-    tasks.refresh_weekly_batch(report_id)
-    monkeypatch.setattr(tasks, "deliver_report", lambda pk: WeeklyReport.objects.get(pk=pk))
-    tasks.deliver_weekly_report(report_id)
-    report.refresh_from_db()
     assert report.is_complete
+    assert all(item["ok"] for item in report.collection["discovery"].values())
     assert {entry["id"] for entry in report.snapshot} == {first.pk, second.pk}
 
 
 @pytest.mark.django_db
-def test_incomplete_collection_and_deadline_are_visible(clock, monkeypatch):
+def test_incomplete_coverage_blocks_delivery_and_preserves_export(clock, monkeypatch):
     prop()
     report_id = tasks.prepare_weekly_report()
-    monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 5, 6, 46, tzinfo=REPORT_TZ))
-    refresh = Mock()
-    monkeypatch.setattr(tasks, "refresh_batch", refresh)
-    tasks.refresh_weekly_batch(report_id)
-    refresh.assert_not_called()
-    monkeypatch.setattr(tasks, "deliver_report", lambda pk: WeeklyReport.objects.get(pk=pk))
-    tasks.deliver_weekly_report(report_id)
+    delivery = Mock()
+    monkeypatch.setattr(tasks, "deliver_report", delivery)
+    result = tasks.deliver_weekly_report(report_id)
+    assert result["blocked"]
+    delivery.assert_not_called()
     report = WeeklyReport.objects.get(pk=report_id)
     assert not report.is_complete
     assert "Coleta incompleta" in report.markdown
@@ -93,20 +95,15 @@ def test_incomplete_collection_and_deadline_are_visible(clock, monkeypatch):
 
 
 @pytest.mark.django_db
-def test_discovery_per_item_errors_make_report_incomplete(clock, monkeypatch):
+def test_daily_item_errors_prevent_complete_snapshot(clock):
     report_id = tasks.prepare_weekly_report()
-    monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 5, 6, 36, tzinfo=REPORT_TZ))
-    IngestionRun.objects.create(
-        house="camara",
-        window_start=date(2026, 10, 4),
-        window_end=date(2026, 10, 6),
-        status="success",
-        error_count=1,
-    )
+    fresh_sources()
+    IngestionRun.objects.filter(house="camara").update(status="failed", error_count=1)
     tasks.finish_weekly_collection()
     report = WeeklyReport.objects.get(pk=report_id)
-    assert report.collection["discovery"]["camara"]["ok"] is False
-    assert report.collection["discovery"]["senado"]["ok"] is False
+    assert report.status == WeeklyReport.Status.COLLECTING
+    assert not report.collection["discovery"]["camara"]["ok"]
+    assert report.collection["discovery"]["senado"]["ok"]
 
 
 @pytest.mark.django_db

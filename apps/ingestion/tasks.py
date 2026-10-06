@@ -1,15 +1,4 @@
-"""Orquestração da coleta diária via Celery.
-
-Substitui run.sh + Scrapy + cron externo. Agendado pelo Celery Beat (ver settings).
-
-Fluxo:
-  ingest_camara / ingest_senado  (1 por casa, rodam em paralelo)
-    └─ lista a janela diária
-       └─ filtra por tema (assert_theme) ANTES dos saltos caros
-          └─ busca detalhe + autores só do que é relevante
-             └─ upsert idempotente (update_or_create) no domínio relacional
-                └─ classify_proposition.delay(id)  (ML desacoplado — hoje só loga)
-"""
+"""Durable daily activity ingestion; substantive documents and AI use the ML queue."""
 
 import csv
 import logging
@@ -37,7 +26,6 @@ from apps.legislatures.models import (
 from apps.legislatures.services.profile_enrichment import upsert_source_profile
 from apps.propositions.models import (
     Proposition,
-    PropositionAnalysis,
     PropositionAuthor,
     PropositionEvent,
 )
@@ -48,26 +36,17 @@ from .clients.senado import SenadoClient
 from .clients.tse import TSEClient
 from .institutional_relationships import persist_official_relationships, persist_senado_fronts
 from .mappers import (
-    enrich_camara_author,
     map_camara_enactment,
-    map_camara_event,
     map_camara_events,
     map_camara_proposition,
     map_senado_enactment,
-    map_senado_event,
     map_senado_process_events,
     map_senado_process_status,
-    map_senado_proposition,
-    parse_camara_authors,
-    parse_senado_authors,
-    parse_senado_authors_from_autoria,
-    pick_senado_full_text_url,
 )
 from .models import IngestionRun
 from .parliamentarians import normalize_camara_profile, normalize_senado_profile
 from .resolvers import resolve_author
 from .senado_fronts import scrape_senado_fronts
-from .theme_assert import assert_theme
 from .tse import build_tse_index, match_tse_candidate, normalize_race_label, parse_tse_archive
 
 logger = logging.getLogger(__name__)
@@ -77,7 +56,10 @@ logger = logging.getLogger(__name__)
 
 
 def _persist(
-    prop_kwargs: dict, event_kwargs: dict | list[dict] | None, authors: list[dict], temas: list[str]
+    prop_kwargs: dict,
+    event_kwargs: dict | list[dict] | None,
+    authors: list[dict] | None,
+    temas: list[str],
 ) -> int:
     """Upsert idempotente de uma proposição + histórico + autores + temas.
 
@@ -87,15 +69,28 @@ def _persist(
     house = prop_kwargs["house"]
     external_id = prop_kwargs.pop("external_id")
     with transaction.atomic():
-        prop, _ = Proposition.objects.update_or_create(
+        prop, created = Proposition.objects.select_for_update(of=("self",)).get_or_create(
             house=house, external_id=external_id, defaults=prop_kwargs
         )
+        old_ementa = prop.ementa
+        if not created:
+            prop_kwargs.pop("is_approved", None)
+            if not prop_kwargs.get("full_text_url") and prop.full_text_url:
+                prop_kwargs.pop("full_text_url", None)
+            payload = prop_kwargs.get("raw_payload")
+            if house == "senado" and payload is not None and not payload.get("_senado_process_id"):
+                payload["_senado_process_id"] = (prop.raw_payload or {}).get("_senado_process_id")
+            changed = {k: v for k, v in prop_kwargs.items() if getattr(prop, k) != v}
+            if changed:
+                Proposition.objects.filter(pk=prop.pk).update(**changed, updated_at=timezone.now())
+                for key, value in changed.items():
+                    setattr(prop, key, value)
+        Proposition.objects.filter(pk=prop.pk).update(source_checked_at=timezone.now())
 
         _persist_events(prop, event_kwargs)
 
-        # Autores: substitui o conjunto a cada coleta (fonte da verdade é a API).
-        prop.authors.all().delete()
-        for a in authors:
+        author_rows = []
+        for a in authors or []:
             parl, inst = resolve_author(a, house)
             if not (parl or inst):
                 continue
@@ -105,60 +100,86 @@ def _persist(
 
                 sigla = a["party"].strip().upper()
                 party, _ = Party.objects.get_or_create(acronym=sigla, defaults={"name": sigla})
-            PropositionAuthor.objects.create(
-                proposition=prop,
-                parliamentarian=parl,
-                institutional_author=inst,
-                party=party,
-                state_at_authorship=a.get("state"),
-                order_index=a.get("order", 1),
+            author_rows.append(
+                {
+                    "parliamentarian_id": parl.pk if parl else None,
+                    "institutional_author_id": inst.pk if inst else None,
+                    "party_id": party.pk if party else None,
+                    "state_at_authorship": a.get("state"),
+                    "order_index": a.get("order", 1),
+                }
             )
+        if authors is not None:
+            fields = [
+                "parliamentarian_id",
+                "institutional_author_id",
+                "party_id",
+                "state_at_authorship",
+                "order_index",
+            ]
+            current_authors = list(prop.authors.order_by("order_index", "pk").values(*fields))
+            if current_authors != author_rows:
+                prop.authors.all().delete()
+                PropositionAuthor.objects.bulk_create(
+                    [PropositionAuthor(proposition=prop, **row) for row in author_rows]
+                )
 
         # Temas detectados pelo regex de relevância.
         for rank, tema in enumerate(dict.fromkeys(t.strip() for t in temas if t), start=1):
             theme, _ = Theme.objects.get_or_create(
                 slug=_slugify(tema), defaults={"name": tema.title()}
             )
-            PropositionTheme.objects.update_or_create(
+            link, link_created = PropositionTheme.objects.get_or_create(
                 proposition=prop, theme=theme, defaults={"rank": rank}
             )
+            if not link_created and link.rank != rank:
+                PropositionTheme.objects.filter(pk=link.pk).update(rank=rank)
+
+        from .content import register_fallback
+
+        register_fallback(
+            prop.pk,
+            analyze=not prop.full_text_url
+            and (created or (not prop.full_text and old_ementa != prop.ementa)),
+        )
 
     return prop.pk
 
 
 def _persist_events(prop: Proposition, event_kwargs: dict | list[dict] | None) -> None:
     """Upsert source events without rewriting proposition metadata or authors."""
-    events = event_kwargs if isinstance(event_kwargs, list) else [event_kwargs]
-    for event_kwargs in events:
-        if not event_kwargs:
-            continue
-        event_kwargs = event_kwargs.copy()
-        event_at = event_kwargs.pop("event_at")
-        source_event_id = event_kwargs.get("source_event_id")
-        if source_event_id:
-            # Eventos gravados antes do backfill não tinham chave da fonte.
-            # Reaproveita o registro idêntico para não criar um duplicado.
-            legacy = PropositionEvent.objects.filter(
-                proposition=prop,
-                source_event_id__isnull=True,
-                event_at=event_at,
-            ).first()
-            if legacy:
-                for field, value in event_kwargs.items():
-                    setattr(legacy, field, value)
-                legacy.save()
+    events = [e for e in (event_kwargs if isinstance(event_kwargs, list) else [event_kwargs]) if e]
+    if not events:
+        return
+    with transaction.atomic():
+        Proposition.objects.select_for_update(of=("self",)).get(pk=prop.pk)
+        current = list(prop.events.order_by("pk"))
+        by_source = {e.source_event_id: e for e in current if e.source_event_id}
+        legacy = {e.event_at: e for e in reversed(current) if not e.source_event_id}
+        new, changed, fields = [], {}, set()
+        for values in events:
+            values = values.copy()
+            key, at = values.get("source_event_id"), values["event_at"]
+            existing = by_source.get(key) if key else legacy.get(at)
+            if existing is None and key:
+                existing = legacy.pop(at, None)
+            if existing is None:
+                existing = PropositionEvent(proposition=prop, **values)
+                new.append(existing)
             else:
-                PropositionEvent.objects.update_or_create(
-                    proposition=prop,
-                    source_event_id=source_event_id,
-                    defaults={"event_at": event_at, **event_kwargs},
-                )
-        else:
-            PropositionEvent.objects.update_or_create(
-                proposition=prop,
-                event_at=event_at,
-                defaults=event_kwargs,
-            )
+                edits = {k: v for k, v in values.items() if getattr(existing, k) != v}
+                for field, value in edits.items():
+                    setattr(existing, field, value)
+                if edits and existing.pk:
+                    changed[existing.pk] = existing
+                    fields.update(edits)
+            if key:
+                by_source[key] = existing
+            else:
+                legacy[at] = existing
+        PropositionEvent.objects.bulk_create(new)
+        if changed:
+            PropositionEvent.objects.bulk_update(list(changed.values()), sorted(fields))
 
 
 def _slugify(value: str) -> str:
@@ -947,7 +968,8 @@ def enrich_parliamentarian_profiles() -> dict:
                         profile_values={
                             key: value
                             for key, value in normalized.items()
-                            if value is not None or key not in {"birth_date", "education", "profession"}
+                            if value is not None
+                            or key not in {"birth_date", "education", "profession"}
                         },
                         source_url=_profile_source_url(
                             house,
@@ -987,109 +1009,144 @@ def enrich_parliamentarian_profiles() -> dict:
 
 @shared_task(bind=True, max_retries=2, default_retry_delay=300)
 def ingest_camara(self):
-    start, end = _daily_window()
-    run = IngestionRun.objects.create(house="camara", window_start=start, window_end=end)
-    try:
-        with CamaraClient() as client:
-            for summary in client.list_propositions(start, end):
-                run.fetched_count += 1
-                result = assert_theme(summary.get("ementa"))
-                if not result["row_relevant"]:
-                    continue
-                run.relevant_count += 1
-                try:
-                    prop_id = int(summary["id"])
-                    detail = client.fetch_detail(prop_id)
-                    # Re-checa com ementa detalhada + keywords (mais sinal).
-                    result = assert_theme(
-                        summary.get("ementa"),
-                        detail.get("ementaDetalhada"),
-                        detail.get("keywords"),
-                    )
-                    if not result["row_relevant"]:  # pragma: no cover — defensivo
-                        continue
-                    authors = parse_camara_authors(client.fetch_authors(prop_id))
-                    for author in authors:
-                        if author["external_id"]:  # deputado → busca sexo/partido/UF
-                            enrich_camara_author(author, client.fetch_deputy(author["external_id"]))
-                    fetch_tramitations = getattr(client, "fetch_tramitations", None)
-                    events = map_camara_events(fetch_tramitations(prop_id)) if fetch_tramitations else []
-                    # A API pode excepcionalmente não devolver a timeline; o
-                    # status do detalhe ainda preserva a última movimentação.
-                    if not events:
-                        event = map_camara_event(detail)
-                        events = [event] if event else []
-                    pk = _persist(
-                        map_camara_proposition(summary, detail),
-                        events,
-                        authors,
-                        result["temas"],
-                    )
-                    run.upserted_count += 1
-                    classify_proposition.delay(pk)
-                except Exception:
-                    run.error_count += 1
-                    logger.exception("Falha ao processar proposição Câmara %s", summary.get("id"))
-        _finish(run, IngestionRun.Status.SUCCESS)
-    except Exception as exc:
-        _finish(run, IngestionRun.Status.FAILED, str(exc))
-        raise self.retry(exc=exc) from exc
-    return run.pk
+    from .sync import begin_daily
 
-
-# ── Senado ───────────────────────────────────────────────────────────────────
+    return begin_daily("camara", CamaraClient)
 
 
 @shared_task(bind=True, max_retries=2, default_retry_delay=300)
 def ingest_senado(self):
-    start, end = _daily_window()
-    run = IngestionRun.objects.create(house="senado", window_start=start, window_end=end)
+    from .sync import begin_daily
+
+    return begin_daily("senado", SenadoClient)
+
+
+@shared_task
+def sync_daily_batch(run_id):
+    from .sync import process_batch
+
+    run = IngestionRun.objects.get(pk=run_id)
+    key = f"ingestion:batch:{run_id}"
+    if not cache.add(key, True, timeout=1800):
+        return
     try:
-        with SenadoClient() as client:
-            for summary in client.list_materias(end - timedelta(days=1)):
-                run.fetched_count += 1
-                result = assert_theme(summary.get("Ementa"))
-                if not result["row_relevant"]:
-                    continue
-                run.relevant_count += 1
-                try:
-                    ident = summary.get("IdentificacaoMateria", {}) or {}
-                    materia_id = int(ident.get("CodigoMateria") or summary["CodigoMateria"])
-                    detail = client.fetch_detail(materia_id)
-                    process_id = ident.get("IdentificacaoProcesso")
-                    fetch_process = getattr(client, "fetch_process", None)
-                    process = fetch_process(int(process_id)) if process_id and fetch_process else None
-                    full_text_url = pick_senado_full_text_url(client.fetch_texts(materia_id))
-                    # Autoria traz sexo/partido/UF; cai no texto livre se vazio.
-                    authors = parse_senado_authors_from_autoria(
-                        client.fetch_authors(materia_id)
-                    ) or parse_senado_authors(detail, summary)
-                    prop_kwargs = map_senado_proposition(summary, detail, full_text_url)
-                    events = None
-                    if process:
-                        prop_kwargs.update(map_senado_process_status(process))
-                        events = map_senado_process_events(process)
-                    if not events:
-                        # Compatibilidade temporária para matérias sem processo
-                        # identificado no resumo legado.
-                        event = map_senado_event(client.fetch_movements(materia_id))
-                        events = [event] if event else []
-                    pk = _persist(
-                        prop_kwargs,
-                        events,
-                        authors,
-                        result["temas"],
-                    )
-                    run.upserted_count += 1
-                    classify_proposition.delay(pk)
-                except Exception:
-                    run.error_count += 1
-                    logger.exception("Falha ao processar matéria Senado %s", summary)
-        _finish(run, IngestionRun.Status.SUCCESS)
-    except Exception as exc:
-        _finish(run, IngestionRun.Status.FAILED, str(exc))
-        raise self.retry(exc=exc) from exc
-    return run.pk
+        try:
+            more = process_batch(run_id, CamaraClient if run.house == "camara" else SenadoClient)
+        except Exception as exc:
+            run.error_detail = f"Batch interrupted ({type(exc).__name__}); pending items preserved"
+            run.save(update_fields=["error_detail"])
+            logger.warning("Ingestion run %s batch interrupted (%s)", run_id, type(exc).__name__)
+            return
+    finally:
+        cache.delete(key)
+    if more:
+        sync_daily_batch.apply_async(args=[run_id], countdown=5)
+
+
+@shared_task(queue="ml")
+def check_proposition_document(document_id):
+    from .content import check_document
+
+    return check_document(document_id)
+
+
+@shared_task(queue="ml")
+def run_classification_request(request_id):
+    from .content import run_analysis
+
+    return run_analysis(request_id)
+
+
+@shared_task
+def recover_pending_content():
+    from apps.propositions.models import ClassificationRequest, PropositionDocument
+
+    for run_id in IngestionRun.objects.filter(
+        status="running", discovery_complete=True
+    ).values_list("pk", flat=True):
+        sync_daily_batch.delay(run_id)
+    stale = timezone.now() - timedelta(minutes=90)
+    for pk in PropositionDocument.objects.filter(
+        Q(status__in=["pending", "failed"], attempts__lt=3)
+        | Q(status="fetching", attempted_at__lt=stale, attempts__lt=3)
+    ).values_list("pk", flat=True)[:100]:
+        check_proposition_document.delay(pk)
+    for pk in ClassificationRequest.objects.filter(
+        Q(status__in=["pending", "failed"], attempts__lt=3)
+        | Q(status="running", attempted_at__lt=stale, attempts__lt=3)
+    ).values_list("pk", flat=True)[:100]:
+        run_classification_request.delay(pk)
+
+
+@shared_task
+def reconcile_daily_propositions(full_baseline=False):
+    key = "ingestion:reconcile-discovery"
+    if not cache.add(key, True, timeout=1800):
+        return
+    try:
+        return _reconcile_daily_propositions(full_baseline)
+    finally:
+        cache.delete(key)
+
+
+def _reconcile_daily_propositions(full_baseline):
+    from .models import IngestionCheckpoint, IngestionItem
+
+    cutoff = timezone.now() - timedelta(days=7)
+    for house in ("camara", "senado"):
+        checkpoint, _ = IngestionCheckpoint.objects.get_or_create(house=house)
+        pending = IngestionRun.objects.filter(
+            house=house, kind="reconcile", status="running"
+        ).first()
+        if pending and pending.status != "success":
+            pending.items.filter(status="failed").update(status="pending", attempts=0)
+            pending.status = pending.Status.RUNNING
+            pending.save(update_fields=["status"])
+            sync_daily_batch.delay(pending.pk)
+            continue
+        targets = list(
+            Proposition.objects.filter(house=house)
+            .filter(Q(reconciled_at__isnull=True) | Q(reconciled_at__lt=cutoff))
+            .order_by("reconciled_at", "pk")[
+                : 100000
+                if full_baseline and not checkpoint.baseline_complete
+                else settings.INGESTION_RECONCILIATION_DAILY_LIMIT
+            ]
+        )
+        if not targets:
+            checkpoint.baseline_complete = True
+            checkpoint.save(update_fields=["baseline_complete", "updated_at"])
+            continue
+        run = IngestionRun.objects.create(
+            house=house,
+            kind="reconcile",
+            window_start=timezone.localdate() - timedelta(days=7),
+            window_end=timezone.localdate() + timedelta(days=1),
+            discovery_complete=True,
+            fetched_count=len(targets),
+            checkpoint_until=timezone.now(),
+        )
+        IngestionItem.objects.bulk_create(
+            [
+                IngestionItem(
+                    run=run,
+                    external_id=p.external_id,
+                    summary={
+                        "id": p.external_id,
+                        "ementa": p.ementa,
+                        "Ementa": p.ementa,
+                        "IdentificacaoMateria": {
+                            "CodigoMateria": p.external_id,
+                            "IdentificacaoProcesso": (p.raw_payload or {}).get(
+                                "_senado_process_id"
+                            ),
+                        },
+                    },
+                )
+                for p in targets
+            ]
+        )
+        sync_daily_batch.delay(run.pk)
 
 
 def _finish(run: IngestionRun, status: str, error: str | None = None):
@@ -1154,7 +1211,9 @@ def refresh_enacted_propositions(queryset=None) -> dict:
                 else:
                     process_id = (proposition.raw_payload or {}).get("_senado_process_id")
                     if not process_id:
-                        logger.warning("Matéria Senado sem processo: proposition=%s", proposition.pk)
+                        logger.warning(
+                            "Matéria Senado sem processo: proposition=%s", proposition.pk
+                        )
                         stats["failed"] += 1
                         continue
                     process = senado.fetch_process(int(process_id))
@@ -1188,102 +1247,29 @@ def refresh_enacted_propositions(queryset=None) -> dict:
 
 @shared_task
 def refresh_enacted_proposition_statuses() -> dict:
-    """Scheduled official refresh for monitored propositions, including closed Senate matters."""
-    return refresh_enacted_propositions()
+    """Compatibility with the retired full-assessment refresh schedule."""
+    task = reconcile_daily_propositions.delay()
+    return {"queued": str(task.id)}
 
 
 # ── classificação (QuitérIA 2.0) ─────────────────────────────────────────────
 
 
-@shared_task(bind=True, autoretry_for=(OSError,), retry_backoff=True, max_retries=3, queue="ml")
-def classify_proposition(self, proposition_id: int):
-    """Classifica uma proposição e só então libera o matching de alertas."""
+@shared_task(queue="ml")
+def classify_proposition(proposition_id: int):
+    """Explicit maintenance entry point; daily status changes do not call this task."""
+    from .content import register_document, register_fallback, request_analysis
+
     prop = Proposition.objects.filter(pk=proposition_id).first()
-    if not prop:
-        logger.warning("[ML] proposição id=%s não encontrada", proposition_id)
+    if prop is None:
         return
-
-    analysis = None
-    if settings.QUITERIA_ENABLED:
-        analysis, _ = PropositionAnalysis.objects.get_or_create(proposition=prop)
-        analysis.analysis_status = PropositionAnalysis.Status.PENDING
-        analysis.analysis_error = None
-        analysis.save(update_fields=["analysis_status", "analysis_error"])
-
-    if prop.full_text_url and not prop.full_text:
-        from .fulltext import extract_pdf_text
-
-        try:
-            full_text = extract_pdf_text(prop.full_text_url)
-        except OSError:
-            # Erros transitórios de download/OCR devem ser reexecutados pelo Celery.
-            if analysis:
-                analysis.analysis_status = PropositionAnalysis.Status.FAILED
-                analysis.analysis_error = "Falha ao extrair o inteiro teor"
-                analysis.save(update_fields=["analysis_status", "analysis_error"])
-            raise
-        if full_text:
-            prop.full_text = full_text
-            prop.save(update_fields=["full_text"])
-
-    if not settings.QUITERIA_ENABLED:
-        logger.info("[ML] QuitérIA desabilitada; proposição id=%s não classificada", proposition_id)
-        return
-
-    try:
-        from apps.propositions.quiteria import classify_proposition as classify_with_quiteria
-
-        prediction = classify_with_quiteria(prop)
-    except OSError:
-        analysis.analysis_status = PropositionAnalysis.Status.FAILED
-        analysis.analysis_error = "Falha transitória ao carregar ou executar a QuitérIA"
-        analysis.save(update_fields=["analysis_status", "analysis_error"])
-        raise
-    except Exception as error:
-        analysis.analysis_status = PropositionAnalysis.Status.FAILED
-        analysis.analysis_error = str(error)
-        analysis.save(update_fields=["analysis_status", "analysis_error"])
-        logger.exception("[ML] QuitérIA falhou para proposição id=%s", proposition_id)
-        return
-
-    analysis.theme_category = prediction.theme_category
-    analysis.theme_confidence = prediction.theme_confidence
-    analysis.theme_scores = prediction.theme_scores
-    analysis.classification = prediction.favorability_label
-    analysis.classification_probability = prediction.favorability_probability
-    analysis.favorability_scores = prediction.favorability_scores
-    analysis.model_id = settings.QUITERIA_MODEL_ID
-    analysis.model_revision = settings.QUITERIA_MODEL_REVISION
-    analysis.input_hash = prediction.input_hash
-    analysis.analysis_status = PropositionAnalysis.Status.SUCCEEDED
-    analysis.analysis_error = None
-    analysis.completed_at = timezone.now()
-    analysis.save(
-        update_fields=[
-            "theme_category",
-            "theme_confidence",
-            "theme_scores",
-            "classification",
-            "classification_probability",
-            "favorability_scores",
-            "model_id",
-            "model_revision",
-            "input_hash",
-            "analysis_status",
-            "analysis_error",
-            "completed_at",
-        ]
-    )
-
-    from apps.subscriptions.tasks import match_and_notify
-
-    transaction.on_commit(lambda: match_and_notify.delay(proposition_id))
-    logger.info(
-        "[ML] QuitérIA classificou proposição id=%s em %s (%.4f)",
-        proposition_id,
-        prediction.theme_category,
-        prediction.theme_confidence,
-    )
+    register_fallback(prop.pk, analyze=True)
+    if prop.full_text_url:
+        register_document(prop.pk, "original", "original", prop.full_text_url)
+    with transaction.atomic():
+        prop = Proposition.objects.select_for_update(of=("self",)).get(pk=proposition_id)
+        if prop.current_content_id:
+            request_analysis(prop, prop.current_content)
 
 
 # ── carga retroativa de anotações — JOB TEMPORÁRIO (remover após a carga) ─────

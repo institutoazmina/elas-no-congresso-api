@@ -12,6 +12,7 @@ from datetime import date
 from urllib.parse import urljoin
 
 import httpx
+from django.utils import timezone
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from apps.ingestion.senado_fronts import (
@@ -30,23 +31,34 @@ class SenadoClient(BaseClient):
     base_url = _BASE
 
     def list_materias(self, day: date) -> Iterator[dict]:
-        """Itera as matérias em tramitação na data informada.
+        """Recent changed processes, including closed matters; preserves legacy identities."""
+        days = (timezone.localdate() - day).days + 1
+        if days > 30:
+            raise ValueError("Senado change feed covers at most 30 days; reconciliation required")
+        payload = self.get_json("/processo", params={"numdias": max(1, days), "v": 1})
+        if not isinstance(payload, list):
+            raise ValueError("Unexpected Senate process listing")
+        for process in payload:
+            yield {
+                "_process_summary": process,
+                "Ementa": process.get("ementa", ""),
+                "IdentificacaoMateria": {
+                    "CodigoMateria": process.get("codigoMateria") or -int(process["id"]),
+                    "IdentificacaoProcesso": process["id"],
+                },
+            }
 
-        A API do Senado aninha as matérias em
-        ``ListaMateriasTramitando.Materias.Materia``.
-        """
-        payload = self.get_json(
-            "/materia/tramitando", params={"data": day.strftime("%Y%m%d")}
-        )
-        materias = (
-            payload.get("ListaMateriasTramitando", {})
-            .get("Materias", {})
-            .get("Materia", [])
-        )
-        # A API retorna objeto único quando há só uma matéria.
-        if isinstance(materias, dict):
-            materias = [materias]
-        yield from materias
+    def find_process(self, materia_id: int) -> dict | None:
+        payload = self.get_json("/processo", params={"codigoMateria": materia_id, "v": 1})
+        if not isinstance(payload, list) or len(payload) != 1:
+            return None
+        return payload[0]
+
+    def fetch_documents(self, process_id: int) -> list[dict]:
+        payload = self.get_json("/processo/documento", params={"idProcesso": process_id, "v": 1})
+        if not isinstance(payload, list):
+            raise ValueError("Unexpected Senate document listing")
+        return payload
 
     def list_current_members(self) -> list[dict]:
         """Lista os senadores em exercício no payload oficial do Senado."""
@@ -77,10 +89,7 @@ class SenadoClient(BaseClient):
         """
         payload = self.get_json(f"/materia/textos/{materia_id}")
         textos = (
-            payload.get("TextoMateria", {})
-            .get("Materia", {})
-            .get("Textos", {})
-            .get("Texto", [])
+            payload.get("TextoMateria", {}).get("Materia", {}).get("Textos", {}).get("Texto", [])
         )
         if isinstance(textos, dict):
             textos = [textos]
@@ -94,10 +103,7 @@ class SenadoClient(BaseClient):
         """
         payload = self.get_json(f"/materia/autoria/{materia_id}")
         autores = (
-            payload.get("AutoriaMateria", {})
-            .get("Materia", {})
-            .get("Autoria", {})
-            .get("Autor", [])
+            payload.get("AutoriaMateria", {}).get("Materia", {}).get("Autoria", {}).get("Autor", [])
         )
         if isinstance(autores, dict):
             autores = [autores]
@@ -152,9 +158,7 @@ class SenadoClient(BaseClient):
                 for chunk in response.iter_bytes():
                     payload.extend(chunk)
                     if len(payload) > max_bytes:
-                        raise SenadoFrontPageLimitError(
-                            "Senado front response exceeds byte limit"
-                        )
+                        raise SenadoFrontPageLimitError("Senado front response exceeds byte limit")
                 encoding = response.encoding or "utf-8"
                 return bytes(payload).decode(encoding, errors="replace")
         raise SenadoFrontPageLimitError("Senado front redirect limit exceeded")

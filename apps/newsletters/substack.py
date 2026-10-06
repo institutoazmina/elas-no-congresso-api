@@ -79,6 +79,11 @@ class DraftOnlyClient:
         if session:
             session.close()
 
+    def check_access(self):
+        drafts = self._call(self.api.get_drafts, offset=0, limit=1)
+        if not isinstance(drafts, list):
+            raise ValueError("Formato inesperado na verificação de acesso aos rascunhos.")
+
     def find(self, title):
         offset = 0
         matches = []

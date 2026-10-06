@@ -1,7 +1,7 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
-from .models import IngestionRun, RelevanceTerm
+from .models import IngestionCheckpoint, IngestionItem, IngestionRun, RelevanceTerm
 
 
 @admin.register(RelevanceTerm)
@@ -18,6 +18,7 @@ class RelevanceTermAdmin(ModelAdmin):
 class IngestionRunAdmin(ModelAdmin):
     list_display = [
         "house",
+        "kind",
         "status",
         "window_start",
         "window_end",
@@ -31,6 +32,25 @@ class IngestionRunAdmin(ModelAdmin):
     list_filter = ["house", "status"]
     readonly_fields = [f.name for f in IngestionRun._meta.fields]
     ordering = ["-started_at"]
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(IngestionCheckpoint)
+class IngestionCheckpointAdmin(ModelAdmin):
+    list_display = ["house", "baseline_complete", "covered_since", "covered_until", "active_run"]
+    readonly_fields = [f.name for f in IngestionCheckpoint._meta.fields]
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(IngestionItem)
+class IngestionItemAdmin(ModelAdmin):
+    list_display = ["run", "external_id", "status", "attempts", "error", "processed_at"]
+    list_filter = ["status", "run__house", "run__kind"]
+    readonly_fields = [f.name for f in IngestionItem._meta.fields]
 
     def has_add_permission(self, request):
         return False

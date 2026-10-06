@@ -19,7 +19,7 @@ class CamaraClient(BaseClient):
     base_url = _BASE
 
     def list_propositions(self, start: date, end: date) -> Iterator[dict]:
-        """Itera todas as proposições apresentadas na janela [start, end].
+        """Itera proposições apresentadas ou movimentadas na janela [start, end].
 
         Yields o resumo de cada proposição (id, tipo, número, ano, ementa, uri).
         Pagina seguindo os links ``rel=next``.
@@ -60,9 +60,21 @@ class CamaraClient(BaseClient):
         """Lista de autores da proposição."""
         return self.get_json(f"/proposicoes/{proposition_id}/autores").get("dados", [])
 
-    def fetch_tramitations(self, proposition_id: int) -> list[dict]:
+    def fetch_tramitations(
+        self, proposition_id: int, start: date | None = None, end: date | None = None
+    ) -> list[dict]:
         """Retorna a linha do tempo oficial completa da proposição."""
-        return self.get_json(f"/proposicoes/{proposition_id}/tramitacoes").get("dados", [])
+        params = {}
+        if start:
+            params["dataInicio"] = start.isoformat()
+        if end:
+            params["dataFim"] = end.isoformat()
+        return self.get_json(
+            f"/proposicoes/{proposition_id}/tramitacoes", params=params or None
+        ).get("dados", [])
+
+    def fetch_related(self, proposition_id: int) -> list[dict]:
+        return self.get_json(f"/proposicoes/{proposition_id}/relacionadas").get("dados", [])
 
     def fetch_deputy(self, deputy_id: int) -> dict:
         """Detalhe de um deputado (traz ``sexo`` e ``ultimoStatus.siglaPartido``)."""

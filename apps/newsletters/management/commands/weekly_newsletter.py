@@ -5,10 +5,11 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
 from apps.newsletters.collection import refresh_batch
+from apps.newsletters.freshness import coverage_complete, source_coverage
 from apps.newsletters.models import WeeklyReport
 from apps.newsletters.report import REPORT_TZ, build_snapshot, render, reporting_week
 from apps.newsletters.service import deliver_report, freeze_report, get_report
-from apps.newsletters.substack import DraftOnlyClient
+from apps.newsletters.substack import AuthenticationRequiredError, DraftOnlyClient
 from apps.propositions.models import Proposition
 
 
@@ -18,6 +19,16 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--week-start", type=date.fromisoformat, help="Segunda-feira YYYY-MM-DD"
+        )
+        parser.add_argument(
+            "--check-auth",
+            action="store_true",
+            help="Verifica sessão e acesso a rascunhos, sem escrita.",
+        )
+        parser.add_argument(
+            "--allow-incomplete",
+            action="store_true",
+            help="Permite entrega manual com aviso de cobertura incompleta.",
         )
         parser.add_argument(
             "--start-date",
@@ -49,6 +60,26 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        if options["check_auth"]:
+            client = None
+            try:
+                client = DraftOnlyClient(settings.SUBSTACK_PUBLICATION_URL)
+                client.check_access()
+            except AuthenticationRequiredError as exc:
+                raise CommandError(
+                    "Substack: renovar sessão e verificar acesso à publicação."
+                ) from exc
+            except Exception as exc:
+                raise CommandError(
+                    f"Substack: verificação indisponível ({type(exc).__name__})."
+                ) from exc
+            finally:
+                if client:
+                    client.close()
+            self.stdout.write(
+                "Substack: acesso aos rascunhos verificado; nenhuma escrita executada."
+            )
+            return
         custom_period = options["start_date"] is not None or options["end_date"] is not None
         if custom_period and (options["week_start"] or options["report_id"]):
             raise CommandError(
@@ -109,7 +140,11 @@ class Command(BaseCommand):
                 raise CommandError(str(exc)) from exc
             if report.status == WeeklyReport.Status.COLLECTING:
                 results = {}
-                ids = list(Proposition.objects.order_by("pk").values_list("pk", flat=True))
+                ids = (
+                    list(Proposition.objects.order_by("pk").values_list("pk", flat=True))
+                    if options["refresh"]
+                    else []
+                )
                 if options["refresh"]:
                     for offset in range(0, len(ids), settings.WEEKLY_NEWSLETTER_BATCH_SIZE):
                         results.update(
@@ -123,11 +158,23 @@ class Command(BaseCommand):
                             self.stdout.flush()
                 report.collection = {"targets": ids, "results": results, "manual": True}
                 report.save(update_fields=["collection", "updated_at"])
-                complete = bool(options["refresh"]) and all(
-                    results.get(str(pk)) == "ok" for pk in ids
-                )
+                if options["refresh"]:
+                    complete = all(results.get(str(pk)) == "ok" for pk in ids)
+                else:
+                    report.collection = source_coverage(start, end)
+                    report.collection["manual"] = True
+                    report.save(update_fields=["collection", "updated_at"])
+                    complete = coverage_complete(report.collection)
                 report = freeze_report(report.pk, complete)
         if options["deliver"]:
+            if (
+                not report.is_complete
+                and not options["allow_incomplete"]
+                and report.status != WeeklyReport.Status.DELIVERED
+            ):
+                raise CommandError(
+                    f"Relatório {report.pk}: cobertura diária incompleta. Exportação preservada; --allow-incomplete exige revisão humana. {report.collection.get('discovery', {})}"
+                )
             report = deliver_report(report.pk)
             if report.status != WeeklyReport.Status.DELIVERED:
                 raise CommandError(
@@ -135,6 +182,7 @@ class Command(BaseCommand):
                 )
         self.stdout.write(
             f"Relatório {report.pk}: {report.get_status_display()} {report.draft_url}\n"
+            f"Cobertura das fontes: {report.collection.get('discovery', {})}\n"
             f"{len(report.snapshot)} proposições; coleta "
             f"{'completa' if report.is_complete else 'incompleta'}."
         )

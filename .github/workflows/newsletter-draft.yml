@@ -12,9 +12,13 @@ on:
         type: string
         required: true
       refresh:
-        description: "Refresh official proposition histories before preparing"
+        description: "Recovery only: full official history refresh (slow)"
         type: boolean
-        default: true
+        default: false
+      allow_incomplete:
+        description: "Allow a draft explicitly labeled with incomplete source coverage"
+        type: boolean
+        default: false
       dry_run:
         description: "Preview only, without database writes or a Substack draft"
         type: boolean
@@ -49,6 +53,7 @@ jobs:
       END_DATE: ${{ inputs.end_date }}
       REFRESH: ${{ inputs.refresh }}
       DRY_RUN: ${{ inputs.dry_run }}
+      ALLOW_INCOMPLETE: ${{ inputs.allow_incomplete }}
     steps:
       - uses: actions/checkout@v4
 
@@ -88,6 +93,10 @@ jobs:
           ssh-keygen -R "$DEPLOY_HOST" 2>/dev/null || true
           ssh-keyscan "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
+      - name: Verify Substack session and publication access
+        if: inputs.dry_run != true
+        run: kamal app exec --reuse --roles web "python -u manage.py weekly_newsletter --check-auth"
+
       - name: Prepare radar and create unpublished draft
         run: |
           set -euo pipefail
@@ -96,13 +105,18 @@ jobs:
             ARGS="$ARGS --dry-run"
           else
             if [ "$REFRESH" = "true" ]; then ARGS="$ARGS --refresh"; fi
+            if [ "$ALLOW_INCOMPLETE" = "true" ]; then ARGS="$ARGS --allow-incomplete"; fi
             ARGS="$ARGS --deliver"
           fi
-          kamal app exec --reuse --roles web "python -u manage.py weekly_newsletter $ARGS" | tee newsletter-result.txt
+          kamal app exec --reuse --roles web --verbose "python -u manage.py weekly_newsletter $ARGS" | tee newsletter-result.txt
+
+      - name: Summarize result
+        if: always()
+        run: |
           {
             echo "Period: $START_DATE through $END_DATE (inclusive, São Paulo)."
             echo
             echo '```text'
-            cat newsletter-result.txt
+            if [ -f newsletter-result.txt ]; then cat newsletter-result.txt; fi
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"

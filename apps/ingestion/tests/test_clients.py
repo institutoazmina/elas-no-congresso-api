@@ -14,6 +14,29 @@ def _client_for(cls, handler):
 
 
 class TestBaseClient:
+    def test_permanent_4xx_is_not_retried(self):
+        requests = []
+
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(404)
+
+        with pytest.raises(httpx.HTTPStatusError):
+            _client_for(CamaraClient, handler).get_json("/missing")
+        assert len(requests) == 1
+
+    def test_retry_after_is_respected_and_bounded(self):
+        from types import SimpleNamespace
+
+        from apps.ingestion.clients.base import _retry_wait
+
+        response = httpx.Response(429, headers={"Retry-After": "120"})
+        error = httpx.HTTPStatusError(
+            "throttled", request=httpx.Request("GET", "https://source.test"), response=response
+        )
+        state = SimpleNamespace(outcome=SimpleNamespace(exception=lambda: error))
+        assert _retry_wait(state) == 60
+
     def test_get_json_success(self):
         c = _client_for(CamaraClient, lambda r: httpx.Response(200, json={"ok": 1}))
         assert c.get_json("/x") == {"ok": 1}
@@ -74,7 +97,9 @@ class TestCamaraClient:
                 200,
                 json={
                     "dados": [{"id": 1}],
-                    "links": [{"rel": "next", "href": f"{CamaraClient.base_url}/proposicoes?pagina=2"}],
+                    "links": [
+                        {"rel": "next", "href": f"{CamaraClient.base_url}/proposicoes?pagina=2"}
+                    ],
                 },
             )
 
@@ -93,7 +118,9 @@ class TestCamaraClient:
         assert c.fetch_authors(9) == [{"nome": "X"}]
 
     def test_fetch_tramitations(self):
-        c = _client_for(CamaraClient, lambda r: httpx.Response(200, json={"dados": [{"sequencia": 1}]}))
+        c = _client_for(
+            CamaraClient, lambda r: httpx.Response(200, json={"dados": [{"sequencia": 1}]})
+        )
         assert c.fetch_tramitations(9) == [{"sequencia": 1}]
 
     def test_fetch_deputy(self):
@@ -132,30 +159,42 @@ class TestCamaraClient:
         assert c.fetch_deputy_fronts(204554) == [{"id": 11, "titulo": "Frente"}]
         assert c.fetch_deputy_organs(204554) == [{"id": 22, "nome": "Comissão"}]
 
+
 class TestSenadoClient:
-    def test_list_materias_normalizes_single(self):
+    def test_changed_feed_includes_closed_and_preserves_legacy_id(self):
+        from django.utils import timezone
+
+        requests = []
+
         def handler(request):
+            requests.append(request)
             return httpx.Response(
                 200,
-                json={"ListaMateriasTramitando": {"Materias": {"Materia": {"x": 1}}}},
+                json=[
+                    {"id": 99, "codigoMateria": 12, "ementa": "Direitos", "tramitando": "Não"},
+                    {"id": 100, "ementa": "Outra", "tramitando": "Sim"},
+                ],
             )
 
-        c = _client_for(SenadoClient, handler)
-        assert list(c.list_materias(date(2024, 1, 1))) == [{"x": 1}]
+        result = list(_client_for(SenadoClient, handler).list_materias(timezone.localdate()))
+        assert result[0]["IdentificacaoMateria"] == {
+            "CodigoMateria": 12,
+            "IdentificacaoProcesso": 99,
+        }
+        assert result[1]["IdentificacaoMateria"]["CodigoMateria"] == -100
+        assert requests[0].url.path == "/dadosabertos/processo"
+        assert "tramitando" not in requests[0].url.params
 
-    def test_list_materias_list(self):
-        def handler(request):
-            return httpx.Response(
-                200,
-                json={"ListaMateriasTramitando": {"Materias": {"Materia": [{"x": 1}, {"x": 2}]}}},
-            )
+    def test_change_feed_rejects_unsupported_gap_and_malformed_payload(self):
+        from datetime import timedelta
 
-        c = _client_for(SenadoClient, handler)
-        assert len(list(c.list_materias(date(2024, 1, 1)))) == 2
+        from django.utils import timezone
 
-    def test_list_materias_empty(self):
-        c = _client_for(SenadoClient, lambda r: httpx.Response(200, json={}))
-        assert list(c.list_materias(date(2024, 1, 1))) == []
+        client = _client_for(SenadoClient, lambda r: httpx.Response(200, json={}))
+        with pytest.raises(ValueError, match="30 days"):
+            list(client.list_materias(timezone.localdate() - timedelta(days=30)))
+        with pytest.raises(ValueError, match="Unexpected"):
+            list(client.list_materias(timezone.localdate()))
 
     def test_fetch_detail_and_movements(self):
         def handler(request):
@@ -228,9 +267,7 @@ class TestSenadoClient:
             )
 
         c = _client_for(SenadoClient, handler)
-        assert c.fetch_profile(35) == {
-            "IdentificacaoParlamentar": {"CodigoParlamentar": "35"}
-        }
+        assert c.fetch_profile(35) == {"IdentificacaoParlamentar": {"CodigoParlamentar": "35"}}
         assert requests[0].url.path == "/dadosabertos/senador/35"
 
     def test_fetch_senator_professions_and_academic_history_normalize_envelopes(self):
@@ -247,9 +284,7 @@ class TestSenadoClient:
             else:
                 body = {
                     "HistoricoAcademicoParlamentar": {
-                        "Parlamentar": {
-                            "HistoricoAcademico": {"Curso": {"NomeCurso": "Direito"}}
-                        }
+                        "Parlamentar": {"HistoricoAcademico": {"Curso": {"NomeCurso": "Direito"}}}
                     }
                 }
             return httpx.Response(200, json=body)
@@ -273,9 +308,7 @@ class TestSenadoClient:
             requests.append(request.url.path)
             if request.url.path.endswith("/comissoes"):
                 body = {
-                    "ComissoesParlamentar": {
-                        "Parlamentar": {"Comissoes": {"Comissao": committee}}
-                    }
+                    "ComissoesParlamentar": {"Parlamentar": {"Comissoes": {"Comissao": committee}}}
                 }
             elif request.url.path.endswith("/filiacoes"):
                 body = {
@@ -290,11 +323,7 @@ class TestSenadoClient:
                     }
                 }
             else:
-                body = {
-                    "CargosParlamentar": {
-                        "Parlamentar": {"Cargos": {"Cargo": [post]}}
-                    }
-                }
+                body = {"CargosParlamentar": {"Parlamentar": {"Cargos": {"Cargo": [post]}}}}
             return httpx.Response(200, json=body)
 
         c = _client_for(SenadoClient, handler)

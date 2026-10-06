@@ -32,6 +32,12 @@ class _FakeCamara:
     def fetch_detail(self, _id):
         return self._d
 
+    def fetch_tramitations(self, _id, **kwargs):
+        return []
+
+    def fetch_related(self, _id):
+        return []
+
     def fetch_authors(self, _id):
         return self._a
 
@@ -42,6 +48,7 @@ class _FakeCamara:
 class _FakeSenado:
     def __init__(self, summary, detail, movements, texts=None, authors=None):
         self._s, self._d, self._m = summary, detail, movements
+        self._s["IdentificacaoMateria"]["IdentificacaoProcesso"] = 99
         self._t = texts or []
         self._a = authors or []
 
@@ -56,6 +63,12 @@ class _FakeSenado:
 
     def fetch_detail(self, _id):
         return self._d
+
+    def fetch_process(self, _id):
+        return {"situacaoAtual": "Em tramitação", "tramitando": "Sim", "autuacoes": []}
+
+    def fetch_documents(self, _id):
+        return []
 
     def fetch_movements(self, _id):
         return self._m
@@ -100,12 +113,14 @@ class _RefreshCamara:
         }
 
     def fetch_tramitations(self, _external_id):
-        return [{
-            "sequencia": 1,
-            "codSituacao": 1140,
-            "dataHora": "2026-08-07T12:00:00",
-            "descricaoTramitacao": "Transformado na Lei Ordinária 15.421/2026.",
-        }]
+        return [
+            {
+                "sequencia": 1,
+                "codSituacao": 1140,
+                "dataHora": "2026-08-07T12:00:00",
+                "descricaoTramitacao": "Transformado na Lei Ordinária 15.421/2026.",
+            }
+        ]
 
 
 class _RefreshSenado:
@@ -119,15 +134,19 @@ class _RefreshSenado:
         return {
             "situacaoAtual": "TRANSFORMADA EM NORMA JURÍDICA",
             "tramitando": "Não",
-            "autuacoes": [{
-                "situacoes": [{"idTipo": 64, "descricao": "TRANSFORMADA EM NORMA JURÍDICA"}],
-                "informesLegislativos": [{
-                    "id": 2,
-                    "data": "2026-08-08 12:00:00",
-                    "idSituacaoIniciada": 64,
-                    "descricao": "Transformada na Lei Ordinária nº 15.422, de 2026.",
-                }],
-            }],
+            "autuacoes": [
+                {
+                    "situacoes": [{"idTipo": 64, "descricao": "TRANSFORMADA EM NORMA JURÍDICA"}],
+                    "informesLegislativos": [
+                        {
+                            "id": 2,
+                            "data": "2026-08-08 12:00:00",
+                            "idSituacaoIniciada": 64,
+                            "descricao": "Transformada na Lei Ordinária nº 15.422, de 2026.",
+                        }
+                    ],
+                }
+            ],
         }
 
 
@@ -261,17 +280,16 @@ class TestClassifyProposition:
     def test_missing_proposition_is_noop(self):
         assert tasks.classify_proposition(123456789) is None
 
-    def test_fetches_full_text(self, monkeypatch):
+    def test_registers_document_for_extraction(self, monkeypatch):
+        from apps.propositions.models import PropositionDocument
+
         pk = tasks._persist(
             {**_camara_kwargs(), "full_text_url": "https://x/doc.pdf"}, None, [], []
         )
-        captured = {}
-        monkeypatch.setattr(
-            "apps.ingestion.fulltext.extract_pdf_text",
-            lambda url: captured.setdefault("url", url) or "texto extraido",
-        )
         tasks.classify_proposition(pk)
-        assert captured["url"] == "https://x/doc.pdf"
+        doc = PropositionDocument.objects.get(proposition_id=pk)
+        assert doc.url == "https://x/doc.pdf"
+        assert doc.status == "pending"
 
     def test_without_url_skips_extraction(self):
         pk = tasks._persist(_camara_kwargs(), None, [], [])
@@ -279,25 +297,32 @@ class TestClassifyProposition:
         assert tasks.classify_proposition(pk) is None
 
     @override_settings(QUITERIA_ENABLED=True)
-    def test_persists_quiteria_prediction_and_enqueues_matching(self, monkeypatch):
+    def test_persists_quiteria_prediction_and_enqueues_matching(
+        self, monkeypatch, settings, django_capture_on_commit_callbacks
+    ):
         from apps.propositions.models import PropositionAnalysis
         from apps.propositions.quiteria import QuiteriaPrediction
 
+        settings.QUITERIA_ENABLED = False
         pk = tasks._persist(_camara_kwargs(), None, [], [])
+        settings.QUITERIA_ENABLED = True
         monkeypatch.setattr(
-            "apps.propositions.quiteria.classify_proposition",
-            lambda proposition: QuiteriaPrediction(
-                input_text="texto de teste",
-                theme_category="saude",
-                theme_confidence=0.9,
-                theme_scores={"LABEL_7": 0.9},
-                favorability_probability=0.3,
-                favorability_scores={"LABEL_0": 0.7, "LABEL_1": 0.3},
-                favorability_label=1,
+            "apps.propositions.quiteria.get_classifier",
+            lambda: SimpleNamespace(
+                classify=lambda input_text: QuiteriaPrediction(
+                    input_text="texto de teste",
+                    theme_category="saude",
+                    theme_confidence=0.9,
+                    theme_scores={"LABEL_7": 0.9},
+                    favorability_probability=0.3,
+                    favorability_scores={"LABEL_0": 0.7, "LABEL_1": 0.3},
+                    favorability_label=1,
+                )
             ),
         )
 
-        tasks.classify_proposition(pk)
+        with django_capture_on_commit_callbacks(execute=True):
+            tasks.classify_proposition(pk)
 
         analysis = PropositionAnalysis.objects.get(proposition_id=pk)
         assert analysis.analysis_status == PropositionAnalysis.Status.SUCCEEDED
@@ -351,7 +376,7 @@ class TestIngestCamaraFlow:
             lambda: _BoomCamara(camara_payload["summary"], {}, []),
         )
         run = IngestionRun.objects.get(pk=tasks.ingest_camara())
-        assert run.status == IngestionRun.Status.SUCCESS
+        assert run.status == IngestionRun.Status.FAILED
         assert run.error_count >= 1
         assert run.upserted_count == 0
 
@@ -435,7 +460,7 @@ class TestIngestSenadoFlow:
 
         monkeypatch.setattr(tasks, "SenadoClient", lambda: _BoomSenado(summary, {}, {}))
         run = IngestionRun.objects.get(pk=tasks.ingest_senado())
-        assert run.status == IngestionRun.Status.SUCCESS
+        assert run.status == IngestionRun.Status.FAILED
         assert run.error_count >= 1
         assert run.upserted_count == 0
 

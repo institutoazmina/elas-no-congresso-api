@@ -189,6 +189,8 @@ CELERY_TASK_COMPRESSION = "gzip"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_TASK_ROUTES = {
     "apps.ingestion.tasks.classify_proposition": {"queue": "ml"},
+    "apps.ingestion.tasks.check_proposition_document": {"queue": "ml"},
+    "apps.ingestion.tasks.run_classification_request": {"queue": "ml"},
 }
 
 # Horário local (America/Sao_Paulo), configurável no ambiente do worker e beat.
@@ -209,6 +211,21 @@ QUITERIA_FAVORABILITY_THRESHOLD = config(
     "QUITERIA_FAVORABILITY_THRESHOLD", default=0.2254, cast=float
 )
 
+INGESTION_RECONCILIATION_DAILY_LIMIT = config(
+    "INGESTION_RECONCILIATION_DAILY_LIMIT", default=600, cast=int
+)
+INGESTION_REQUESTS_PER_SECOND = config("INGESTION_REQUESTS_PER_SECOND", default=2.0, cast=float)
+INGESTION_BATCH_SIZE = config("INGESTION_BATCH_SIZE", default=10, cast=int)
+
+if (
+    INGESTION_BATCH_SIZE < 1
+    or INGESTION_RECONCILIATION_DAILY_LIMIT < 1
+    or INGESTION_REQUESTS_PER_SECOND < 0
+):
+    raise ValueError(
+        "Ingestion batch and reconciliation limits must be positive; rate must be nonnegative"
+    )
+
 # Coleta diária (DatabaseScheduler sincroniza este dict para o banco no startup).
 CELERY_BEAT_SCHEDULE = {
     "enrich-parliamentarian-profiles-daily": {
@@ -224,8 +241,12 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=6, minute=10),
     },
     "refresh-enacted-proposition-statuses-daily": {
-        "task": "apps.ingestion.tasks.refresh_enacted_proposition_statuses",
+        "task": "apps.ingestion.tasks.reconcile_daily_propositions",
         "schedule": crontab(hour=6, minute=30),
+    },
+    "recover-content-work": {
+        "task": "apps.ingestion.tasks.recover_pending_content",
+        "schedule": crontab(minute="*/15"),
     },
     "daily-digest": {
         "task": "apps.subscriptions.tasks.send_daily_digest",
@@ -247,24 +268,26 @@ SUBSTACK_PUBLICATION_URL = config(
 )
 SUBSTACK_COOKIES_STRING = config("SUBSTACK_COOKIES_STRING", default="")
 if WEEKLY_NEWSLETTER_ENABLED:
-    CELERY_BEAT_SCHEDULE.update({
-        "weekly-newsletter-prepare": {
-            "task": "apps.newsletters.tasks.prepare_weekly_report",
-            "schedule": crontab(day_of_week=1, hour=4, minute=0),
-        },
-        "weekly-newsletter-finish-collection": {
-            "task": "apps.newsletters.tasks.finish_weekly_collection",
-            "schedule": crontab(day_of_week=1, hour=6, minute=35),
-        },
-        "weekly-newsletter-deliver": {
-            "task": "apps.newsletters.tasks.deliver_weekly_report",
-            "schedule": crontab(day_of_week=1, hour=6, minute=45),
-        },
-        "weekly-newsletter-deadline": {
-            "task": "apps.newsletters.tasks.check_weekly_deadline",
-            "schedule": crontab(day_of_week=1, hour=7, minute=0),
-        },
-    })
+    CELERY_BEAT_SCHEDULE.update(
+        {
+            "weekly-newsletter-prepare": {
+                "task": "apps.newsletters.tasks.prepare_weekly_report",
+                "schedule": crontab(day_of_week=1, hour=4, minute=0),
+            },
+            "weekly-newsletter-finish-collection": {
+                "task": "apps.newsletters.tasks.finish_weekly_collection",
+                "schedule": crontab(day_of_week=1, hour=6, minute=35),
+            },
+            "weekly-newsletter-deliver": {
+                "task": "apps.newsletters.tasks.deliver_weekly_report",
+                "schedule": crontab(day_of_week=1, hour=6, minute=45),
+            },
+            "weekly-newsletter-deadline": {
+                "task": "apps.newsletters.tasks.check_weekly_deadline",
+                "schedule": crontab(day_of_week=1, hour=7, minute=0),
+            },
+        }
+    )
 
 # Public base URL used to build links inside outgoing emails
 SITE_BASE_URL = config("SITE_BASE_URL", default="http://localhost:8000")

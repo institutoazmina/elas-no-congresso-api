@@ -1,0 +1,62 @@
+name: Ingestion sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Queue background work or inspect persisted progress"
+        type: choice
+        options: [status, daily, bootstrap, catchup, retry]
+        default: status
+
+permissions:
+  contents: read
+
+# Share the deploy lock: the running container must not be replaced mid-collection.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+      SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+      KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+      KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      SYNC_MODE: ${{ inputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install Kamal
+        run: gem install kamal -v 2.12.0
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Trust deployment host key
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          ssh-keygen -R "$DEPLOY_HOST" 2>/dev/null || true
+          ssh-keyscan "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Queue or inspect ingestion
+        run: |
+          set -euo pipefail
+          case "$SYNC_MODE" in status|daily|bootstrap|catchup|retry) ;; *) exit 1 ;; esac
+          kamal app exec --reuse --roles web --verbose "python -u manage.py ingestion_sync --mode $SYNC_MODE"

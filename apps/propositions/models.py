@@ -16,6 +16,15 @@ class Proposition(models.Model):
     keywords = models.TextField(null=True, blank=True)
     full_text_url = models.TextField(null=True, blank=True)
     full_text = models.TextField(null=True, blank=True)
+    source_checked_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    reconciled_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    current_content = models.ForeignKey(
+        "PropositionContentVersion",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="selected_by",
+    )
     tramitation_url = models.TextField(null=True, blank=True)
     current_status = models.TextField(null=True, blank=True)
     current_status_code = models.IntegerField(null=True, blank=True)
@@ -199,12 +208,123 @@ class PropositionAnalysis(models.Model):
     analysis_error = models.TextField(null=True, blank=True)
     analyzed_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+    content_version = models.ForeignKey(
+        "PropositionContentVersion",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="analyses",
+    )
 
     class Meta:
         db_table = "proposition_analysis"
         indexes = [
             models.Index(fields=["quiterometer_score"], name="idx_analysis_quitero"),
             models.Index(fields=["analysis_status"], name="idx_analysis_status"),
+        ]
+
+
+class PropositionDocument(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pendente"
+        FETCHING = "fetching", "Extraindo"
+        READY = "ready", "Verificado"
+        FAILED = "failed", "Falhou"
+
+    proposition = models.ForeignKey(Proposition, on_delete=models.CASCADE, related_name="documents")
+    source_key = models.CharField(max_length=128)
+    role = models.CharField(
+        max_length=16, choices=[("original", "Original"), ("replacement", "Texto substitutivo")]
+    )
+    url = models.TextField()
+    source_revision = models.CharField(max_length=64)
+    checked_revision = models.CharField(max_length=64, blank=True)
+    analyze_on_first = models.BooleanField(default=True)
+    source_date = models.DateTimeField(null=True, blank=True)
+    etag = models.TextField(blank=True)
+    last_modified = models.TextField(blank=True)
+    bytes_hash = models.CharField(max_length=64, blank=True)
+    status = models.CharField(
+        max_length=16, choices=Status.choices, default=Status.PENDING, db_index=True
+    )
+    attempts = models.PositiveIntegerField(default=0)
+    attempted_at = models.DateTimeField(null=True, blank=True)
+    checked_at = models.DateTimeField(null=True, blank=True)
+    error = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["proposition", "source_key"], name="proposition_document_source"
+            )
+        ]
+
+
+class PropositionContentVersion(models.Model):
+    proposition = models.ForeignKey(
+        Proposition, on_delete=models.CASCADE, related_name="content_versions"
+    )
+    document = models.ForeignKey(
+        PropositionDocument,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="versions",
+    )
+    text = models.TextField()
+    text_hash = models.CharField(max_length=64)
+    source_url = models.TextField(blank=True)
+    source_revision = models.CharField(max_length=64, blank=True)
+    source_date = models.DateTimeField(null=True, blank=True)
+    extraction_version = models.CharField(max_length=32, default="pdf-ocr-v1")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["proposition", "document", "text_hash", "source_revision"],
+                name="proposition_content_document_hash",
+                nulls_distinct=False,
+            )
+        ]
+
+
+class ClassificationRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pendente"
+        RUNNING = "running", "Em execução"
+        SUCCEEDED = "succeeded", "Concluída"
+        FAILED = "failed", "Falhou"
+        SUPERSEDED = "superseded", "Substituída"
+
+    proposition = models.ForeignKey(
+        Proposition, on_delete=models.CASCADE, related_name="classification_requests"
+    )
+    content_version = models.ForeignKey(
+        PropositionContentVersion, on_delete=models.CASCADE, related_name="classification_requests"
+    )
+    content_hash = models.CharField(max_length=64)
+    configuration_hash = models.CharField(max_length=64)
+    input_text = models.TextField()
+    input_hash = models.CharField(max_length=64)
+    model_id = models.CharField(max_length=128)
+    model_revision = models.CharField(max_length=64)
+    threshold = models.FloatField()
+    status = models.CharField(
+        max_length=16, choices=Status.choices, default=Status.PENDING, db_index=True
+    )
+    attempts = models.PositiveIntegerField(default=0)
+    attempted_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    result = models.JSONField(default=dict)
+    error = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["proposition", "content_hash", "configuration_hash"],
+                name="classification_content_configuration",
+            )
         ]
 
 

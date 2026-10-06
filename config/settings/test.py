@@ -74,3 +74,5 @@ CACHES = {
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
+
+INGESTION_REQUESTS_PER_SECOND = 0

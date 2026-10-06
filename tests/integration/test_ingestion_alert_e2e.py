@@ -1,5 +1,8 @@
 """Fluxo completo: Câmara → preparação para análise → categoria → alerta diário."""
 
+from types import SimpleNamespace
+
+import httpx
 import pytest
 from django.test import override_settings
 
@@ -49,6 +52,12 @@ class _CamaraComUmaProposicao:
         assert proposition_id == self.summary["id"]
         return self.detail
 
+    def fetch_tramitations(self, proposition_id, **kwargs):
+        return []
+
+    def fetch_related(self, proposition_id):
+        return []
+
     def fetch_authors(self, proposition_id):
         assert proposition_id == self.summary["id"]
         return []
@@ -90,19 +99,28 @@ def test_ingestao_exige_aprovacao_antes_de_entregar_alerta(monkeypatch, outbox, 
         lambda: _CamaraComUmaProposicao(),
     )
     monkeypatch.setattr(
-        "apps.ingestion.fulltext.extract_pdf_text",
-        lambda url: "Inteiro teor preparado para a análise da IA.",
+        "apps.ingestion.fulltext._extract",
+        lambda raw, url: "Inteiro teor preparado para a análise da IA.",
+    )
+    http_client = httpx.Client
+    monkeypatch.setattr(
+        "apps.ingestion.content.httpx.Client",
+        lambda **kwargs: http_client(
+            transport=httpx.MockTransport(lambda r: httpx.Response(200, content=b"PDF")), **kwargs
+        ),
     )
     monkeypatch.setattr(
-        "apps.propositions.quiteria.classify_proposition",
-        lambda proposition: QuiteriaPrediction(
-            input_text="texto de e2e",
-            theme_category="saude",
-            theme_confidence=0.97,
-            theme_scores={"LABEL_7": 0.97},
-            favorability_probability=0.3,
-            favorability_scores={"LABEL_0": 0.7, "LABEL_1": 0.3},
-            favorability_label=1,
+        "apps.propositions.quiteria.get_classifier",
+        lambda: SimpleNamespace(
+            classify=lambda input_text: QuiteriaPrediction(
+                input_text=input_text,
+                theme_category="saude",
+                theme_confidence=0.97,
+                theme_scores={"LABEL_7": 0.97},
+                favorability_probability=0.3,
+                favorability_scores={"LABEL_0": 0.7, "LABEL_1": 0.3},
+                favorability_label=1,
+            )
         ),
     )
 

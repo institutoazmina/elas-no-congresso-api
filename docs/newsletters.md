@@ -92,18 +92,22 @@ uv run python manage.py weekly_newsletter --week-start 2026-09-28 --dry-run
 uv run python manage.py weekly_newsletter --week-start 2026-09-28 --dry-run --format html
 ```
 
-Preparar, atualizar históricos e criar um rascunho real para validação:
+Verificar a sessão sem escrita e criar um rascunho a partir do banco atualizado:
 
 ```sh
-uv run python manage.py weekly_newsletter --week-start 2026-09-28 --refresh --deliver
+uv run python manage.py weekly_newsletter --check-auth
+uv run python manage.py weekly_newsletter --week-start 2026-09-28 --deliver
 ```
 
 Para o teste manual, manter `WEEKLY_NEWSLETTER_ENABLED=False`, configurar o segredo
 de sessão e fazer redeploy para injetá-lo nos containers. Esse comando pode rodar
 com a automação desativada. Confirmar na publicação que
 o rascunho está sem agendamento, com as seções e links corretos. Ele nunca
-publica ou apaga conteúdo. Sem `--refresh`, a preparação fica marcada como
-coleta incompleta; sem `--deliver`, apenas persiste o relatório e suas exportações.
+publica ou apaga conteúdo. A preparação normal verifica os checkpoints da ingestão
+diária e não chama fontes oficiais, OCR ou IA. Sem `--deliver`, apenas persiste
+o relatório e suas exportações. Cobertura incompleta bloqueia a entrega;
+`--allow-incomplete` autoriza explicitamente um rascunho com esse aviso.
+`--refresh` é uma recuperação lenta de históricos e não deve ser usado na rotina.
 Uma semana já preparada nunca é regenerada silenciosamente.
 
 ### Pipeline manual no GitHub Actions
@@ -113,7 +117,10 @@ informar `start_date` e `end_date` em `YYYY-MM-DD`. As duas datas são inclusiva
 no fuso de São Paulo, e a data final não pode estar no futuro. Por exemplo:
 `2026-09-29` a `2026-10-06` cobre da terça-feira anterior até a terça-feira atual.
 
-`refresh=true` atualiza os históricos oficiais antes de congelar o relatório.
+`refresh=false` é o padrão: usa os dados da ingestão diária. `refresh=true` é
+recuperação explícita, atualizando todos os históricos oficiais antes de congelar.
+O workflow verifica a sessão e acesso à publicação antes de preparar qualquer
+relatório. `allow_incomplete=true` permite revisão humana de cobertura incompleta.
 `dry_run=true` apenas mostra o conteúdo disponível, sem coletar, persistir ou
 criar rascunho, independentemente de `refresh`. Com `dry_run=false`, o workflow
 cria um rascunho e informa o link, a quantidade de proposições e a cobertura da
@@ -130,13 +137,13 @@ Não habilita a agenda semanal.
 ```sh
 gh workflow run newsletter-draft.yml --ref main \
   -f start_date=2026-09-29 -f end_date=2026-10-06 \
-  -f refresh=true -f dry_run=false
+  -f refresh=false -f dry_run=false
 ```
 
 O comando equivalente no servidor é:
 
 ```sh
-python manage.py weekly_newsletter --start-date 2026-09-29 --end-date 2026-10-06 --refresh --deliver
+python manage.py weekly_newsletter --start-date 2026-09-29 --end-date 2026-10-06 --deliver
 ```
 
 Repetir o mesmo período preserva o snapshot e o rascunho existentes, incluindo
@@ -149,15 +156,18 @@ Após a validação, habilitar `WEEKLY_NEWSLETTER_ENABLED=True` no worker e Beat
 
 | Segunda-feira, horário local | Trabalho |
 | --- | --- |
-| 04:00 | Abrir relatório e atualizar históricos em lotes pequenos |
+| 04:00 | Abrir relatório, sem coleta externa |
 | 06:00 / 06:10 | Descoberta diária existente da Câmara / Senado |
-| 06:35–06:44 | Verificar descoberta e adicionar registros novos à coleta |
-| 06:45 | Congelar conteúdo e criar rascunho; falhas anteriores à criação têm até duas novas tentativas |
+| 06:35 | Verificar checkpoints e congelar snapshot se completos |
+| 06:45 | Criar rascunho com cobertura completa; caso contrário, preservar exportação e bloquear entrega |
 | 07:00 | Registrar e emitir erro nos logs se a entrega não terminou |
 
-O refresh inclui todas as proposições, não apenas as avaliadas. Matérias do
-Senado sem `_senado_process_id` ficam registradas como falha de cobertura;
-corrigir esse vínculo pelo pipeline de ingestão antes de confiar em sua timeline.
+A ingestão diária atualiza todas as proposições já monitoradas que aparecem no
+feed de mudanças, mesmo antigas, arquivadas ou sem avaliação humana. A Câmara
+consulta apresentações e movimentações; o Senado consulta processos alterados,
+incluindo encerrados. Uma reconciliação limitada revisita o inventário em lotes.
+Matérias legadas sem `_senado_process_id` têm o vínculo resolvido pela fonte ou
+ficam registradas como falha, sem avançar o checkpoint.
 Votações vêm dos movimentos oficiais e de registros já existentes. Este recurso
 não adiciona coleta de votos nominais nem amplia o universo de descoberta.
 
@@ -167,9 +177,9 @@ HTTP em andamento. Se necessário, antecipar a agenda de preparação no código
 settings ou aumentar a capacidade do worker. 07:00 é o objetivo de disponibilidade;
 indisponibilidade externa ou fila atrasada pode impedir esse horário.
 
-Se a coleta não terminar, o rascunho mantém os dados disponíveis e uma indicação
-visível de cobertura incompleta. No admin, `collection` registra os IDs-alvo,
-resultados por proposição e execuções de descoberta; `snapshot` mantém as
+Se a ingestão não terminar, a exportação mantém os dados disponíveis e uma
+indicação visível de cobertura incompleta. A entrega automática é bloqueada.
+No admin, `collection` registra motivos e datas de cobertura por fonte; `snapshot` mantém as
 evidências de classificação, movimentos, aprovação e categorias humanas.
 
 ## Falhas e reconciliação
@@ -217,3 +227,58 @@ uv run python manage.py makemigrations --check --dry-run
 Os testes usam PostgreSQL para validar restrições, seleção temporal, permissões
 e idempotência. Chamadas oficiais e Substack são substituídas nos testes; nenhuma
 publicação, envio, agendamento ou criação real é executada por eles.
+
+## Operação da ingestão eficiente
+
+**Actions → Ingestion sync** usa o mesmo host/SSH do deploy e aceita:
+
+| Modo | Efeito |
+| --- | --- |
+| `status` | Somente consulta: mostra checkpoints, baseline e contagens por execução |
+| `daily` | Enfileira descoberta incremental e retoma execuções interrompidas |
+| `bootstrap` | Ingestão diária e baseline inicial de todo o inventário, em lotes |
+| `retry` | Retoma falhas de fontes/itens e trabalho pendente de documentos/IA |
+| `catchup` | Recuperação explícita de lacuna: reinicia a cobertura recente e audita todos os registros conhecidos |
+
+```sh
+gh workflow run ingestion-sync.yml --ref main -f mode=status
+python manage.py ingestion_sync --mode status
+```
+
+O deploy enfileira `bootstrap`; se a baseline já terminou, não repete sua
+varredura completa. A primeira baseline tem custo proporcional ao inventário;
+ela fica separada da criação dos rascunhos e não reclassifica automaticamente
+textos históricos. O pipeline retorna após enfileirar: sucesso do job não significa
+que a ingestão terminou. Consultar `status` ou o admin de ingestão para confirmar.
+
+Checkpoints só avançam após descoberta e processamento completos. Falhas
+individuais conservam o ID e tentativas; cada lote tem dez itens por padrão.
+A rotina revisita até 600 proposições por casa/dia e verifica bytes/validadores
+dos documentos, detectando também alterações silenciosas na mesma URL. Isso
+significa que uma correção sem sinal no feed pode levar até o ciclo de reconciliação
+para aparecer. A cobertura deve estar atualizada há no máximo 26 horas e o
+inventário reconciliado há no máximo oito dias; a baseline inicial é obrigatória.
+Se o inventário crescer além da capacidade semanal, aumentar o limite de reconciliação.
+
+O feed do Senado permite até 30 dias. Uma lacuna maior bloqueia a cobertura;
+`catchup` registra nova cobertura recente e audita o inventário conhecido. Ele
+não promete descobrir proposições desconhecidas que só mudaram fora desse horizonte.
+Relatórios de períodos anteriores à nova cobertura continuam incompletos.
+
+IA usa texto normalizado + configuração do modelo como chave durável. Rodam
+somente proposições novas e novos textos substantivos: original, substitutivo
+ou redação integral identificável. Pareceres, requerimentos e emendas parciais
+não substituem o texto principal. URLs/revisões diferentes com texto igual não
+reclassificam; bytes iguais também não repetem OCR. Resultados de textos antigos
+não sobrescrevem a análise do texto selecionado. Avaliações humanas e aprovação
+permanecem preservadas. Alterar a configuração do modelo exige manutenção explícita.
+
+Extração/IA rodam na fila `ml`, separada da coleta; falhas ficam persistidas e o
+recuperador tenta novamente até três tentativas. Falhas esgotadas exigem revisão
+operacional. Esses estados não são convertidos em falha da cobertura de atividade:
+o Radar utiliza datas/status oficiais, sem depender da categoria da IA.
+
+O run `37495777475` falhou depois da coleta ao receber rejeição de autenticação
+Substack. O relatório 1 permaneceu congelado e exportável. Renovar o secret,
+redeployar e executar `--check-auth` antes de repetir sua entrega; se sua cobertura
+original estiver incompleta, a repetição exige `--allow-incomplete`.
