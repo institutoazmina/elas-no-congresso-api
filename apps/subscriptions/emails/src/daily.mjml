@@ -1,8 +1,8 @@
 <mjml>
   <mj-head>
     <mj-attributes>
-      <mj-all font-family="Arial, Helvetica, sans-serif" color="#373732" />
-      <mj-text font-size="16px" line-height="1.35" padding="0" />
+      <mj-all font-family="Arial, Helvetica, sans-serif" color="#000000" />
+      <mj-text font-size="16px" line-height="1.3" padding="0" />
     </mj-attributes>
   </mj-head>
 
@@ -18,51 +18,43 @@
       </mj-column>
     </mj-section>
 
-    <mj-section padding="76px 56px 0">
+    <mj-section padding="39px 64px 0">
+      <mj-column padding="0">
+        <mj-text color="#9C929A" font-size="16px" line-height="1.2" padding="6px 0 0">
+          {{ data }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="27px 64px 0">
+      <mj-column padding="0">
+        <mj-divider border-color="#DFE4F8" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="29px 64px 0">
       <mj-column padding="0">
         <mj-text font-size="18px" font-weight="700" line-height="1.2">Olá,</mj-text>
-
-        <mj-text font-size="18px" line-height="1.28" padding="36px 0 0">
-          Uma proposição que você acompanha acaba de ter uma movimentação importante.
-        </mj-text>
-
-        <mj-text font-size="16px" font-weight="700" line-height="1.25" padding="35px 0 0">
-          {{ titulo_curto }}
-        </mj-text>
-        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
-          {{ tipo }} {{ numero }}
-        </mj-text>
-        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
-          Ementa: {{ ementa }}.
-        </mj-text>
-        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
-          Autoria: {{ autor }} {{ partido_uf }}.
-        </mj-text>
-        <mj-text font-size="16px" line-height="1.25" padding="3px 0 0">
-          <span style="color: #373732; font-size: 20px; line-height: 0; vertical-align: -1px;">■</span>
-          Pronta para votação em: {{ orgao }}.
-        </mj-text>
-
-        <mj-text font-size="16px" line-height="1.28" padding="38px 0 0">
-          <span style="color: #373732; font-size: 20px; line-height: 0; vertical-align: -1px;">■</span>
-          Você pode ler e acompanhar cada passo da tramitação por aqui:<br />
-          <a href="{{ link_tramitacao }}" style="color: #373732; text-decoration: none;">{{ link_tramitacao }}</a>
-        </mj-text>
-
-        <mj-text font-size="16px" line-height="1.3" padding="57px 0 0">
-          Até breve,<br />
-          <strong>Elas no Congresso</strong>
+        <mj-text font-size="18px" line-height="1.3" padding="34px 0 0">
+          Esse é seu Radar do dia com todas as atualizações sobre as proposições e temas que você escolheu acompanhar.
         </mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="67px 56px 0">
+    <mj-section padding="57px 64px 0">
       <mj-column padding="0">
-        <mj-divider border-color="#1E2546" border-width="1px" padding="0" />
+        <!-- O conteúdo agrupado por tema é montado pelo remetente. -->
+        <mj-text font-size="16px" line-height="1.3">{{ temas_html }}</mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="43px 56px 0">
+    <mj-section padding="65px 64px 0">
+      <mj-column padding="0">
+        <mj-divider border-color="#DFE4F8" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="37px 64px 0">
       <mj-column padding="0">
         <mj-text align="center" font-size="18px" font-weight="700" line-height="1.3">
           Você pode acompanhar essas e outras<br />
@@ -74,7 +66,7 @@
           border-radius="10px"
           color="#FFFFFF"
           font-size="16px"
-          inner-padding="12px 24px"
+          inner-padding="15px 32px"
           padding="28px 0 0"
         >
           Acompanhar proposições
@@ -82,11 +74,11 @@
       </mj-column>
     </mj-section>
 
-    <mj-section padding="51px 56px 64px">
+    <mj-section padding="61px 64px 64px">
       <mj-column padding="0">
-        <mj-text align="center" color="#1E2546" font-size="16px" line-height="1.2">
+        <mj-text align="center" color="#000000" font-size="16px" line-height="1.2">
           Elas no Congresso&nbsp; {{ ano }}&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="{{ link_descadastro }}" style="color: #1E2546; text-decoration: underline;">Descadastrar-se</a>
+          <a href="{{ link_descadastro }}" style="color: #000000; text-decoration: underline;">Descadastrar-se</a>
         </mj-text>
       </mj-column>
     </mj-section>

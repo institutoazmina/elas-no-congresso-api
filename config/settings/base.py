@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
 from celery.schedules import crontab
@@ -189,6 +190,13 @@ CELERY_TASK_ROUTES = {
     "apps.ingestion.tasks.classify_proposition": {"queue": "ml"},
 }
 
+# Horário local (America/Sao_Paulo), configurável no ambiente do worker e beat.
+DAILY_DIGEST_TIME = config(
+    "DAILY_DIGEST_TIME",
+    default="09:00",
+    cast=lambda value: datetime.strptime(value, "%H:%M").time(),
+)
+
 # QuitérIA 2.0: os artefatos são baixados na imagem de runtime e carregados
 # apenas pelo worker da fila ``ml``. A revisão é fixa para que um deploy seja
 # reprodutível mesmo se o repositório do Hub receber novos pesos.
@@ -218,10 +226,9 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.ingestion.tasks.refresh_enacted_proposition_statuses",
         "schedule": crontab(hour=6, minute=30),
     },
-    # Depois das duas coletas, para o resumo já sair com a semana inteira.
-    "weekly-digest": {
-        "task": "apps.subscriptions.tasks.send_weekly_digest",
-        "schedule": crontab(day_of_week=3, hour=9, minute=0),
+    "daily-digest": {
+        "task": "apps.subscriptions.tasks.send_daily_digest",
+        "schedule": crontab(hour=DAILY_DIGEST_TIME.hour, minute=DAILY_DIGEST_TIME.minute),
     },
     "cleanup-unconfirmed-subscriptions": {
         "task": "apps.subscriptions.tasks.cleanup_unconfirmed_subscriptions",

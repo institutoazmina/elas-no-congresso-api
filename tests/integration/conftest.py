@@ -1,5 +1,8 @@
 import time
 import urllib.request
+from datetime import datetime
+from types import SimpleNamespace
+from zoneinfo import ZoneInfo
 
 import boto3
 import pytest
@@ -59,3 +62,16 @@ def outbox(settings, mailoutbox):
     é *quantos* e-mails saem e para quem, não o transporte."""
     settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
     return mailoutbox
+
+
+@pytest.fixture
+def daily_clock(monkeypatch, settings):
+    """Collect matches at 08:00; tests advance to the scheduled delivery time."""
+    from datetime import time as datetime_time
+
+    from django.utils import timezone
+
+    settings.DAILY_DIGEST_TIME = datetime_time(9)
+    clock = SimpleNamespace(now=datetime(2026, 10, 6, 8, tzinfo=ZoneInfo("America/Sao_Paulo")))
+    monkeypatch.setattr(timezone, "now", lambda: clock.now)
+    return clock

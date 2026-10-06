@@ -2,10 +2,9 @@
   "name": "elas-no-congresso-emails",
   "private": true,
   "scripts": {
-    "prebuild": "mkdir -p dist",
-    "build": "mjml src/daily.mjml -o dist/daily.html && mjml src/weekly.mjml -o dist/weekly.html && mjml src/confirmation.mjml -o dist/confirmation.html",
+    "prebuild": "mkdir -p dist && rm -f dist/weekly.html",
+    "build": "mjml src/daily.mjml -o dist/daily.html && mjml src/confirmation.mjml -o dist/confirmation.html",
     "build:daily": "mjml src/daily.mjml -o dist/daily.html",
-    "build:weekly": "mjml src/weekly.mjml -o dist/weekly.html",
     "build:confirmation": "mjml src/confirmation.mjml -o dist/confirmation.html"
   },
   "devDependencies": {

@@ -12,7 +12,7 @@ from apps.propositions.models import (
 )
 from apps.subscriptions.models import Subscription
 from apps.subscriptions.service import match_proposition
-from apps.subscriptions.tasks import match_and_notify
+from apps.subscriptions.tasks import match_and_notify, send_daily_digest
 
 
 @pytest.fixture(autouse=True)
@@ -83,7 +83,7 @@ def test_proposition_search_filters_by_house(client, propositions, house, query)
     ids=["all-propositions", "specific-propositions"],
 )
 def test_daily_subscription_house_filter_matches_and_delivers(
-    client, outbox, propositions, house, specific_propositions, settings
+    client, outbox, propositions, house, specific_propositions, settings, daily_clock
 ):
     settings.QUITERIA_ENABLED = False
     selected_ids = [proposition.pk for proposition in propositions if proposition.number == 10]
@@ -130,8 +130,11 @@ def test_daily_subscription_house_filter_matches_and_delivers(
         assert matched == ([subscription.pk] if proposition.pk in expected else [])
         match_and_notify.delay(proposition.pk)
 
+    assert outbox == []
+    daily_clock.now = daily_clock.now.replace(hour=9)
+    send_daily_digest()
     assert set(subscription.deliveries.values_list("proposition_id", flat=True)) == expected
-    assert len(outbox) == len(expected)
+    assert len(outbox) == 1
     assert all(message.to == [subscription.email] for message in outbox)
 
 
@@ -202,7 +205,7 @@ class LegislativeFeed:
 
 
 @pytest.mark.django_db(transaction=True)
-def test_api_flow_smoke_without_ai(client, outbox, settings, monkeypatch):
+def test_api_flow_smoke_without_ai(client, outbox, settings, monkeypatch, daily_clock):
     """Signup → confirmation → ingestion → review → alerts → unsubscribe."""
     settings.QUITERIA_ENABLED = False
     subscriptions = {}
@@ -266,25 +269,30 @@ def test_api_flow_smoke_without_ai(client, outbox, settings, monkeypatch):
         assert not proposition.alert_deliveries.exists()
         proposition.is_approved = True
         proposition.save(update_fields=["is_approved"])
-        assert set(proposition.alert_deliveries.values_list("subscription_id", flat=True)) == {
-            subscriptions[proposition.house].pk,
-            subscriptions[None].pk,
-        }
+        assert not proposition.alert_deliveries.exists()
         assert (
             client.get("/api/v1/propositions/", {"house": proposition.house}).json()["count"] == 1
         )
 
-    assert len(outbox) == 4
+    assert outbox == []
+    daily_clock.now = daily_clock.now.replace(hour=9)
+    send_daily_digest()
+    for proposition in propositions:
+        assert set(proposition.alert_deliveries.values_list("subscription_id", flat=True)) == {
+            subscriptions[proposition.house].pk,
+            subscriptions[None].pk,
+        }
+    assert len(outbox) == 3
     for house, subscription in subscriptions.items():
         messages = [message for message in outbox if message.to == [subscription.email]]
-        assert len(messages) == (1 if house else 2)
+        assert len(messages) == 1
         assert all("PL 42/2026" in message.alternatives[0][0] for message in messages)
         if house:
             assert f"Casa: {house}" in messages[0].body
 
     for proposition in propositions:
         match_and_notify.delay(proposition.pk)
-    assert len(outbox) == 4
+    assert len(outbox) == 3
 
     for subscription in subscriptions.values():
         response = client.get(f"/api/v1/subscriptions/unsubscribe/{subscription.unsubscribe_token}")
@@ -294,4 +302,4 @@ def test_api_flow_smoke_without_ai(client, outbox, settings, monkeypatch):
     for proposition in propositions:
         assert match_proposition(proposition.pk, frequency="daily") == []
         match_and_notify.delay(proposition.pk)
-    assert len(outbox) == 4
+    assert len(outbox) == 3

@@ -9,7 +9,7 @@ from django.test import Client
 
 from apps.propositions.models import Proposition
 from apps.subscriptions.models import Subscription
-from apps.subscriptions.tasks import match_and_notify
+from apps.subscriptions.tasks import match_and_notify, send_daily_digest
 
 SITE_ORIGIN = "https://www.elasnocongresso.com.br"
 HOMOLOGATION_ORIGIN = "https://homologacao.elasnocongresso.com.br"
@@ -102,8 +102,9 @@ def test_asset_do_email_e_publico_e_cacheavel(client, name):
     assert b"".join(response.streaming_content).startswith(b"\x89PNG\r\n\x1a\n")
 
 
-def test_asset_de_email_desconhecido_retorna_404(client):
-    response = client.get("/api/v1/assets/emails/inexistente.png")
+@pytest.mark.parametrize("name", ["inexistente.png", "weekly-header.png"])
+def test_asset_de_email_desconhecido_retorna_404(client, name):
+    response = client.get(f"/api/v1/assets/emails/{name}")
 
     assert response.status_code == 404
 
@@ -202,7 +203,7 @@ def test_assinar_as_duas_frequencias_cria_duas_inscricoes_e_um_email(client, out
 
 
 @pytest.mark.django_db(transaction=True)
-def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
+def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings, daily_clock):
     settings.PUBLIC_SITE_URL = SITE_ORIGIN
     _post(
         client,
@@ -247,9 +248,14 @@ def test_so_inscricao_confirmada_recebe_alerta(client, outbox, settings):
     )
     match_and_notify.delay(after_confirmation.pk)
 
+    assert len(outbox) == 1
+    daily_clock.now = daily_clock.now.replace(hour=9)
+    send_daily_digest()
     assert len(outbox) == 2
     assert outbox[1].to == ["confirmacao@example.org"]
-    assert outbox[1].subject == "O PL 2/2026 que vc acompanha tem novidade"
+    assert outbox[1].subject == "[Elas no Congresso] Resumo do dia: 1 proposição"
+    assert after_confirmation.number_label in outbox[1].body
+    assert before_confirmation.number_label not in outbox[1].body
 
 
 @pytest.mark.django_db

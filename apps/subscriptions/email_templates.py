@@ -12,8 +12,13 @@ from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import SafeString
 
+from apps.core.enums import PropositionCategory
+from apps.propositions.celerity import calculate_celerity
+from apps.propositions.models import PropositionAnalysis
+
 EMAIL_DIST_DIR = Path(__file__).resolve().parent / "emails" / "dist"
-EMAIL_ASSETS = {"daily-header.png", "weekly-header.png", "header.png"}
+EMAIL_ASSETS = {"daily-header.png", "header.png"}
+CELERITY_ORDER = ("Tá voando", "Rápida", "Lenta", "Travada", "Esquecida")
 
 
 def _absolute_url(path: str) -> str:
@@ -50,12 +55,12 @@ def _proposition_url(proposition_id: int) -> str:
 
 
 def _authors(proposition) -> tuple[str, str]:
-    authors = proposition.authors.select_related(
-        "parliamentarian", "institutional_author", "party"
-    ).order_by("order_index")
+    authors = proposition.authors.all()
+    if "authors" not in getattr(proposition, "_prefetched_objects_cache", {}):
+        authors = authors.select_related("parliamentarian", "institutional_author", "party")
     names: list[str] = []
     affiliations: list[str] = []
-    for author in authors:
+    for author in sorted(authors, key=lambda item: (item.order_index, item.pk)):
         if author.parliamentarian:
             names.append(str(author.parliamentarian))
         elif author.institutional_author:
@@ -97,64 +102,153 @@ def _base_context(subscription) -> dict[str, str | int]:
 
 
 def render_daily_alert(subscription, proposition) -> str:
-    context = _base_context(subscription)
-    context.update(_proposition_context(proposition))
-    context["daily_header_url"] = _header_url("daily-header.png")
-    return _render_email("daily.html", context)
+    """Compatibility wrapper for callers previewing a single proposition."""
+    return render_daily_digest(subscription, [proposition])
 
 
-def _weekly_cards(propositions) -> SafeString:
-    cards = []
+def _daily_groups(propositions):
+    """Human themes take precedence over successful AI analysis, as in matching."""
+    groups = {}
+    seen = set()
     for proposition in propositions:
-        item = _proposition_context(proposition)
-        cards.append(
+        if proposition.pk in seen:
+            continue
+        seen.add(proposition.pk)
+        categories = {annotation.category for annotation in proposition.annotations.all()}
+        if not categories:
+            analysis = getattr(proposition, "analysis", None)
+            if analysis and analysis.analysis_status == PropositionAnalysis.Status.SUCCEEDED:
+                categories = {analysis.theme_category} if analysis.theme_category else set()
+        categories = categories.intersection(PropositionCategory.values) or {None}
+        celerity = calculate_celerity(proposition, proposition.events.all()).label
+        for category in categories:
+            groups.setdefault(category, {}).setdefault(celerity, []).append(proposition)
+
+    for category in (*PropositionCategory.values, None):
+        if category not in groups:
+            continue
+        label = PropositionCategory(category).label if category else "Sem tema informado"
+        yield (
+            label,
+            [
+                (
+                    celerity,
+                    sorted(
+                        groups[category][celerity], key=lambda prop: (prop.presented_at, prop.pk)
+                    ),
+                )
+                for celerity in CELERITY_ORDER
+                if celerity in groups[category]
+            ],
+        )
+
+
+def _daily_card(proposition) -> tuple[dict, list[str]]:
+    item = _proposition_context(proposition)
+    affiliation = f" ({item['partido_uf']})" if item["partido_uf"] else ""
+    lines = [
+        f"Casa: {proposition.house}",
+        f"Ementa: {item['ementa']}",
+        f"Autoria: {item['autor']}{affiliation}.",
+        f"Situação: {item['orgao']}.",
+    ]
+    for rapporteur in proposition.rapporteurs.all():
+        if rapporteur.is_current:
+            party = f" ({rapporteur.party.acronym})" if rapporteur.party else ""
+            lines.append(f"Relatoria: {rapporteur.parliamentarian}{party}.")
+    if proposition.regime:
+        lines.append(f"Regime de tramitação: {proposition.regime}.")
+    if proposition.enacted_law_number:
+        law = str(proposition.enacted_law_number)
+        if proposition.enacted_law_year:
+            law = f"{law}/{proposition.enacted_law_year}"
+        lines.append(f"Agora é {proposition.enacted_law_type or 'lei'} {law}.")
+    return item, lines
+
+
+def _daily_themes_html(propositions) -> SafeString:
+    themes = []
+    for theme, groups in _daily_groups(propositions):
+        sections = []
+        for celerity, props in groups:
+            cards = []
+            for proposition in props:
+                item, lines = _daily_card(proposition)
+                cards.append(
+                    format_html(
+                        '<div style="margin-top: 26px; font-size: 16px; line-height: 1.3;">'
+                        "<strong>{}</strong><br>{} {}<br>{}"
+                        "📄 Você pode ler e acompanhar cada passo da tramitação por aqui:<br>"
+                        '<a href="{}" style="color: #000000; text-decoration: underline;">{}</a>'
+                        "</div>",
+                        item["titulo_curto"],
+                        item["tipo"],
+                        item["numero"],
+                        format_html_join("", "{}<br>", ((line,) for line in lines)),
+                        item["link_tramitacao"],
+                        item["link_tramitacao"],
+                    )
+                )
+            sections.append(
+                format_html(
+                    '<div style="margin-top: 23px; font-weight: 700;">Celeridade: {}</div>{}',
+                    celerity,
+                    format_html_join("", "{}", ((card,) for card in cards)),
+                )
+            )
+        themes.append(
             format_html(
-                '<div style="margin-top: 26px; font-size: 16px; line-height: 1.3;">'
-                "<strong>{}</strong><br>"
-                "{} {}<br>"
-                "Ementa: {}.<br>"
-                "Autoria: {} {}.<br>"
-                '<span style="font-size: 20px; line-height: 0; vertical-align: -1px;">■</span> '
-                "Você pode ler e acompanhar cada passo da tramitação por aqui:<br>"
-                '<a href="{}" style="color: #000000; text-decoration: none;">{}</a>'
-                "</div>",
-                item["titulo_curto"],
-                item["tipo"],
-                item["numero"],
-                item["ementa"],
-                item["autor"],
-                item["partido_uf"],
-                item["link_tramitacao"],
-                item["link_tramitacao"],
+                '<div style="margin-bottom: 38px;">'
+                '<div style="font-size: 18px; font-weight: 700; line-height: 1.2;">{}</div>{}</div>',
+                theme,
+                format_html_join("", "{}", ((section,) for section in sections)),
             )
         )
-    return format_html_join("", "{}", ((card,) for card in cards))
+    return format_html_join("", "{}", ((theme,) for theme in themes))
 
 
-def _weekly_themes_html(propositions) -> SafeString:
-    cards = _weekly_cards(propositions)
-    return format_html(
-        '<div style="font-size: 16px; line-height: 1.3;">'
-        '<div style="font-size: 18px; font-weight: 700; line-height: 1.2;">'
-        "Proposições acompanhadas</div>"
-        '<div style="margin-top: 23px; font-weight: 700;">'
-        '<span style="font-size: 20px; line-height: 0; vertical-align: -1px;">■</span> '
-        "Atualizações que chegaram nesta semana:</div>{}</div>",
-        cards,
-    )
-
-
-def render_weekly_digest(subscription, propositions) -> str:
+def render_daily_digest(subscription, propositions) -> str:
     context = _base_context(subscription)
     context.update(
         {
-            "edicao": timezone.localdate().isocalendar().week,
             "data": timezone.localdate().strftime("%d/%m/%Y"),
-            "temas_html": _weekly_themes_html(propositions),
-            "weekly_header_url": _header_url("weekly-header.png"),
+            "temas_html": _daily_themes_html(propositions),
+            "daily_header_url": _header_url("daily-header.png"),
         }
     )
-    return _render_email("weekly.html", context)
+    return _render_email("daily.html", context)
+
+
+def render_daily_digest_text(subscription, propositions) -> str:
+    lines = [
+        "Olá,",
+        "Esse é seu Radar do dia com todas as atualizações sobre as proposições "
+        "e temas que você escolheu acompanhar.",
+        timezone.localdate().strftime("%d/%m/%Y"),
+    ]
+    for theme, groups in _daily_groups(propositions):
+        lines.append(f"\n{theme}")
+        for celerity, props in groups:
+            lines.append(f"\nCeleridade: {celerity}")
+            for proposition in props:
+                item, details = _daily_card(proposition)
+                lines.extend(
+                    [
+                        f"\n{item['titulo_curto']}",
+                        f"{item['tipo']} {item['numero']}",
+                        *details,
+                        "Você pode ler e acompanhar cada passo da tramitação por aqui:",
+                        item["link_tramitacao"],
+                    ]
+                )
+    context = _base_context(subscription)
+    lines.extend(
+        [
+            f"\nAcompanhar proposições: {context['link_acompanhar']}",
+            f"Cancelar inscrição: {context['link_descadastro']}",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def render_confirmation_email(subscription) -> str:

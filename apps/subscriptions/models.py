@@ -14,9 +14,7 @@ class Frequency(models.TextChoices):
 
 class Subscription(models.Model):
     email = models.EmailField(db_index=True)
-    frequency = models.CharField(
-        max_length=10, choices=Frequency.choices, default=Frequency.DAILY
-    )
+    frequency = models.CharField(max_length=10, choices=Frequency.choices, default=Frequency.DAILY)
     ast = models.JSONField()
     # TSQUERY stored as text, cast to tsquery in raw SQL queries
     query = models.TextField()
@@ -40,11 +38,7 @@ class Subscription(models.Model):
 
 
 class AlertDelivery(models.Model):
-    """Registro de "já avisei esta inscrição sobre esta proposição".
-
-    O match roda em mais de um gatilho (a proposição entra, depois a anotação
-    humana chega e muda o que ela casa). O unique é o que garante um e-mail só.
-    """
+    """Proposição incluída em um e-mail enviado com sucesso à inscrição."""
 
     subscription = models.ForeignKey(
         Subscription, on_delete=models.CASCADE, related_name="deliveries"
@@ -59,5 +53,40 @@ class AlertDelivery(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["subscription", "proposition"], name="alert_deliveries_sub_prop"
+            )
+        ]
+
+
+class PendingAlert(models.Model):
+    """Matches persistidos até o próximo horário do resumo diário."""
+
+    subscription = models.ForeignKey(
+        Subscription, on_delete=models.CASCADE, related_name="pending_alerts"
+    )
+    proposition = models.ForeignKey("propositions.Proposition", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        db_table = "pending_alerts"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["subscription", "proposition"], name="pending_alerts_sub_prop"
+            )
+        ]
+
+
+class DailyDigestDelivery(models.Model):
+    """Uma entrega por endereço e data local, inclusive com várias inscrições."""
+
+    email = models.EmailField()
+    delivery_date = models.DateField()
+    sent_at = models.DateTimeField(null=True, blank=True)
+    message_id = models.TextField(null=True, blank=True)
+
+    class Meta:
+        db_table = "daily_digest_deliveries"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["email", "delivery_date"], name="daily_digest_email_date"
             )
         ]

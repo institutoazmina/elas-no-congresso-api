@@ -9,7 +9,7 @@ from apps.propositions.models import Proposition
 from apps.propositions.quiteria import QuiteriaPrediction
 from apps.subscriptions.models import AlertDelivery, Subscription
 from apps.subscriptions.service import register_subscriptions
-from apps.subscriptions.tasks import match_and_notify
+from apps.subscriptions.tasks import match_and_notify, send_daily_digest
 
 
 class _CamaraComUmaProposicao:
@@ -65,7 +65,7 @@ def _activate_daily_subscription(email: str, ast: dict) -> int:
 
 @pytest.mark.django_db(transaction=True)
 @override_settings(QUITERIA_ENABLED=True)
-def test_ingestao_exige_aprovacao_antes_de_entregar_alerta(monkeypatch, outbox):
+def test_ingestao_exige_aprovacao_antes_de_entregar_alerta(monkeypatch, outbox, daily_clock):
     """Ingestão → QuitérIA → aprovação → matching → e-mail, sem anotação humana."""
     no_match_educacao = _activate_daily_subscription(
         "educacao-e2e@example.com",
@@ -119,10 +119,7 @@ def test_ingestao_exige_aprovacao_antes_de_entregar_alerta(monkeypatch, outbox):
     proposition.is_approved = True
     proposition.save(update_fields=["is_approved"])
 
-    assert {message.to[0] for message in outbox} == {
-        "saude-e2e@example.com",
-        "multicategoria-e2e@example.com",
-    }
+    assert outbox == []
 
     # O caso de borda do modal: acompanha uma categoria, mas só uma PL já
     # conhecida. A categorização chega depois de a pessoa ter se inscrito.
@@ -138,6 +135,9 @@ def test_ingestao_exige_aprovacao_antes_de_entregar_alerta(monkeypatch, outbox):
     )
 
     match_and_notify(proposition.pk)
+    assert outbox == []
+    daily_clock.now = daily_clock.now.replace(hour=9)
+    send_daily_digest()
 
     delivered_subscriptions = set(
         AlertDelivery.objects.filter(proposition=proposition).values_list(

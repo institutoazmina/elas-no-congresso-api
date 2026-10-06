@@ -69,6 +69,7 @@ env:
     # Não-sensível / não-identificável
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DEBUG: "False"
+    DAILY_DIGEST_TIME: "<%= ENV.fetch('DAILY_DIGEST_TIME', '09:00') %>"
     # Site estático (domínio público, nada sensível): destino do redirect depois
     # de confirmar/cancelar alerta, e origem liberada no CORS do modal. Sem isto
     # o default de dev (localhost:4321) vazaria para produção.

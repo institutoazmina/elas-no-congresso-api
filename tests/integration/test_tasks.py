@@ -66,12 +66,15 @@ class TestSendConfirmationEmail:
 
 @pytest.mark.django_db
 class TestSendAlertEmail:
-    def test_sends_and_returns_message_id(self, verified_sender):
+    def test_queues_without_sending(self, outbox):
+        from apps.subscriptions.models import PendingAlert
+
         sub = _make_subscription(email="alert@example.com", is_active=True)
         prop = _make_proposition(external_id=100)
         result = send_alert_email.delay(sub.pk, prop.pk)
-        msg_id = result.get()
-        assert msg_id and isinstance(msg_id, str)
+        assert result.get() is None
+        assert outbox == []
+        assert PendingAlert.objects.filter(subscription=sub, proposition=prop).exists()
 
     def test_skips_inactive_subscription(self, verified_sender):
         # task filters is_active=True; inactive sub → early return
@@ -106,11 +109,11 @@ class TestSendTestAlertEmail:
 
         assert result.get() == "test-message-id"
         subject, _text, _html, recipient = send.call_args.args
-        assert subject == "[TESTE] [Elas no Congresso] Nova proposição: PL 1/2024"
+        assert subject == "[TESTE] [Elas no Congresso] Resumo do dia: 1 proposição"
         assert recipient == sub.email
         assert not AlertDelivery.objects.filter(subscription=sub, proposition=prop).exists()
 
-    def test_uses_weekly_template_for_weekly_subscription(self):
+    def test_legacy_weekly_subscription_previews_daily_template(self):
         from apps.subscriptions.models import Frequency
 
         sub = _make_subscription(
@@ -122,10 +125,9 @@ class TestSendTestAlertEmail:
             result = send_test_alert_email.delay(sub.pk, prop.pk)
 
         assert result.get() == "test-message-id"
-        assert (
-            send.call_args.args[0]
-            == "[TESTE] [Elas no Congresso] Resumo da semana: 1 nova proposição"
-        )
+        assert send.call_args.args[0] == "[TESTE] [Elas no Congresso] Resumo do dia: 1 proposição"
+        assert "daily-header.png" in send.call_args.args[2]
+        assert "weekly-header.png" not in send.call_args.args[2]
 
 
 @pytest.mark.django_db

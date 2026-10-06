@@ -61,6 +61,28 @@ open http://localhost:8000/api/v1/docs
 
 Documentação completa em `/api/v1/docs`.
 
+## Alertas diários
+
+Os matches de inscrições diárias ficam em uma fila persistida até o resumo.
+O Celery Beat dispara às **09:00 de America/Sao_Paulo** por padrão. Configure
+`DAILY_DIGEST_TIME=HH:MM` no ambiente do beat e dos workers e reinicie ambos
+para alterar o horário. Aplique as migrações antes de iniciar os novos workers.
+
+Cada endereço recebe no máximo um resumo diário, mesmo com várias inscrições.
+O conteúdo é agrupado por tema editorial e, dentro do tema, pela celeridade
+calculada a partir do histórico oficial. Anotações humanas prevalecem sobre a
+análise concluída da QuitérIA; itens sem categoria têm uma seção própria.
+Matches posteriores ao horário de corte entram no próximo dia. Não há envio
+sem novidades; pendências de dias anteriores são preservadas e revalidadas
+antes de enviar. Falhas de envio mantêm as pendências para retry.
+
+A proteção por endereço/data serializa tarefas concorrentes e repetidas.
+Como SES e PostgreSQL não compartilham uma transação, uma interrupção do worker
+depois da aceitação pelo SES e antes do commit ainda pode causar reenvio.
+O template e o envio semanal foram retirados. A migração `0006` desativa
+agendamentos semanais persistidos no banco do Celery Beat; tarefas antigas
+já presentes no broker são descartadas sem enviar e-mails.
+
 ## Admin
 
 - Django Admin: `http://localhost:8000/admin/` (usar sessão Django)
