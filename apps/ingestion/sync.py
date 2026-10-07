@@ -195,13 +195,14 @@ def _documents(prop, client, events, *, verify=False, process_id=None, baseline=
 
 
 def _discovery_relevance(fields, *ementas):
-    """Use the ementa alone when the document requires interactive verification."""
+    """Use ementas alone for missing links or interactive document verification."""
     relevance = assert_theme(fields.get("ementa"), *ementas)
     if relevance["row_relevant"]:
         return relevance
     url = fields.get("full_text_url")
     if not url:
-        raise ValueError("Full text unavailable for relevance check")
+        logger.info("Relevance checked using ementa only: document link unavailable")
+        return relevance
     from urllib.parse import urlparse
 
     from .clients.base import throttle_source

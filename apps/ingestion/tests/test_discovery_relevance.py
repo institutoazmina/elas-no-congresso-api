@@ -96,14 +96,21 @@ def test_ementa_match_does_not_need_synchronous_pdf(discovery):
     extraction.assert_not_called()
 
 
-def test_missing_document_is_failed_not_skipped(discovery):
+@pytest.mark.parametrize("relevant", [False, True])
+def test_missing_document_uses_ementa_without_failing_run(discovery, relevant):
     task, client, extraction, house = discovery
     if house == "camara":
         client._d.pop("urlInteiroTeor")
     else:
         client._s["_process_summary"].pop("urlDocumento")
+    if relevant:
+        client._s["ementa" if house == "camara" else "Ementa"] = "Proteção às mulheres."
     run = IngestionRun.objects.get(pk=task())
-    assert run.status == "failed" and run.skipped_count == 0
+    assert run.status == "success" and run.error_count == 0
+    assert run.skipped_count == (0 if relevant else 1)
+    assert run.upserted_count == (1 if relevant else 0)
+    assert run.items.get().attempts == 1
+    assert Proposition.objects.filter(house=house, external_id=701).exists() == relevant
     extraction.assert_not_called()
 
 
