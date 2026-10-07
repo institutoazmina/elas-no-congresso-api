@@ -148,6 +148,9 @@ Variáveis obrigatórias:
 
 ## Performance
 
+Para investigar o explorer em produção via SSH, consulte o
+[guia de instrumentação e profiling](docs/explorer-performance.md).
+
  benchmmarks Targets:
 - Matcher: p95 < 30ms (10k subscriptions × 900 propositions)
 - API GET /propositions: p95 < 200ms sustentando 500 rps

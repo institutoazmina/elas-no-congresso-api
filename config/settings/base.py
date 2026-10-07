@@ -78,6 +78,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    "apps.propositions.performance.ExplorerPerformanceMiddleware",
     # First: rewrite Host on health paths so orchestrator probes bypass
     # ALLOWED_HOSTS (kamal-proxy uses the container ID as Host).
     "config.middleware.HealthCheckHostMiddleware",
@@ -405,3 +406,10 @@ LOGGING = {
         "apps": {"handlers": ["console"], "level": "INFO", "propagate": False},
     },
 }
+
+# Opt-in sampling of production explorer requests; 1 traces every request.
+ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE = config(
+    "ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE", default=0.0, cast=float
+)
+if not 0 <= ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE <= 1:
+    raise ValueError("ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE must be between 0 and 1")

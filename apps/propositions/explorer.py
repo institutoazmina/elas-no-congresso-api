@@ -13,6 +13,8 @@ from django.http import HttpResponse
 from ninja import Field, Schema
 from pydantic import field_validator, model_validator
 
+from .performance import annotate, current_trace, stage
+
 SOURCE_CACHE_KEY = "activity:explorer:source:v2"
 UNKNOWN_RELIGION = "__unknown__"
 UFS = [
@@ -239,14 +241,23 @@ def _matches(item, query):
 def _all_activity():
     from .activity import ACTIVITY_CACHE_TIMEOUT, _queryset, _serialize
 
-    items = cache.get(SOURCE_CACHE_KEY)
+    trace = current_trace.get()
+    bypass = trace is not None and trace.bypass_cache
+    with stage("cache_get"):
+        items = None if bypass else cache.get(SOURCE_CACHE_KEY)
+    annotate(source_cache="bypass" if bypass else "miss" if items is None else "hit")
     if items is None:
-        # No listing cap: filter and count the complete public collection before pagination.
-        items = [
-            _serialize(proposition, event_limit=0)
-            for proposition in _queryset().order_by("-presented_at", "-pk")
-        ]
-        cache.set(SOURCE_CACHE_KEY, items, ACTIVITY_CACHE_TIMEOUT)
+        # Materialization includes fetch, model hydration and all prefetches.
+        with stage("source_load"):
+            propositions = list(_queryset().order_by("-presented_at", "-pk"))
+        annotate(source_count=len(propositions))
+        with stage("source_serialize"):
+            items = [_serialize(proposition, event_limit=0) for proposition in propositions]
+            del propositions
+        if not bypass:
+            with stage("cache_set"):
+                cache.set(SOURCE_CACHE_KEY, items, ACTIVITY_CACHE_TIMEOUT)
+    annotate(source_count=len(items))
     return items
 
 
@@ -465,7 +476,20 @@ def _sort_items(items, query):
 
 def explore_activity(query):
     source = _all_activity()
-    items = _sort_items([item for item in source if _matches(item, query)], query)
+    with stage("filter"):
+        filtered = [item for item in source if _matches(item, query)]
+    with stage("sort"):
+        items = _sort_items(filtered, query)
+        del filtered
+    annotate(filtered_count=len(items), page_size=query.page_size,
+             active_filters=[name for name in (
+                 "search", "house", "year", "year_start", "year_end", "party", "category",
+                 "assessment", "celerity", "movements", "gender", "state", "religion",
+                 "comments", "evaluator") if getattr(query, name)])
+    with stage("options"):
+        options = _options(source)
+    with stage("dashboard"):
+        dashboard = _dashboard(items, query)
     total = len(items)
     page_count = max(1, math.ceil(total / query.page_size))
     page = min(query.page, page_count)
@@ -491,7 +515,7 @@ def explore_activity(query):
         "total": total,
         "page": page,
         "page_count": page_count,
-        "options": _options(source),
+        "options": options,
         "summary": {
             "favorable": favorable,
             "unfavorable": unfavorable,
@@ -503,7 +527,7 @@ def explore_activity(query):
                 query.year is not None or query.year_start is not None or query.year_end is not None
             ),
         },
-        "dashboard": _dashboard(items, query),
+        "dashboard": dashboard,
     }
 
 
