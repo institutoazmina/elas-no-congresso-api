@@ -195,7 +195,7 @@ def _documents(prop, client, events, *, verify=False, process_id=None, baseline=
 
 
 def _discovery_relevance(fields, *ementas):
-    """Never treat an unreadable full text as a negative keyword match."""
+    """Use the ementa alone when the document requires interactive verification."""
     relevance = assert_theme(fields.get("ementa"), *ementas)
     if relevance["row_relevant"]:
         return relevance
@@ -205,10 +205,14 @@ def _discovery_relevance(fields, *ementas):
     from urllib.parse import urlparse
 
     from .clients.base import throttle_source
-    from .fulltext import extract_pdf_text
+    from .fulltext import DocumentSecurityChallengeError, extract_pdf_text
 
     throttle_source(urlparse(url).netloc)
-    text = extract_pdf_text(url)
+    try:
+        text = extract_pdf_text(url, raise_on_challenge=True)
+    except DocumentSecurityChallengeError:
+        logger.info("Relevance checked using ementa only: document security challenge (%s)", url)
+        return relevance
     if not text:
         raise ValueError("Full text extraction failed for relevance check")
     fields["full_text"] = text

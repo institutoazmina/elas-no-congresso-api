@@ -13,6 +13,9 @@ Se o OCR não estiver disponível (sem tesseract/fitz), degrada para só-pypdf.
 import io
 import logging
 import os
+import re
+import unicodedata
+from html import unescape
 
 import httpx
 from pypdf import PdfReader
@@ -41,10 +44,40 @@ _OCR_DPI = 200
 _OCR_LANG = "por"
 
 
-def extract_pdf_text(url: str | None, client: httpx.Client | None = None) -> str | None:
+class DocumentSecurityChallengeError(Exception):
+    """The document endpoint requires interactive security verification."""
+
+
+def _is_security_challenge(response: httpx.Response) -> bool:
+    prefix = response.content[:65536]
+    if prefix.lstrip().startswith(b"%PDF-"):
+        return False
+    html = prefix.decode("utf-8", errors="replace").lower()
+    if not re.search(r"<!doctype\s+html|<html\b|<head\b|<body\b", html):
+        return False
+    text = unicodedata.normalize("NFKD", unescape(html)).encode("ascii", "ignore").decode()
+    return any(
+        marker in text
+        for marker in (
+            "verificacao de seguranca",
+            "captcha",
+            "verify you are human",
+            "verify that you are human",
+            "verifique que voce e humano",
+            "checking your browser",
+            "cf-chl-",
+            "cf-turnstile",
+        )
+    )
+
+
+def extract_pdf_text(
+    url: str | None, client: httpx.Client | None = None, *, raise_on_challenge: bool = False
+) -> str | None:
     """Baixa o PDF em ``url`` e extrai o texto (pypdf + OCR nas páginas-imagem).
 
-    Retorna ``None`` em qualquer falha de download/leitura.
+    Retorna ``None`` em falhas de download/leitura. Com ``raise_on_challenge``,
+    sinaliza verificação interativa separadamente para a descoberta usar a ementa.
     """
     if not url:
         return None
@@ -53,6 +86,11 @@ def extract_pdf_text(url: str | None, client: httpx.Client | None = None) -> str
     client = client or httpx.Client(timeout=_TIMEOUT, headers=_HEADERS, follow_redirects=True)
     try:
         resp = client.get(url)
+        # Challenges can arrive as HTTP 200 as well as 403/429/503 responses.
+        if _is_security_challenge(resp):
+            if raise_on_challenge:
+                raise DocumentSecurityChallengeError("Document requires security verification")
+            return None
         resp.raise_for_status()
         content = resp.content
     except httpx.HTTPError as exc:
@@ -84,7 +122,10 @@ def _extract(content: bytes, url: str = "") -> str | None:
             if ocr and len(ocr) > len(text) + _OCR_GAIN_MIN:
                 logger.info(
                     "OCR pág %d: pypdf=%d → ocr=%d chars (%s)",
-                    i + 1, len(text), len(ocr), url[:60],
+                    i + 1,
+                    len(text),
+                    len(ocr),
+                    url[:60],
                 )
                 text = ocr
         parts.append(text)

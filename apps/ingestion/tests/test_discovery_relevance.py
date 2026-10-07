@@ -1,8 +1,10 @@
 from unittest.mock import Mock
 
+import httpx
 import pytest
 
 from apps.ingestion import tasks
+from apps.ingestion.fulltext import extract_pdf_text
 from apps.ingestion.models import IngestionRun
 from apps.ingestion.tests.test_tasks import _FakeCamara, _FakeSenado
 from apps.propositions.models import Proposition
@@ -103,3 +105,21 @@ def test_missing_document_is_failed_not_skipped(discovery):
     run = IngestionRun.objects.get(pk=task())
     assert run.status == "failed" and run.skipped_count == 0
     extraction.assert_not_called()
+
+
+def test_security_challenge_uses_ementa_without_failing_run(discovery):
+    task, client, extraction, house = discovery
+    transport = httpx.MockTransport(
+        lambda request: httpx.Response(
+            200, text="<!DOCTYPE html><title>Verificação de segurança — Senado Federal</title>"
+        )
+    )
+    with httpx.Client(transport=transport) as http_client:
+        extraction.side_effect = lambda url, **kwargs: extract_pdf_text(
+            url, client=http_client, **kwargs
+        )
+        run = IngestionRun.objects.get(pk=task())
+    assert run.status == "success"
+    assert run.skipped_count == 1 and run.error_count == 0
+    assert run.items.get().attempts == 1
+    assert not Proposition.objects.filter(house=house).exists()

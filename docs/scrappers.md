@@ -85,6 +85,7 @@ flowchart TD
     D -->|Sim| F[Persiste proposição, autores, eventos e temas]
     D -->|Não| E[Extrai inteiro teor PDF/OCR]
     E -->|Falha ou indisponível| R[Registra falha para retomada]
+    E -->|CAPTCHA: usa apenas a ementa já verificada| I
     E --> H{Ementa ou inteiro teor contém uma regra?}
     H -->|Sim| F
     H -->|Não| I[Marca item como ignorado]
@@ -206,6 +207,12 @@ Fluxo de descoberta:
    download malsucedido ou extração vazia são falhas retomáveis, não resultados
    negativos. Seguem as tentativas e a retomada já existentes da coleta; uma
    execução com falhas não avança a cobertura da janela.
+5. Exceção: se o documento devolver uma página HTML de CAPTCHA/verificação de
+   segurança, decide apenas pelas ementas disponíveis. Sem correspondência nelas,
+   o item é ignorado, sem erro nem novas tentativas nessa execução. O fallback é
+   registrado em log informativo. Isso permite concluir a coleta, mas pode deixar
+   de descobrir matérias relevantes apenas no inteiro teor. HTML genérico, URL
+   ausente, erros de rede e PDFs inválidos continuam sendo falhas retomáveis.
 
 Uma correspondência na ementa dispensa a extração síncrona; o processamento de
 versões de documentos continua pela fila existente. Esse processamento também

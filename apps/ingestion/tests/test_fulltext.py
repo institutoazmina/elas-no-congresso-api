@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import httpx
 import pytest
 
@@ -86,3 +88,45 @@ class TestExtractPdfText:
 @pytest.mark.parametrize("url", ["", None])
 def test_falsy_urls(url):
     assert fulltext.extract_pdf_text(url) is None
+
+
+@pytest.mark.parametrize("status", [200, 403, 429, 503])
+@pytest.mark.parametrize(
+    "page",
+    [
+        "<!DOCTYPE html><title>Verificação de segurança — Senado Federal</title>",
+        "<html><body>Please verify you are human</body></html>",
+        '<html><div class="g-recaptcha">Confirm access</div></html>',
+    ],
+)
+def test_security_challenge_is_distinguished_from_pdf_failure(monkeypatch, status, page):
+    parse = Mock()
+    monkeypatch.setattr(fulltext, "_extract", parse)
+    with _client(lambda request: httpx.Response(status, text=page)) as client:
+        with pytest.raises(fulltext.DocumentSecurityChallengeError):
+            fulltext.extract_pdf_text("https://x/doc.pdf", client=client, raise_on_challenge=True)
+        assert fulltext.extract_pdf_text("https://x/doc.pdf", client=client) is None
+    parse.assert_not_called()
+
+
+def test_unrelated_html_remains_extraction_failure():
+    with _client(
+        lambda request: httpx.Response(200, text="<html>Document not found</html>")
+    ) as client:
+        assert (
+            fulltext.extract_pdf_text("https://x/doc.pdf", client=client, raise_on_challenge=True)
+            is None
+        )
+
+
+def test_pdf_about_captcha_is_not_a_security_challenge(monkeypatch):
+    parse = Mock(return_value="Legislação sobre CAPTCHA")
+    monkeypatch.setattr(fulltext, "_extract", parse)
+    with _client(
+        lambda request: httpx.Response(200, content=b"%PDF-1.7 captcha verify you are human")
+    ) as client:
+        assert (
+            fulltext.extract_pdf_text("https://x/doc.pdf", client=client, raise_on_challenge=True)
+            == parse.return_value
+        )
+    parse.assert_called_once()
