@@ -18,8 +18,15 @@ as datas inclusivas. A data final pode ser hoje: nesse caso o relatório inclui
 os dados disponíveis no momento da execução, sem esperar o encerramento do dia.
 
 O rascunho contém LEGENDA, destaques 📃, Radar da Câmara e Radar do Senado.
-Cada entrada tem ementa oficial, identificador real, estágio e link oficial.
-Não há resumo por IA, autores ou texto editorial. Destaques não são repetidos
+Cada entrada tem ementa oficial, identificador real, estágio e link oficial,
+seguidos de uma linha `Autoria: Nome (PARTIDO–UF).`, inclusive nos destaques.
+Coautores são separados por ponto e vírgula, na ordem de autoria registrada.
+Partido e UF vêm do registro de autoria, preservados no snapshot; não são
+substituídos pela filiação atual. Dados ausentes aparecem como “partido não
+informado” e “UF não informada”; autoria institucional exibe apenas o nome da
+instituição, e proposições sem autores exibem “Autoria: não informada.”.
+O formato vale para novos relatórios; relatórios já congelados mantêm o conteúdo salvo.
+Não há resumo por IA ou texto editorial. Destaques não são repetidos
 nos Radars. As entradas são agrupadas 🔁, 🗳️, 🆕 e revisão, com ordenação por tipo,
 número e ano. Tipos como PDL, PEC e PLS são preservados.
 

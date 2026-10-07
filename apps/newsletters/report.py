@@ -10,7 +10,7 @@ from django.db.models import Exists, OuterRef, Prefetch, Q
 from markdown_it import MarkdownIt
 
 from apps.activity.models import Vote
-from apps.propositions.models import Proposition, PropositionEvent
+from apps.propositions.models import Proposition, PropositionAuthor, PropositionEvent
 
 REPORT_TZ = ZoneInfo("America/Sao_Paulo")
 STAGES = {
@@ -180,6 +180,12 @@ def build_snapshot(start, end):
         )
     ).prefetch_related(
         Prefetch(
+            "authors",
+            queryset=PropositionAuthor.objects.select_related(
+                "parliamentarian", "institutional_author", "party"
+            ).order_by("order_index", "pk"),
+        ),
+        Prefetch(
             "events",
             queryset=PropositionEvent.objects.filter(event_at__lt=upper).order_by(
                 "event_at", "sequence", "pk"
@@ -201,6 +207,15 @@ def build_snapshot(start, end):
                 "year": proposition.year,
                 "identifier": f"{proposition.type_code.upper()} {proposition.number}/{proposition.year}",
                 "ementa": proposition.ementa,
+                "authors": [
+                    {
+                        "name": str(author.parliamentarian or author.institutional_author),
+                        "institutional": author.parliamentarian_id is None,
+                        "party": author.party.acronym if author.party else None,
+                        "state": author.state_at_authorship,
+                    }
+                    for author in proposition.authors.all()
+                ],
                 "url": official_url(proposition),
                 "stage": stage,
                 "evidence": evidence,
@@ -249,7 +264,19 @@ def render(entries, complete=True):
             if entry["stage"] != "review"
             else f"Status a revisar: {escape_markdown(entry['official_status']) or 'não identificado'}"
         )
-        return f"{emoji} **{escape_markdown(entry['ementa'])}** — {link} — {status}".strip()
+        authors = []
+        for author in entry.get("authors", []):
+            name = escape_markdown(author["name"])
+            if not author["institutional"]:
+                party = escape_markdown(author["party"]) or "partido não informado"
+                state = escape_markdown(author["state"]) or "UF não informada"
+                name += f" ({party}–{state})"
+            authors.append(name)
+        authors_text = "; ".join(authors) or "não informada"
+        return (
+            f"{emoji} **{escape_markdown(entry['ementa'])}** — {link} — {status}".strip()
+            + f"  \n**Autoria:** {authors_text}."
+        )
 
     for entry in entries:
         if entry["stage"] == "law":

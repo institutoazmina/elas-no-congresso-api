@@ -3,8 +3,9 @@ from types import SimpleNamespace
 
 import pytest
 
+from apps.legislatures.models import InstitutionalAuthor, Parliamentarian, Party
 from apps.newsletters.report import REPORT_TZ, build_snapshot, classify, render, reporting_week
-from apps.propositions.models import Proposition, PropositionEvent
+from apps.propositions.models import Proposition, PropositionAuthor, PropositionEvent
 
 START = date(2026, 9, 28)
 END = date(2026, 10, 5)
@@ -110,6 +111,40 @@ def test_render_radar_structure_escaping_and_missing_links():
     assert "<script>" not in html and "<img" not in html
     assert "Nenhuma movimentação" in render([])[0]
     assert "Coleta incompleta" in render([], complete=False)[0]
+    assert markdown.count("**Autoria:** não informada.") == 4
+
+
+@pytest.mark.parametrize("stage,house", [("law", "camara"), ("new", "camara"), ("vote", "senado")])
+def test_render_authorship_for_highlights_and_both_radars(stage, house):
+    markdown, html = render(
+        [
+            {
+                "stage": stage,
+                "house": house,
+                "ementa": "Ementa oficial",
+                "identifier": "PL 123/2026",
+                "url": "https://www.camara.leg.br/propostas-legislativas/123",
+                "authors": [
+                    {"name": "Ana Silva", "institutional": False, "party": "PSB", "state": "PE"},
+                    {"name": "Maria Costa", "institutional": False, "party": None, "state": "SP"},
+                    {"name": "Joana Santos", "institutional": False, "party": "PSD", "state": None},
+                    {
+                        "name": "Comissão <script> ![imagem](url)",
+                        "institutional": True,
+                        "party": None,
+                        "state": None,
+                    },
+                ],
+            }
+        ]
+    )
+    assert (
+        "  \n**Autoria:** Ana Silva (PSB–PE); Maria Costa (partido não informado–SP); Joana Santos (PSD–UF não informada); Comissão"
+        in markdown
+    )
+    assert "<br />\n<strong>Autoria:</strong>" in html
+    assert "<script>" not in html and "<img" not in html
+    assert markdown.count("**Autoria:**") == 1
 
 
 @pytest.mark.django_db
@@ -133,6 +168,19 @@ def test_snapshot_filters_dates_and_preserves_all_tracked():
     new = create(4)
     new.presented_at = START
     new.save()
+    party = Party.objects.create(acronym="PSB", name="Partido de teste")
+    person = Parliamentarian.objects.create(full_name="Ana Silva", social_name="Ana")
+    institution = InstitutionalAuthor.objects.create(name="Comissão de teste", kind="comissao")
+    PropositionAuthor.objects.create(
+        proposition=old, institutional_author=institution, order_index=2
+    )
+    PropositionAuthor.objects.create(
+        proposition=old,
+        parliamentarian=person,
+        party=party,
+        state_at_authorship="PE",
+        order_index=1,
+    )
     for prop, at in [
         (old, datetime(2026, 9, 28, 3, tzinfo=UTC)),
         (outside, datetime(2026, 10, 5, 3, tzinfo=UTC)),
@@ -154,6 +202,13 @@ def test_snapshot_filters_dates_and_preserves_all_tracked():
     assert snapshot[0]["stage"] == "vote"
     assert snapshot[0]["is_approved"] is False
     assert updated_only.pk not in {entry["id"] for entry in snapshot}
+    assert snapshot[0]["authors"] == [
+        {"name": "Ana", "institutional": False, "party": "PSB", "state": "PE"},
+        {"name": "Comissão de teste", "institutional": True, "party": None, "state": None},
+    ]
+    party.acronym = "OUTRO"
+    party.save()
+    assert "Ana (PSB–PE)" in render(snapshot)[0]
 
 
 @pytest.mark.django_db
