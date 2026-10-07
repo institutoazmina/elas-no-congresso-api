@@ -41,6 +41,51 @@ def test_adapter_explicit_flags_and_verification():
         adapter.verify(123)
 
 
+@pytest.mark.parametrize(
+    "field", ["published", "post_date", "scheduled_at", "draft_datetime", "scheduled_release"]
+)
+def test_delivery_never_accepts_published_or_scheduled_content(report, field):
+    api = Mock()
+    api.get_drafts.return_value = []
+    api.create_draft_from_markdown.return_value = {"draft": {"id": 123}}
+    api.get_draft.return_value = {"id": 123, "draft_body": "{}", field: True}
+    adapter = DraftOnlyClient("https://example.substack.com", api)
+    result = deliver_report(report.pk, lambda _: adapter)
+    assert result.status == WeeklyReport.Status.UNCERTAIN
+    assert result.delivered_at is None
+    api.publish_draft.assert_not_called()
+    api.schedule_draft.assert_not_called()
+
+
+def test_automatic_task_creates_only_an_unpublished_draft(report, settings, monkeypatch):
+    from apps.newsletters.tasks import deliver_weekly_report
+
+    settings.WEEKLY_NEWSLETTER_ENABLED = True
+    api = Mock()
+    api.get_drafts.return_value = []
+    api.create_draft_from_markdown.return_value = {"draft": {"id": 123}}
+    api.get_draft.return_value = {"id": 123, "draft_body": "{}", "post_date": None}
+
+    def initialize(self, publication_url):
+        self.api = api
+
+    monkeypatch.setattr(DraftOnlyClient, "__init__", initialize)
+    result = deliver_weekly_report(report_id=report.pk)
+    assert result["status"] == WeeklyReport.Status.DELIVERED
+    api.create_draft_from_markdown.assert_called_once_with(
+        title=report.title,
+        markdown=report.markdown,
+        publish=False,
+        prepublish=False,
+        send=False,
+        share_automatically=False,
+    )
+    api.get_draft.assert_called_once_with(123)
+    api.publish_draft.assert_not_called()
+    api.prepublish_draft.assert_not_called()
+    api.schedule_draft.assert_not_called()
+
+
 def test_http_guard_blocks_all_other_writes():
     api = SimpleNamespace(publication_url="https://example.substack.com/api/v1", _session=Mock())
     adapter = DraftOnlyClient("https://example.substack.com", api)
