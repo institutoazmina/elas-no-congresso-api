@@ -165,6 +165,7 @@ class LegislativeFeed:
         yield {
             "IdentificacaoMateria": {
                 "CodigoMateria": 990001,
+                "IdentificacaoProcesso": 990001,
                 "SiglaSubtipoMateria": "PL",
                 "NumeroMateria": 42,
                 "AnoMateria": 2026,
@@ -199,6 +200,15 @@ class LegislativeFeed:
 
     def fetch_texts(self, external_id):
         return []
+
+    def fetch_tramitations(self, external_id, **kwargs):
+        return []
+
+    def fetch_documents(self, process_id):
+        return []
+
+    def fetch_process(self, process_id):
+        return {"situacaoAtual": "Em tramitação", "tramitando": "Sim", "autuacoes": []}
 
     def fetch_movements(self, external_id):
         return {}

@@ -30,7 +30,7 @@ apps/ingestion/
 │   ├── base.py      # httpx keep-alive + retry exponencial (tenacity)
 │   ├── camara.py    # Dados Abertos Câmara (JSON)
 │   └── senado.py    # Dados Abertos Senado (JSON)
-├── theme_assert.py  # filtro de relevância (regex de gênero) — antecipado
+├── theme_assert.py  # filtro de relevância na ementa ou inteiro teor
 ├── mappers.py       # payload bruto → kwargs de Proposition/Event/Author/Theme
 ├── resolvers.py     # autor → Parliamentarian | InstitutionalAuthor (+ sexo)
 ├── fulltext.py      # download + extração de texto do PDF (inteiro teor)
@@ -49,8 +49,8 @@ Decisões de projeto:
   `classify_proposition`. Falha de ML não bloqueia ingestão. Hoje a classificação
   é um stub (loga) que já baixa/extrai o inteiro teor — a inferência em si está
   pendente de decisão (HF endpoint / fila dedicada / local).
-- **Filtro de tema antes dos saltos caros**: só descemos em detalhe/autores/textos
-  para proposições relevantes.
+- **Filtro na ementa ou inteiro teor**: candidatos sem correspondência na ementa
+  exigem leitura do documento antes de serem descartados.
 
 ```mermaid
 graph LR
@@ -73,35 +73,28 @@ graph LR
 
 ## Fluxo da coleta
 
-Cada casa roda em uma task independente (paralelas). O filtro de tema é aplicado
-**antes** de qualquer salto caro.
+Cada casa roda em uma task independente. A descoberta de novas proposições usa
+ementa ou inteiro teor; atualizações de proposições conhecidas preservam o acompanhamento.
 
 ```mermaid
 flowchart TD
-    A[ingest_camara / ingest_senado] --> B[Cria IngestionRun status=running]
-    B --> C[Lista proposições da janela diária]
-    C --> D{Para cada item}
-    D --> E[assert_theme na ementa]
-    E -->|irrelevante| D
-    E -->|relevante| F[fetch_detail]
-    F --> G[fetch_authors / autoria]
-    G --> H[Câmara: fetch_deputy por autor<br/>sexo + partido + UF]
-    G --> I[Senado: autoria já traz<br/>sexo + partido + UF]
-    F --> J[fetch_texts → inteiro teor PDF url]
-    H --> K[_persist: update_or_create idempotente]
-    I --> K
-    J --> K
-    K --> L[Proposition + Event + Authors + Themes]
-    L --> M[signal post_save]
-    M --> N[classify_proposition.delay<br/>baixa+extrai PDF, loga]
-    M --> O[match_and_notify.delay<br/>alertas por e-mail]
-    K --> D
-    D -->|fim| P[IngestionRun status=success<br/>contadores fetched/relevant/upserted/errors]
+    A[Lista proposições da janela diária] --> B[Busca detalhes e URL do inteiro teor]
+    B --> C{Proposição já acompanhada?}
+    C -->|Sim| G[Atualiza dados e documentos]
+    C -->|Não| D{Ementa contém uma regra?}
+    D -->|Sim| F[Persiste proposição, autores, eventos e temas]
+    D -->|Não| E[Extrai inteiro teor PDF/OCR]
+    E -->|Falha ou indisponível| R[Registra falha para retomada]
+    E --> H{Ementa ou inteiro teor contém uma regra?}
+    H -->|Sim| F
+    H -->|Não| I[Marca item como ignorado]
+    F --> G
+    G --> J[Processamento de versões de documentos e análise]
 ```
 
-Erros por item são contados (`error_count`) e não interrompem a coleta; uma falha
-geral (ex.: API fora) marca o `IngestionRun` como `failed` e a task tenta novamente
-(`max_retries=2`, backoff 5 min).
+Falhas por item são registradas e retomáveis. Uma execução com falhas não avança
+o checkpoint de cobertura; resultados negativos só são registrados após a
+verificação do texto disponível ter sido concluída.
 
 ### Saltos por casa
 
@@ -170,41 +163,56 @@ separado.
 
 ## Filtro de tema (`theme_assert`)
 
-[`apps/ingestion/theme_assert.py`](../apps/ingestion/theme_assert.py). Roda sobre a
-ementa **antes** de descer nos saltos caros, garantindo que só proposições
-relevantes ao tema gênero/direitos das mulheres sejam processadas.
+[`apps/ingestion/theme_assert.py`](../apps/ingestion/theme_assert.py) verifica
+**ementa ou inteiro teor** para descobrir novas proposições, tanto na Câmara
+quanto no Senado. Os registros das APIs continuam sendo coletados por janela de
+datas; a seleção por palavras ocorre localmente.
 
-> **Editável no admin (Unfold)**: os termos ficam no modelo `RelevanceTerm`
-> (`Coleta de dados → Termos de relevância`). A operação adiciona/remove/desativa
-> termos **sem tocar no código**. Ao salvar/excluir, um signal limpa o cache e a
-> próxima coleta já usa a lista nova. Os 96 termos originais (86 isolados + 10
-> combinados) são carregados por migração de seed; enquanto a tabela estiver vazia,
-> o filtro cai automaticamente nos defaults embutidos no módulo.
+Os termos ficam na tabela `relevance_terms`, editável no admin em
+`Coleta de dados → Termos de relevância`. A migração `0005` ativa o vocabulário
+solicitado em outubro de 2026: **298 expressões isoladas e 4 combinações**.
+Registros anteriores fora da lista ficam inativos para consulta. A migração não
+é reversível, pois não seria possível reconstruir com segurança o estado das
+edições anteriores no admin. A lista padrão está em
+[`relevance_defaults.py`](../apps/ingestion/relevance_defaults.py); é usada quando
+não há registros ativos ou a consulta ao banco falha. Alterações posteriores no
+arquivo não substituem os registros do banco: exigem outra migração de dados.
 
-Usa duas expressões regulares (case-insensitive), montadas a partir dos termos:
+Regras de correspondência:
 
-1. **Termos relevantes por si só** (`_PATTERN_STANDALONE`, ~86 termos): ex.
-   `ABORTO`, `FEMINICÍDIO`, `MULHER`, `GÊNERO`, `MARIA DA PENHA`, `ESTUPRO`,
-   `VIOLÊNCIA DOMÉSTICA`, `LICENÇA MATERNIDADE`, `IDENTIDADE DE GÊNERO`, `CRECHE`…
+- Palavras inteiras, sem diferenciar maiúsculas/minúsculas, preservando acentos.
+  `TRANS` e `TRANSGEN` não correspondem a `TRANSGÊNICA` nem a `TRANSGENERO`.
+  Variações e plurais precisam constar na lista.
+- Expressões completas, contíguas e na mesma ordem: `ABUSO SEXUAL` aceita
+  espaços ou quebras de linha entre as palavras, mas não `ABUSO DE NATUREZA SEXUAL`.
+  Uma expressão nunca é formada juntando o final da ementa ao início do PDF.
+- `COTAS + MULHERES`, `COTAS + GÊNERO`, `POLÍTICA + MULHERES` e
+  `POLÍTICA + MULHER` exigem ambas as expressões, em qualquer ordem, nos campos
+  consultados. O `+` final de `LGBTQIA+` é literal. Termos combinados antigos
+  cadastrados sem ` + ` continuam exigindo `MULHER`, por compatibilidade.
+- Cada regra é uma alternativa: qualquer uma basta. Por exemplo, `MULHERES`
+  também é uma regra isolada, independentemente da combinação com `COTAS`.
+- `ENTREGA VOLUNTÁRIA` corrige apenas a quebra de linha da lista recebida;
+  as demais grafias foram preservadas, inclusive `SÊMEM`.
 
-2. **Termos relevantes só combinados com "mulher"** (`_PATTERN_COMBINED`):
-   `COTAS`, `TRABALHO`, `RAÇA`, `PARTICIPAÇÃO POLÍTICA`, `RACIAL`, `POLÍTICA`,
-   `RACISMO`, `RELIGIÃO`, `EDUCAÇÃO RELIGIOSA`, `DEUS` — só disparam se o texto
-   também contém a palavra `mulher`.
+Fluxo de descoberta:
 
-```python
-from apps.ingestion.theme_assert import assert_theme
+1. Busca os detalhes para obter a ementa e a URL do documento original.
+2. Verifica a ementa (incluindo a ementa detalhada da Câmara). `keywords` de
+   indexação não qualificam uma proposição por conta própria.
+3. Sem correspondência, baixa e extrai o inteiro teor com o extrator PDF/OCR
+   existente, antes de decidir pela exclusão. O texto positivo é persistido.
+4. Se ambos não tiverem correspondência, marca o item como ignorado. URL ausente,
+   download malsucedido ou extração vazia são falhas retomáveis, não resultados
+   negativos. Seguem as tentativas e a retomada já existentes da coleta; uma
+   execução com falhas não avança a cobertura da janela.
 
-assert_theme("Projeto sobre violência contra a mulher")
-# {"row_relevant": True, "temas": ["violência contra a mulher"]}
-
-assert_theme("Pavimentação de rodovia federal")
-# {"row_relevant": False, "temas": []}
-```
-
-A função aceita múltiplos campos (ementa, ementa detalhada, keywords) e os
-concatena. Na Câmara o filtro roda **duas vezes**: na lista (só ementa) e de novo
-após o detalhe (ementa + ementa detalhada + keywords), para maior sinal.
+Uma correspondência na ementa dispensa a extração síncrona; o processamento de
+versões de documentos continua pela fila existente. Esse processamento também
+verifica o documento após a descoberta por inteiro teor. Proposições já
+acompanhadas continuam sendo atualizadas sem reaplicar o filtro de descoberta.
+A leitura de PDFs de candidatos antes descartados aumenta o custo da coleta.
+Não há reprocessamento automático de itens ignorados em execuções históricas.
 
 ### Temas no domínio
 

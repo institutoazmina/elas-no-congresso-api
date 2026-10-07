@@ -243,3 +243,24 @@ def test_concurrent_content_requests_are_deduplicated(ai):
     assert ClassificationRequest.objects.count() == 1
     assert PropositionContentVersion.objects.count() == 1
     assert ai[1].call_count == 1
+
+
+def test_text_saved_during_discovery_is_analyzed_after_document_verification(ai, monkeypatch):
+    text = "Texto sobre adenomiose"
+    pk = tasks._persist(
+        {**fields(), "full_text": text, "full_text_url": "https://docs.test/original.pdf"},
+        None,
+        [],
+        ["ADENOMIOSE"],
+    )
+    assert not ClassificationRequest.objects.exists()
+    pdf_transport(monkeypatch, [text.encode()])
+    doc = content.register_document(pk, "original", "original", "https://docs.test/original.pdf")
+    assert content.check_document(doc.pk)
+    request = ClassificationRequest.objects.get()
+    assert request.content_version.document_id == doc.pk
+    prop = Proposition.objects.get(pk=pk)
+    assert prop.current_content_id == request.content_version_id
+    content.register_document(pk, "original", "original", doc.url, verify=True)
+    assert content.check_document(doc.pk)
+    assert ClassificationRequest.objects.count() == 1

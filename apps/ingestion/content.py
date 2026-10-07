@@ -113,6 +113,11 @@ def select_content(prop, version, *, analyze=True):
                 PropositionAnalysis.objects.filter(
                     proposition=prop, content_version=current
                 ).update(content_version=version)
+                # Discovery may already have stored this PDF text as a fallback,
+                # without analysis. Attaching its first verified document must
+                # still request the initial classification (idempotently).
+                if analyze and current.document_id is None and version.document_id:
+                    request_analysis(prop, version)
             return
     prop.current_content = version
     prop.save(update_fields=["current_content"])

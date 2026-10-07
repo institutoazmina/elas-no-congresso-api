@@ -12,7 +12,7 @@ class RelevanceTerm(models.Model):
 
     class Mode(models.TextChoices):
         STANDALONE = "standalone", "Isolado (relevante por si só)"
-        COMBINED = "combined", "Combinado (só com 'mulher' no texto)"
+        COMBINED = "combined", "Combinado (expressões separadas por +)"
 
     term = models.TextField()
     mode = models.CharField(max_length=12, choices=Mode.choices, default=Mode.STANDALONE)

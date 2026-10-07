@@ -74,3 +74,84 @@ class TestThemeFromDatabase:
         # Excluir também invalida.
         RelevanceTerm.objects.filter(term="xpto").delete()
         assert assert_theme("projeto sobre xpto")["row_relevant"] is False
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Combate ao abuso sexual.", True),
+        ("ABUSO\n\t SEXUAL", True),
+        ("abuso de natureza sexual", False),
+        ("abuso sexuais", False),
+        ("sexual abuso", False),
+    ],
+)
+def test_complete_phrase(text, expected):
+    RelevanceTerm.objects.create(term="ABUSO SEXUAL")
+    assert assert_theme(text)["row_relevant"] is expected
+
+
+def test_phrase_cannot_span_fields():
+    RelevanceTerm.objects.create(term="ABUSO SEXUAL")
+    assert assert_theme("abuso", "sexual")["row_relevant"] is False
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("LGBTQIA+", True),
+        ("LGBTQIA+.", True),
+        ("lgbtqia+ no texto", True),
+        ("LGBTQIA", False),
+        ("LGBTQIA+extra", False),
+    ],
+)
+def test_literal_trailing_plus(text, expected):
+    RelevanceTerm.objects.create(term="LGBTQIA+")
+    assert assert_theme(text)["row_relevant"] is expected
+
+
+@pytest.mark.parametrize(
+    "term", ["COTAS + MULHERES", "COTAS + GÊNERO", "POLÍTICA + MULHERES", "POLÍTICA + MULHER"]
+)
+def test_explicit_conjunction(term):
+    RelevanceTerm.objects.create(term=term, mode="combined")
+    left, right = term.split(" + ")
+    assert not assert_theme(left)["row_relevant"]
+    assert not assert_theme(right)["row_relevant"]
+    assert assert_theme(f"{right}\n legislação sobre {left}")["temas"] == [term]
+    assert assert_theme(left, right)["row_relevant"]
+    assert not assert_theme(f"{left} {right}XYZ")["row_relevant"]
+
+
+def test_accents_preserved_but_unicode_normalized():
+    import unicodedata
+
+    RelevanceTerm.objects.create(term="GÊNERO")
+    assert assert_theme(unicodedata.normalize("NFD", "gênero"))["row_relevant"]
+    assert not assert_theme("genero")["row_relevant"]
+
+
+def test_vocabulary_migration_activates_exact_requested_set():
+    from importlib import import_module
+    from types import SimpleNamespace
+
+    from django.apps import apps
+    from django.db import connection
+
+    from apps.ingestion.relevance_defaults import DEFAULT_COMBINED, DEFAULT_STANDALONE
+
+    RelevanceTerm.objects.create(term="TERMO ANTIGO")
+    RelevanceTerm.objects.create(term="TRABALHO", mode="combined")
+    RelevanceTerm.objects.create(term="ABORTO", is_active=False)
+    migration = import_module("apps.ingestion.migrations.0005_update_relevance_vocabulary")
+    for _ in range(2):
+        migration.update_terms(apps, SimpleNamespace(connection=connection))
+        active = set(RelevanceTerm.objects.filter(is_active=True).values_list("term", "mode"))
+        expected = {(term, "standalone") for term in DEFAULT_STANDALONE}
+        expected |= {(term, "combined") for term in DEFAULT_COMBINED}
+        assert active == expected
+        assert len(active) == 302
+    assert not RelevanceTerm.objects.get(term="TERMO ANTIGO").is_active
+    assert not RelevanceTerm.objects.get(term="TRABALHO", mode="combined").is_active
+    assert assert_theme("TRABALHO")["row_relevant"]

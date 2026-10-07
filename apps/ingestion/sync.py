@@ -194,6 +194,27 @@ def _documents(prop, client, events, *, verify=False, process_id=None, baseline=
             )
 
 
+def _discovery_relevance(fields, *ementas):
+    """Never treat an unreadable full text as a negative keyword match."""
+    relevance = assert_theme(fields.get("ementa"), *ementas)
+    if relevance["row_relevant"]:
+        return relevance
+    url = fields.get("full_text_url")
+    if not url:
+        raise ValueError("Full text unavailable for relevance check")
+    from urllib.parse import urlparse
+
+    from .clients.base import throttle_source
+    from .fulltext import extract_pdf_text
+
+    throttle_source(urlparse(url).netloc)
+    text = extract_pdf_text(url)
+    if not text:
+        raise ValueError("Full text extraction failed for relevance check")
+    fields["full_text"] = text
+    return assert_theme(fields.get("ementa"), *ementas, text)
+
+
 def sync_item(item, client, *, reconcile=False):
     from .tasks import _enactment_fields, _persist
 
@@ -201,19 +222,18 @@ def sync_item(item, client, *, reconcile=False):
         house=item.run.house, external_id=item.external_id
     ).first()
     summary = item.summary
-    relevance = assert_theme(
-        summary.get("ementa") if item.run.house == "camara" else summary.get("Ementa")
-    )
-    if not existing and not relevance["row_relevant"]:
-        return None
+    relevance = {"row_relevant": False, "temas": []}
     authors, process_id = None, None
     if item.run.house == "camara":
         detail = client.fetch_detail(item.external_id)
         if not detail:
             raise ValueError("Empty Camara detail")
+        fields = map_camara_proposition({**summary, "id": item.external_id}, detail)
+        if detail.get("ementa"):
+            fields["ementa"] = detail["ementa"]
         if not existing:
-            relevance = assert_theme(
-                summary.get("ementa"), detail.get("ementaDetalhada"), detail.get("keywords")
+            relevance = _discovery_relevance(
+                fields, summary.get("ementa"), detail.get("ementaDetalhada")
             )
             if not relevance["row_relevant"]:
                 return None
@@ -222,9 +242,6 @@ def sync_item(item, client, *, reconcile=False):
             if existing and existing.reconciled_at and not reconcile
             else client.fetch_tramitations(item.external_id)
         )
-        fields = map_camara_proposition({**summary, "id": item.external_id}, detail)
-        if detail.get("ementa"):
-            fields["ementa"] = detail["ementa"]
         if existing:
             fields = {
                 key: value
@@ -315,6 +332,14 @@ def sync_item(item, client, *, reconcile=False):
                 fields = map_senado_proposition(
                     summary, detail, pick_senado_full_text_url(client.fetch_texts(item.external_id))
                 )
+            process_ementa = (process.get("conteudo", {}) or {}).get("ementa") or process.get(
+                "ementa"
+            )
+            if process_ementa:
+                fields["ementa"] = process_ementa
+            relevance = _discovery_relevance(fields, summary.get("Ementa"))
+            if not relevance["row_relevant"]:
+                return None
             authors = (
                 parse_senado_authors_from_autoria(client.fetch_authors(item.external_id))
                 if item.external_id > 0
