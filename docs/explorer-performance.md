@@ -1,13 +1,14 @@
 # Diagnóstico de performance do explorer em produção
 
-O objetivo é medir antes de mudar a estratégia de cache. Não há medição de
-produção neste documento. O código atual guarda a coleção pública completa em
-`activity:explorer:source:v2` por 300 segundos. Um miss carrega proposições,
-análises, eventos completos, anotações, autores e temas; depois calcula celeridade
-e serializa todos os itens, mesmo retornando só uma página. Hits ainda recalculam
-filtros, ordenação, opções e dashboard. Alterações passam por
-`invalidate_activity_cache`, que remove `activity:*`. Não há trava de reconstrução:
-misses simultâneos podem repetir o trabalho.
+O explorer usa uma projeção própria de leitura, com colunas explícitas e
+agregados de eventos, sem materializar históricos como modelos Django.
+`activity:explorer:source:v3` guarda a coleção pública, opções e busca normalizada
+por 300 segundos; snapshots de outro dia local são reconstruídos para atualizar
+celeridade. Alterações passam por `invalidate_activity_cache`, que remove
+`activity:*`. Não há trava de reconstrução: misses simultâneos podem repetir trabalho.
+
+A motivação, limites e medições estão na
+[ADR-003](decisions/003-explorer-bff-read-projection.md).
 
 ## Executar via SSH
 
@@ -81,8 +82,10 @@ A instrumentação SQL funciona com `DEBUG=False`. Desative a amostragem ao fina
 | `total_ms` | Pipeline Django após entrada no middleware, incluindo renderização da resposta |
 | `thread_cpu_ms` | CPU da thread síncrona; compare com tempo total para distinguir CPU de espera |
 | `cache_get` | Redis + transferência + desserialização do valor |
-| `source_load` | SQL, fetch, conversão para modelos e todos os prefetches |
-| `source_serialize` | Celeridade, ordenação dos eventos e montagem da coleção pública |
+| `source_load` | Total das cinco projeções e montagem dos itens; inclui os subestágios abaixo |
+| `source_propositions`, `source_events`, `source_assessments`, `source_authors`, `source_themes` | Consulta, fetch e associação da respectiva projeção |
+| `source_serialize` | Celeridade a partir dos agregados e montagem dos itens |
+| `source_prepare` | Opções e normalização da busca preparadas para o snapshot |
 | `cache_set` | Serialização do valor + escrita no Redis |
 | `filter`, `sort`, `options`, `dashboard` | Processamento Python da coleção |
 | `sql_execute_ms` | Soma dos tempos do cursor execute; está **dentro** dos estágios, não some novamente |
@@ -92,7 +95,7 @@ A instrumentação SQL funciona com `DEBUG=False`. Desative a amostragem ao fina
 rede/buffering e não inclui necessariamente todo o fetch, conexão ou hidratação.
 Use o perfil para detalhar essas diferenças; se SQL dominar, prossiga com planos
 de execução das consultas identificadas no código. O residual de `total_ms`
-menos os estágios inclui middleware, validação/renderização, contagem de resumo,
+menos os estágios de primeiro nível (sem somar os subestágios de `source_load`) inclui middleware, validação/renderização, contagem de resumo,
 liberação de objetos e overhead; não atribua todo o residual à serialização.
 Para separar Redis/rede de unpickle, consulte as funções correspondentes no perfil.
 O profiler não coleta variáveis locais.

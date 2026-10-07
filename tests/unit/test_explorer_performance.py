@@ -42,9 +42,8 @@ class TraceTests(SimpleTestCase):
         try:
             with (
                 patch.object(explorer, "cache") as cache,
-                patch("apps.propositions.activity._queryset") as queryset,
+                patch.object(explorer, "load_explorer_source", return_value=[]),
             ):
-                queryset.return_value.order_by.return_value = []
                 self.assertEqual(explorer._all_activity(), [])
                 cache.get.assert_not_called()
                 cache.set.assert_not_called()

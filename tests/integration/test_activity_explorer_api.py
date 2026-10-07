@@ -515,3 +515,121 @@ def test_explorer_filters_beyond_legacy_5000_limit(activity_data, monkeypatch):
 )
 def test_explorer_validates_query(params):
     assert Client().get("/api/v1/activity/explorer", params).status_code == 422
+
+
+def test_flat_source_matches_legacy_without_hydrating_models(
+    activity_data, django_assert_num_queries
+):
+    from unittest.mock import patch
+
+    from apps.propositions.activity import _queryset, _serialize
+    from apps.propositions.explorer_source import load_explorer_source
+    from apps.propositions.models import PropositionAnalysis
+    from apps.taxonomy.models import PropositionTheme, Theme
+
+    shared = activity_data["shared"]
+    shared.full_text = "Unused document body " * 1000
+    shared.raw_payload = {"unused": "large official payload"}
+    shared.save(update_fields=["full_text", "raw_payload"])
+    theme = Theme.objects.create(slug="projection-test", name="Tema preservado")
+    PropositionTheme.objects.create(proposition=shared, theme=theme)
+    PropositionAnalysis.objects.create(
+        proposition=activity_data["missing"],
+        analysis_status="succeeded",
+        classification=0,
+        theme_category="saude",
+        theme_scores={"unused": 0.99},
+    )
+    organization = AssessmentOrganization.objects.get(name="Themis")
+    PropositionAnnotation.objects.create(
+        proposition=shared,
+        organization=organization,
+        is_favorable=False,
+        category="educacao_cultura",
+        comments="Prevalece sobre favorável",
+    )
+    expected = [_serialize(p, event_limit=0) for p in _queryset().order_by("-presented_at", "-pk")]
+    # from_db catches all accidental model materialization, not only N+1 SQL.
+    with (
+        patch("django.db.models.Model.from_db", side_effect=AssertionError("ORM hydration")),
+        django_assert_num_queries(5),
+    ):
+        actual = load_explorer_source()
+    assert actual == expected
+
+
+@pytest.mark.parametrize("days", [0, 89, 90, 179, 180, 359, 360])
+def test_event_aggregates_preserve_celerity_boundaries(activity_data, days):
+    from datetime import UTC, datetime, time
+
+    from apps.propositions.activity import _queryset, _serialize
+    from apps.propositions.explorer_source import load_explorer_source
+
+    proposition = activity_data["older"]
+    day = timezone.localdate() - timedelta(days=days)
+    PropositionEvent.objects.bulk_create(
+        [
+            PropositionEvent(
+                proposition=proposition, event_at=datetime.combine(day, time.min, UTC)
+            ),
+            PropositionEvent(
+                proposition=proposition, event_at=datetime.combine(day, time(0, 1), UTC)
+            ),
+            PropositionEvent(
+                proposition=proposition, event_at=datetime.combine(day, time(23, 59), UTC)
+            ),
+            # A more recent administrative event cannot alter the label or count.
+            PropositionEvent(proposition=proposition, event_at=timezone.now(), is_countable=False),
+        ]
+    )
+    expected = _serialize(_queryset().get(pk=proposition.pk), event_limit=0)
+    actual = next(item for item in load_explorer_source() if item["id"] == proposition.pk)
+    assert actual["celerity"] == expected["celerity"]
+
+
+def test_projection_queries_exclude_heavy_columns(activity_data):
+    from django.db import connection
+    from django.test.utils import CaptureQueriesContext
+
+    from apps.propositions.explorer_source import load_explorer_source
+
+    with CaptureQueriesContext(connection) as queries:
+        load_explorer_source()
+    sql = "\n".join(query["sql"] for query in queries)
+    for column in ("full_text", "raw_payload", "theme_scores", "favorability_scores", "bio"):
+        assert f'"{column}"' not in sql
+    events_sql = next(
+        query["sql"] for query in queries if 'FROM "proposition_events"' in query["sql"]
+    )
+    assert "COUNT(" in events_sql and "MAX(" in events_sql
+    assert '"description"' not in events_sql
+    assert '"dispatch"' not in events_sql
+
+
+def test_prepared_source_keeps_search_and_options_without_rebuilding(activity_data):
+    from unittest.mock import patch
+
+    first = get_explorer(search="alice")
+    with (
+        patch.object(explorer, "_options", side_effect=AssertionError("options rebuilt")),
+        patch.object(explorer, "_search_text", side_effect=AssertionError("search rebuilt")),
+        patch.object(explorer, "load_explorer_source", side_effect=AssertionError("DB rebuilt")),
+    ):
+        second = get_explorer(search="alice", page_size=1)
+    assert first["options"] == second["options"]
+    assert first["total"] == second["total"]
+    assert second["items"][0]["id"] == first["items"][0]["id"]
+    assert "_search" not in second["items"][0]
+
+
+def test_prepared_source_expires_at_local_midnight(activity_data, monkeypatch):
+    source = explorer._all_activity()
+    original = source.built_on
+    monkeypatch.setattr(timezone, "localdate", lambda: original + timedelta(days=1))
+    refreshed = explorer._all_activity()
+    assert refreshed.built_on == original + timedelta(days=1)
+    by_id = {item["id"]: item for item in source}
+    for item in refreshed:
+        assert item["celerity"]["days_without_movement"] == (
+            by_id[item["id"]]["celerity"]["days_without_movement"] + 1
+        )

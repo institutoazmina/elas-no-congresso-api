@@ -10,12 +10,14 @@ from typing import Literal
 
 from django.core.cache import cache
 from django.http import HttpResponse
+from django.utils import timezone
 from ninja import Field, Schema
 from pydantic import field_validator, model_validator
 
+from .explorer_source import load_explorer_source
 from .performance import annotate, current_trace, stage
 
-SOURCE_CACHE_KEY = "activity:explorer:source:v2"
+SOURCE_CACHE_KEY = "activity:explorer:source:v3"
 UNKNOWN_RELIGION = "__unknown__"
 UFS = [
     "AC",
@@ -173,10 +175,10 @@ def _is_pl(item):
 
 
 def _authors_match(item, query):
-    checks = [_author_filter_matches(author, query) for author in item["authors"]]
     active = [name for name in ("gender", "state", "religion") if getattr(query, name)]
     if not active:
         return True
+    checks = [_author_filter_matches(author, query) for author in item["authors"]]
     if _is_pl(item):
         # Different coauthors may satisfy different criteria for a PL.
         return all(any(check[name] for check in checks) for name in active)
@@ -195,20 +197,12 @@ def _dashboard_author_matches(author, item, query):
 def _matches(item, query):
     house = {"Deputado": "camara", "Senador": "senado"}.get(query.house, query.house)
     authors = item["authors"]
-    search_text = " ".join(
-        [
-            item["number_label"],
-            item["ementa"],
-            item["assessment_organization"] or "",
-            *(
-                f"{author['name']} {author['party'] or ''} {author['state'] or ''}"
-                for author in authors
-            ),
-        ]
+    search_matches = not query.search.strip() or _normalized(query.search) in (
+        item["_search"] if "_search" in item else _search_text(item)
     )
     movements = item["celerity"]["movements_last_90_days"]
     return (
-        (not query.search.strip() or _normalized(query.search) in _normalized(search_text))
+        search_matches
         and (not house or item["house"] == house)
         and (query.year is None or _year(item) == query.year)
         and (query.year_start is None or _year(item) >= query.year_start)
@@ -238,22 +232,49 @@ def _matches(item, query):
     )
 
 
+def _search_text(item):
+    return _normalized(
+        " ".join(
+            [
+                item["number_label"],
+                item["ementa"],
+                item["assessment_organization"] or "",
+                *(
+                    f"{author['name']} {author['party'] or ''} {author['state'] or ''}"
+                    for author in item["authors"]
+                ),
+            ]
+        )
+    )
+
+
+class ExplorerSnapshot(list):
+    """One cache entry keeps source, global options and search text consistent."""
+
+    def __init__(self, items):
+        super().__init__(items)
+        self.built_on = timezone.localdate()
+        self.options = _options(self)
+        for item in self:
+            item["_search"] = _search_text(item)
+
+
 def _all_activity():
-    from .activity import ACTIVITY_CACHE_TIMEOUT, _queryset, _serialize
+    from .activity import ACTIVITY_CACHE_TIMEOUT
 
     trace = current_trace.get()
     bypass = trace is not None and trace.bypass_cache
     with stage("cache_get"):
         items = None if bypass else cache.get(SOURCE_CACHE_KEY)
+    # Celerity changes at midnight even without an ingestion write.
+    if isinstance(items, ExplorerSnapshot) and items.built_on != timezone.localdate():
+        items = None
     annotate(source_cache="bypass" if bypass else "miss" if items is None else "hit")
     if items is None:
-        # Materialization includes fetch, model hydration and all prefetches.
         with stage("source_load"):
-            propositions = list(_queryset().order_by("-presented_at", "-pk"))
-        annotate(source_count=len(propositions))
-        with stage("source_serialize"):
-            items = [_serialize(proposition, event_limit=0) for proposition in propositions]
-            del propositions
+            items = load_explorer_source()
+        with stage("source_prepare"):
+            items = ExplorerSnapshot(items)
         if not bypass:
             with stage("cache_set"):
                 cache.set(SOURCE_CACHE_KEY, items, ACTIVITY_CACHE_TIMEOUT)
@@ -481,13 +502,33 @@ def explore_activity(query):
     with stage("sort"):
         items = _sort_items(filtered, query)
         del filtered
-    annotate(filtered_count=len(items), page_size=query.page_size,
-             active_filters=[name for name in (
-                 "search", "house", "year", "year_start", "year_end", "party", "category",
-                 "assessment", "celerity", "movements", "gender", "state", "religion",
-                 "comments", "evaluator") if getattr(query, name)])
+    annotate(
+        filtered_count=len(items),
+        page_size=query.page_size,
+        active_filters=[
+            name
+            for name in (
+                "search",
+                "house",
+                "year",
+                "year_start",
+                "year_end",
+                "party",
+                "category",
+                "assessment",
+                "celerity",
+                "movements",
+                "gender",
+                "state",
+                "religion",
+                "comments",
+                "evaluator",
+            )
+            if getattr(query, name)
+        ],
+    )
     with stage("options"):
-        options = _options(source)
+        options = source.options if isinstance(source, ExplorerSnapshot) else _options(source)
     with stage("dashboard"):
         dashboard = _dashboard(items, query)
     total = len(items)

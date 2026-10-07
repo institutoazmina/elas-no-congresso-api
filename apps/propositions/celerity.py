@@ -15,16 +15,31 @@ class Celerity:
     last_event_at: datetime | None
 
 
-def calculate_celerity(proposition, events: Iterable | None = None, *, today: date | None = None) -> Celerity:
+def calculate_celerity(
+    proposition, events: Iterable | None = None, *, today: date | None = None
+) -> Celerity:
     """Apply the public monitoring rule with inactivity taking precedence."""
     today = today or timezone.localdate()
     events = events if events is not None else proposition.events.filter(is_countable=True)
     event_dates = [event.event_at for event in events if event.is_countable and event.event_at]
     last_event_at = max(event_dates, default=None)
-    reference_date = last_event_at.date() if last_event_at else proposition.presented_at
-    days_without_movement = max(0, (today - reference_date).days)
     window_start = today - timedelta(days=90)
     movements_last_90_days = sum(1 for event_at in event_dates if event_at.date() >= window_start)
+    return celerity_from_summary(
+        proposition.presented_at, last_event_at, movements_last_90_days, today=today
+    )
+
+
+def celerity_from_summary(
+    presented_at: date,
+    last_event_at: datetime | None,
+    movements_last_90_days: int,
+    *,
+    today: date,
+) -> Celerity:
+    """Same rule for event histories and the BFF's database aggregates."""
+    reference_date = last_event_at.date() if last_event_at else presented_at
+    days_without_movement = max(0, (today - reference_date).days)
 
     if days_without_movement >= 360:
         label = "Esquecida"
