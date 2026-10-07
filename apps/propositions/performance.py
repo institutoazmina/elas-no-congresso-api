@@ -19,8 +19,10 @@ current_trace = ContextVar("explorer_trace", default=None)
 
 
 class ExplorerTrace:
-    def __init__(self, *, bypass_cache=False):
+    def __init__(self, *, bypass_cache=False, detailed_sql=False, emit_log=True):
         self.bypass_cache = bypass_cache
+        self.detailed_sql = detailed_sql
+        self.emit_log = emit_log
         self.stages = defaultdict(float)
         self.sql = {}
         self.sql_count = 0
@@ -40,27 +42,30 @@ class ExplorerTrace:
             elapsed = (perf_counter() - start) * 1000
             self.sql_count += 1
             self.sql_ms += elapsed
-            # Hash the template only; values and raw SQL never enter logs.
-            key = (self.phase, sha256(sql.encode()).hexdigest()[:16])
-            if key not in self.sql and len(self.sql) >= 20:
-                key = ("other", "overflow")
-            row = self.sql.setdefault(
-                key, {"stage": key[0], "fingerprint": key[1], "count": 0, "ms": 0.0}
-            )
-            row["count"] += 1
-            row["ms"] += elapsed
+            if self.detailed_sql:
+                # Hash the template only; values and raw SQL never enter logs.
+                key = (self.phase, sha256(sql.encode()).hexdigest()[:16])
+                if key not in self.sql and len(self.sql) >= 20:
+                    key = ("other", "overflow")
+                row = self.sql.setdefault(
+                    key, {"stage": key[0], "fingerprint": key[1], "count": 0, "ms": 0.0}
+                )
+                row["count"] += 1
+                row["ms"] += elapsed
 
     def report(self):
-        return {
+        report = {
             **self.data,
             "stages_ms": {k: round(v, 3) for k, v in self.stages.items()},
             "sql_count": self.sql_count,
             "sql_execute_ms": round(self.sql_ms, 3),
-            "sql_groups": [
+        }
+        if self.detailed_sql:
+            report["sql_groups"] = [
                 {**row, "ms": round(row["ms"], 3)}
                 for row in sorted(self.sql.values(), key=lambda r: -r["ms"])
-            ],
-        }
+            ]
+        return report
 
 
 @contextmanager
@@ -96,7 +101,8 @@ class ExplorerPerformanceMiddleware:
             return self.get_response(request)
         trace = current_trace.get()
         if trace is None:
-            if random.random() >= settings.ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE:
+            rate = settings.ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE
+            if rate <= 0 or random.random() >= rate:
                 return self.get_response(request)
             trace = ExplorerTrace()
         token = current_trace.set(trace)
@@ -116,4 +122,5 @@ class ExplorerPerformanceMiddleware:
                 thread_cpu_ms=round((thread_time() - cpu) * 1000, 3),
             )
             current_trace.reset(token)
-            logger.info(json.dumps(trace.report(), ensure_ascii=False))
+            if trace.emit_log:
+                logger.info(json.dumps(trace.report(), ensure_ascii=False))

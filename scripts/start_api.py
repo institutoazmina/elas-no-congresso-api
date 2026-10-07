@@ -29,6 +29,7 @@ def main() -> None:
             "0.0.0.0",
             "--port",
             PORT,
+            "--no-access-log",
         ],
     )
 

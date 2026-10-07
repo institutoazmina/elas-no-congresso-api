@@ -36,7 +36,9 @@ class Command(BaseCommand):
         with override_settings(ALLOWED_HOSTS=["testserver"], SECURE_SSL_REDIRECT=False):
             client = Client(raise_request_exception=False)
             for run in range(options["runs"]):
-                trace = ExplorerTrace(bypass_cache=options["bypass_cache"])
+                trace = ExplorerTrace(
+                    bypass_cache=options["bypass_cache"], detailed_sql=True, emit_log=False
+                )
                 trace.data.update(origin="management_command", run=run + 1)
                 token = current_trace.set(trace)
                 try:

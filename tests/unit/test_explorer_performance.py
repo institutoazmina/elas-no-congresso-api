@@ -14,7 +14,7 @@ from apps.propositions.performance import ExplorerTrace, current_trace, stage
 
 class TraceTests(SimpleTestCase):
     def test_query_values_are_not_logged_and_groups_are_bounded(self):
-        trace = ExplorerTrace()
+        trace = ExplorerTrace(detailed_sql=True)
         for i in range(100):
             trace.execute(
                 lambda *args: None, f"SELECT column_{i} WHERE name=%s", ["secret"], False, {}
@@ -93,3 +93,39 @@ class TraceTests(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(log.call_args.args[0])["sql_count"], 1)
         self.assertIsNone(current_trace.get())
+
+    @override_settings(ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE=0, ALLOWED_HOSTS=["testserver"])
+    def test_disabled_sampling_has_no_logs_wrapper_or_random_draw(self):
+        def source():
+            self.assertIsNone(current_trace.get())
+            self.assertEqual(connection.execute_wrappers, [])
+            return []
+
+        with (
+            patch.object(explorer, "_all_activity", side_effect=source),
+            patch("apps.propositions.performance.logger.info") as log,
+            patch("apps.propositions.performance.random.random") as random_draw,
+        ):
+            response = Client().get("/api/v1/activity/explorer")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("X-Explorer-Trace-ID", response)
+        log.assert_not_called()
+        random_draw.assert_not_called()
+
+    def test_request_trace_keeps_sql_totals_without_hashing_queries(self):
+        trace = ExplorerTrace()
+        with patch("apps.propositions.performance.sha256") as digest:
+            trace.execute(lambda *args: None, "SELECT %s", [1], False, {})
+        self.assertEqual(trace.report()["sql_count"], 1)
+        self.assertNotIn("sql_groups", trace.report())
+        digest.assert_not_called()
+
+    def test_command_outputs_report_without_duplicate_log(self):
+        output = StringIO()
+        with (
+            patch.object(explorer.cache, "get", return_value=[]),
+            patch("apps.propositions.performance.logger.info") as log,
+        ):
+            call_command("profile_activity_explorer", stdout=output)
+        self.assertIn("sql_groups", json.loads(output.getvalue()))
+        log.assert_not_called()

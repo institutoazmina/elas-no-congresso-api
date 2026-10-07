@@ -24,7 +24,7 @@ docker exec "$API_CONTAINER" python manage.py profile_activity_explorer --runs 3
 
 O modo padrão usa o cache normalmente: se ele estiver ausente, reconstrói e
 preenche, como uma visita real. Cada linha de stdout contém uma medição JSON;
-logs vão para stderr. Não trate a primeira execução automaticamente como miss:
+o relatório não é duplicado no logger da aplicação. Outros logs vão para stderr. Não trate a primeira execução automaticamente como miss:
 confira `source_cache`. Para usar os mesmos filtros da requisição lenta:
 
 ```sh
@@ -59,7 +59,7 @@ conexão ao banco. `--bypass-cache` não esfria buffers do PostgreSQL/OS.
 
 Defina `ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE=1` no ambiente do deploy Kamal para
 uma janela curta de diagnóstico (ou `0.1` para uma amostra de 10%) e recrie o web
-com essa configuração. A configuração padrão é `0`, desativada. Mudar a variável
+com essa configuração. A configuração padrão e operacional é `0`, desativada, para evitar volume proporcional ao tráfego. Os access logs do Uvicorn também estão desligados (incluindo healthchecks); logs de erros/exceções permanecem ativos. Mudar a variável
 apenas em uma sessão SSH não altera o processo web existente. O comando acima
 força sua própria medição e independe desta variável.
 
@@ -71,8 +71,9 @@ docker logs --since 15m "$API_CONTAINER" 2>&1 \
 O header `X-Explorer-Trace-ID` correlaciona a resposta amostrada com o log. Cada
 registro tem PID, status HTTP, bytes, contagens da coleção, nomes dos filtros
 ativos (sem valores), hit/miss e durações. Não registra SQL bruto, parâmetros,
-termos de busca, cookies nem dados de usuários. Os grupos SQL são limitados a
-20 fingerprints mais um grupo overflow, evitando crescimento ilimitado em N+1.
+termos de busca, cookies nem dados de usuários. Requests amostradas registram apenas contagem e tempo SQL agregado, sem calcular
+fingerprints. O comando sob demanda inclui grupos SQL limitados a 20 fingerprints
+mais um grupo overflow, evitando crescimento ilimitado em N+1.
 A instrumentação SQL funciona com `DEBUG=False`. Desative a amostragem ao final.
 
 ## Interpretar os tempos
@@ -89,7 +90,7 @@ A instrumentação SQL funciona com `DEBUG=False`. Desative a amostragem ao fina
 | `cache_set` | Serialização do valor + escrita no Redis |
 | `filter`, `sort`, `options`, `dashboard` | Processamento Python da coleção |
 | `sql_execute_ms` | Soma dos tempos do cursor execute; está **dentro** dos estágios, não some novamente |
-| `sql_groups` | Quantidade/tempo por template SQL (hash) e estágio; evidencia N+1 |
+| `sql_groups` | Apenas no comando sob demanda: quantidade/tempo por template SQL (hash) e estágio |
 
 `sql_execute_ms` não isola tempo de execução no servidor PostgreSQL: pode incluir
 rede/buffering e não inclui necessariamente todo o fetch, conexão ou hidratação.
