@@ -41,7 +41,7 @@ def configuration_hash():
     )
 
 
-def request_analysis(prop, version):
+def request_analysis(prop, version, *, only_if_unevaluated=False):
     """Caller holds the proposition lock; metadata-only changes never call this."""
     if not settings.QUITERIA_ENABLED:
         return None
@@ -63,6 +63,7 @@ def request_analysis(prop, version):
             "model_id": settings.QUITERIA_MODEL_ID,
             "model_revision": settings.QUITERIA_MODEL_REVISION,
             "threshold": settings.QUITERIA_FAVORABILITY_THRESHOLD,
+            "only_if_unevaluated": only_if_unevaluated,
         },
     )
     if not created and request.status == request.Status.SUCCEEDED and request.result:
@@ -82,7 +83,8 @@ def request_analysis(prop, version):
         )
     if not created and request.status == request.Status.SUPERSEDED and not request.result:
         request.status, request.attempts = request.Status.PENDING, 0
-        request.save(update_fields=["status", "attempts"])
+        request.only_if_unevaluated = only_if_unevaluated
+        request.save(update_fields=["status", "attempts", "only_if_unevaluated"])
         created = True
     if created:
         from .tasks import run_classification_request
@@ -274,6 +276,13 @@ def run_analysis(request_id):
             return
         if not settings.QUITERIA_ENABLED:
             return
+        if req.only_if_unevaluated:
+            from .classification_backfill import missing_evaluations
+
+            if not missing_evaluations().filter(pk=prop.pk).exists():
+                req.status, req.error = req.Status.SUPERSEDED, "Evaluation already exists"
+                req.save(update_fields=["status", "error"])
+                return
         if req.configuration_hash != configuration_hash():
             req.status, req.error = (
                 req.Status.SUPERSEDED,
@@ -303,6 +312,10 @@ def run_analysis(request_id):
                 not prop.current_content_id
                 or prop.current_content.text_hash != req.content_hash
                 or req.configuration_hash != configuration_hash()
+                or (
+                    req.only_if_unevaluated
+                    and not missing_evaluations().filter(pk=prop.pk).exists()
+                )
             ):
                 req.status = req.Status.SUPERSEDED
             else:
@@ -322,7 +335,8 @@ def run_analysis(request_id):
                 )
                 from apps.subscriptions.tasks import match_and_notify
 
-                transaction.on_commit(lambda: match_and_notify.delay(prop.pk))
+                if not req.only_if_unevaluated:
+                    transaction.on_commit(lambda: match_and_notify.delay(prop.pk))
             req.error = ""
             req.save(update_fields=["result", "completed_at", "status", "error"])
     except Exception as exc:

@@ -310,6 +310,7 @@ class ClassificationRequest(models.Model):
     model_id = models.CharField(max_length=128)
     model_revision = models.CharField(max_length=64)
     threshold = models.FloatField()
+    only_if_unevaluated = models.BooleanField(default=False)
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.PENDING, db_index=True
     )

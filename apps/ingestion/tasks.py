@@ -1058,6 +1058,17 @@ def run_classification_request(request_id):
 
 
 @shared_task
+def backfill_missing_evaluations():
+    from .classification_backfill import prepare_missing_evaluations
+
+    if not settings.QUITERIA_ENABLED:
+        return {"disabled": True}
+    result = prepare_missing_evaluations(limit=settings.CLASSIFICATION_BACKFILL_DAILY_LIMIT)
+    logger.info("QuitérIA evaluation backfill: %s", result)
+    return result
+
+
+@shared_task
 def recover_pending_content():
     from apps.propositions.models import ClassificationRequest, PropositionDocument
 

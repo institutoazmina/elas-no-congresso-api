@@ -216,11 +216,15 @@ INGESTION_RECONCILIATION_DAILY_LIMIT = config(
 )
 INGESTION_REQUESTS_PER_SECOND = config("INGESTION_REQUESTS_PER_SECOND", default=2.0, cast=float)
 INGESTION_BATCH_SIZE = config("INGESTION_BATCH_SIZE", default=10, cast=int)
+CLASSIFICATION_BACKFILL_DAILY_LIMIT = config(
+    "CLASSIFICATION_BACKFILL_DAILY_LIMIT", default=600, cast=int
+)
 
 if (
     INGESTION_BATCH_SIZE < 1
     or INGESTION_RECONCILIATION_DAILY_LIMIT < 1
     or INGESTION_REQUESTS_PER_SECOND < 0
+    or CLASSIFICATION_BACKFILL_DAILY_LIMIT < 1
 ):
     raise ValueError(
         "Ingestion batch and reconciliation limits must be positive; rate must be nonnegative"
@@ -247,6 +251,10 @@ CELERY_BEAT_SCHEDULE = {
     "recover-content-work": {
         "task": "apps.ingestion.tasks.recover_pending_content",
         "schedule": crontab(minute="*/15"),
+    },
+    "backfill-missing-evaluations-daily": {
+        "task": "apps.ingestion.tasks.backfill_missing_evaluations",
+        "schedule": crontab(hour=6, minute=45),
     },
     "daily-digest": {
         "task": "apps.subscriptions.tasks.send_daily_digest",

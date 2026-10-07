@@ -30,6 +30,7 @@ jobs:
       SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
       WEEKLY_NEWSLETTER_ENABLED: ${{ vars.WEEKLY_NEWSLETTER_ENABLED || 'False' }}
       WEEKLY_NEWSLETTER_BATCH_SIZE: ${{ vars.WEEKLY_NEWSLETTER_BATCH_SIZE || '5' }}
+      CLASSIFICATION_BACKFILL_DAILY_LIMIT: ${{ vars.CLASSIFICATION_BACKFILL_DAILY_LIMIT || '600' }}
       SUBSTACK_PUBLICATION_URL: ${{ vars.SUBSTACK_PUBLICATION_URL || 'https://elasnocongresso.substack.com' }}
       SUBSTACK_COOKIES_STRING: ${{ secrets.SUBSTACK_COOKIES_STRING }}
       # Registry: o próprio token do Actions tem write:packages pro repo
