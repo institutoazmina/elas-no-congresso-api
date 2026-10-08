@@ -1,0 +1,70 @@
+/* Complementa os tokens do Unfold sem substituir seus estados semânticos. */
+:root {
+    --admin-focus: var(--color-brand-accent);
+    --admin-control-border: var(--color-base-500);
+}
+
+.dark {
+    --admin-focus: var(--color-brand-lime);
+    --admin-control-border: var(--color-base-400);
+}
+
+/* O hover opaco preserva o contraste do texto branco sobre a cor da marca. */
+:is(a, button, input)[class~="bg-primary-600"]:not(:disabled):hover {
+    background-color: var(--color-primary-700);
+}
+
+/* O contorno claro distingue controles azuis das superfícies navy. */
+.dark :is(a, button, input)[class~="bg-primary-600"],
+.dark input:is([type="checkbox"], [type="radio"]):checked {
+    box-shadow: inset 0 0 0 1px var(--color-primary-500);
+}
+
+/* Borda de controles, sem escurecer todas as divisórias decorativas. */
+:is(input, select, textarea):not(
+    [type="hidden"], [type="submit"], [type="button"], [type="reset"],
+    :disabled, :checked, [aria-invalid="true"], .errors *
+),
+.select2-container--admin-autocomplete .select2-selection {
+    border-color: var(--admin-control-border);
+}
+
+:is(input, textarea)::placeholder {
+    color: var(--color-font-subtle-light);
+    opacity: 1;
+}
+
+.dark :is(input, textarea)::placeholder {
+    color: var(--color-font-subtle-dark);
+}
+
+/* Alguns widgets usam classes diretas em vez dos tokens semânticos de fonte. */
+.text-base-400,
+.text-base-500,
+.text-icon {
+    color: var(--color-base-600);
+}
+
+.dark .text-base-400,
+.dark .text-base-500,
+.dark .text-icon {
+    color: var(--color-base-300);
+}
+
+.dark input[type="radio"]:checked::after {
+    background-color: white;
+}
+
+/* Foco visível também em links, botões e controles com outline removido. */
+:is(a, button, input, select, textarea, summary, [tabindex]):focus-visible,
+.select2-container--focus .select2-selection {
+    outline: 3px solid var(--admin-focus);
+    outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+    :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible,
+    .select2-container--focus .select2-selection {
+        outline-color: Highlight;
+    }
+}

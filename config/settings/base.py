@@ -4,6 +4,9 @@ from pathlib import Path
 
 from celery.schedules import crontab
 from decouple import Csv, config
+from django.templatetags.static import static
+
+from config.admin_theme import ADMIN_COLORS
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -364,21 +367,8 @@ UNFOLD = {
     "SITE_SYMBOL": "gavel",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
-    "COLORS": {
-        "primary": {
-            "50": "236 253 245",
-            "100": "209 250 229",
-            "200": "167 243 208",
-            "300": "110 231 183",
-            "400": "52 211 153",
-            "500": "16 185 129",
-            "600": "5 150 105",
-            "700": "4 120 87",
-            "800": "6 95 70",
-            "900": "6 78 59",
-            "950": "2 44 34",
-        },
-    },
+    "COLORS": ADMIN_COLORS,
+    "STYLES": [lambda request: static("core/css/admin-theme.css")],
     "TABS": [],
     "SIDEBAR": {
         "show_search": True,
