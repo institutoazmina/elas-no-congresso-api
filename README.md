@@ -8,18 +8,20 @@ Projeto do [Instituto AzMina](https://azmina.org.br) em parceria com o Programa 
 
 ## Arquitetura
 
+```mermaid
+flowchart LR
+    API[API Django Ninja] --> DB[(PostgreSQL)]
+    API --> R[(Redis: cache e broker)]
+    B[Celery Beat] --> R
+    R --> W[Workers Celery]
+    W --> DB
+    W --> S[Amazon SES ou MiniStack local]
+    W --> M[QuitérIA local na fila ML]
+    W --> D[Substack: somente rascunhos]
 ```
-┌─────────────┐     ┌──────────┐     ┌─────────────┐
-│  API Ninja  │────▶│ Postgres │◀────│  Celery    │
-│ (uvicorn)   │     │ +vector  │     │  Worker   │
-└─────────────┘     └──────────┘     └─────┬─────┘
-       │                 ▲                 │
-       │                 │                 ▼
-       ▼            ┌──────┐          ┌──────────┐
-    /api/v1/        │ Redis │          │ MiniStack │
-                    └──────┘          │  (SES)   │
-                                       └──────────┘
-```
+
+As [decisões de arquitetura](docs/README.md) documentam a estrutura do banco,
+os alertas, os rascunhos do Substack e a ingestão com análise local de IA.
 
 ## Pré-requisitos
 
@@ -125,7 +127,7 @@ uv run ./manage.py shell
 
 ## Deploy
 
-O [Radar semanal no Substack](docs/newsletters.md) prepara rascunhos para revisão
+O [Radar semanal no Substack](docs/decisions/001-weekly-substack-drafts.md) prepara rascunhos para revisão
 humana, com LEGENDA, destaques e Radars por casa. Está desativado por padrão e
 nunca publica ou envia e-mails.
 
@@ -148,13 +150,10 @@ Variáveis obrigatórias:
 
 ## Performance
 
-Para investigar o explorer em produção via SSH, consulte o
-[guia de instrumentação e profiling](docs/explorer-performance.md).
-
- benchmmarks Targets:
-- Matcher: p95 < 30ms (10k subscriptions × 900 propositions)
-- API GET /propositions: p95 < 200ms sustentando 500 rps
-- DB: índices GIN/HNSW/trigram, connection pooling
+A [ADR da estrutura do banco](docs/decisions/004-estrutura-do-banco.md) descreve
+a projeção de leitura e os limites do cache do explorer. O comando
+`python manage.py profile_activity_explorer` continua disponível para diagnóstico;
+suas medições não equivalem à latência de rede ou a um teste de carga.
 
 ## Licença
 
