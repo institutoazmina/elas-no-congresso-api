@@ -39,6 +39,10 @@ class TermInline(TabularInline):
     fields = ["house", "state", "party", "legislature_number", "start_date", "end_date"]
     readonly_fields = ["is_current"]
 
+    @admin.display(description="Vigente", boolean=True)
+    def is_current(self, obj):
+        return obj.is_current
+
 
 class ContactInline(TabularInline):
     model = ParliamentarianContact

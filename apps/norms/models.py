@@ -5,21 +5,26 @@ from apps.propositions.models import Proposition
 
 
 class LegalNorm(models.Model):
-    type = models.CharField(max_length=30, choices=LegalNormType.choices)
-    number = models.IntegerField(null=True, blank=True)
-    year = models.SmallIntegerField(null=True, blank=True)
-    published_at = models.DateField(null=True, blank=True)
-    official_name = models.TextField()
-    popular_name = models.TextField(null=True, blank=True)
+    type = models.CharField(verbose_name="Tipo", max_length=30, choices=LegalNormType.choices)
+    number = models.IntegerField(verbose_name="Número", null=True, blank=True)
+    year = models.SmallIntegerField(verbose_name="Ano", null=True, blank=True)
+    published_at = models.DateField(verbose_name="Publicado em", null=True, blank=True)
+    official_name = models.TextField(verbose_name="Nome oficial")
+    popular_name = models.TextField(verbose_name="Nome popular", null=True, blank=True)
 
     class Meta:
+        verbose_name = "Norma legal"
+        verbose_name_plural = "Normas legais"
         db_table = "legal_norms"
         constraints = [
-            models.UniqueConstraint(fields=["type", "number", "year"], name="legal_norms_type_number_year")
+            models.UniqueConstraint(
+                fields=["type", "number", "year"], name="legal_norms_type_number_year"
+            )
         ]
         indexes = [
             models.Index(
-                fields=["popular_name"], name="idx_norms_popular",
+                fields=["popular_name"],
+                name="idx_norms_popular",
                 condition=models.Q(popular_name__isnull=False),
             ),
         ]
@@ -30,15 +35,22 @@ class LegalNorm(models.Model):
 
 class PropositionAmend(models.Model):
     proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="amends"
+        Proposition, verbose_name="Proposição", on_delete=models.CASCADE, related_name="amends"
     )
-    norm = models.ForeignKey(LegalNorm, on_delete=models.CASCADE, related_name="amends")
+    norm = models.ForeignKey(
+        LegalNorm, verbose_name="Norma legal", on_delete=models.CASCADE, related_name="amends"
+    )
     relation_type = models.CharField(
-        max_length=15, choices=AmendRelationType.choices, default=AmendRelationType.ALTERA
+        verbose_name="Tipo de relação",
+        max_length=15,
+        choices=AmendRelationType.choices,
+        default=AmendRelationType.ALTERA,
     )
-    extracted_from = models.TextField(null=True, blank=True)
+    extracted_from = models.TextField(verbose_name="Extraído de", null=True, blank=True)
 
     class Meta:
+        verbose_name = "Alteração de norma"
+        verbose_name_plural = "Alterações de normas"
         db_table = "proposition_amends"
         constraints = [
             models.UniqueConstraint(

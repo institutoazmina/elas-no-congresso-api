@@ -32,6 +32,10 @@ class RapporteurInline(TabularInline):
     autocomplete_fields = ["parliamentarian", "party"]
     readonly_fields = ["is_current"]
 
+    @admin.display(description="Vigente", boolean=True)
+    def is_current(self, obj):
+        return obj.is_current
+
 
 class AnalysisInline(TabularInline):
     model = PropositionAnalysis

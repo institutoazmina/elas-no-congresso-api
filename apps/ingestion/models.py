@@ -14,17 +14,19 @@ class RelevanceTerm(models.Model):
         STANDALONE = "standalone", "Isolado (relevante por si só)"
         COMBINED = "combined", "Combinado (expressões separadas por +)"
 
-    term = models.TextField()
-    mode = models.CharField(max_length=12, choices=Mode.choices, default=Mode.STANDALONE)
-    is_active = models.BooleanField(default=True)
-    notes = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    term = models.TextField(verbose_name="Termo")
+    mode = models.CharField(
+        verbose_name="Modo", max_length=12, choices=Mode.choices, default=Mode.STANDALONE
+    )
+    is_active = models.BooleanField(verbose_name="Ativo", default=True)
+    notes = models.TextField(verbose_name="Observações", null=True, blank=True)
+    created_at = models.DateTimeField(verbose_name="Criado em", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="Atualizado em", auto_now=True)
 
     class Meta:
-        db_table = "relevance_terms"
         verbose_name = "Termo de relevância"
         verbose_name_plural = "Termos de relevância"
+        db_table = "relevance_terms"
         constraints = [
             models.UniqueConstraint(fields=["term", "mode"], name="relevance_terms_term_mode")
         ]
@@ -42,24 +44,30 @@ class IngestionRun(models.Model):
         SUCCESS = "success", "Sucesso"
         FAILED = "failed", "Falha"
 
-    house = models.CharField(max_length=10, choices=House.choices)
-    window_start = models.DateField()
-    window_end = models.DateField()
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.RUNNING)
-    fetched_count = models.IntegerField(default=0)
-    relevant_count = models.IntegerField(default=0)
-    upserted_count = models.IntegerField(default=0)
-    error_count = models.IntegerField(default=0)
-    error_detail = models.TextField(null=True, blank=True)
-    kind = models.CharField(max_length=16, default="daily")
-    discovery_complete = models.BooleanField(default=False)
-    processed_count = models.PositiveIntegerField(default=0)
-    skipped_count = models.PositiveIntegerField(default=0)
-    checkpoint_until = models.DateTimeField(null=True, blank=True)
-    started_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(null=True, blank=True)
+    house = models.CharField(verbose_name="Casa legislativa", max_length=10, choices=House.choices)
+    window_start = models.DateField(verbose_name="Início do período")
+    window_end = models.DateField(verbose_name="Fim do período")
+    status = models.CharField(
+        verbose_name="Situação", max_length=10, choices=Status.choices, default=Status.RUNNING
+    )
+    fetched_count = models.IntegerField(verbose_name="Itens coletados", default=0)
+    relevant_count = models.IntegerField(verbose_name="Itens relevantes", default=0)
+    upserted_count = models.IntegerField(verbose_name="Itens inseridos ou atualizados", default=0)
+    error_count = models.IntegerField(verbose_name="Erros", default=0)
+    error_detail = models.TextField(verbose_name="Detalhes do erro", null=True, blank=True)
+    kind = models.CharField(verbose_name="Tipo", max_length=16, default="daily")
+    discovery_complete = models.BooleanField(verbose_name="Descoberta concluída", default=False)
+    processed_count = models.PositiveIntegerField(verbose_name="Itens processados", default=0)
+    skipped_count = models.PositiveIntegerField(verbose_name="Itens ignorados", default=0)
+    checkpoint_until = models.DateTimeField(
+        verbose_name="Marco de coleta até", null=True, blank=True
+    )
+    started_at = models.DateTimeField(verbose_name="Iniciado em", auto_now_add=True)
+    finished_at = models.DateTimeField(verbose_name="Finalizado em", null=True, blank=True)
 
     class Meta:
+        verbose_name = "Execução de coleta"
+        verbose_name_plural = "Execuções de coleta"
         db_table = "ingestion_runs"
         indexes = [
             models.Index(fields=["house", "-started_at"], name="idx_ingestion_house_date"),
@@ -70,12 +78,24 @@ class IngestionRun(models.Model):
 
 
 class IngestionCheckpoint(models.Model):
-    house = models.CharField(max_length=10, choices=House.choices, unique=True)
-    covered_since = models.DateField(null=True, blank=True)
-    covered_until = models.DateTimeField(null=True, blank=True)
-    baseline_complete = models.BooleanField(default=False)
-    active_run = models.ForeignKey(IngestionRun, null=True, blank=True, on_delete=models.SET_NULL)
-    updated_at = models.DateTimeField(auto_now=True)
+    house = models.CharField(
+        verbose_name="Casa legislativa", max_length=10, choices=House.choices, unique=True
+    )
+    covered_since = models.DateField(verbose_name="Cobertura desde", null=True, blank=True)
+    covered_until = models.DateTimeField(verbose_name="Cobertura até", null=True, blank=True)
+    baseline_complete = models.BooleanField(verbose_name="Carga inicial concluída", default=False)
+    active_run = models.ForeignKey(
+        IngestionRun,
+        verbose_name="Coleta em andamento",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    updated_at = models.DateTimeField(verbose_name="Atualizado em", auto_now=True)
+
+    class Meta:
+        verbose_name = "Marco de coleta"
+        verbose_name_plural = "Marcos de coleta"
 
 
 class IngestionItem(models.Model):
@@ -85,15 +105,24 @@ class IngestionItem(models.Model):
         SKIPPED = "skipped", "Ignorado"
         FAILED = "failed", "Falhou"
 
-    run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE, related_name="items")
-    external_id = models.BigIntegerField()
-    summary = models.JSONField(default=dict)
-    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
-    attempts = models.PositiveIntegerField(default=0)
-    error = models.CharField(max_length=200, blank=True)
-    processed_at = models.DateTimeField(null=True, blank=True)
+    run = models.ForeignKey(
+        IngestionRun,
+        verbose_name="Execução de coleta",
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+    external_id = models.BigIntegerField(verbose_name="Identificador externo")
+    summary = models.JSONField(verbose_name="Resumo", default=dict)
+    status = models.CharField(
+        verbose_name="Situação", max_length=16, choices=Status.choices, default=Status.PENDING
+    )
+    attempts = models.PositiveIntegerField(verbose_name="Tentativas", default=0)
+    error = models.CharField(verbose_name="Erro", max_length=200, blank=True)
+    processed_at = models.DateTimeField(verbose_name="Processado em", null=True, blank=True)
 
     class Meta:
+        verbose_name = "Item de coleta"
+        verbose_name_plural = "Itens de coleta"
         indexes = [models.Index(fields=["run", "status"], name="idx_ingestion_item_status")]
         constraints = [
             models.UniqueConstraint(fields=["run", "external_id"], name="ingestion_run_source_item")

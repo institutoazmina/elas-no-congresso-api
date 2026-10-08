@@ -4,13 +4,20 @@ from apps.propositions.models import Proposition
 
 
 class Theme(models.Model):
-    slug = models.TextField(unique=True)
-    name = models.TextField()
+    slug = models.TextField(verbose_name="Identificador textual", unique=True)
+    name = models.TextField(verbose_name="Nome")
     parent = models.ForeignKey(
-        "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="children"
+        "self",
+        verbose_name="Tema superior",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="children",
     )
 
     class Meta:
+        verbose_name = "Tema"
+        verbose_name_plural = "Temas"
         db_table = "themes"
         indexes = [models.Index(fields=["parent"], name="idx_themes_parent")]
 
@@ -19,11 +26,13 @@ class Theme(models.Model):
 
 
 class AnalyticalTag(models.Model):
-    slug = models.TextField(unique=True)
-    name = models.TextField()
-    description = models.TextField(null=True, blank=True)
+    slug = models.TextField(verbose_name="Identificador textual", unique=True)
+    name = models.TextField(verbose_name="Nome")
+    description = models.TextField(verbose_name="Descrição", null=True, blank=True)
 
     class Meta:
+        verbose_name = "Etiqueta analítica"
+        verbose_name_plural = "Etiquetas analíticas"
         db_table = "analytical_tags"
 
     def __str__(self):
@@ -32,12 +41,19 @@ class AnalyticalTag(models.Model):
 
 class PropositionTheme(models.Model):
     proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="proposition_themes"
+        Proposition,
+        verbose_name="Proposição",
+        on_delete=models.CASCADE,
+        related_name="proposition_themes",
     )
-    theme = models.ForeignKey(Theme, on_delete=models.CASCADE, related_name="proposition_themes")
-    rank = models.SmallIntegerField(default=1)
+    theme = models.ForeignKey(
+        Theme, verbose_name="Tema", on_delete=models.CASCADE, related_name="proposition_themes"
+    )
+    rank = models.SmallIntegerField(verbose_name="Ordem", default=1)
 
     class Meta:
+        verbose_name = "Tema de proposição"
+        verbose_name_plural = "Temas de proposições"
         db_table = "proposition_themes"
         constraints = [
             models.UniqueConstraint(fields=["proposition", "theme"], name="proposition_themes_pk")
@@ -47,11 +63,21 @@ class PropositionTheme(models.Model):
 
 class PropositionTag(models.Model):
     proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="proposition_tags"
+        Proposition,
+        verbose_name="Proposição",
+        on_delete=models.CASCADE,
+        related_name="proposition_tags",
     )
-    tag = models.ForeignKey(AnalyticalTag, on_delete=models.CASCADE, related_name="proposition_tags")
+    tag = models.ForeignKey(
+        AnalyticalTag,
+        verbose_name="Etiqueta",
+        on_delete=models.CASCADE,
+        related_name="proposition_tags",
+    )
 
     class Meta:
+        verbose_name = "Etiqueta de proposição"
+        verbose_name_plural = "Etiquetas de proposições"
         db_table = "proposition_tags"
         constraints = [
             models.UniqueConstraint(fields=["proposition", "tag"], name="proposition_tags_pk")
@@ -61,16 +87,26 @@ class PropositionTag(models.Model):
 
 class PropositionRelation(models.Model):
     proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="relations_from"
+        Proposition,
+        verbose_name="Proposição",
+        on_delete=models.CASCADE,
+        related_name="relations_from",
     )
     related_proposition = models.ForeignKey(
-        Proposition, on_delete=models.CASCADE, related_name="relations_to"
+        Proposition,
+        verbose_name="Proposição relacionada",
+        on_delete=models.CASCADE,
+        related_name="relations_to",
     )
-    relation_type = models.CharField(max_length=20)
-    similarity_score = models.FloatField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    relation_type = models.CharField(verbose_name="Tipo de relação", max_length=20)
+    similarity_score = models.FloatField(
+        verbose_name="Pontuação de similaridade", null=True, blank=True
+    )
+    created_at = models.DateTimeField(verbose_name="Criado em", auto_now_add=True)
 
     class Meta:
+        verbose_name = "Relação entre proposições"
+        verbose_name_plural = "Relações entre proposições"
         db_table = "proposition_relations"
         constraints = [
             models.UniqueConstraint(
@@ -82,10 +118,14 @@ class PropositionRelation(models.Model):
                 name="proposition_relations_no_self",
             ),
             models.CheckConstraint(
-                condition=models.Q(relation_type__in=["appended", "similar", "predecessor", "successor"]),
+                condition=models.Q(
+                    relation_type__in=["appended", "similar", "predecessor", "successor"]
+                ),
                 name="proposition_relations_type_check",
             ),
         ]
         indexes = [
-            models.Index(fields=["related_proposition", "relation_type"], name="idx_relations_related")
+            models.Index(
+                fields=["related_proposition", "relation_type"], name="idx_relations_related"
+            )
         ]

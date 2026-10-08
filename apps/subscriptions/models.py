@@ -13,21 +13,31 @@ class Frequency(models.TextChoices):
 
 
 class Subscription(models.Model):
-    email = models.EmailField(db_index=True)
-    frequency = models.CharField(max_length=10, choices=Frequency.choices, default=Frequency.DAILY)
-    ast = models.JSONField()
+    email = models.EmailField(verbose_name="E-mail", db_index=True)
+    frequency = models.CharField(
+        verbose_name="Frequência", max_length=10, choices=Frequency.choices, default=Frequency.DAILY
+    )
+    ast = models.JSONField(verbose_name="Critérios (AST JSON)")
     # TSQUERY stored as text, cast to tsquery in raw SQL queries
-    query = models.TextField()
-    needs_revalidation = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-    confirm_token = models.CharField(max_length=64, unique=True, default=_generate_token)
-    unsubscribe_token = models.CharField(max_length=64, unique=True, default=_generate_token)
-    created_at = models.DateTimeField(auto_now_add=True)
-    confirmed_at = models.DateTimeField(null=True, blank=True)
+    query = models.TextField(verbose_name="Consulta de busca")
+    needs_revalidation = models.BooleanField(verbose_name="Requer revalidação", default=False)
+    is_active = models.BooleanField(verbose_name="Ativa", default=False)
+    confirm_token = models.CharField(
+        verbose_name="Token de confirmação", max_length=64, unique=True, default=_generate_token
+    )
+    unsubscribe_token = models.CharField(
+        verbose_name="Token de cancelamento", max_length=64, unique=True, default=_generate_token
+    )
+    created_at = models.DateTimeField(verbose_name="Criado em", auto_now_add=True)
+    confirmed_at = models.DateTimeField(verbose_name="Confirmado em", null=True, blank=True)
     # LGPD: quando a pessoa marcou o aceite dos termos no modal.
-    accepted_terms_at = models.DateTimeField(null=True, blank=True)
+    accepted_terms_at = models.DateTimeField(
+        verbose_name="Termos aceitos em", null=True, blank=True
+    )
 
     class Meta:
+        verbose_name = "Inscrição de alertas"
+        verbose_name_plural = "Inscrições de alertas"
         db_table = "subscriptions"
         indexes = [
             models.Index(fields=["is_active"], name="ix_subs_active"),
@@ -41,14 +51,19 @@ class AlertDelivery(models.Model):
     """Proposição incluída em um e-mail enviado com sucesso à inscrição."""
 
     subscription = models.ForeignKey(
-        Subscription, on_delete=models.CASCADE, related_name="deliveries"
+        Subscription, verbose_name="Inscrição", on_delete=models.CASCADE, related_name="deliveries"
     )
     proposition = models.ForeignKey(
-        "propositions.Proposition", on_delete=models.CASCADE, related_name="alert_deliveries"
+        "propositions.Proposition",
+        verbose_name="Proposição",
+        on_delete=models.CASCADE,
+        related_name="alert_deliveries",
     )
-    sent_at = models.DateTimeField(auto_now_add=True)
+    sent_at = models.DateTimeField(verbose_name="Enviado em", auto_now_add=True)
 
     class Meta:
+        verbose_name = "Entrega de alerta"
+        verbose_name_plural = "Entregas de alertas"
         db_table = "alert_deliveries"
         constraints = [
             models.UniqueConstraint(
@@ -61,12 +76,19 @@ class PendingAlert(models.Model):
     """Matches persistidos até o próximo horário do resumo diário."""
 
     subscription = models.ForeignKey(
-        Subscription, on_delete=models.CASCADE, related_name="pending_alerts"
+        Subscription,
+        verbose_name="Inscrição",
+        on_delete=models.CASCADE,
+        related_name="pending_alerts",
     )
-    proposition = models.ForeignKey("propositions.Proposition", on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    proposition = models.ForeignKey(
+        "propositions.Proposition", verbose_name="Proposição", on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(verbose_name="Criado em", auto_now_add=True, db_index=True)
 
     class Meta:
+        verbose_name = "Alerta pendente"
+        verbose_name_plural = "Alertas pendentes"
         db_table = "pending_alerts"
         constraints = [
             models.UniqueConstraint(
@@ -78,12 +100,14 @@ class PendingAlert(models.Model):
 class DailyDigestDelivery(models.Model):
     """Uma entrega por endereço e data local, inclusive com várias inscrições."""
 
-    email = models.EmailField()
-    delivery_date = models.DateField()
-    sent_at = models.DateTimeField(null=True, blank=True)
-    message_id = models.TextField(null=True, blank=True)
+    email = models.EmailField(verbose_name="E-mail")
+    delivery_date = models.DateField(verbose_name="Data de entrega")
+    sent_at = models.DateTimeField(verbose_name="Enviado em", null=True, blank=True)
+    message_id = models.TextField(verbose_name="Identificador da mensagem", null=True, blank=True)
 
     class Meta:
+        verbose_name = "Entrega de resumo diário"
+        verbose_name_plural = "Entregas de resumos diários"
         db_table = "daily_digest_deliveries"
         constraints = [
             models.UniqueConstraint(
