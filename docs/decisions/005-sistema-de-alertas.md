@@ -20,14 +20,19 @@ Python do AST. Esse mecanismo é distinto do filtro de relevância dos raspadore
 ### Inscrição e confirmação
 
 `POST /api/v1/subscriptions` exige e-mail, aceite dos termos e uma lista de
-critérios compiláveis. Uma nova inscrição substitui as anteriores do mesmo
-endereço e nasce inativa. O aceite fica registrado em `accepted_terms_at`.
+critérios válidos: campos preenchidos pelo construtor de documentos e
+operadores compatíveis, validados antes da compilação. Uma nova inscrição nasce
+inativa e só substitui as inscrições confirmadas do endereço quando é
+confirmada; até lá, os alertas anteriores continuam. O aceite fica registrado em
+`accepted_terms_at`.
 
-O token de confirmação ativa as inscrições pendentes daquele endereço; o token
-de cancelamento desativa todas as inscrições dele. Ambos são acessados por GET
-nos links de e-mail. A limpeza diária remove inscrições inativas anteriores ao
-TTL configurado. A rota de confirmação não verifica a idade do token diretamente;
-não há garantia de expiração exata no instante do TTL.
+O token de confirmação ativa o pedido pendente daquele endereço, desde que
+nunca confirmado e criado dentro de `SUBSCRIPTION_CONFIRM_TTL_HOURS` (48 h,
+constante sem variável de ambiente). O token de cancelamento desativa todas as
+inscrições dele; um link de confirmação antigo não as reativa. Ambos são
+acessados por GET nos links de e-mail. A limpeza diária, às 04:00, remove apenas
+pedidos nunca confirmados e vencidos. Inscrições canceladas permanecem, com
+histórico e link de cancelamento válidos.
 
 O modelo e a API ainda aceitam `weekly` por compatibilidade, mas o fluxo de envio
 seleciona somente `daily`. As tarefas semanais antigas retornam sem enviar e-mail.
@@ -67,8 +72,8 @@ pendências anteriores são recuperadas. Não há mensagem quando não há novid
 
 `DailyDigestDelivery` tem unicidade por e-mail/data e é bloqueado com
 `select_for_update`. `AlertDelivery` registra proposições enviadas e evita sua
-repetição para o endereço enquanto esse histórico existe. A reinscrição remove
-as inscrições anteriores e, por cascata, seus históricos associados.
+repetição para o endereço. Na confirmação de uma reinscrição, o histórico das
+inscrições substituídas passa para a nova antes da exclusão delas.
 
 A categoria humana tem precedência no documento de correspondência; sem categoria
 humana, vale a categoria da QuitérIA com análise concluída. O resumo agrupa itens
@@ -81,7 +86,10 @@ O envio imediato foi substituído por pendências persistidas. Isso reduz mensag
 e permite revalidar mudanças antes da entrega, com atraso intencional até o corte.
 O AST mantém critérios reproduzíveis, mas exige compatibilidade entre compilador,
 documento e avaliador de referência; atributos disponíveis no schema não garantem
-que todos estejam preenchidos pelo construtor de documentos.
+que todos estejam preenchidos pelo construtor de documentos. Por isso a entrada
+recusa campos que o documento não gera, e proposições sem análise não têm
+`quiteriometro`. Campos, operadores e tokens estão em
+[alertas.md](../alertas.md).
 
 A trava e as restrições serializam tarefas repetidas, mas SES e PostgreSQL não
 compartilham uma transação. Uma queda após aceitação pelo SES e antes do commit

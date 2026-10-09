@@ -15,7 +15,9 @@ assíncrono e preservar o conteúdo de relatórios já preparados.
 Usar PostgreSQL com models e migrações Django como definição versionada do schema.
 O Compose utiliza PostgreSQL 16 com pgvector. A migração de infraestrutura instala
 `pg_trgm`, `unaccent`, `btree_gin`, `btree_gist` e `vector`, além de funções SQL.
-A presença de extensões não significa que cada recurso tenha um pipeline ativo.
+A presença de extensões não significa que cada recurso tenha um pipeline ativo:
+hoje só `unaccent` é usada, na busca de proposições, e nenhuma migração cria
+índices GIN, GiST, trigram ou vetoriais.
 
 Separar o domínio nos seguintes conjuntos:
 
@@ -33,6 +35,9 @@ Separar o domínio nos seguintes conjuntos:
 
 As tabelas de autenticação, administração e Celery complementam o domínio. Uma
 tabela existente não comprova que sua coleta esteja implementada ou preenchida.
+`core` não tem models, mas mantém as migrações de extensões e de remoção do
+Wagtail. O inventário completo por app está em
+[banco-de-dados.md](../banco-de-dados.md).
 
 ### Relações centrais
 
@@ -44,7 +49,7 @@ ou autor institucional; a restrição atual também permite preencher ambos.
 erDiagram
     Legislature ||--o{ ParliamentarianTerm : delimita
     Parliamentarian ||--o{ ParliamentarianTerm : exerce
-    Party o|--o{ ParliamentarianTerm : identifica
+    Party ||--o{ ParliamentarianTerm : identifica
     Parliamentarian o|--o{ PropositionAuthor : assina
     InstitutionalAuthor o|--o{ PropositionAuthor : assina
     Proposition ||--o{ PropositionAuthor : possui
@@ -87,7 +92,8 @@ guarda um snapshot JSON, sem depender de FKs para reconstruir a edição.
 
 ### Leitura do explorer
 
-`explorer_source.py` monta uma projeção em cinco consultas quando há proposições:
+`explorer_source.py` considera apenas proposições aprovadas de tipos públicos e
+monta uma projeção em cinco consultas quando há proposições:
 proposições/análise, agregados de eventos, anotações, autorias e temas. Usa
 `values`/agregações, evitando carregar PDFs, payloads e históricos completos como
 objetos Django ou multiplicar linhas em um único JOIN de todas as relações.
@@ -95,7 +101,15 @@ objetos Django ou multiplicar linhas em um único JOIN de todas as relações.
 O explorer e seu CSV compartilham essa fonte. Filtros e painéis são calculados no
 servidor sobre a coleção; a paginação não limita os totais. Redis mantém o snapshot
 `activity:explorer:source:v3` por 300 segundos. A data local obriga reconstrução
-quando muda o dia, e alterações relevantes invalidam `activity:*`.
+quando muda o dia. Sinais de gravação de `Proposition`, `PropositionAnnotation`,
+`PropositionAnalysis`, `Parliamentarian` e `PropositionAuthor`, além de chamadas
+explícitas na ingestão, invalidam `activity:*`; excluir uma anotação também
+invalida. Temas, vínculos de tema, partidos, autores institucionais,
+organizações avaliadoras e eventos são invalidados pelo admin, e não por signals,
+porque a ingestão os grava em lote e já invalida ao fim de cada lote. Alterações
+fora desses caminhos, como `QuerySet.update()` ou scripts no shell, aguardam o
+TTL. Sem `delete_pattern` (LocMem nos testes), só uma lista fixa de chaves é
+removida.
 
 ## Alternativas e consequências
 
@@ -109,7 +123,8 @@ explorer. Não é uma materialized view: ainda percorre a coleção em Python e 
 possui trava contra reconstruções simultâneas. Redis não é a fonte de verdade.
 
 `PropositionEmbedding.embedding` permanece `BinaryField` nos models e na migração
-inicial; as migrações atuais não criam o índice HNSW anunciado em um comentário.
+inicial; nenhuma migração converte a coluna para `vector` nem cria índice
+vetorial.
 Este registro não considera busca vetorial ou geração de embeddings um fluxo
 implementado. Dumps antigos de schema não substituem as migrações atuais.
 

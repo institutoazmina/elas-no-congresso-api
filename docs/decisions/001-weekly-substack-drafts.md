@@ -34,6 +34,8 @@ a análise editorial no Substack; o fluxo não gera esse texto por IA.
 `source_coverage` exige, por casa, baseline concluída, início de cobertura
 compatível com o período, cobertura recente de até 26 horas, última execução
 diária bem-sucedida sem erros e inventário reconciliado nos últimos oito dias.
+A cobertura recente é medida em relação ao momento atual, mesmo para semanas
+antigas.
 Períodos ainda abertos usam o corte disponível da coleta, não uma promessa de
 cobertura das publicações futuras daquele dia. OCR e IA pendentes não bloqueiam
 por si só a cobertura da atividade oficial.
@@ -46,8 +48,8 @@ flowchart TD
     B --> C[Consulta atividade e cobertura no PostgreSQL]
     C --> D[Congela snapshot, Markdown e HTML]
     D --> E{Cobertura completa?}
-    E -->|Não| F[Exportação disponível; entrega automática bloqueada]
-    F -->|Exceção manual explícita| G[Reserva tentativa de entrega]
+    E -->|Não| F[Exportação disponível; Beat e admin bloqueados]
+    F -->|Comando com --allow-incomplete| G[Reserva tentativa de entrega]
     E -->|Sim| G
     G --> H{ID ou título já encontrado?}
     H -->|Sim| J[Verifica rascunho existente]
@@ -62,7 +64,11 @@ flowchart TD
 `WeeklyReport` é único por publicação/data inicial; uma data final diferente para
 a mesma chave é recusada. Depois de congelado, conteúdo não é regenerado
 silenciosamente. A cobertura gravada também não é recalculada apenas por repetir
-a entrega de um relatório já preparado.
+a entrega de um relatório já preparado. No Beat, o relatório só é congelado às
+06:35 se a cobertura estiver completa; às 06:45 ele é congelado de qualquer
+forma, com `is_complete=False` quando incompleto. Na recuperação por
+`--refresh`, `is_complete` passa a indicar que todos os refresh retornaram `ok`,
+e `source_coverage` não é consultado.
 
 `deliver_report` reserva a tentativa em transação. Uma reserva inferior a dez
 minutos impede concorrência; uma reserva vencida é tratada como resultado incerto.
@@ -71,7 +77,7 @@ não atualiza rascunhos existentes. Uma tentativa incerta não permite nova cria
 cega; é possível vincular um ID localizado manualmente.
 
 `DraftOnlyClient` isola `python-substack==0.9.1`. Depois da autenticação, aceita
-leituras e somente o POST de criação de rascunho. A criação passa
+apenas `GET` e o POST para `{publicação}/drafts`. A criação passa
 `publish=False`, `prepublish=False`, `send=False` e `share_automatically=False`.
 A verificação exige `draft_body`, ID correspondente e ausência de campos que
 indiquem publicação ou agendamento.
@@ -79,13 +85,16 @@ indiquem publicação ou agendamento.
 ### Configuração e operação implementadas
 
 `WEEKLY_NEWSLETTER_ENABLED=False` é o padrão. A entrega exige
-`SUBSTACK_PUBLICATION_URL` e `SUBSTACK_COOKIES_STRING` com sessão autorizada,
-fornecida como segredo de implantação. Com a agenda habilitada, às segundas-feiras
+`SUBSTACK_COOKIES_STRING` com sessão autorizada, fornecida como segredo de
+implantação. `SUBSTACK_PUBLICATION_URL` tem padrão
+`https://elasnocongresso.substack.com` e precisa ser uma origem HTTPS sem
+caminho, query ou fragmento. Com a agenda habilitada, às segundas-feiras
 o Beat prepara às 04:00, verifica cobertura às 06:35, tenta entregar às 06:45 e
 registra prazo excedido às 07:00, no fuso de São Paulo.
 
-O workflow `newsletter-draft.yml` verifica autenticação antes de preparar e usa
-o host configurado no deploy. Exemplos do comando, sem executar nesta revisão:
+O workflow `newsletter-draft.yml` aceita `start_date`, `end_date` e `dry_run`.
+Fora do `dry_run`, verifica autenticação antes de preparar e entrega com
+`--deliver`, usando o host configurado no deploy. Exemplos do comando, sem executar nesta revisão:
 
 ```sh
 python manage.py weekly_newsletter --check-auth
@@ -94,9 +103,11 @@ python manage.py weekly_newsletter --week-start 2026-09-28 --deliver
 python manage.py weekly_newsletter --report-id 12 --attach-draft-id 12345 --deliver
 ```
 
-`--allow-incomplete` é a exceção manual para entregar com aviso de cobertura
-incompleta. O admin permite inspeção, exportação e tentativa de entrega conforme
-as permissões. O status `delivered` significa rascunho criado, não publicação.
+`--allow-incomplete`, disponível só no comando, é a exceção manual para entregar
+com aviso de cobertura incompleta. O admin permite inspeção, exportação e nova
+tentativa de entrega conforme as permissões, mas respeita o bloqueio de
+cobertura. O status `delivered` significa rascunho criado, não publicação.
+O guia operacional está em [newsletter.md](../newsletter.md).
 
 ## Alternativas e consequências
 

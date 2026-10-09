@@ -1,8 +1,29 @@
-# Decisões de arquitetura
+# Documentação
 
-ADRs em PT-BR, consolidadas em 08/10/2026 a partir do código e das migrações
-versionadas. O status **implementada** descreve o repositório; não comprova
+Documentação técnica da API Elas no Congresso, em PT-BR. Revisada em 08/10/2026
+contra o código da branch `main`. Descreve o repositório; não comprova
 migrações aplicadas, configuração ou execução bem-sucedida em produção.
+
+## Guias
+
+| Documento | Conteúdo |
+| --- | --- |
+| [Visão geral](visao-geral.md) | Componentes, apps, ciclo diário, regras de domínio (avaliação, celeridade, categorias) |
+| [Desenvolvimento local](desenvolvimento.md) | Setup com Docker/uv, dados de desenvolvimento, testes, lint, scripts |
+| [Configuração](configuracao.md) | Todas as variáveis de ambiente e diferenças entre dev, prod e test |
+| [API HTTP](api.md) | Endpoints, filtros, paginação, cache e health checks |
+| [Banco de dados](banco-de-dados.md) | Inventário de models, restrições e extensões |
+| [Ingestão e QuitérIA](ingestao.md) | Pipeline, comandos `ingestion_sync` e `classification_backfill`, enriquecimento de parlamentares |
+| [Alertas por e-mail](alertas.md) | Inscrição, critérios (AST), correspondência, resumo diário |
+| [Radar semanal no Substack](newsletter.md) | Agenda, status, comando `weekly_newsletter`, recuperação |
+| [Admin](admin.md) | Curadoria e ações administrativas |
+| [Deploy e operação](operacao.md) | Imagem Docker, Kamal, workflows, agenda do Beat, checklist de incidentes |
+
+Templates de e-mail: [`apps/subscriptions/emails/README.md`](../apps/subscriptions/emails/README.md).
+
+## Decisões de arquitetura
+
+ADRs consolidadas em 08/10/2026 a partir do código e das migrações versionadas.
 
 | ADR | Tema | Estado |
 | --- | --- | --- |
@@ -13,11 +34,8 @@ migrações aplicadas, configuração ou execução bem-sucedida em produção.
 
 As ADRs 001 e 002 mantêm seus identificadores. A decisão de projeção de leitura
 do explorer, antes registrada como ADR-003, foi incorporada à ADR-004; seu número
-não será reutilizado. Planos, instruções duplicadas, dumps de SQL/DBML e medições
-pontuais foram retirados desta pasta. As regras implementadas relevantes foram
-consolidadas nas quatro ADRs.
+não será reutilizado.
 
-Cada registro contém contexto, decisão, consequências e referências ao código.
-Os diagramas representam relações e fluxos selecionados, não um dump completo
-do banco. Models e migrações são a referência para campos e restrições; os testes
-referenciados descrevem os contratos verificáveis.
+Cada ADR registra contexto, decisão, consequências e referências ao código; os
+guias acima descrevem uso e operação. Quando houver conflito, models, migrações
+e testes são a referência.

@@ -21,7 +21,10 @@ consulta processo/documentos. O client mantém endpoints legados para operaçõe
 auxiliares. `codigoMateria` continua como identidade quando disponível; sem ele,
 o código usa o negativo do ID do processo e preserva o vínculo no payload.
 
-A janela diária retoma a cobertura com sobreposição de dois dias. A descoberta
+A janela diária retoma a cobertura com sobreposição de dois dias; sem checkpoint,
+começa 14 dias atrás. Uma execução que terminou em falha é reaproveitada no
+disparo seguinte, sem nova descoberta, até que seus itens sejam concluídos.
+A descoberta
 persiste itens antes do processamento em lotes, dez por padrão. Somente descoberta
 completa e itens sem falhas permitem avançar o checkpoint. Proposições conhecidas
 são atualizadas sem reaplicar o filtro de descoberta, inclusive antigas e não
@@ -30,8 +33,10 @@ aprovadas; `is_approved` e anotações humanas não são substituídos pela cole
 Para novas proposições, `theme_assert` consulta `RelevanceTerm` no banco, com
 vocabulário padrão como fallback. Verifica palavras inteiras e expressões
 completas, sem diferenciar caixa e preservando acentos; combinações explícitas
-exigem todos os componentes. Ementa e ementa detalhada são verificadas primeiro.
-Sem correspondência, tenta extrair o inteiro teor antes de descartar o item.
+exigem todos os componentes; uma regra combinada sem ` + ` é tratada como
+`termo + MULHER`. As ementas são verificadas primeiro: ementa e ementa detalhada
+na Câmara; ementa do processo e da listagem no Senado. Sem correspondência,
+tenta extrair o inteiro teor antes de descartar o item.
 
 Sem link ou diante de CAPTCHA reconhecido, a descoberta decide só pelas ementas.
 Erro de rede, PDF inválido ou texto vazio são falhas retomáveis, não evidência de
@@ -82,6 +87,8 @@ Uma falha mantém a versão anterior e registra a tentativa malsucedida.
 
 Pedidos de IA são únicos por proposição, hash de texto e configuração do modelo.
 Mudança apenas de URL, status ou metadados não reclassifica texto idêntico.
+A configuração inclui modelo, revisão e limiar; mudá-la torna os pedidos
+pendentes `superseded` e exige reclassificação explícita.
 Resultados existentes podem ser reutilizados. Antes e depois da inferência,
 versão/configuração são verificadas para impedir aplicação de resultados antigos.
 A baseline histórica registra conteúdo sem iniciar uma classificação em massa.
@@ -110,14 +117,23 @@ Horários padrão do Beat em `America/Sao_Paulo`:
 | 06:45 | Preparação de até 600 lacunas de avaliação |
 | A cada 15 minutos | Recuperação de trabalho pendente, falho ou abandonado |
 
+A tabela cobre a ingestão; a agenda completa, com alertas e newsletter, está em
+[operacao.md](../operacao.md#agenda-do-celery-beat).
+
 A reconciliação revisita registros sem verificação ou anteriores a sete dias,
-incluindo checagem de documentos. Pedidos/documentos abandonados há 90 minutos
-podem ser retomados; a recuperação automática limita tentativas a três.
+incluindo checagem de documentos. O limite de 600 é diário; com `full_baseline`
+(`bootstrap` e `catchup`) o teto é 100000 enquanto a baseline não termina.
+Pedidos/documentos abandonados há 90 minutos podem ser retomados; a recuperação
+automática limita tentativas a três e processa até 100 documentos e 100 pedidos
+por execução.
 
 `ingestion_sync` oferece `status`, `daily`, `bootstrap`, `retry` e `catchup`.
-O feed do Senado é limitado a 30 dias; `catchup` reinicia cobertura recente e
-audita o inventário conhecido, sem afirmar continuidade sobre a lacuna nem
-recuperação de proposições desconhecidas fora da janela.
+O feed do Senado é limitado a 30 dias. `catchup` zera todos os checkpoints,
+remove `reconciled_at` de todas as proposições e enfileira ingestão e
+reconciliação completa; reinicia a cobertura recente e audita o inventário
+conhecido, sem afirmar continuidade sobre a lacuna nem recuperação de
+proposições desconhecidas fora da janela. O guia operacional está em
+[ingestao.md](../ingestao.md).
 
 `classification_backfill` oferece `preview`, `status`, `queue` e `retry`. Usa
 somente texto já armazenado e exclui qualquer anotação humana, revisão legada
@@ -138,10 +154,12 @@ link/CAPTCHA pode perder relevância presente só no PDF. Cobertura de atividade
 extração e IA são medidas separadas; nenhuma equivale a completude absoluta das
 fontes. A truncagem do modelo limita o texto efetivamente considerado.
 
-As rotinas legadas de carga/reparo ainda esperam CSVs em `tmp/` e `data/`, removidos
-do repositório. Sua existência no código não significa execução autossuficiente;
-as entradas precisam ser fornecidas externamente. A migração histórica de
-categorias também consulta o mapa CSV quando há anotações pendentes de categoria.
+O banco é a referência dos dados. As cargas históricas por planilha já foram
+aplicadas, e suas rotinas, junto com os crosswalks em CSV, foram removidas. O
+enriquecimento de parlamentares identifica pessoas apenas por evidência oficial
+persistida (mandatos e perfis por fonte), nunca só pelo nome. Uma pessoa sem
+essa evidência gera novo cadastro, que precisa ser unificado manualmente se for
+duplicata.
 
 ## Referências da implementação
 
