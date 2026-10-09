@@ -114,8 +114,18 @@ def test_dry_run_never_persists_or_calls_external_services(monkeypatch):
         "apps.newsletters.management.commands.weekly_newsletter.refresh_batch", refresh
     )
     output = StringIO()
-    call_command("weekly_newsletter", week_start=date(2026, 9, 28), dry_run=True, stdout=output)
+    errors = StringIO()
+    call_command(
+        "weekly_newsletter",
+        week_start=date(2026, 9, 28),
+        dry_run=True,
+        stdout=output,
+        stderr=errors,
+    )
     assert "Radar da Câmara" in output.getvalue()
+    # Sem ingestão registrada, a prévia mostra o mesmo aviso do relatório real.
+    assert "Coleta incompleta" in output.getvalue()
+    assert "baseline_pending" in errors.getvalue()
     assert WeeklyReport.objects.count() == 0
     refresh.assert_not_called()
 

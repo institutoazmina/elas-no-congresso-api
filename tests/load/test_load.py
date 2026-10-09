@@ -12,7 +12,7 @@ class APILoadUser(HttpUser):
     @task(10)
     def list_propositions(self):
         with self.client.get(
-            "/api/v1/propositions",
+            "/api/v1/propositions/",
             catch_response=True,
             name="/propositions [list]"
         ) as resp:
@@ -24,7 +24,7 @@ class APILoadUser(HttpUser):
     @task(5)
     def list_propositions_with_query(self):
         with self.client.get(
-            "/api/v1/propositions?q=saude",
+            "/api/v1/propositions/?q=saude",
             catch_response=True,
             name="/propositions [search]"
         ) as resp:
@@ -50,7 +50,7 @@ class APILoadUser(HttpUser):
     @task(2)
     def list_parliamentarians(self):
         with self.client.get(
-            "/api/v1/parliamentarians",
+            "/api/v1/legislatures/parliamentarians",
             catch_response=True,
             name="/parliamentarians"
         ) as resp:
@@ -62,7 +62,7 @@ class APILoadUser(HttpUser):
     @task(2)
     def list_themes(self):
         with self.client.get(
-            "/api/v1/themes",
+            "/api/v1/taxonomy/themes",
             catch_response=True,
             name="/themes"
         ) as resp:
@@ -74,7 +74,7 @@ class APILoadUser(HttpUser):
     @task(1)
     def list_parties(self):
         with self.client.get(
-            "/api/v1/parties",
+            "/api/v1/legislatures/parties",
             catch_response=True,
             name="/parties"
         ) as resp:

@@ -47,6 +47,16 @@ def enqueue_match_on_annotation(sender, instance, **kwargs):
     invalidate_activity_cache([instance.proposition])
 
 
+@receiver(post_delete, sender="propositions.PropositionAnnotation")
+def invalidate_activity_after_annotation_delete(sender, instance, **kwargs):
+    """Excluir a anotação devolve a proposição à avaliação da QuitérIA ou a
+    "sem avaliação"; a ingestão nunca exclui anotações."""
+    from .activity import invalidate_activity_cache
+    from .models import Proposition
+
+    invalidate_activity_cache(Proposition.objects.filter(pk=instance.proposition_id))
+
+
 @receiver(post_save, sender="propositions.PropositionAnalysis")
 def invalidate_activity_after_quiteria_analysis(sender, instance, **kwargs):
     """A conclusão da QuitérIA altera categoria, avaliação e avaliadora públicas."""

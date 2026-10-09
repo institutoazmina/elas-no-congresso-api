@@ -76,3 +76,10 @@ PASSWORD_HASHERS = [
 ]
 
 INGESTION_REQUESTS_PER_SECOND = 0
+
+# Testes não dependem de `collectstatic`: o manifesto do WhiteNoise só existe
+# depois do build e ficaria desatualizado a cada asset novo.
+STORAGES = {
+    **STORAGES,  # noqa: F405
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}

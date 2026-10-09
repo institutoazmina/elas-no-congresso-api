@@ -43,8 +43,10 @@ def send_alert_email(subscription_id: int, proposition_id: int):
         or not Proposition.objects.filter(pk=proposition_id, is_approved=True).exists()
     ):
         return
+    # Histórico por endereço, igual ao resumo: várias inscrições recebem uma vez.
     if AlertDelivery.objects.filter(
-        subscription_id=subscription_id, proposition_id=proposition_id
+        subscription__email=Subscription.objects.filter(pk=subscription_id).values("email")[:1],
+        proposition_id=proposition_id,
     ).exists():
         return
     PendingAlert.objects.get_or_create(
@@ -266,5 +268,9 @@ def cleanup_unconfirmed_subscriptions():
     from apps.subscriptions.models import Subscription
 
     cutoff = timezone.now() - timedelta(hours=settings.SUBSCRIPTION_CONFIRM_TTL_HOURS)
-    deleted, _ = Subscription.objects.filter(is_active=False, created_at__lt=cutoff).delete()
+    # Só pedidos nunca confirmados: inscrições canceladas guardam o histórico de
+    # entregas e mantêm válido o link de cancelamento dos e-mails já enviados.
+    deleted, _ = Subscription.objects.filter(
+        is_active=False, confirmed_at__isnull=True, created_at__lt=cutoff
+    ).delete()
     logger.info("Cleaned up %d unconfirmed subscriptions", deleted)

@@ -1,7 +1,7 @@
 # Kamal 2 deploy — elas-no-congresso
 # Colocation no EC2 AzMina-Mautic-et-all (x86_64) junto de mautic/metabase/elasnacamera.
 # Padrão do host: SEM kamal-proxy (porta 80 é do nginx do host) — publica numa porta
-# local e a borda é o Cloudflare Tunnel (igual metabase). Ver ec2-fit.md.
+# local e a borda é o Cloudflare Tunnel (igual metabase).
 # Repo é open source: nenhum host/endpoint/credencial fica neste arquivo.
 service: elas-no-congresso
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin, TabularInline
 
+from .admin_cache import ActivityCacheAdminMixin
 from .models import (
     AssessmentOrganization,
     Proposition,
@@ -89,7 +90,7 @@ class PropositionAdmin(ModelAdmin):
 
 
 @admin.register(PropositionEvent)
-class PropositionEventAdmin(ModelAdmin):
+class PropositionEventAdmin(ActivityCacheAdminMixin, ModelAdmin):
     list_display = ["proposition", "event_at", "description"]
     autocomplete_fields = ["proposition"]
 
@@ -108,7 +109,7 @@ class PropositionAnalysisAdmin(ModelAdmin):
 
 
 @admin.register(AssessmentOrganization)
-class AssessmentOrganizationAdmin(ModelAdmin):
+class AssessmentOrganizationAdmin(ActivityCacheAdminMixin, ModelAdmin):
     list_display = ["name", "created_at"]
     search_fields = ["name"]
 

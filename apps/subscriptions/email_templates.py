@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+import unicodedata
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urljoin
@@ -50,8 +52,18 @@ def _render_email(name: str, context: dict) -> str:
     return _compiled_template(name).render(Context(context))
 
 
-def _proposition_url(proposition_id: int) -> str:
-    return f"{settings.SITE_BASE_URL.rstrip('/')}/api/v1/propositions/{proposition_id}"
+def _route_slug(value: object) -> str:
+    folded = unicodedata.normalize("NFD", str(value or ""))
+    folded = "".join(c for c in folded if not unicodedata.combining(c)).lower()
+    return re.sub(r"[^a-z0-9]+", "-", folded).strip("-")
+
+
+def _proposition_url(proposition) -> str:
+    """Página pública da proposição, com a mesma rota do site (`propositionRoute`)."""
+    slug = _route_slug(proposition.number_label)
+    house = _route_slug(proposition.house)
+    path = f"/atividade-legislativa/proposicao/{f'{house}-' if house else ''}{slug}"
+    return f"{settings.PUBLIC_SITE_URL.rstrip('/')}{path}"
 
 
 def _authors(proposition) -> tuple[str, str]:
@@ -76,7 +88,7 @@ def _authors(proposition) -> tuple[str, str]:
 
 def _proposition_context(proposition) -> dict[str, str]:
     author, party_state = _authors(proposition)
-    fallback_url = _proposition_url(proposition.pk)
+    fallback_url = _proposition_url(proposition)
     return {
         "titulo_curto": proposition.number_label,
         "tipo": proposition.type_code.upper(),

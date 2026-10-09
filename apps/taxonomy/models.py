@@ -1,5 +1,6 @@
 from django.db import models
 
+from apps.core.enums import RelationType
 from apps.propositions.models import Proposition
 
 
@@ -98,7 +99,9 @@ class PropositionRelation(models.Model):
         on_delete=models.CASCADE,
         related_name="relations_to",
     )
-    relation_type = models.CharField(verbose_name="Tipo de relação", max_length=20)
+    relation_type = models.CharField(
+        verbose_name="Tipo de relação", max_length=20, choices=RelationType.choices
+    )
     similarity_score = models.FloatField(
         verbose_name="Pontuação de similaridade", null=True, blank=True
     )
@@ -118,9 +121,7 @@ class PropositionRelation(models.Model):
                 name="proposition_relations_no_self",
             ),
             models.CheckConstraint(
-                condition=models.Q(
-                    relation_type__in=["appended", "similar", "predecessor", "successor"]
-                ),
+                condition=models.Q(relation_type__in=RelationType.values),
                 name="proposition_relations_type_check",
             ),
         ]

@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.utils import timezone
 from ninja import Router
 from ninja.throttling import AnonRateThrottle
 
@@ -41,17 +40,11 @@ def create_subscription(request, payload: SubscriptionCreateSchema):
 
 @router.get("/confirm/{token}", auth=None, include_in_schema=False)
 def confirm_subscription(request, token: str):
-    try:
-        sub = Subscription.objects.get(confirm_token=token, is_active=False)
-    except Subscription.DoesNotExist:
-        return _back_home("invalido")
+    from .service import confirm_subscriptions
 
     # Quem confirma confirma o endereço, não a linha: um clique vale para as
     # duas frequências criadas no mesmo envio.
-    Subscription.objects.filter(email=sub.email, is_active=False).update(
-        is_active=True, confirmed_at=timezone.now()
-    )
-    return _back_home("confirmado")
+    return _back_home("confirmado" if confirm_subscriptions(token) else "invalido")
 
 
 @router.get("/unsubscribe/{token}", auth=None, include_in_schema=False)

@@ -131,13 +131,23 @@ class Command(BaseCommand):
                 if end > today:
                     raise CommandError("A semana deve estar encerrada.")
             if options["dry_run"]:
-                markdown, html = render(build_snapshot(start, end))
+                # Somente leitura: a cobertura entra no aviso, sem gravar relatório.
+                coverage = source_coverage(start, end)
+                complete = coverage_complete(coverage)
+                if not complete:
+                    self.stderr.write(f"Cobertura incompleta: {coverage['discovery']}")
+                markdown, html = render(build_snapshot(start, end), complete)
                 self.stdout.write(html if options["format"] == "html" else markdown)
                 return
             try:
                 report = get_report(start, end)
             except ValueError as exc:
                 raise CommandError(str(exc)) from exc
+            if options["refresh"] and report.status != WeeklyReport.Status.COLLECTING:
+                # Repetir o comando é idempotente; só avisa que nada foi recoletado.
+                self.stderr.write(
+                    f"Relatório {report.pk} já congelado; --refresh não altera o conteúdo."
+                )
             if report.status == WeeklyReport.Status.COLLECTING:
                 results = {}
                 ids = (

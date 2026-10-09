@@ -1,15 +1,11 @@
-"""Preenche `category` a partir de tmp/categories-2026.csv e fecha em NOT NULL.
+"""Fecha `category` em NOT NULL com a restrição das Categorias 2026.
 
-O backfill vive DENTRO da migração de propósito: um `migrate` deixa qualquer
-ambiente consistente, e se algum par (proposição, avaliadora) não casar a
-migração aborta antes do ALTER — em vez de o NOT NULL falhar com uma mensagem
-do Postgres que não diz qual linha ficou de fora.
-
-Casamento por (type_code, number, year, organization), nunca pelo `id` da
-planilha — ver apps/propositions/categories.py.
+O preenchimento histórico a partir de planilha já foi aplicado nos ambientes
+existentes; a planilha não faz mais parte do repositório. Em banco novo não há
+anotações, e a migração só altera o schema. Se houver anotação sem categoria,
+a migração aborta antes do ALTER, indicando quais linhas precisam de correção
+no banco.
 """
-
-from collections import defaultdict
 
 from django.db import migrations, models
 
@@ -33,46 +29,18 @@ def backfill(apps, schema_editor):
         model.objects.filter(category__isnull=True).values_list(
             'id', 'proposition__type_code', 'proposition__number',
             'proposition__year', 'organization__name',
-        )
+        )[:21]
     )
-    if not pendentes:
-        return
-
-    # Import tardio: em banco vazio (testes, ambiente novo) nem se lê o arquivo.
-    from apps.propositions.categories import load_category_map, proposition_fallback
-
-    mapa = load_category_map()
-    fallback = proposition_fallback(mapa)
-    por_categoria = defaultdict(list)
-    orfas = []
-    por_fallback = 0
-    for pk, type_code, number, year, org in pendentes:
-        prop = ((type_code or '').upper(), number, year)
-        categoria = mapa.get((*prop, org))
-        if categoria is None:
-            # Avaliadora divergente entre planilha e banco: cai na categoria da
-            # proposição, se ela for única. Ambígua ou desconhecida -> órfã.
-            categoria = fallback.get(prop)
-            por_fallback += categoria is not None
-        if categoria is None:
-            orfas.append(f"  {type_code} {number}/{year} · {org} (pk={pk})")
-        else:
-            por_categoria[categoria].append(pk)
-
-    if orfas:
+    if pendentes:
+        orfas = [
+            f"  {type_code} {number}/{year} · {org} (pk={pk})"
+            for pk, type_code, number, year, org in pendentes[:20]
+        ]
         raise RuntimeError(
-            f"{len(orfas)} anotações sem categoria em tmp/categories-2026.csv — "
-            "regenere o mapa com scripts/build_category_map.py ou trate os casos:\n"
-            + "\n".join(orfas[:20])
-            + (f"\n  ... (+{len(orfas) - 20})" if len(orfas) > 20 else "")
+            "Anotações sem categoria; preencha `category` no banco antes de migrar:\n"
+            + "\n".join(orfas)
+            + ("\n  ..." if len(pendentes) > 20 else "")
         )
-
-    for categoria, pks in por_categoria.items():
-        model.objects.filter(pk__in=pks).update(category=categoria)
-    print(
-        f"  categorias preenchidas: {len(pendentes)} "
-        f"({por_fallback} pela categoria da proposição, avaliadora divergente)"
-    )
 
 
 class Migration(migrations.Migration):

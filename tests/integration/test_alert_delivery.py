@@ -521,3 +521,37 @@ def test_beat_usa_horario_configurado_no_ambiente(configured, expected):
         [sys.executable, "-c", code], env=env, capture_output=True, text=True, check=True
     )
     assert result.stdout.splitlines() == [expected, "America/Sao_Paulo"]
+
+
+@pytest.mark.django_db
+def test_sem_tramitacao_o_link_aponta_para_a_pagina_publica(settings):
+    from apps.subscriptions.email_templates import render_daily_digest
+
+    settings.PUBLIC_SITE_URL = "https://www.elasnocongresso.com.br/"
+    prop = _make_proposition(
+        house="senado",
+        number_label="PL 2628/2022 (Substitutivo-CD)",
+        tramitation_url=None,
+    )
+
+    html = render_daily_digest(_make_subscription(), [prop])
+
+    assert (
+        'href="https://www.elasnocongresso.com.br/atividade-legislativa/proposicao/'
+        'senado-pl-2628-2022-substitutivo-cd"'
+    ) in html
+    assert "/api/v1/propositions/" not in html
+
+
+@pytest.mark.django_db
+def test_faixa_do_quiteriometro_nao_casa_proposicao_sem_analise():
+    from apps.subscriptions.service import ast_matches_proposition
+
+    prop = _make_proposition()
+    faixa = {"field": "quiteriometro", "op": "between", "value": [-10, 10]}
+
+    assert not ast_matches_proposition(faixa, prop.pk)
+    PropositionAnalysis.objects.create(
+        proposition=prop, analysis_status=PropositionAnalysis.Status.SUCCEEDED, quiterometer_score=0.3
+    )
+    assert ast_matches_proposition(faixa, prop.pk)

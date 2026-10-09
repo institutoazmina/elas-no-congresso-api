@@ -19,8 +19,10 @@ def register_subscriptions(email: str, alerts: list[dict]) -> list[int]:
     from .models import Subscription
 
     # Reinscrever é *substituir*: quem volta ao modal está reconfigurando o que
-    # recebe, não somando uma segunda inscrição no mesmo endereço.
-    Subscription.objects.filter(email=email).delete()
+    # recebe, não somando uma segunda inscrição no mesmo endereço. A troca só
+    # acontece na confirmação; até lá, apenas pedidos anteriores ainda não
+    # confirmados são descartados e as inscrições confirmadas seguem valendo.
+    Subscription.objects.filter(email=email, confirmed_at__isnull=True).delete()
 
     accepted_at = timezone.now()
     created = []
@@ -38,6 +40,47 @@ def register_subscriptions(email: str, alerts: list[dict]) -> list[int]:
         # Store compiled tsquery in DB as text; matching done via raw SQL cast
         created.append(sub.pk)
     return created
+
+
+def confirm_subscriptions(token: str) -> bool:
+    """Ativa o pedido pendente do endereço e substitui as inscrições anteriores.
+
+    Só confirma pedidos nunca confirmados e dentro do prazo, então um link
+    antigo não reativa quem cancelou. O histórico de entregas das inscrições
+    substituídas passa para a nova, para que proposições já enviadas não se
+    repitam.
+    """
+    from datetime import timedelta
+
+    from django.conf import settings
+    from django.db import transaction
+
+    from .models import AlertDelivery, Subscription
+
+    expires_after = timezone.now() - timedelta(hours=settings.SUBSCRIPTION_CONFIRM_TTL_HOURS)
+    with transaction.atomic():
+        sub = (
+            Subscription.objects.select_for_update()
+            .filter(confirm_token=token, confirmed_at__isnull=True, created_at__gte=expires_after)
+            .first()
+        )
+        if sub is None:
+            return False
+
+        pending = Subscription.objects.filter(email=sub.email, confirmed_at__isnull=True)
+        replaced = Subscription.objects.filter(email=sub.email, confirmed_at__isnull=False)
+        delivered = set(
+            AlertDelivery.objects.filter(subscription__in=replaced).values_list(
+                "proposition_id", flat=True
+            )
+        )
+        AlertDelivery.objects.bulk_create(
+            [AlertDelivery(subscription=sub, proposition_id=pk) for pk in delivered],
+            ignore_conflicts=True,
+        )
+        replaced.delete()
+        pending.update(is_active=True, confirmed_at=timezone.now())
+    return True
 
 
 def match_document(doc: dict, frequency: str | None = None) -> list[int]:

@@ -319,8 +319,24 @@ def test_cancelar_encerra_todas_as_frequencias_do_email(client, outbox, settings
         {"field": "tema", "op": "explodir", "value": "saude"},
         {"field": "ano", "op": "eq", "value": "não é número"},
         {"op": "AND", "children": [{"field": "tema", "op": "cont", "value": "x"}]},
+        {},
+        {"op": "AND", "children": []},
+        {"field": "ementa", "op": "contains", "value": "mulher"},
+        {"field": "celeridade", "op": "eq", "value": 1},
+        {"field": "categoria", "op": "in", "value": []},
+        {"field": "casa", "op": "gte", "value": "camara"},
     ],
-    ids=["operador-desconhecido", "numero-invalido", "operador-ruim-aninhado"],
+    ids=[
+        "operador-desconhecido",
+        "numero-invalido",
+        "operador-ruim-aninhado",
+        "vazio",
+        "and-sem-filhos",
+        "campo-desconhecido",
+        "celeridade-sem-documento",
+        "in-vazio",
+        "faixa-em-campo-textual",
+    ],
 )
 def test_ast_malformado_e_recusado_sem_500(client, outbox, ast):
     response = _post(client, alerts=[{"frequency": "weekly", "ast": ast}])
@@ -368,3 +384,96 @@ def test_frequencia_desconhecida_e_recusada(client, outbox):
 
     assert response.status_code == 422
     assert not Subscription.objects.exists()
+
+
+@pytest.mark.django_db
+def test_conectivo_em_minusculas_e_aceito(client, outbox):
+    ast = {"op": "and", "children": [{"field": "casa", "op": "eq", "value": "camara"}]}
+
+    response = _post(client, alerts=[{"frequency": "daily", "ast": ast}])
+
+    assert response.status_code == 201
+
+
+def _confirmar(client, email="leitora@example.com"):
+    pendente = Subscription.objects.filter(email=email, confirmed_at__isnull=True).first()
+    return client.get(f"/api/v1/subscriptions/confirm/{pendente.confirm_token}")
+
+
+@pytest.mark.django_db
+def test_link_antigo_de_confirmacao_nao_reativa_quem_cancelou(client, outbox, settings):
+    settings.PUBLIC_SITE_URL = SITE_ORIGIN
+    _post(client)
+    sub = Subscription.objects.get(email="leitora@example.com")
+    client.get(f"/api/v1/subscriptions/confirm/{sub.confirm_token}")
+    client.get(f"/api/v1/subscriptions/unsubscribe/{sub.unsubscribe_token}")
+
+    response = client.get(f"/api/v1/subscriptions/confirm/{sub.confirm_token}")
+
+    assert response["Location"] == f"{SITE_ORIGIN}/?subscription=invalido"
+    assert not Subscription.objects.filter(email="leitora@example.com", is_active=True).exists()
+
+
+@pytest.mark.django_db
+def test_link_de_confirmacao_expira_no_prazo(client, outbox, settings):
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    settings.PUBLIC_SITE_URL = SITE_ORIGIN
+    _post(client)
+    vencido = timezone.now() - timedelta(hours=settings.SUBSCRIPTION_CONFIRM_TTL_HOURS + 1)
+    Subscription.objects.update(created_at=vencido)
+
+    response = _confirmar(client)
+
+    assert response["Location"] == f"{SITE_ORIGIN}/?subscription=invalido"
+    assert not Subscription.objects.filter(is_active=True).exists()
+
+
+@pytest.mark.django_db
+def test_reinscrever_mantem_alertas_ate_confirmar_e_preserva_historico(client, outbox):
+    from django.utils import timezone
+
+    from apps.subscriptions.models import AlertDelivery
+
+    _post(client, alerts=[{"frequency": "daily", "ast": {"field": "casa", "op": "eq", "value": "camara"}}])
+    _confirmar(client)
+    antiga = Subscription.objects.get(email="leitora@example.com")
+    prop = Proposition.objects.create(
+        external_id=9101, house="camara", type_code="PL", number_label="PL 9101/2026",
+        number=9101, year=2026, ementa="Ementa", is_approved=True,
+        presented_at=timezone.localdate(),
+    )
+    AlertDelivery.objects.create(subscription=antiga, proposition=prop)
+
+    _post(client, alerts=[{"frequency": "daily", "ast": {"field": "casa", "op": "eq", "value": "senado"}}])
+
+    antiga.refresh_from_db()
+    assert antiga.is_active
+
+    _confirmar(client)
+
+    nova = Subscription.objects.get(email="leitora@example.com")
+    assert nova.pk != antiga.pk
+    assert nova.is_active and nova.ast["value"] == "senado"
+    assert AlertDelivery.objects.filter(subscription=nova, proposition=prop).exists()
+
+
+@pytest.mark.django_db
+def test_limpeza_remove_pendentes_mas_preserva_canceladas(client, outbox):
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    from apps.subscriptions.tasks import cleanup_unconfirmed_subscriptions
+
+    antigo = timezone.now() - timedelta(days=10)
+    cancelada = _make_subscription(email="cancelou@example.com", confirmed_at=antigo)
+    pendente = _make_subscription(email="nunca@example.com")
+    Subscription.objects.update(created_at=antigo)
+
+    cleanup_unconfirmed_subscriptions()
+
+    assert Subscription.objects.filter(pk=cancelada.pk).exists()
+    assert not Subscription.objects.filter(pk=pendente.pk).exists()

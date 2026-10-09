@@ -248,3 +248,14 @@ def test_on_time_delivery_clock(report, monkeypatch):
     monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 5, 6, 46, tzinfo=REPORT_TZ))
     result = deliver_report(report.pk, lambda _: client())
     assert result.deadline_missed is False
+
+
+@pytest.mark.django_db
+def test_custom_period_has_no_monday_deadline(monkeypatch):
+    from apps.newsletters.report import REPORT_TZ
+
+    custom = freeze_report(get_report(date(2026, 9, 29), date(2026, 10, 7)).pk, True)
+    monkeypatch.setattr(timezone, "now", lambda: datetime(2026, 10, 8, 12, tzinfo=REPORT_TZ))
+    result = deliver_report(custom.pk, lambda _: client())
+    assert result.status == WeeklyReport.Status.DELIVERED
+    assert result.deadline_missed is False

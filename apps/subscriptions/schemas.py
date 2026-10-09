@@ -23,9 +23,10 @@ class AlertSchema(Schema):
     def _compilable_ast(cls, value: dict) -> dict:
         """O AST vem de fora, então compila aqui: erro vira 422 em vez de 500
         estourando lá no meio do register."""
-        from .compiler import ast_to_tsquery
+        from .compiler import ast_to_tsquery, validate_ast
 
         try:
+            validate_ast(value)
             ast_to_tsquery(value)
         except (ValueError, TypeError, KeyError, IndexError) as exc:
             raise ValueError(f"filtro inválido: {exc}") from exc

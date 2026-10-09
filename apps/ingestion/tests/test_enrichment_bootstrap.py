@@ -243,55 +243,7 @@ def test_ambiguous_name_creates_distinct_parliamentarian(monkeypatch):
 
 
 @pytest.mark.django_db
-def test_exact_trusted_csv_identity_reuses_existing_parliamentarian(monkeypatch):
-    _current_legislature()
-    existing = Parliamentarian.objects.create(full_name="Átila Lira")
-    camara = _BootstrapClient(
-        [_camara_member(external_id=74459, name="Atila Lira")],
-        {74459: _camara_profile_named(74459, "Átila Lira")},
-    )
-    _prepare_task(monkeypatch, camara, _BootstrapClient([], {}))
-
-    tasks.enrich_parliamentarian_profiles()
-
-    assert Parliamentarian.objects.count() == 1
-    assert ParliamentarianTerm.objects.get().parliamentarian_id == existing.pk
-
-
-@pytest.mark.django_db
-def test_old_csv_identity_does_not_merge_live_atila_id(monkeypatch):
-    _current_legislature()
-    old = Parliamentarian.objects.create(full_name="Átila Lira")
-    camara = _BootstrapClient(
-        [_camara_member(external_id=123086, name="Atila Lira")],
-        {123086: _camara_profile_named(123086, "Átila Lira")},
-    )
-    _prepare_task(monkeypatch, camara, _BootstrapClient([], {}))
-
-    tasks.enrich_parliamentarian_profiles()
-
-    assert Parliamentarian.objects.count() == 2
-    assert not ParliamentarianTerm.objects.filter(parliamentarian=old).exists()
-
-
-@pytest.mark.django_db
-def test_curated_crosswalk_reuses_camara_base_row_for_senado_transition(monkeypatch):
-    _current_legislature()
-    existing = Parliamentarian.objects.create(full_name="Alan Rick")
-    senado = _BootstrapClient(
-        [_senado_member(external_id="5672", public_name="Alan Rick", full_name="Alan Rick")],
-        {5672: _senado_profile(5672, "Alan Rick", "Alan Rick")},
-    )
-    _prepare_task(monkeypatch, _BootstrapClient([], {}), senado)
-
-    tasks.enrich_parliamentarian_profiles()
-
-    assert Parliamentarian.objects.count() == 1
-    assert ParliamentarianTerm.objects.get(house="senado", external_id=5672).parliamentarian_id == existing.pk
-
-
-@pytest.mark.django_db
-def test_profile_source_identity_precedes_name_and_csv(monkeypatch):
+def test_profile_source_identity_precedes_name(monkeypatch):
     _current_legislature()
     existing = Parliamentarian.objects.create(full_name="Pessoa Fonte")
     ParliamentarianProfileSource.objects.create(
@@ -483,10 +435,9 @@ def test_term_identity_across_any_legislature_precedes_names(monkeypatch):
 
 
 @pytest.mark.django_db
-def test_missing_crosswalk_disables_name_merge(monkeypatch, tmp_path):
+def test_matching_name_without_official_evidence_creates_new_person(monkeypatch):
     _current_legislature()
     existing = Parliamentarian.objects.create(full_name="Atila Lira")
-    monkeypatch.setattr(tasks, "_PARLIAMENTARIANS_CSV", tmp_path / "missing.csv")
     camara = _BootstrapClient(
         [_camara_member(external_id=74459, name="Atila Lira")],
         {74459: _camara_profile_named(74459, "Atila Lira")},

@@ -7,6 +7,9 @@ from typing import Any
 
 def matches(ast: dict, proposition: dict) -> bool:
     op = ast.get("op")
+    # O compilador aceita conectivos em qualquer caixa; o oráculo também.
+    if isinstance(op, str) and op.upper() in ("AND", "OR", "NOT"):
+        op = op.upper()
 
     if op == "AND":
         return all(matches(child, proposition) for child in ast["children"])

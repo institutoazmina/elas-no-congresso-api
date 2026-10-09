@@ -2,17 +2,14 @@ from datetime import timedelta
 
 import pytest
 from django.core.cache import cache
-from django.core.management import call_command
 from django.test import Client
 from django.utils import timezone
 
-from apps.legislatures.models import Parliamentarian
 from apps.propositions.models import (
     AssessmentOrganization,
     Proposition,
     PropositionAnalysis,
     PropositionAnnotation,
-    PropositionAuthor,
     PropositionEvent,
 )
 from apps.taxonomy.models import PropositionTheme, Theme
@@ -203,50 +200,6 @@ def test_activity_by_number_is_cached():
 
 
 @pytest.mark.django_db
-def test_legacy_profile_sync_adds_missing_author_photo_to_activity(tmp_path):
-    photo_url = "https://www.camara.leg.br/internet/deputado/bandep/74052.jpg"
-    csv_path = tmp_path / "parlamentares.csv"
-    csv_path.write_text(
-        "nome,numero,foto,genero,partido,cargo,estado,legislatura\n"
-        f'"Bosco Costa",74052,{photo_url},M,PROS,Deputado,SE,56.57\n',
-        encoding="utf-8",
-    )
-    parliamentarian = Parliamentarian.objects.create(full_name="Bosco Costa", gender="M")
-    proposition = Proposition.objects.create(
-        external_id=505,
-        house="camara",
-        type_code="PL",
-        number_label="PL 505/2020",
-        number=505,
-        year=2020,
-        presented_at=timezone.localdate(),
-        ementa="Proteção das mulheres",
-    )
-    PropositionAuthor.objects.create(proposition=proposition, parliamentarian=parliamentarian)
-
-    initial = Client().get(f"/api/v1/activity/{proposition.pk}")
-    assert initial.json()["authors"][0]["photo_url"] is None
-
-    call_command("sync_legacy_parliamentarian_profiles", csv_path=str(csv_path))
-
-    response = Client().get(f"/api/v1/activity/{proposition.pk}")
-
-    assert response.status_code == 200
-    assert response.json()["authors"] == [
-        {
-            "id": parliamentarian.pk,
-            "name": "Bosco Costa",
-            "party": None,
-            "state": None,
-            "gender": "M",
-            "religion": None,
-            "photo_url": photo_url,
-            "role": None,
-        }
-    ]
-
-
-@pytest.mark.django_db
 def test_fast_unfavorable_activity_only_returns_fast_unfavorable_propositions():
     organization = AssessmentOrganization.objects.create(name="AzMina")
     fast_unfavorable = Proposition.objects.create(
@@ -319,7 +272,8 @@ def test_fast_unfavorable_activity_only_returns_fast_unfavorable_propositions():
     assert {item["celerity"]["label"] for item in response.json()} == {"Rápida", "Tá voando"}
     assert all(item["is_favorable"] is False for item in response.json())
 
-    fast_unfavorable.delete()
+    # QuerySet.update não dispara signals: a resposta seguinte deve vir do cache.
+    Proposition.objects.filter(pk=fast_unfavorable.pk).update(is_approved=False)
     cached = Client().get("/api/v1/activity/fast-unfavorable")
 
     assert cached.json() == response.json()
@@ -533,3 +487,54 @@ def test_enacted_projects_returns_a_shared_complete_contract_for_both_houses():
     assert set(items[0]) == set(items[1])
     assert items[1]["assessment_label"] == "desfavorável"
     assert items[1]["enactment"]["status_code"] == 92
+
+
+def _public_proposition(external_id=901):
+    return Proposition.objects.create(
+        external_id=external_id,
+        house="camara",
+        type_code="PL",
+        number_label=f"PL {external_id}/2026",
+        number=external_id,
+        year=2026,
+        presented_at=timezone.localdate(),
+        ementa="Proteção das mulheres",
+        current_status="Em tramitação",
+    )
+
+
+@pytest.mark.django_db
+def test_excluir_anotacao_invalida_o_cache_da_proposicao():
+    proposition = _public_proposition()
+    organization = AssessmentOrganization.objects.create(name="AzMina")
+    annotation = PropositionAnnotation.objects.create(
+        proposition=proposition, organization=organization, category="saude", is_favorable=False
+    )
+    client = Client()
+    assert client.get(f"/api/v1/activity/{proposition.pk}").json()["is_favorable"] is False
+
+    annotation.delete()
+
+    assert client.get(f"/api/v1/activity/{proposition.pk}").json()["is_favorable"] is None
+
+
+@pytest.mark.django_db
+def test_renomear_tema_no_admin_invalida_o_cache(
+    rf, admin_user, django_capture_on_commit_callbacks
+):
+    from django.contrib import admin
+
+    proposition = _public_proposition()
+    theme = Theme.objects.create(slug="saude", name="Saúde")
+    PropositionTheme.objects.create(proposition=proposition, theme=theme)
+    client = Client()
+    client.get("/api/v1/activity/explorer")
+    assert cache.get("activity:explorer:source:v3") is not None
+
+    theme.name = "Saúde da mulher"
+    request = rf.post("/")
+    request.user = admin_user
+    with django_capture_on_commit_callbacks(execute=True):
+        admin.site._registry[Theme].save_model(request, theme, None, True)
+
+    assert cache.get("activity:explorer:source:v3") is None

@@ -1,13 +1,11 @@
 """Durable daily activity ingestion; substantive documents and AI use the ML queue."""
 
-import csv
 import logging
 import re
 import unicodedata
 from collections.abc import Mapping
 from contextlib import ExitStack
 from datetime import date, datetime, timedelta
-from pathlib import Path
 
 from celery import shared_task
 from django.conf import settings
@@ -201,8 +199,6 @@ _PROFILE_ENRICHMENT_LOCK_KEY = "ingestion:parliamentarian-profile-enrichment"
 _PROFILE_ENRICHMENT_LOCK_TIMEOUT = 60 * 60
 _CAMARA_PROFILE_BASE_URL = "https://dadosabertos.camara.leg.br/api/v2"
 _SENADO_PROFILE_BASE_URL = "https://legis.senado.leg.br/dadosabertos"
-_PARLIAMENTARIANS_CSV = Path(__file__).resolve().parents[2] / "data" / "parlamentares.csv"
-_IDENTITIES_CSV = Path(__file__).resolve().parents[2] / "data" / "parliamentarian_identities.csv"
 _EXPECTED_CURRENT_ROSTER = {"camara": 513, "senado": 81}
 
 
@@ -442,56 +438,6 @@ def _canonical_party_acronym(value: object) -> str:
     return acronym.upper()
 
 
-def _load_trusted_crosswalk() -> set[tuple[str, int, str]]:
-    if not _PARLIAMENTARIANS_CSV.is_file():
-        logger.warning("Crosswalk de parlamentares ausente: %s", _PARLIAMENTARIANS_CSV)
-        return set()
-
-    crosswalk = set()
-    try:
-        with _PARLIAMENTARIANS_CSV.open(encoding="utf-8", newline="") as source:
-            for row in csv.DictReader(source):
-                role = _normalized_name(row.get("cargo"))
-                photo = (_text(row.get("foto")) or "").casefold()
-                if "senador" in role and "camara.leg.br" in photo:
-                    house = "camara"
-                elif "senador" in role:
-                    house = "senado"
-                elif "deputado" in role:
-                    house = "camara"
-                else:
-                    house = None
-                name = _normalized_name(row.get("nome"))
-                try:
-                    external_id = int(row.get("numero", ""))
-                except (TypeError, ValueError):
-                    continue
-                if house and name:
-                    crosswalk.add((house, external_id, name))
-    except OSError:
-        logger.exception("Falha ao carregar crosswalk de parlamentares %s", _PARLIAMENTARIANS_CSV)
-        return set()
-
-    if not _IDENTITIES_CSV.is_file():
-        logger.warning("Crosswalk de transições ausente: %s", _IDENTITIES_CSV)
-        return crosswalk
-    try:
-        with _IDENTITIES_CSV.open(encoding="utf-8", newline="") as source:
-            for row in csv.DictReader(source):
-                name = _normalized_name(row.get("name"))
-                if not name:
-                    continue
-                for house, column in (("camara", "camara_id"), ("senado", "senado_id")):
-                    try:
-                        external_id = int(row.get(column, ""))
-                    except (TypeError, ValueError):
-                        continue
-                    crosswalk.add((house, external_id, name))
-    except OSError:
-        logger.exception("Falha ao carregar crosswalk de transições %s", _IDENTITIES_CSV)
-    return crosswalk
-
-
 class _BootstrapIndexes:
     """Indexes loaded once so member reconciliation never scans the full tables."""
 
@@ -510,23 +456,12 @@ class _BootstrapIndexes:
                 row["parliamentarian_id"]
             )
 
-        self.people_by_name: dict[str, set[int]] = {}
-        for row in Parliamentarian.objects.values("id", "full_name", "social_name"):
-            self.add_person(row["id"], row["full_name"], row["social_name"])
-
-        self.crosswalk = _load_trusted_crosswalk()
         self.parties = {}
         for party in Party.objects.all():
             key = party.acronym.casefold()
             current = self.parties.get(key)
             if current is None or party.acronym in {"PCdoB", "PODEMOS"}:
                 self.parties[key] = party
-
-    def add_person(self, person_id: int, full_name: object, social_name: object) -> None:
-        for name in (full_name, social_name):
-            normalized = _normalized_name(name)
-            if normalized:
-                self.people_by_name.setdefault(normalized, set()).add(person_id)
 
     def add_term(self, term: ParliamentarianTerm) -> None:
         self.term_people.setdefault((term.house, term.external_id), set()).add(
@@ -553,17 +488,9 @@ class _BootstrapIndexes:
         return term_id or source_id
 
     def resolve_person(self, *, house: str, external_id: int, fields: dict) -> int | None:
-        evidence_id = self._evidence_person(house=house, external_id=external_id)
-        if evidence_id is not None:
-            return evidence_id
-
-        for name in (fields["supplied_full_name"], fields["social_name"]):
-            normalized = _normalized_name(name)
-            if not normalized or (house, external_id, normalized) not in self.crosswalk:
-                continue
-            name_ids = self.people_by_name.get(normalized, set())
-            return next(iter(name_ids)) if len(name_ids) == 1 else None
-        return None
+        # Somente evidência oficial já persistida (mandatos e perfis por fonte)
+        # identifica a pessoa; o nome sozinho nunca reaproveita um cadastro.
+        return self._evidence_person(house=house, external_id=external_id)
 
     def validate_existing_person(self, *, house: str, external_id: int, person_id: int) -> None:
         evidence_id = self._evidence_person(house=house, external_id=external_id)
@@ -618,7 +545,6 @@ def _sync_current_member(
                 start_date=fields["start_date"],
                 end_date=None,
             )
-            indexes.add_person(parliamentarian_id, fields["full_name"], fields["social_name"])
             indexes.add_term(term)
             return term, created
 
@@ -1007,15 +933,15 @@ def enrich_parliamentarian_profiles() -> dict:
 # ── Câmara ───────────────────────────────────────────────────────────────────
 
 
-@shared_task(bind=True, max_retries=2, default_retry_delay=300)
-def ingest_camara(self):
+@shared_task
+def ingest_camara():
     from .sync import begin_daily
 
     return begin_daily("camara", CamaraClient)
 
 
-@shared_task(bind=True, max_retries=2, default_retry_delay=300)
-def ingest_senado(self):
+@shared_task
+def ingest_senado():
     from .sync import begin_daily
 
     return begin_daily("senado", SenadoClient)
@@ -1193,8 +1119,8 @@ def _enactment_fields(enactment: dict | None) -> dict:
 def refresh_enacted_propositions(queryset=None) -> dict:
     """Refresh official statuses for every proposition with a human assessment.
 
-    The daily Senate listing excludes closed matters, so this refresh follows the
-    saved process identifier instead of relying on ``/materia/tramitando``.
+    Senate propositions are refreshed through the saved process identifier, so
+    a proposition is updated even when it is outside the daily listing window.
     """
     if queryset is None:
         queryset = (
@@ -1281,21 +1207,3 @@ def classify_proposition(proposition_id: int):
         prop = Proposition.objects.select_for_update(of=("self",)).get(pk=proposition_id)
         if prop.current_content_id:
             request_analysis(prop, prop.current_content)
-
-
-# ── carga retroativa de anotações — JOB TEMPORÁRIO (remover após a carga) ─────
-
-
-@shared_task(bind=True)
-def backfill_annotations(self, reset: bool = True, start: int = 0, limit: int | None = None):
-    """Carga retroativa das anotações humanas (one-shot, sequencial).
-
-    Roda em processo no worker, gravando uma a uma (durável). Para retomar após
-    queda, disparar de novo com ``start=<última linha>`` e ``reset=False``.
-    """
-    from scripts.load_annotations import run
-
-    logger.info("[backfill] iniciando (reset=%s start=%s limit=%s)", reset, start, limit)
-    stats = run(reset=reset, start=start, limit=limit)
-    logger.info("[backfill] concluído: %s", stats)
-    return stats

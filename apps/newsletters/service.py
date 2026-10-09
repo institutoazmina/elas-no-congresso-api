@@ -82,7 +82,12 @@ def deliver_report(report_id, client_factory=DraftOnlyClient):
         client.verify(draft_id)
         report.status = WeeklyReport.Status.DELIVERED
         report.delivered_at = timezone.now()
-        report.deadline_missed = report.delivered_at >= datetime.combine(
+        # O prazo de segunda às 07:00 só existe para a semana padrão do Beat.
+        standard_week = (
+            report.week_start.weekday() == 0
+            and (report.week_end - report.week_start).days == 7
+        )
+        report.deadline_missed = standard_week and report.delivered_at >= datetime.combine(
             report.week_end, time(7), REPORT_TZ
         )
         report.error = ""

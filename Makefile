@@ -6,7 +6,7 @@ help:
 	@echo "  make down           - Para todos os serviços"
 	@echo "  make migrate       - Executa migrações"
 	@echo "  make seed           - Popula dados sintéticos"
-	@echo "  make test           - Executa testes unitários"
+	@echo "  make test           - Executa testes unitários e dos apps"
 	@echo "  make test-integration - Executa testes de integração"
 	@echo "  make loadtest       - Executa testes de carga"
 	@echo "  make lint           - Executa lint e type check"
@@ -34,7 +34,7 @@ seed:
 # tem shell nem as dev deps. Os testes de integração falam com o Postgres do
 # compose pela porta publicada — `make up` antes.
 test:
-	uv run pytest tests/unit/
+	uv run pytest tests/unit/ apps/
 
 test-integration:
 	uv run pytest tests/integration/ --reuse-db

@@ -39,9 +39,10 @@ class SendTestAlertForm(forms.Form):
 
     def clean_ast(self):
         ast = self.cleaned_data["ast"]
-        from .compiler import ast_to_tsquery
+        from .compiler import ast_to_tsquery, validate_ast
 
         try:
+            validate_ast(ast)
             ast_to_tsquery(ast)
         except (ValueError, TypeError, KeyError, IndexError) as exc:
             raise forms.ValidationError(f"Critério inválido: {exc}") from exc

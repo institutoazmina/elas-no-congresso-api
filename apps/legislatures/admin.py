@@ -6,6 +6,7 @@ from django.urls import path
 from unfold.admin import ModelAdmin, TabularInline
 
 from apps.ingestion.tasks import enrich_parliamentarian_profiles
+from apps.propositions.admin_cache import ActivityCacheAdminMixin
 
 from .models import (
     InstitutionalAuthor,
@@ -27,7 +28,7 @@ class LegislatureAdmin(ModelAdmin):
 
 
 @admin.register(Party)
-class PartyAdmin(ModelAdmin):
+class PartyAdmin(ActivityCacheAdminMixin, ModelAdmin):
     list_display = ["acronym", "name", "ideology"]
     search_fields = ["acronym", "name"]
     ordering = ["acronym"]
@@ -125,6 +126,6 @@ class ParliamentarianInvestigationAdmin(ModelAdmin):
 
 
 @admin.register(InstitutionalAuthor)
-class InstitutionalAuthorAdmin(ModelAdmin):
+class InstitutionalAuthorAdmin(ActivityCacheAdminMixin, ModelAdmin):
     list_display = ["name", "kind"]
     search_fields = ["name"]

@@ -29,12 +29,56 @@ def _make_token(field: str, value: Any) -> str:
 
 NUMERIC_TOKEN_FIELDS = {
     "quiteriometro": ("quiter", -10, 10),
-    "celeridade": ("celer", 0, 122),
     "ano": ("ano", 2000, 2030),
 }
 
-DATE_FIELDS: set = set()
-FLOAT_FIELDS: set = {"quiteriometro", "celeridade"}
+SCALAR_FIELDS = ("tipo", "casa", "situacao", "ano", "proposicao")
+# `relator` é lista no documento (uma proposição pode ter mais de um).
+ARRAY_FIELDS = (
+    "partido", "autor", "genero", "raca", "religiao",
+    "estado", "relator", "tema", "categoria", "comissao", "frente", "bancada", "norma",
+)
+# Campos que `build_document` preenche; qualquer outro nunca casaria.
+KNOWN_FIELDS = frozenset(SCALAR_FIELDS + ARRAY_FIELDS) | frozenset(NUMERIC_TOKEN_FIELDS)
+LEAF_OPS = frozenset({"eq", "ne", "in", "contains", "gt", "gte", "lt", "lte", "between"})
+
+
+def validate_ast(ast: Any) -> None:
+    """Recusa critérios que compilariam para uma consulta sem sentido.
+
+    Chamado na entrada (API e admin). O compilador continua aceitando a forma
+    antiga para não quebrar inscrições já gravadas.
+    """
+    if not isinstance(ast, dict):
+        raise ValueError("cada nó do filtro deve ser um objeto")
+    op = ast.get("op")
+    if not isinstance(op, str):
+        raise ValueError("nó sem operador")
+    upper = op.upper()
+    if upper in ("AND", "OR"):
+        children = ast.get("children")
+        if not isinstance(children, list) or not children:
+            raise ValueError(f"{upper} precisa de ao menos um filtro")
+        for child in children:
+            validate_ast(child)
+        return
+    if upper == "NOT":
+        validate_ast(ast.get("child"))
+        return
+    if op not in LEAF_OPS:
+        raise ValueError(f"operador desconhecido: {op!r}")
+    field = ast.get("field")
+    if field not in KNOWN_FIELDS:
+        raise ValueError(f"campo desconhecido: {field!r}")
+    value = ast.get("value")
+    if op == "in" and (not isinstance(value, list) or not value):
+        raise ValueError("'in' exige uma lista não vazia")
+    if op == "between" and (not isinstance(value, list) or len(value) != 2):
+        raise ValueError("'between' exige [mínimo, máximo]")
+    if op in ("gt", "gte", "lt", "lte", "between") and field not in NUMERIC_TOKEN_FIELDS:
+        raise ValueError(f"{op!r} só vale para campos numéricos")
+    if op not in ("in", "between") and (value is None or isinstance(value, (list, dict))):
+        raise ValueError(f"{op!r} exige um valor simples")
 
 
 def _leaf_to_tsquery(leaf: dict) -> tuple[str, bool]:
@@ -144,18 +188,12 @@ def ast_to_tsquery(ast: dict) -> tuple[str, bool]:
 def document_to_tsvector_tokens(prop: dict) -> list[str]:
     tokens = []
 
-    for field in ("tipo", "casa", "situacao", "ano", "proposicao"):
+    for field in SCALAR_FIELDS:
         v = prop.get(field)
         if v is not None:
             tokens.append(_make_token(field, v))
 
-    # `relator` é lista no documento (uma proposição pode ter mais de um) —
-    # estava na volta dos escalares e virava o token literal `relator_[]`.
-    array_fields = (
-        "partido", "autor", "genero", "raca", "religiao",
-        "estado", "relator", "tema", "categoria", "comissao", "frente", "bancada", "norma",
-    )
-    for field in array_fields:
+    for field in ARRAY_FIELDS:
         vals = prop.get(field, [])
         for v in vals:
             tokens.append(_make_token(field, v))

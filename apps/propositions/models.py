@@ -542,10 +542,9 @@ class PropositionEmbedding(models.Model):
         related_name="embedding",
     )
     model_name = models.TextField(verbose_name="Nome do modelo")
-    # VectorField requires pgvector; migration adds HNSW index via RunSQL
-    embedding = models.BinaryField(
-        verbose_name="Representação vetorial"
-    )  # overridden via RunSQL ALTER COLUMN in migration
+    # Reservado: nenhuma migração converte a coluna para `vector` nem cria índice
+    # vetorial, e não há pipeline gerando embeddings.
+    embedding = models.BinaryField(verbose_name="Representação vetorial")
     generated_at = models.DateTimeField(verbose_name="Gerado em", auto_now_add=True)
 
     class Meta:

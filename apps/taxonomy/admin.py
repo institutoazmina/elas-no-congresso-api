@@ -1,11 +1,13 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
+from apps.propositions.admin_cache import ActivityCacheAdminMixin
+
 from .models import AnalyticalTag, PropositionRelation, PropositionTheme, Theme
 
 
 @admin.register(Theme)
-class ThemeAdmin(ModelAdmin):
+class ThemeAdmin(ActivityCacheAdminMixin, ModelAdmin):
     list_display = ["name", "slug", "parent"]
     search_fields = ["name", "slug"]
     autocomplete_fields = ["parent"]
@@ -18,7 +20,7 @@ class AnalyticalTagAdmin(ModelAdmin):
 
 
 @admin.register(PropositionTheme)
-class PropositionThemeAdmin(ModelAdmin):
+class PropositionThemeAdmin(ActivityCacheAdminMixin, ModelAdmin):
     list_display = ["proposition", "theme", "rank"]
     autocomplete_fields = ["proposition", "theme"]
 

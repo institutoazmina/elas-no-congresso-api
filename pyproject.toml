@@ -13,7 +13,6 @@ dependencies = [
     "django-ninja>=1.4",
     "django-redis>=5.4",
     "django-unfold>=0.76",
-    "gunicorn>=22",
     "httpx>=0.28.1",
     "huggingface-hub>=0.36.0",
     "pgvector>=0.3",
@@ -86,6 +85,8 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
+# Locust (gevent) não roda sob pytest; use `make loadtest`.
+norecursedirs = ["tests/load", ".*", "node_modules", "staticfiles"]
 asyncio_mode = "auto"
 
 [tool.coverage.run]

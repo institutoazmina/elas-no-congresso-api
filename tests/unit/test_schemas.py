@@ -47,6 +47,9 @@ class TestParliamentarianSchema:
             "created_at",
             "updated_at",
             "terms",
+            "public_propositions_count",
+            "favorable_propositions_count",
+            "unfavorable_propositions_count",
         }
 
     def test_term_schema_includes_all_join_table_fields(self):

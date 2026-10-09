@@ -40,8 +40,8 @@ def build_document(proposition_id: int) -> dict[str, Any]:
         "frente": [],
         "bancada": [],
         "norma": [],
-        "quiteriometro": 0,
-        "celeridade": None,
+        # Sem análise concluída não há escore: filtros por faixa não casam.
+        "quiteriometro": None,
     }
 
     with connection.cursor() as cur:
