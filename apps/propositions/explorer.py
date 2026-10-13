@@ -50,22 +50,27 @@ UFS = [
 ]
 
 
+# Teto das entradas livres: a busca roda sobre a coleção inteira a cada request.
+MAX_SEARCH_LENGTH = 200
+MAX_FILTER_VALUES = 100
+
+
 class ExplorerQuery(Schema):
-    search: str = ""
+    search: str = Field("", max_length=MAX_SEARCH_LENGTH)
     house: str = ""
     year: int | None = None
     year_start: int | None = Field(None, ge=1, le=9999)
     year_end: int | None = Field(None, ge=1, le=9999)
-    party: list[str] = Field(default_factory=list)
-    category: list[str] = Field(default_factory=list)
+    party: list[str] = Field(default_factory=list, max_length=MAX_FILTER_VALUES)
+    category: list[str] = Field(default_factory=list, max_length=MAX_FILTER_VALUES)
     assessment: Literal["", "favorable", "unfavorable", "unrated"] = ""
-    celerity: list[str] = Field(default_factory=list)
+    celerity: list[str] = Field(default_factory=list, max_length=MAX_FILTER_VALUES)
     movements: Literal["", "with", "without"] = ""
     gender: str = ""
-    state: list[str] = Field(default_factory=list)
-    religion: list[str] = Field(default_factory=list)
+    state: list[str] = Field(default_factory=list, max_length=MAX_FILTER_VALUES)
+    religion: list[str] = Field(default_factory=list, max_length=MAX_FILTER_VALUES)
     comments: Literal["", "yes", "no"] = ""
-    evaluator: list[str] = Field(default_factory=list)
+    evaluator: list[str] = Field(default_factory=list, max_length=MAX_FILTER_VALUES)
     page: int = Field(1, ge=1)
     page_size: int = Field(10, ge=1, le=100)
     sort: Literal[

@@ -77,6 +77,10 @@ PASSWORD_HASHERS = [
 
 INGESTION_REQUESTS_PER_SECOND = 0
 
+# O suite inteiro sai do mesmo IP em segundos; os testes de throttle baixam a
+# taxa explicitamente.
+API_THROTTLE_RATE = "100000/m"
+
 # Testes não dependem de `collectstatic`: o manifesto do WhiteNoise só existe
 # depois do build e ficaria desatualizado a cada asset novo.
 STORAGES = {

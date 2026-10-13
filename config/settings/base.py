@@ -86,6 +86,7 @@ MIDDLEWARE = [
     # ALLOWED_HOSTS (kamal-proxy uses the container ID as Host).
     "config.middleware.HealthCheckHostMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "config.middleware.PublicCacheControlMiddleware",
     # Antes do CommonMiddleware, como manda o django-cors-headers: o preflight
     # precisa de resposta antes de qualquer redirect de APPEND_SLASH.
     "corsheaders.middleware.CorsMiddleware",
@@ -356,6 +357,47 @@ SUBSCRIPTION_CONFIRM_TTL_HOURS = 48
 SUBSCRIPTION_THROTTLE_RATE_PER_HOUR = config(
     "SUBSCRIPTION_THROTTLE_RATE_PER_HOUR", default=10, cast=int
 )
+# O teto por IP não protege a caixa de quem é inscrito à revelia: cada POST com
+# o mesmo endereço dispara outro e-mail de confirmação. Por endereço, um envio a
+# cada intervalo e no máximo N por dia.
+SUBSCRIPTION_CONFIRMATION_COOLDOWN_SECONDS = config(
+    "SUBSCRIPTION_CONFIRMATION_COOLDOWN_SECONDS", default=5 * 60, cast=int
+)
+SUBSCRIPTION_CONFIRMATIONS_PER_DAY = config(
+    "SUBSCRIPTION_CONFIRMATIONS_PER_DAY", default=3, cast=int
+)
+
+# Identidade do cliente para os limites (apps.core.throttling). Só ligar quando a
+# origem for alcançável exclusivamente pelo Cloudflare — fora disso o cabeçalho
+# CF-Connecting-IP é forjável.
+TRUST_CF_CONNECTING_IP = config("TRUST_CF_CONNECTING_IP", default=False, cast=bool)
+# Teto geral por IP; o Cloudflare segura volumes maiores na borda. Folgado porque
+# redes móveis e universidades põem muita gente atrás do mesmo IP.
+API_THROTTLE_RATE = config("API_THROTTLE_RATE", default="300/m")
+# Exportações percorrem a coleção inteira a cada chamada.
+EXPORT_THROTTLE_RATE = config("EXPORT_THROTTLE_RATE", default="20/h")
+DATASET_DOWNLOAD_THROTTLE_RATE = config("DATASET_DOWNLOAD_THROTTLE_RATE", default="5/h")
+
+# Paginação limit/offset: sem teto, ``?limit=999999`` serializa a tabela inteira.
+# Folgado para listas pequenas (partidos, comissões) que o site busca de uma vez;
+# o dataset, com texto integral por linha, tem teto próprio.
+NINJA_PAGINATION_MAX_LIMIT = config("NINJA_PAGINATION_MAX_LIMIT", default=1000, cast=int)
+DATASET_PAGINATION_MAX_LIMIT = config("DATASET_PAGINATION_MAX_LIMIT", default=100, cast=int)
+
+# Cache HTTP das leituras públicas (config.middleware.PublicCacheControlMiddleware).
+# Os dados mudam uma vez por dia; o s-maxage deixa o Cloudflare absorver picos.
+PUBLIC_CACHE_MAX_AGE = config("PUBLIC_CACHE_MAX_AGE", default=60, cast=int)
+PUBLIC_CACHE_S_MAXAGE = config("PUBLIC_CACHE_S_MAXAGE", default=300, cast=int)
+PUBLIC_CACHE_STALE_WHILE_REVALIDATE = config(
+    "PUBLIC_CACHE_STALE_WHILE_REVALIDATE", default=600, cast=int
+)
+
+# Teto de duração de cada query do processo web (ms; 0 desliga), aplicado só
+# pelo config.asgi. Workers e ``manage.py migrate`` (que roda via
+# ``kamal app exec`` no mesmo env) não herdam: ingestão e índices demoram mesmo.
+DB_STATEMENT_TIMEOUT_MS = config("DB_STATEMENT_TIMEOUT_MS", default=0, cast=int)
+if DB_STATEMENT_TIMEOUT_MS < 0:
+    raise ValueError("DB_STATEMENT_TIMEOUT_MS must be nonnegative")
 
 # django-unfold
 UNFOLD = {

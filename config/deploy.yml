@@ -69,6 +69,9 @@ env:
     # Não-sensível / não-identificável
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DEBUG: "False"
+    # Teto de query aplicado só pelo processo ASGI (config/db.py); workers e
+    # `manage.py migrate` ignoram, embora leiam o mesmo env.
+    DB_STATEMENT_TIMEOUT_MS: "<%= ENV.fetch('DB_STATEMENT_TIMEOUT_MS', '15000') %>"
     ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE: "<%= ENV.fetch('ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE', '0') %>"
     DAILY_DIGEST_TIME: "<%= ENV.fetch('DAILY_DIGEST_TIME', '09:00') %>"
     CLASSIFICATION_BACKFILL_DAILY_LIMIT: "<%= ENV.fetch('CLASSIFICATION_BACKFILL_DAILY_LIMIT', '600') %>"
@@ -107,6 +110,9 @@ accessories:
   redis:
     image: redis:7-alpine
     host: <%= ENV["DEPLOY_HOST"] %>
-    cmd: redis-server --appendonly yes
+    # Cache e broker dividem esta instância. volatile-lru só despeja chaves com
+    # TTL (cache, throttle, locks); as filas do Celery não têm TTL e ficam.
+    # Sem teto, um flood de chaves de cache levaria o Redis — e os alertas — a OOM.
+    cmd: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy volatile-lru
     volumes:
       - /var/lib/elas/redis:/data

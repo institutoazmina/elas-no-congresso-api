@@ -27,6 +27,8 @@ import os
 # forçar o alocador do sistema. Precisa estar setado ANTES do 1º import de pyarrow.
 os.environ.setdefault("ARROW_DEFAULT_MEMORY_POOL", "system")
 
+from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Case, CharField, F, Value, When
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse, StreamingHttpResponse
@@ -35,6 +37,7 @@ from ninja.errors import HttpError
 from ninja.pagination import LimitOffsetPagination, paginate
 
 from apps.core.enums import Gender, HumanRelevance, PropositionCategory
+from apps.core.throttling import dataset_download_throttle
 
 from .models import PropositionAnnotation
 
@@ -156,8 +159,16 @@ def _row(d: dict) -> dict:
 
 # ── JSON paginado ─────────────────────────────────────────────────────────────
 
+class DatasetPagination(LimitOffsetPagination):
+    """Cada linha carrega o texto integral: o teto geral de paginação é alto demais."""
+
+    class Input(Schema):
+        limit: int = Field(100, ge=1, le=settings.DATASET_PAGINATION_MAX_LIMIT)
+        offset: int = Field(0, ge=0)
+
+
 @router.get("", response=list[DatasetRowSchema])
-@paginate(LimitOffsetPagination)
+@paginate(DatasetPagination)
 def dataset(
     request,
     house: str | None = None,
@@ -203,7 +214,28 @@ def _parquet_bytes(qs) -> bytes:
     return sink.getvalue().to_pybytes()
 
 
-@router.get("/download")
+# Um download percorre o banco inteiro (e o parquet materializa tudo na memória
+# de um container de 512 MB): só um por vez, para que uma rajada de IPs
+# diferentes não derrube a API. O TTL cobre um processo que morra no meio.
+DOWNLOAD_LOCK_KEY = "dataset:download:lock"
+DOWNLOAD_LOCK_TIMEOUT = 15 * 60
+
+
+class _ReleaseOnClose:
+    """O Django fecha a resposta ao fim do envio, também quando o cliente cai
+    ou nem começa a ler (um generator nunca iniciado não roda seu ``finally``)."""
+
+    def __init__(self, chunks):
+        self._chunks = chunks
+
+    def __iter__(self):
+        return iter(self._chunks)
+
+    def close(self):
+        cache.delete(DOWNLOAD_LOCK_KEY)
+
+
+@router.get("/download", throttle=[dataset_download_throttle])
 def download(
     request,
     format: str = "csv",
@@ -212,20 +244,26 @@ def download(
     include_unlabeled: bool = False,
 ):
     """Baixa o dataset INTEIRO (sem paginação) em csv | parquet | jsonl."""
-    qs = _dataset_qs(house, year, include_unlabeled)
     fmt = (format or "").lower()
+    if fmt not in {"csv", "jsonl", "parquet"}:
+        raise HttpError(400, "format inválido: use csv, parquet ou jsonl")
+    if not cache.add(DOWNLOAD_LOCK_KEY, True, timeout=DOWNLOAD_LOCK_TIMEOUT):
+        raise HttpError(503, "outro download do dataset está em andamento; tente em instantes")
 
-    if fmt == "csv":
-        resp = StreamingHttpResponse(_csv_stream(qs), content_type="text/csv; charset=utf-8")
-        resp["Content-Disposition"] = 'attachment; filename="dataset.csv"'
-        return resp
-    if fmt == "jsonl":
-        resp = StreamingHttpResponse(_jsonl_stream(qs), content_type="application/x-ndjson")
-        resp["Content-Disposition"] = 'attachment; filename="dataset.jsonl"'
-        return resp
+    qs = _dataset_qs(house, year, include_unlabeled)
     if fmt == "parquet":
-        resp = HttpResponse(_parquet_bytes(qs), content_type="application/vnd.apache.parquet")
+        try:
+            body = _parquet_bytes(qs)
+        finally:
+            cache.delete(DOWNLOAD_LOCK_KEY)
+        resp = HttpResponse(body, content_type="application/vnd.apache.parquet")
         resp["Content-Disposition"] = 'attachment; filename="dataset.parquet"'
         return resp
 
-    raise HttpError(400, "format inválido: use csv, parquet ou jsonl")
+    if fmt == "csv":
+        stream, content_type = _csv_stream(qs), "text/csv; charset=utf-8"
+    else:
+        stream, content_type = _jsonl_stream(qs), "application/x-ndjson"
+    resp = StreamingHttpResponse(_ReleaseOnClose(stream), content_type=content_type)
+    resp["Content-Disposition"] = f'attachment; filename="dataset.{fmt}"'
+    return resp

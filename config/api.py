@@ -1,11 +1,16 @@
 from ninja import NinjaAPI
 from ninja.pagination import LimitOffsetPagination, paginate  # noqa: F401
 
+from apps.core.throttling import api_throttle
+
 api = NinjaAPI(
     version="1.0.0",
     title="Elas no Congresso API",
     description="API pública de dados legislativos com foco em gênero e diversidade.",
     docs_url="/docs",
+    # Vale para toda rota sem throttle próprio; as que declaram um (exportações,
+    # inscrição) trocam este pelo seu, sempre mais estrito.
+    throttle=[api_throttle],
 )
 
 

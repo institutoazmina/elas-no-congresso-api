@@ -23,6 +23,7 @@ def list_propositions(
     q: Annotated[
         str | None,
         Query(  # type: ignore[operator]
+            max_length=200,
             description=(
                 "Busca parcial por ementa, número da proposição ou nome completo ou social "
                 "de autores e coautores. A busca por autor ignora maiúsculas, minúsculas "

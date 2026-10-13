@@ -8,6 +8,9 @@ DEBUG = False
 AWS_SES_ENDPOINT_URL = None
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# A porta do container só é publicada no docker0 e quem chega nela é o
+# cloudflared: o CF-Connecting-IP é o endereço real do cliente.
+TRUST_CF_CONNECTING_IP = config("TRUST_CF_CONNECTING_IP", default=True, cast=bool)
 # Controlável por env: desligar durante teste HTTP (sem SSL); ligar com domínio/SSL.
 SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
 # O healthcheck interno do kamal-proxy chega via HTTP (sem X-Forwarded-Proto);

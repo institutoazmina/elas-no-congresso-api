@@ -50,8 +50,26 @@ Em base/prod o backend é `anymail.backends.amazon_sesv2`.
 | --- | --- | --- |
 | `DAILY_DIGEST_TIME` | `09:00` | Corte e disparo do resumo diário (`HH:MM`, São Paulo). Use o mesmo valor no Beat e nos workers e reinicie ambos |
 | `SUBSCRIPTION_THROTTLE_RATE_PER_HOUR` | `10` | Limite de `POST /subscriptions/` por IP |
+| `SUBSCRIPTION_CONFIRMATION_COOLDOWN_SECONDS` | `300` | Intervalo mínimo entre e-mails de confirmação para o mesmo endereço (429 antes disso) |
+| `SUBSCRIPTION_CONFIRMATIONS_PER_DAY` | `3` | Teto diário de confirmações por endereço |
 
 `SUBSCRIPTION_CONFIRM_TTL_HOURS = 48` é constante, sem variável.
+
+### Proteção da API pública
+
+| Variável | Padrão | Uso |
+| --- | --- | --- |
+| `TRUST_CF_CONNECTING_IP` | base `False`, prod `True` | Identifica o cliente pelo `CF-Connecting-IP`. Só é seguro com a origem alcançável apenas pelo Cloudflare |
+| `API_THROTTLE_RATE` | `300/m` | Limite geral por IP para rotas sem limite próprio (test usa `100000/m`) |
+| `EXPORT_THROTTLE_RATE` | `20/h` | `GET /activity/explorer/export` por IP |
+| `DATASET_DOWNLOAD_THROTTLE_RATE` | `5/h` | `GET /dataset/download` por IP; além disso, um download por vez (503 enquanto outro roda) |
+| `NINJA_PAGINATION_MAX_LIMIT` | `1000` | Maior `limit` aceito nas listas paginadas (422 acima) |
+| `DATASET_PAGINATION_MAX_LIMIT` | `100` | Maior `limit` de `GET /dataset` |
+| `PUBLIC_CACHE_MAX_AGE` / `PUBLIC_CACHE_S_MAXAGE` / `PUBLIC_CACHE_STALE_WHILE_REVALIDATE` | `60` / `300` / `600` | `Cache-Control` das respostas 200 de GET em `/api/v1/` (exceto `/subscriptions/`) |
+| `DB_STATEMENT_TIMEOUT_MS` | `0` (deploy: `15000`) | Teto por query, aplicado só pelo processo ASGI; workers e `migrate` ignoram |
+
+Buscas livres (`q`, `search`) aceitam até 200 caracteres e filtros múltiplos do
+explorer até 100 valores.
 
 ### Ingestão e QuitérIA
 

@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from ninja import Query, Router, Schema
 
+from apps.core.throttling import export_throttle
+
 from .celerity import calculate_celerity
 from .explorer import (
     SOURCE_CACHE_KEY,
@@ -407,7 +409,7 @@ def get_activity_explorer(request, filters: ExplorerQuery = Query(...)):
     return explore_activity(filters)
 
 
-@router.get("/explorer/export")
+@router.get("/explorer/export", throttle=[export_throttle])
 def get_activity_explorer_export(request, filters: ExplorerQuery = Query(...)):
     """Export the full filtered collection, independently of the displayed page."""
     return export_activity(filters)

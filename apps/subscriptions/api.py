@@ -1,7 +1,12 @@
+from hashlib import sha256
+
 from django.conf import settings
+from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from ninja import Router
-from ninja.throttling import AnonRateThrottle
+from ninja.errors import HttpError
+
+from apps.core.throttling import subscription_throttle
 
 from .models import Subscription
 from .schemas import SubscriptionCreateSchema, SubscriptionSchema
@@ -22,14 +27,34 @@ def _back_home(status: str) -> HttpResponseRedirect:
     return HttpResponseRedirect(f"{settings.PUBLIC_SITE_URL.rstrip('/')}/?subscription={status}")
 
 
-@router.post(
-    "",
-    response={201: list[SubscriptionSchema]},
-    throttle=[AnonRateThrottle(f"{settings.SUBSCRIPTION_THROTTLE_RATE_PER_HOUR}/h")],
-)
+def _reserve_confirmation(email: str) -> bool:
+    """Conta um e-mail de confirmação para o endereço, se ainda couber.
+
+    Sem isto qualquer um inscreve o endereço de outra pessoa em loop, enchendo
+    a caixa dela com mensagens nossas — e cada reenvio também apagaria o pedido
+    pendente legítimo. As chaves usam o hash para não guardar e-mails no Redis.
+    """
+    digest = sha256(email.strip().lower().encode()).hexdigest()
+    cooldown_key = f"subscriptions:confirmation:cooldown:{digest}"
+    daily_key = f"subscriptions:confirmation:daily:{digest}"
+
+    if not cache.add(
+        cooldown_key, True, timeout=settings.SUBSCRIPTION_CONFIRMATION_COOLDOWN_SECONDS
+    ):
+        return False
+    cache.add(daily_key, 0, timeout=24 * 60 * 60)
+    return cache.incr(daily_key) <= settings.SUBSCRIPTION_CONFIRMATIONS_PER_DAY
+
+
+@router.post("", response={201: list[SubscriptionSchema]}, throttle=[subscription_throttle])
 def create_subscription(request, payload: SubscriptionCreateSchema):
     from .service import register_subscriptions
     from .tasks import send_confirmation_email
+
+    if not _reserve_confirmation(payload.email):
+        raise HttpError(
+            429, "Já enviamos uma confirmação para este e-mail. Confira sua caixa de entrada."
+        )
 
     alerts = [alert.dict() for alert in payload.alerts]
     sub_ids = register_subscriptions(payload.email, alerts)

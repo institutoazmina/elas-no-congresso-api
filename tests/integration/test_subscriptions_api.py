@@ -30,6 +30,13 @@ def client():
     return Client()
 
 
+@pytest.fixture
+def sem_intervalo(settings):
+    """Reinscrições de verdade acontecem com horas ou dias de distância; aqui o
+    intervalo mínimo entre confirmações não é o assunto."""
+    settings.SUBSCRIPTION_CONFIRMATION_COOLDOWN_SECONDS = 0
+
+
 def _make_subscription(**kwargs):
     defaults = {
         "email": "alguem@example.com",
@@ -277,7 +284,7 @@ def test_um_clique_confirma_todas_as_frequencias_do_mesmo_email(client, outbox, 
 
 
 @pytest.mark.django_db
-def test_reinscrever_substitui_as_preferencias_anteriores(client, outbox):
+def test_reinscrever_substitui_as_preferencias_anteriores(client, outbox, sem_intervalo):
     _post(
         client,
         alerts=[{"frequency": "weekly", "ast": {"field": "tema", "op": "eq", "value": "saude"}}],
@@ -432,7 +439,9 @@ def test_link_de_confirmacao_expira_no_prazo(client, outbox, settings):
 
 
 @pytest.mark.django_db
-def test_reinscrever_mantem_alertas_ate_confirmar_e_preserva_historico(client, outbox):
+def test_reinscrever_mantem_alertas_ate_confirmar_e_preserva_historico(
+    client, outbox, sem_intervalo
+):
     from django.utils import timezone
 
     from apps.subscriptions.models import AlertDelivery
@@ -477,3 +486,35 @@ def test_limpeza_remove_pendentes_mas_preserva_canceladas(client, outbox):
 
     assert Subscription.objects.filter(pk=cancelada.pk).exists()
     assert not Subscription.objects.filter(pk=pendente.pk).exists()
+
+
+@pytest.mark.django_db
+def test_reenvio_para_o_mesmo_email_respeita_o_intervalo(client, outbox):
+    """Quem inscreve o endereço de outra pessoa em loop não enche a caixa dela
+    nem apaga o pedido pendente que ela ainda pode confirmar."""
+    primeiro = _post(client)
+    pendente = Subscription.objects.get(email="leitora@example.com")
+
+    repetido = _post(client, email="Leitora@Example.com")
+
+    assert primeiro.status_code == 201
+    assert repetido.status_code == 429
+    assert len(outbox) == 1
+    assert list(Subscription.objects.filter(email__iexact="leitora@example.com")) == [pendente]
+
+
+@pytest.mark.django_db
+def test_confirmacoes_por_dia_tem_teto_por_email(client, outbox, settings, sem_intervalo):
+    settings.SUBSCRIPTION_CONFIRMATIONS_PER_DAY = 2
+
+    status = [_post(client).status_code for _ in range(3)]
+
+    assert status == [201, 201, 429]
+    assert len(outbox) == 2
+
+
+@pytest.mark.django_db
+def test_intervalo_e_por_email_nao_por_ip(client, outbox):
+    assert _post(client, email="uma@example.com").status_code == 201
+    assert _post(client, email="outra@example.com").status_code == 201
+    assert len(outbox) == 2

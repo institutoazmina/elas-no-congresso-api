@@ -12,6 +12,12 @@ from apps.propositions import explorer
 from apps.propositions.performance import ExplorerTrace, current_trace, stage
 
 
+def _empty_snapshot(*args, **kwargs):
+    # Uma lista nova por chamada: o throttle da API lê o mesmo cache e muta o
+    # histórico que recebe — um ``return_value`` compartilhado vazaria para cá.
+    return []
+
+
 class TraceTests(SimpleTestCase):
     def test_query_values_are_not_logged_and_groups_are_bounded(self):
         trace = ExplorerTrace(detailed_sql=True)
@@ -54,7 +60,7 @@ class TraceTests(SimpleTestCase):
     @override_settings(ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE=1, ALLOWED_HOSTS=["testserver"])
     def test_real_pipeline_records_rendered_response_and_cache_hit(self):
         with (
-            patch.object(explorer.cache, "get", return_value=[]),
+            patch.object(explorer.cache, "get", side_effect=_empty_snapshot),
             patch("apps.propositions.performance.logger.info") as log,
         ):
             response = Client().get("/api/v1/activity/explorer", {"search": "private query"})
@@ -69,7 +75,7 @@ class TraceTests(SimpleTestCase):
     @override_settings(ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE=0)
     def test_command_forces_trace_even_when_sampling_disabled(self):
         output = StringIO()
-        with patch.object(explorer.cache, "get", return_value=[]):
+        with patch.object(explorer.cache, "get", side_effect=_empty_snapshot):
             call_command("profile_activity_explorer", runs=2, stdout=output)
         reports = [json.loads(line) for line in output.getvalue().splitlines()]
         self.assertEqual(len(reports), 2)
@@ -123,7 +129,7 @@ class TraceTests(SimpleTestCase):
     def test_command_outputs_report_without_duplicate_log(self):
         output = StringIO()
         with (
-            patch.object(explorer.cache, "get", return_value=[]),
+            patch.object(explorer.cache, "get", side_effect=_empty_snapshot),
             patch("apps.propositions.performance.logger.info") as log,
         ):
             call_command("profile_activity_explorer", stdout=output)
