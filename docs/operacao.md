@@ -27,7 +27,7 @@ explicitamente.
 
 Configuração em `config/deploy.yml`; segredos lidos por nome em `.kamal/secrets`.
 
-- Serviço `elas-no-congresso`, imagem `ghcr.io/wura-io/elas-no-congresso-api`,
+- Serviço `elas-no-congresso`, imagem `ghcr.io/institutoazmina/elas-no-congresso-api`,
   usuário SSH `ubuntu`, host em `DEPLOY_HOST`.
 
 | Papel | Comando | Observações | Memória |
