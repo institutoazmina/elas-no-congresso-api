@@ -76,6 +76,7 @@ LOCAL_APPS = [
     "apps.subscriptions",
     "apps.ingestion",
     "apps.newsletters",
+    "apps.og",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -348,6 +349,13 @@ if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
     )
 if AWS_SES_ENDPOINT_URL:
     ANYMAIL["AMAZON_SES_CLIENT_PARAMS"]["endpoint_url"] = AWS_SES_ENDPOINT_URL
+
+# Imagens de compartilhamento das parlamentares, publicadas direto no bucket do
+# site. Sem bucket (desenvolvimento e testes), nenhum evento agenda renderização.
+OG_S3_BUCKET = config("OG_S3_BUCKET", default="")
+# Endpoint alternativo (MiniStack) para o S3 em desenvolvimento.
+OG_AWS_ENDPOINT_URL = config("OG_AWS_ENDPOINT_URL", default=None)
+OG_RENDER_DELAY_SECONDS = config("OG_RENDER_DELAY_SECONDS", default=300, cast=int)
 
 # Subscription confirmation token TTL (hours)
 SUBSCRIPTION_CONFIRM_TTL_HOURS = 48

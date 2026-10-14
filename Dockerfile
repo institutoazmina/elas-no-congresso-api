@@ -54,8 +54,10 @@ RUN --mount=type=cache,target=/root/.cache/huggingface \
 # binutils corrupts large-alignment libs (e.g. numpy's openblas → page-align error).
 RUN set -eux; \
     PYLIB="$(echo /opt/python/cpython-*/lib/python3.12)"; \
-    # botocore ships JSON for every AWS service; the app only uses SES v2
-    find /app/.venv/lib/python3.12/site-packages/botocore/data -mindepth 1 -maxdepth 1 -type d ! -name sesv2 -exec rm -rf {} +; \
+    # botocore ships JSON for every AWS service; the app uses SES v2, plus S3
+    # for the parliamentarian OG images
+    find /app/.venv/lib/python3.12/site-packages/botocore/data -mindepth 1 -maxdepth 1 -type d \
+        ! -name sesv2 ! -name s3 -exec rm -rf {} +; \
     # stdlib pieces a headless server never loads
     rm -rf "$PYLIB/test" "$PYLIB/idlelib" "$PYLIB/tkinter" "$PYLIB/turtledemo" \
            "$PYLIB/ensurepip" "$PYLIB/lib2to3" "$PYLIB/config-3.12"*; \

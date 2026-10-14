@@ -42,3 +42,6 @@ Thumbs.db
 # Django collectstatic output (baked into image at build)
 staticfiles/
 tmp/
+
+# Renderizações locais das imagens de compartilhamento (og_images --output)
+previews/

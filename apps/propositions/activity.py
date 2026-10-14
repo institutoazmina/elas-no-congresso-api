@@ -143,6 +143,24 @@ def _selected_annotation(proposition):
     ) or (annotations[0] if annotations else None)
 
 
+def _has_quiteria_assessment(annotation, analysis) -> bool:
+    return (
+        annotation is None
+        and analysis is not None
+        and analysis.analysis_status == PropositionAnalysis.Status.SUCCEEDED
+        and analysis.classification in (0, 1)
+    )
+
+
+def public_is_favorable(proposition) -> bool | None:
+    """Avaliação pública da proposição, a mesma servida em ``is_favorable``."""
+    annotation = _selected_annotation(proposition)
+    if annotation:
+        return annotation.is_favorable
+    analysis = getattr(proposition, "analysis", None)
+    return analysis.classification == 0 if _has_quiteria_assessment(None, analysis) else None
+
+
 def _serialize(proposition, *, event_limit: int | None) -> dict:
     events = sorted(proposition.events.all(), key=lambda event: event.event_at, reverse=True)
     annotation = _selected_annotation(proposition)
@@ -168,12 +186,7 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
     category = annotation.category if annotation else getattr(analysis, "theme_category", None)
     # A anotação humana sempre prevalece. Na sua ausência, uma classificação
     # concluída pela QuitérIA é a avaliação automática exibida no painel.
-    has_quiteria_assessment = (
-        annotation is None
-        and analysis is not None
-        and analysis.analysis_status == PropositionAnalysis.Status.SUCCEEDED
-        and analysis.classification in (0, 1)
-    )
+    has_quiteria_assessment = _has_quiteria_assessment(annotation, analysis)
     # O rótulo editorial vem da enumeração de categorias, sem transformar o
     # slug em texto aproximado no cliente.
     from apps.core.enums import PropositionCategory
@@ -196,11 +209,7 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
             relation.theme.name
             for relation in proposition.proposition_themes.all()
         ],
-        "is_favorable": (
-            annotation.is_favorable
-            if annotation
-            else (analysis.classification == 0 if has_quiteria_assessment else None)
-        ),
+        "is_favorable": public_is_favorable(proposition),
         "assessment_organization": (
             annotation.organization.name
             if annotation
