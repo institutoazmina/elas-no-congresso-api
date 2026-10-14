@@ -90,6 +90,9 @@ env:
     # SES usa a instance role do EC2; região e remetente não são segredos.
     AWS_DEFAULT_REGION: us-east-2
     AWS_SES_FROM_EMAIL: alertas@elasnocongresso.azmina.com.br
+    # Imagens de compartilhamento: exige s3:PutObject/DeleteObject em
+    # atividade-legislativa/autoria/* na role.
+    OG_S3_BUCKET: elas-no-congresso-site
   secret:
     - SECRET_KEY
     # Banco (RDS) — endpoint/credenciais não expostos no repo
