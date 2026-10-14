@@ -2,6 +2,7 @@ from datetime import date
 from io import BytesIO
 from unittest.mock import Mock
 
+import numpy as np
 import pytest
 from PIL import Image
 
@@ -282,3 +283,15 @@ class TestRenderer:
             image = Image.open(BytesIO(png))
             assert image.size == (1200, 630)
             assert image.format == "PNG"
+
+    def test_png_is_lossless_and_smaller_than_pillow_default(self):
+        png = render(OgData("Tabata Amaral", "PSB/SP", 38, 0, None))
+        image = Image.open(BytesIO(png))
+        image.load()
+        pillow = BytesIO()
+        image.save(pillow, "PNG")
+
+        assert image.mode == "RGBA"
+        assert (np.asarray(image) == np.asarray(Image.open(BytesIO(pillow.getvalue())))).all()
+        # O fundo em meio-tom comprime bem melhor sem filtro por linha.
+        assert len(png) < 0.7 * len(pillow.getvalue())

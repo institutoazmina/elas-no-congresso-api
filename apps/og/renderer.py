@@ -2,6 +2,8 @@
 
 import io
 import math
+import struct
+import zlib
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
@@ -177,6 +179,31 @@ def _composite(background: Image.Image, layer: Image.Image) -> Image.Image:
     return Image.fromarray(np.clip(out * f(255), 0, 255).astype(np.uint8), "RGBA")
 
 
+def _png_chunk(kind: bytes, data: bytes) -> bytes:
+    return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+
+
+def _encode_png(image: Image.Image) -> bytes:
+    """PNG RGBA sem filtro por linha e zlib nível 6, como o sharp grava.
+
+    O fundo em meio-tom comprime melhor sem filtro: o filtro adaptativo do
+    Pillow deixava o arquivo ~65% maior (≈ 970 KB contra ≈ 590 KB).
+    """
+    pixels = np.asarray(image.convert("RGBA"), dtype=np.uint8)
+    height, width = pixels.shape[:2]
+    # Cada linha começa com o byte do tipo de filtro: 0 (nenhum).
+    rows = np.hstack([np.zeros((height, 1), dtype=np.uint8), pixels.reshape(height, width * 4)])
+    header = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+    return b"".join(
+        [
+            b"\x89PNG\r\n\x1a\n",
+            _png_chunk(b"IHDR", header),
+            _png_chunk(b"IDAT", zlib.compress(rows.tobytes(), 6)),
+            _png_chunk(b"IEND", b""),
+        ]
+    )
+
+
 def _border(layer: Image.Image) -> Image.Image:
     """1.5px inner border: full outer pixel, half-covered inner pixel (pixman OVER rounding)."""
     arr = np.asarray(layer).astype(np.int64).copy()
@@ -252,6 +279,4 @@ def render(data: OgData) -> bytes:
         Image.open(ASSETS / "thumbs-down.png").convert("RGBA"), (ROW_X + 650 - ICON, ROW_Y)
     )
 
-    out = io.BytesIO()
-    _composite(Image.open(ASSETS / "og-background.png"), layer).save(out, "PNG")
-    return out.getvalue()
+    return _encode_png(_composite(Image.open(ASSETS / "og-background.png"), layer))
