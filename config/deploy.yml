@@ -6,7 +6,7 @@
 service: elas-no-congresso
 
 # Imagem pública no GHCR (mesmo nome do repo). CI faz push; servidor faz pull.
-image: wura-io/elas-no-congresso-api
+image: institutoazmina/elas-no-congresso-api
 
 # Host Ubuntu 24.04: login via ubuntu (no grupo docker). Chave via ssh-agent.
 ssh:
