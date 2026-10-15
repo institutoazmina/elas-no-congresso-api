@@ -10,7 +10,7 @@ from unfold.admin import ModelAdmin
 from unfold.widgets import UnfoldAdminTextareaWidget
 
 from .images import ImageSpec, normalize
-from .models import AlertsPage, HeroPage, ReportsPage
+from .models import ActivityPage, AlertsPage, HeroPage, ReportsPage
 
 
 class CmsPageForm(forms.ModelForm):
@@ -83,3 +83,8 @@ class AlertsPageAdmin(HeroPageAdmin):
 @admin.register(ReportsPage)
 class ReportsPageAdmin(HeroPageAdmin):
     form = hero_page_form(ReportsPage)
+
+
+@admin.register(ActivityPage)
+class ActivityPageAdmin(HeroPageAdmin):
+    form = hero_page_form(ActivityPage)

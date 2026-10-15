@@ -14,7 +14,7 @@ from PIL import Image
 
 from apps.cms import deploy, storage, tasks
 from apps.cms.images import ImageSpec, normalize
-from apps.cms.models import AlertsPage, ReportsPage
+from apps.cms.models import ActivityPage, AlertsPage, ReportsPage
 
 pytestmark = pytest.mark.django_db
 
@@ -80,6 +80,14 @@ PAGES = [
         "Reportagens",
         "Veja as histórias que os dados do Congresso nos contam.",
         "reportagens",
+    ),
+    (
+        "/api/v1/cms/activity",
+        ActivityPage,
+        "Atividade Legislativa",
+        "Use filtros e explore as movimentações do Legislativo sensíveis a gênero, "
+        "atualizadas diariamente pela nossa robô que monitora o Congresso.",
+        "atividade-legislativa",
     ),
 ]
 
@@ -151,7 +159,7 @@ class TestAdmin:
     def change_url(self):
         return reverse("admin:cms_alertspage_change", args=[AlertsPage.SINGLETON_PK])
 
-    @pytest.mark.parametrize("model", [AlertsPage, ReportsPage])
+    @pytest.mark.parametrize("model", [AlertsPage, ReportsPage, ActivityPage])
     def test_menu_abre_o_registro_unico(self, admin_client, model):
         name = model._meta.model_name
         response = admin_client.get(reverse(f"admin:cms_{name}_changelist"))
@@ -229,7 +237,7 @@ class TestAdmin:
 
     def test_titulo_acima_do_limite_nao_salva(self, admin_client):
         response = admin_client.post(
-            self.change_url(), {"title": "Alertas diários!", "subtitle": "x"}
+            self.change_url(), {"title": "Alertas diários do Congresso", "subtitle": "x"}
         )
 
         assert response.status_code == 200
@@ -242,7 +250,7 @@ class TestPublishDefaults:
         published = tmp_path / "cms" / "alertas" / "hero.webp"
 
         call_command("cms_publish_defaults", stdout=io.StringIO())
-        for folder in ["alertas", "reportagens"]:
+        for folder in ["alertas", "reportagens", "atividade-legislativa"]:
             image = Image.open(tmp_path / "cms" / folder / "hero.webp")
             assert (image.format, image.size) == ("WEBP", (1080, 1350))
 
@@ -258,11 +266,12 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", stdout=io.StringIO())
 
         keys = [call.kwargs["Key"] for call in bucket.put_object.call_args_list]
-        assert keys == ["cms/alertas/hero.webp", "cms/reportagens/hero.webp"]
-        assert invalidated_paths(bucket.cloudfront) == [
-            ["/cms/alertas/hero.webp*"],
-            ["/cms/reportagens/hero.webp*"],
+        assert keys == [
+            "cms/alertas/hero.webp",
+            "cms/reportagens/hero.webp",
+            "cms/atividade-legislativa/hero.webp",
         ]
+        assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
 
     def test_no_bucket_nao_sobrescreve_substituicao(self, bucket):
         call_command("cms_publish_defaults", stdout=io.StringIO())
@@ -273,7 +282,7 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_count == 2
+        assert bucket.put_object.call_count == 3
 
 
 class TestDeploy:

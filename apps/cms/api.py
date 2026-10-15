@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from ninja import Router
 
-from .models import AlertsPage, HeroPage, ReportsPage
+from .models import ActivityPage, AlertsPage, HeroPage, ReportsPage
 from .schemas import HeroPageSchema
 
 router = Router()
@@ -35,3 +35,9 @@ def alerts_page(request, response: HttpResponse):
 def reports_page(request, response: HttpResponse):
     """Topo editável da página de reportagens, lido pelo build do site."""
     return _hero(ReportsPage, response)
+
+
+@router.get("/activity", response=HeroPageSchema)
+def activity_page(request, response: HttpResponse):
+    """Topo editável da página de atividade legislativa, lido pelo build do site."""
+    return _hero(ActivityPage, response)
