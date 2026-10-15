@@ -11,12 +11,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 
 from apps.cms.images import normalize
-from apps.cms.models import AlertsPage
+from apps.cms.models import HeroPage
 
 DEFAULTS_DIR = Path(__file__).resolve().parents[2] / "defaults"
-
-# (model, campo, arquivo original, especificação)
-DEFAULTS = [(AlertsPage, "hero_image", "alerts-hero.png", AlertsPage.HERO_IMAGE)]
 
 
 class Command(BaseCommand):
@@ -30,15 +27,18 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, force=False, **options):
-        for model, field_name, filename, spec in DEFAULTS:
-            field = model._meta.get_field(field_name)
+        for model in HeroPage.__subclasses__():
+            field = model._meta.get_field("hero_image")
             name = field.default
+            filename = model.DEFAULT_HERO_IMAGE
             if not force and field.storage.exists(name):
                 self.stdout.write(f"{name}: já publicado")
                 continue
             source = DEFAULTS_DIR / filename
             image = normalize(
-                SimpleUploadedFile(filename, source.read_bytes()), spec, stem=Path(name).stem
+                SimpleUploadedFile(filename, source.read_bytes()),
+                model.HERO_IMAGE,
+                stem=Path(name).stem,
             )
             field.storage.save(name, image)
             self.stdout.write(self.style.SUCCESS(f"{name}: publicado"))

@@ -15,7 +15,7 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
 ## CMS do site
 
 O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
-(hoje só **Alertas**: título, subtítulo e ilustração do topo). Cada página tem
+(hoje **Alertas** e **Reportagens**: título, subtítulo e ilustração do topo). Cada página tem
 um registro único: o menu abre direto o formulário. Ver
 [ADR-006](decisions/006-cms-do-site.md).
 
