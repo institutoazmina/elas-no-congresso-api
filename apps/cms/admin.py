@@ -3,23 +3,27 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.files.uploadedfile import UploadedFile
+from django.forms import modelform_factory
 from django.shortcuts import redirect
 from django.urls import reverse
 from unfold.admin import ModelAdmin
 from unfold.widgets import UnfoldAdminTextareaWidget
 
 from .images import ImageSpec, normalize
-from .models import AlertsPage
+from .models import AlertsPage, HeroPage, ReportsPage
 
 
 class CmsPageForm(forms.ModelForm):
-    # campo -> (especificação, prefixo do arquivo no bucket)
-    # Imagens são obrigatórias no model: sem a opção "limpar", só substituir.
-    image_specs: dict[str, tuple[ImageSpec, str]] = {}
+    """Valida e regrava as imagens enviadas. Imagens são obrigatórias no model:
+    sem a opção "limpar", só substituir."""
+
+    def image_specs(self) -> dict[str, tuple[ImageSpec, str]]:
+        """Campo -> (especificação, nome do arquivo no bucket)."""
+        return {}
 
     def clean(self):
         cleaned = super().clean()
-        for field, (spec, stem) in self.image_specs.items():
+        for field, (spec, stem) in self.image_specs().items():
             value = cleaned.get(field)
             if isinstance(value, UploadedFile):
                 try:
@@ -53,16 +57,29 @@ class CmsPageAdmin(ModelAdmin):
             messages.info(request, "O site será publicado com a alteração em alguns minutos.")
 
 
-class AlertsPageForm(CmsPageForm):
-    image_specs = {"hero_image": (AlertsPage.HERO_IMAGE, "hero")}
+class HeroPageForm(CmsPageForm):
+    def image_specs(self):
+        return {"hero_image": (self._meta.model.HERO_IMAGE, "hero")}
 
-    class Meta:
-        model = AlertsPage
-        fields = ["title", "subtitle", "hero_image"]
-        widgets = {"subtitle": UnfoldAdminTextareaWidget(attrs={"rows": 3})}
+
+def hero_page_form(model: type[HeroPage]) -> type[forms.ModelForm]:
+    return modelform_factory(
+        model,
+        form=HeroPageForm,
+        fields=["title", "subtitle", "hero_image"],
+        widgets={"subtitle": UnfoldAdminTextareaWidget(attrs={"rows": 3})},
+    )
+
+
+class HeroPageAdmin(CmsPageAdmin):
+    fieldsets = [("Topo da página", {"fields": ["title", "subtitle", "hero_image", "updated_at"]})]
 
 
 @admin.register(AlertsPage)
-class AlertsPageAdmin(CmsPageAdmin):
-    form = AlertsPageForm
-    fieldsets = [("Topo da página", {"fields": ["title", "subtitle", "hero_image", "updated_at"]})]
+class AlertsPageAdmin(HeroPageAdmin):
+    form = hero_page_form(AlertsPage)
+
+
+@admin.register(ReportsPage)
+class ReportsPageAdmin(HeroPageAdmin):
+    form = hero_page_form(ReportsPage)

@@ -14,7 +14,7 @@ from PIL import Image
 
 from apps.cms import deploy, storage, tasks
 from apps.cms.images import ImageSpec, normalize
-from apps.cms.models import AlertsPage
+from apps.cms.models import AlertsPage, ReportsPage
 
 pytestmark = pytest.mark.django_db
 
@@ -66,21 +66,40 @@ def deploy_task(settings, monkeypatch):
     return fake
 
 
+PAGES = [
+    (
+        "/api/v1/cms/alerts",
+        AlertsPage,
+        "Alertas",
+        "Acompanhe as movimentações do Legislativo no Radar do Congresso",
+        "alertas",
+    ),
+    (
+        "/api/v1/cms/reports",
+        ReportsPage,
+        "Reportagens",
+        "Veja as histórias que os dados do Congresso nos contam.",
+        "reportagens",
+    ),
+]
+
+
 class TestEndpoint:
-    def test_sem_registro_devolve_padroes_sem_gravar(self):
-        response = Client().get("/api/v1/cms/alerts")
+    @pytest.mark.parametrize(("path", "model", "title", "subtitle", "folder"), PAGES)
+    def test_sem_registro_devolve_padroes_sem_gravar(self, path, model, title, subtitle, folder):
+        response = Client().get(path)
 
         assert response["Cache-Control"] == "no-store"
         assert response.json() == {
-            "title": "Alertas",
-            "subtitle": "Acompanhe as movimentações do Legislativo no Radar do Congresso",
+            "title": title,
+            "subtitle": subtitle,
             "hero_image": {
-                "url": "/media/cms/alertas/hero.webp?v=0",
+                "url": f"/media/cms/{folder}/hero.webp?v=0",
                 "width": 1080,
                 "height": 1350,
             },
         }
-        assert not AlertsPage.objects.exists()
+        assert not model.objects.exists()
 
     def test_imagem_usa_dominio_do_site_com_versao(self, bucket):
         page = AlertsPage.load()
@@ -132,12 +151,24 @@ class TestAdmin:
     def change_url(self):
         return reverse("admin:cms_alertspage_change", args=[AlertsPage.SINGLETON_PK])
 
-    def test_menu_abre_o_registro_unico(self, admin_client):
-        response = admin_client.get(reverse("admin:cms_alertspage_changelist"))
+    @pytest.mark.parametrize("model", [AlertsPage, ReportsPage])
+    def test_menu_abre_o_registro_unico(self, admin_client, model):
+        name = model._meta.model_name
+        response = admin_client.get(reverse(f"admin:cms_{name}_changelist"))
 
         assert response.status_code == 302
-        assert response["Location"] == self.change_url()
-        assert AlertsPage.objects.count() == 1
+        assert response["Location"] == reverse(f"admin:cms_{name}_change", args=[1])
+        assert model.objects.count() == 1
+
+    def test_reportagens_usa_a_propria_pasta(self, admin_client, bucket):
+        ReportsPage.load()
+        response = admin_client.post(
+            reverse("admin:cms_reportspage_change", args=[1]),
+            {"title": "Reportagens", "subtitle": "x", "hero_image": image_file()},
+        )
+
+        assert response.status_code == 302
+        assert bucket.put_object.call_args.kwargs["Key"] == "cms/reportagens/hero.webp"
 
     def test_nao_permite_criar_nem_excluir(self, admin_client):
         assert admin_client.get(reverse("admin:cms_alertspage_add")).status_code == 403
@@ -211,8 +242,9 @@ class TestPublishDefaults:
         published = tmp_path / "cms" / "alertas" / "hero.webp"
 
         call_command("cms_publish_defaults", stdout=io.StringIO())
-        image = Image.open(published)
-        assert (image.format, image.size) == ("WEBP", (1080, 1350))
+        for folder in ["alertas", "reportagens"]:
+            image = Image.open(tmp_path / "cms" / folder / "hero.webp")
+            assert (image.format, image.size) == ("WEBP", (1080, 1350))
 
         published.write_bytes(b"substituida no admin")
         out = io.StringIO()
@@ -225,8 +257,12 @@ class TestPublishDefaults:
 
         call_command("cms_publish_defaults", stdout=io.StringIO())
 
-        assert bucket.put_object.call_args.kwargs["Key"] == "cms/alertas/hero.webp"
-        assert invalidated_paths(bucket.cloudfront) == [["/cms/alertas/hero.webp*"]]
+        keys = [call.kwargs["Key"] for call in bucket.put_object.call_args_list]
+        assert keys == ["cms/alertas/hero.webp", "cms/reportagens/hero.webp"]
+        assert invalidated_paths(bucket.cloudfront) == [
+            ["/cms/alertas/hero.webp*"],
+            ["/cms/reportagens/hero.webp*"],
+        ]
 
     def test_no_bucket_nao_sobrescreve_substituicao(self, bucket):
         call_command("cms_publish_defaults", stdout=io.StringIO())
@@ -237,7 +273,7 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_args.kwargs["Key"] == "cms/alertas/hero.webp"
+        assert bucket.put_object.call_count == 2
 
 
 class TestDeploy:

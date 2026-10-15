@@ -7,7 +7,7 @@ class CmsImageSchema(Schema):
     height: int
 
 
-class AlertsPageSchema(Schema):
+class HeroPageSchema(Schema):
     title: str
     subtitle: str
     hero_image: CmsImageSchema
