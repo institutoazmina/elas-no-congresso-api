@@ -120,6 +120,7 @@ O CSV usa `;`, BOM UTF-8, todos os campos entre aspas e 11 colunas em português
 | --- | --- | --- |
 | `GET /cms/alerts` | — | Topo de `/alertas`: `{title, subtitle, hero_image: {url, width, height}}`, com `?v=` na URL da imagem; `Cache-Control: no-store` |
 | `GET /cms/reports` | — | Topo de `/reportagens`, mesmo formato |
+| `GET /cms/activity` | — | Topo de `/atividade-legislativa`, mesmo formato |
 
 Lido pelo build do site ([ADR-006](decisions/006-cms-do-site.md)).
 

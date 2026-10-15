@@ -2,7 +2,7 @@
 
 ## Estado e contexto
 
-**Implementada para as páginas de alertas e de reportagens em 14/10/2026.**
+**Implementada para as páginas de alertas, reportagens e atividade legislativa em 14/10/2026.**
 
 Textos e imagens do site estático (Astro, S3 + CloudFront) estavam no código:
 cada ajuste editorial exigia um desenvolvedor e um deploy. A equipe precisa
@@ -24,7 +24,7 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   direto o formulário; criar e excluir são bloqueados. Só texto e imagens são
   editáveis; rotas, rótulos de interface e layout continuam no site.
 - **Limites vêm do layout**: `max_length` medido com a fonte do site (o título
-  de alertas tem 14 caracteres porque não quebra linha no celular). Imagens
+  do topo tem até 24 caracteres, no máximo duas linhas). Imagens
   precisam da proporção do recorte (±2%), têm no máximo 5 MB, aceitam PNG, JPEG
   ou WebP (SVG não) e são regravadas em WebP no tamanho exato.
 - **Imagens direto no bucket do site**, como as imagens de compartilhamento

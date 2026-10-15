@@ -36,10 +36,10 @@ class CmsPage(models.Model):
 def title_field(default: str):
     return models.CharField(
         verbose_name="Título",
-        # No celular o título não quebra linha: ~15 maiúsculas cabem em 375 px.
-        max_length=14,
+        # Duas linhas no máximo, no celular e ao lado da ilustração no computador.
+        max_length=24,
         default=default,
-        help_text="Até 14 caracteres. No celular o título fica numa linha só.",
+        help_text="Até 24 caracteres, no máximo duas linhas.",
     )
 
 
@@ -116,3 +116,22 @@ class ReportsPage(HeroPage):
 
     def __str__(self):
         return "Página de reportagens"
+
+
+class ActivityPage(HeroPage):
+    DEFAULT_HERO_IMAGE = "activity-hero.png"
+
+    title = title_field("Atividade Legislativa")
+    subtitle = subtitle_field(
+        "Use filtros e explore as movimentações do Legislativo sensíveis a gênero, "
+        "atualizadas diariamente pela nossa robô que monitora o Congresso."
+    )
+    hero_image = hero_image_field("atividade-legislativa")
+
+    class Meta:
+        verbose_name = "Atividade legislativa"
+        verbose_name_plural = "Atividade legislativa"
+        db_table = "cms_activity_page"
+
+    def __str__(self):
+        return "Página de atividade legislativa"
