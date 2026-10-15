@@ -47,7 +47,8 @@ Configuração em `config/deploy.yml`; segredos lidos por nome em `.kamal/secret
     resumo, limite de backfill e as variáveis da newsletter.
 - **Segredos:** `SECRET_KEY`, `POSTGRES_HOST/PORT/DB/USER/PASSWORD`,
   `ALLOWED_HOSTS`, `SITE_BASE_URL`. `SUBSTACK_COOKIES_STRING` só entra quando a
-  newsletter está ligada ou o cookie está definido.
+  newsletter está ligada ou o cookie está definido; `SITE_DEPLOY_GITHUB_TOKEN` e
+  `CMS_CLOUDFRONT_DISTRIBUTION_ID`, quando definidos.
 - **E-mail:** o app não recebe chaves AWS; o SES usa a IAM role da instância.
 
 ## Workflow de deploy
@@ -65,10 +66,12 @@ Etapas:
 3. `kamal setup`: sobe acessórios, faz build, push e deploy.
 4. `kamal app exec --reuse --roles web "python manage.py migrate --noinput"`.
 5. `kamal app exec --reuse --roles web "python manage.py ingestion_sync --mode bootstrap"`.
+6. `kamal app exec --reuse --roles web "python manage.py cms_publish_defaults"`:
+   publica as imagens originais do CMS que ainda não estão no bucket.
 
 | Tipo | Itens |
 | --- | --- |
-| Segredos do GitHub | `DEPLOY_HOST`, `SSH_PRIVATE_KEY`, `SECRET_KEY`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `ALLOWED_HOSTS`, `SITE_BASE_URL`, `SUBSTACK_COOKIES_STRING`; `GITHUB_TOKEN` autentica no GHCR |
+| Segredos do GitHub | `DEPLOY_HOST`, `SSH_PRIVATE_KEY`, `SECRET_KEY`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `ALLOWED_HOSTS`, `SITE_BASE_URL`, `SUBSTACK_COOKIES_STRING`, `SITE_DEPLOY_GITHUB_TOKEN`, `CMS_CLOUDFRONT_DISTRIBUTION_ID`; `GITHUB_TOKEN` autentica no GHCR |
 | Variáveis do repositório | `ACTIVITY_EXPLORER_TRACE_SAMPLE_RATE`, `WEEKLY_NEWSLETTER_ENABLED`, `WEEKLY_NEWSLETTER_BATCH_SIZE`, `CLASSIFICATION_BACKFILL_DAILY_LIMIT`, `SUBSTACK_PUBLICATION_URL` |
 
 ## Workflows operacionais

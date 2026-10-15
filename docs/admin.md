@@ -12,6 +12,20 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
   `apps/core/admin.py`. Continuam funcionando; ajustes de agenda exigem shell ou
   alteração das configurações.
 
+## CMS do site
+
+O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
+(hoje só **Alertas**: título, subtítulo e ilustração do topo). Cada página tem
+um registro único: o menu abre direto o formulário. Ver
+[ADR-006](decisions/006-cms-do-site.md).
+
+- Os limites de texto e as exigências da imagem aparecem no formulário e vêm do
+  layout do site. Imagens fora da proporção não são aceitas.
+- Salvar dispara o deploy do site; a alteração aparece em alguns minutos.
+  Salvamentos seguidos viram um único deploy.
+- Imagens só podem ser substituídas, não removidas. A primeira versão é a
+  ilustração original, publicada pelo comando `cms_publish_defaults` no deploy.
+
 ## Curadoria de proposições
 
 **Proposições** traz inlines de autorias, relatorias, análise QuitérIA e

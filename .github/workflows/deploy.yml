@@ -34,6 +34,8 @@ jobs:
       CLASSIFICATION_BACKFILL_DAILY_LIMIT: ${{ vars.CLASSIFICATION_BACKFILL_DAILY_LIMIT || '600' }}
       SUBSTACK_PUBLICATION_URL: ${{ vars.SUBSTACK_PUBLICATION_URL || 'https://elasnocongresso.substack.com' }}
       SUBSTACK_COOKIES_STRING: ${{ secrets.SUBSTACK_COOKIES_STRING }}
+      SITE_DEPLOY_GITHUB_TOKEN: ${{ secrets.SITE_DEPLOY_GITHUB_TOKEN }}
+      CMS_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CMS_CLOUDFRONT_DISTRIBUTION_ID }}
       # Registry: o próprio token do Actions tem write:packages pro repo
       KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
@@ -90,3 +92,7 @@ jobs:
 
       - name: Initialize durable daily ingestion (on server)
         run: kamal app exec --reuse --roles web "python manage.py ingestion_sync --mode bootstrap"
+
+      # Só envia as imagens originais do CMS que ainda não estão no bucket.
+      - name: Publish CMS default images (on server)
+        run: kamal app exec --reuse --roles web "python manage.py cms_publish_defaults"

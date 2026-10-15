@@ -98,6 +98,17 @@ Constantes sem variável: `QUITERIA_MODEL_ID="azmina/quiteria-2.0"`,
 | `SUBSTACK_PUBLICATION_URL` | `https://elasnocongresso.substack.com` | Origem HTTPS da publicação, sem caminho |
 | `SUBSTACK_COOKIES_STRING` | vazio | Cabeçalho `Cookie` completo de uma sessão autorizada; segredo |
 
+### CMS do site
+
+| Variável | Padrão | Uso |
+| --- | --- | --- |
+| `CMS_S3_BUCKET` | `OG_S3_BUCKET` | Bucket das imagens do CMS (prefixo `cms/`); vazio grava no `MEDIA_ROOT` |
+| `CMS_PUBLIC_BASE_URL` | `PUBLIC_SITE_URL` | Origem das URLs das imagens |
+| `CMS_CLOUDFRONT_DISTRIBUTION_ID` | vazio | Distribuição do site; imagem substituída tem o caminho invalidado. Vazio não invalida; segredo |
+| `SITE_DEPLOY_GITHUB_TOKEN` | vazio | Token fine-grained do repositório do site (Contents: read and write); vazio não dispara deploy; segredo |
+| `SITE_DEPLOY_GITHUB_REPOSITORY` | `institutoazmina/elas-no-congresso` | Repositório que recebe o `repository_dispatch` |
+| `SITE_DEPLOY_DELAY_SECONDS` | `30` | Janela que agrupa salvamentos num único deploy |
+
 ### Observabilidade
 
 | Variável | Padrão | Uso |

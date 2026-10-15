@@ -15,6 +15,7 @@ api = NinjaAPI(
 
 
 def register_routers() -> None:
+    from apps.cms.api import router as cms_router
     from apps.committees.api import router as committees_router
     from apps.legislatures.api import router as legislatures_router
     from apps.norms.api import router as norms_router
@@ -34,6 +35,7 @@ def register_routers() -> None:
     api.add_router("/committees/", committees_router, tags=["Comissões"])
     api.add_router("/norms/", norms_router, tags=["Normas"])
     api.add_router("/subscriptions/", subscriptions_router, tags=["Inscrições"])
+    api.add_router("/cms/", cms_router, tags=["CMS"])
 
 
 register_routers()
