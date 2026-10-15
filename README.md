@@ -4,7 +4,9 @@ API Django para acompanhamento de proposições legislativas do Congresso Brasil
 
 ## Sobre
 
-Projeto do [Instituto AzMina](https://azmina.org.br) em parceria com o Programa QuitérIA — usando dados abertos da Câmara dos Deputados e Senado Federal.
+O [Elas no Congresso](https://elasnocongresso.com.br) é um projeto do [Instituto AzMina](https://institutoazmina.org.br) que monitora as pautas de gênero no Congresso Nacional usando dados abertos da Câmara dos Deputados e Senado Federal.
+
+A [QuitérIA](https://github.com/institutoazmina/ia-feminista-elas-no-congresso) é a ferramenta de inteligência artificial feminista responsável por classificar os temas e a favorabilidade das proposições legislativas monitoradas.
 
 ## Arquitetura
 
