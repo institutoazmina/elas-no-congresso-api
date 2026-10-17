@@ -18,7 +18,9 @@ esta configuração substitui a configuração mínima proposta nele.
 - Django fica fora do grupo geral de Python.
 - PyTorch e Transformers são revisados juntos, com aprovação no dashboard
   inclusive para upgrades minor. Valide inferência da QuitérIA com o modelo
-  fixado e confira as wheels CPU no lockfile; a suíte de CI usa mocks de IA.
+  fixado e confira as wheels CPU no lockfile. O job obrigatório de compatibilidade
+  executa inferência real contra um baseline gravado antes dos upgrades; os
+  testes de orquestração continuam usando mocks de IA.
 - Manutenção semanal dos lockfiles, incluindo `uv.lock` e `package-lock.json`.
 - Automerge desativado para todos os updates. Cada merge em `main` dispara o
   pipeline de deploy, e o bot não recebe bypass das proteções da branch.
