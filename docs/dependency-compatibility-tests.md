@@ -66,10 +66,6 @@ variações numéricas entre CPUs; o somatório das probabilidades também é va
 A tokenização deve preservar o tamanho e o hash dos IDs de tokens.
 
 O baseline registra versões, revisão do modelo e SHA-256 dos pesos/configs.
-Quatro checksums públicos de arquivos `tokenizer*.json` coincidem com a regra
-genérica de secrets. O `.gitleaksignore` registra somente os quatro fingerprints
-históricos revisados; o arquivo e a regra continuam sendo verificados em novas
-alterações. Não há exclusão geral do baseline.
 Ele não é regenerado pela suíte. Para gravar uma nova referência deliberadamente:
 
 ```bash
