@@ -67,7 +67,7 @@
       "separateMajorMinor": false,
       "dependencyDashboardApproval": true,
       "prBodyNotes": [
-        "Validate Quiteria inference against the pinned model revision; CI mocks inference.",
+        "Require the Quiteria model compatibility job; review any drift from the pre-upgrade inference baseline.",
         "Regenerate uv.lock using the configured PyTorch CPU index and retain Linux CPU wheels."
       ]
     }
