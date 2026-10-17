@@ -127,56 +127,6 @@ make loadtest
 uv run ./manage.py shell
 ```
 
-### CI nos Pull Requests
-
-O workflow [CI](.github/workflows/ci.yml) roda em todos os Pull Requests,
-manualmente pelo GitHub Actions e como pré-requisito do deploy de `main`.
-O job `Lint, migrations and tests` verifica o lockfile (`uv sync --locked`), compila
-os templates MJML, executa Ruff, os checks do Django, a detecção de migrações
-pendentes e todos os testes em `tests/unit/`, `apps/` e `tests/integration/`.
-O pytest cria um banco novo e aplica todas as migrações.
-
-O ambiente usa Python de `.python-version`, Node 22 e PostgreSQL 16 com pgvector.
-Os testes de SES iniciam MiniStack via testcontainers; Celery roda em modo eager
-e o cache fica em memória. Não são necessários secrets de produção, Redis nem
-pesos da QuitérIA. Os testes de carga continuam sendo executados separadamente
-com `make loadtest`.
-
-Os relatórios JUnit e de cobertura ficam no artefato `test-reports` por 14 dias,
-inclusive quando há falhas nos testes. A cobertura é informativa, sem mínimo
-obrigatório. Novos commits cancelam a execução anterior do mesmo PR.
-
-O check final `CI passed` exige sucesso dos testes e dos jobs de segurança.
-O ruleset de `main` exige esse check e atualização em relação à branch base.
-O deploy, tanto por push em `main` quanto manual, executa o mesmo CI antes de
-acessar os secrets de produção. Deploys manuais de outras branches são ignorados.
-
-O [workflow de segurança](.github/workflows/security.yml) inclui CodeQL para
-Python e GitHub Actions, auditoria das dependências Python e npm e varredura de
-secrets no histórico Git com Gitleaks. Também roda semanalmente. Consulte
-[segurança no CI](docs/security-ci.md) para os limites, comandos e pendências
-encontradas na configuração inicial.
-
-O Renovate propõe atualizações semanais de dependências, mantendo Django e o
-runtime de IA sob revisão separada. Veja a [política de atualizações](docs/dependency-updates.md).
-
-Para reproduzir a suíte completa localmente, com Docker disponível:
-
-```bash
-uv sync --locked --dev
-docker compose up -d postgres
-npm ci --prefix apps/subscriptions/emails
-npm run build --prefix apps/subscriptions/emails
-DJANGO_SETTINGS_MODULE=config.settings.test uv run python manage.py check
-DJANGO_SETTINGS_MODULE=config.settings.test uv run python manage.py makemigrations --check --dry-run
-uv run ruff check .
-DJANGO_SETTINGS_MODULE=config.settings.test uv run pytest --cov=apps --cov=config
-```
-
-Se o PostgreSQL estiver em outra porta ou usar outras credenciais, configure
-`TEST_DATABASE_URL=postgresql://usuario:senha@localhost:porta/banco`. O usuário
-precisa poder criar bancos de teste e as extensões usadas pelas migrações.
-
 ## Deploy
 
 O [Radar semanal no Substack](docs/decisions/001-weekly-substack-drafts.md) prepara rascunhos para revisão
