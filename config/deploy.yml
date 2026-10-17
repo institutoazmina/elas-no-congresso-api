@@ -93,6 +93,9 @@ env:
     # Imagens de compartilhamento: exige s3:PutObject/DeleteObject em
     # atividade-legislativa/autoria/* na role.
     OG_S3_BUCKET: elas-no-congresso-site
+    # Imagens do CMS vão para o mesmo bucket (CMS_S3_BUCKET herda OG_S3_BUCKET):
+    # exige também s3:GetObject/PutObject em cms/* e cloudfront:CreateInvalidation
+    # na distribuição do site.
   secret:
     - SECRET_KEY
     # Banco (RDS) — endpoint/credenciais não expostos no repo
@@ -106,6 +109,14 @@ env:
     - SITE_BASE_URL
 <% if ENV.fetch('WEEKLY_NEWSLETTER_ENABLED', 'False').downcase == 'true' || !ENV.fetch('SUBSTACK_COOKIES_STRING', '').strip.empty? %>
     - SUBSTACK_COOKIES_STRING
+<% end %>
+<% unless ENV.fetch('SITE_DEPLOY_GITHUB_TOKEN', '').strip.empty? %>
+    # Token fine-grained só do repo do site (Contents: read and write): o CMS
+    # dispara o deploy do site via repository_dispatch.
+    - SITE_DEPLOY_GITHUB_TOKEN
+<% end %>
+<% unless ENV.fetch('CMS_CLOUDFRONT_DISTRIBUTION_ID', '').strip.empty? %>
+    - CMS_CLOUDFRONT_DISTRIBUTION_ID
 <% end %>
 
 # ---- Redis accessory (no servidor), isolado por nome próprio ----
