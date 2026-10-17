@@ -144,7 +144,7 @@ temático: `direitos_sexuais_reprodutivos`, `educacao_cultura`,
 
 ## Pilha técnica
 
-- Python 3.12, gerenciado por `uv`; Django 5.2 LTS, Django Ninja, django-unfold.
+- Python 3.12, gerenciado por `uv`; Django 5.1, Django Ninja, django-unfold.
 - PostgreSQL 16 com pgvector (imagem `pgvector/pgvector:pg16`), Redis 7.
 - Celery 5 com `django-celery-beat` e `django-celery-results`.
 - `httpx` e `tenacity` para as fontes; `pypdf`, PyMuPDF e Tesseract (`por`) para

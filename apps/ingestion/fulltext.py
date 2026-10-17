@@ -106,9 +106,6 @@ def extract_pdf_text(
 def _extract(content: bytes, url: str = "") -> str | None:
     try:
         pages = PdfReader(io.BytesIO(content)).pages
-        # pypdf's page sequence is lazy: encrypted or malformed page trees may
-        # fail only when counted, after constructing the reader successfully.
-        len(pages)
     except Exception as exc:  # noqa: BLE001 — pypdf lança vários tipos
         logger.warning("Falha ao ler PDF %s: %s", url, exc)
         return None

@@ -7,7 +7,7 @@ dependencies = [
     "boto3>=1.35",
     "celery[redis]>=5.4",
     "django-anymail[amazon-ses]>=10",
-    "django>=5.2.18,<5.3",
+    "django>=5.1,<5.2",
     "django-celery-beat>=2.9.0",
     "django-celery-results>=2.6.0",
     "django-ninja>=1.4",
@@ -17,7 +17,7 @@ dependencies = [
     "huggingface-hub>=0.36.0",
     "pgvector>=0.3",
     "psycopg[binary]>=3.2",
-    "pypdf>=6.19.0",
+    "pypdf>=6.13.2",
     "python-decouple>=3.8",
     "tenacity>=9.1.4",
     "uvicorn[standard]>=0.30",
@@ -26,8 +26,8 @@ dependencies = [
     "pymupdf>=1.28.0",
     "pytesseract>=0.3.13",
     "pillow>=12.3.0",
-    "torch==2.13.0",
-    "transformers==5.10.4",
+    "torch==2.12.0",
+    "transformers==5.7.0",
     "django-cors-headers>=4.9.0",
     "email-validator>=2.3.0",
     "python-substack==0.9.1",
@@ -89,7 +89,6 @@ addopts = "-v --tb=short"
 # Locust (gevent) não roda sob pytest; use `make loadtest`.
 norecursedirs = ["tests/load", ".*", "node_modules", "staticfiles"]
 asyncio_mode = "auto"
-markers = ["ml: real CPU inference against pinned Quiteria model artifacts (requires --run-ml)"]
 
 [tool.coverage.run]
 omit = [
