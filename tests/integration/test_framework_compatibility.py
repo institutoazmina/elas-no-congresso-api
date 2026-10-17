@@ -75,14 +75,9 @@ def test_non_staff_password_login_cannot_open_admin():
 
 
 @pytest.mark.parametrize(
-    ("email", "expected"),
-    [
-        ("Pessoa@EXAMPLE.COM", "Pessoa@example.com"),
-        ("Pessoa@bücher.de", "Pessoa@bücher.de"),
-        ("Pessoa@xn--bcher-kva.de", "Pessoa@bücher.de"),
-    ],
+    "email", ["Pessoa@EXAMPLE.COM", "Pessoa@bücher.de", "Pessoa@xn--bcher-kva.de"]
 )
-def test_subscription_email_normalization_survives_dependency_updates(email, expected, monkeypatch):
+def test_subscription_email_normalization_survives_dependency_updates(email, monkeypatch):
     send = Mock()
     monkeypatch.setattr("apps.subscriptions.tasks.send_confirmation_email.delay", send)
     response = Client(enforce_csrf_checks=True).post(
@@ -98,6 +93,7 @@ def test_subscription_email_normalization_survives_dependency_updates(email, exp
     )
     assert response.status_code == 201, response.content
     sub = Subscription.objects.get()
+    expected = "Pessoa@example.com" if email.endswith("EXAMPLE.COM") else "Pessoa@bücher.de"
     assert sub.email == expected
     assert response.json()[0]["email"] == expected
     assert sub.is_active is False
