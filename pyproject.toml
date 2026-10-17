@@ -27,7 +27,7 @@ dependencies = [
     "pytesseract>=0.3.13",
     "pillow>=12.3.0",
     "torch==2.13.0",
-    "transformers==5.10.4",
+    "transformers==5.7.0",
     "django-cors-headers>=4.9.0",
     "email-validator>=2.3.0",
     "python-substack==0.9.1",
