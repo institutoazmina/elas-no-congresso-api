@@ -13,7 +13,13 @@ def main(directory: str) -> int:
     findings = 0
     for report in reports:
         for run in json.loads(report.read_text())["runs"]:
-            rules = {rule["id"]: rule for rule in run["tool"]["driver"].get("rules", [])}
+            # CodeQL stores query metadata in extensions, not necessarily the driver.
+            components = [run["tool"]["driver"], *run["tool"].get("extensions", [])]
+            rules = {
+                rule["id"]: rule
+                for component in components
+                for rule in component.get("rules", [])
+            }
             for result in run.get("results", []):
                 rule = rules.get(result.get("ruleId"), {})
                 severity = float(rule.get("properties", {}).get("security-severity", 0))
