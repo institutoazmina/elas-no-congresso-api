@@ -2,9 +2,8 @@
 
 O baseline foi gravado com o `uv.lock` anterior às correções de segurança:
 PyTorch `2.12.0+cpu`, Transformers `5.7.0` e revisão do modelo
-`6f258ee80c0ac410ce60317a4e31460590d7e594`. Essa referência permanece fixa após
-as atualizações de segurança; as versões atuais estão no `uv.lock` e no
-[registro das correções](security-ci.md#correções-de-dependências-python).
+`6f258ee80c0ac410ce60317a4e31460590d7e594`. As versões dos pacotes permanecem
+inalteradas nesta preparação.
 
 ## Contratos cobertos
 
@@ -13,7 +12,7 @@ as atualizações de segurança; as versões atuais estão no `uv.lock` e no
 | PDF | pypdf e PyMuPDF reais; acentos, ordem de páginas, conteúdo esperado, arquivo truncado, PDF criptografado e fallback sem renderer/OCR |
 | OCR | Renderização de um PDF sem camada de texto e reconhecimento real com Tesseract em português; verifica frases e recuperação substancial do documento |
 | HTTP | Servidor local com sockets reais; redirects, JSON UTF-8, gzip, retry de 503, JSON inválido sem retry e download de PDF comprimido com parsing real |
-| Django | Login por senha, autenticação de hash PBKDF2 criado com o custo padrão do Django 5.1 e atualização para o custo atual, CSRF obrigatório, rejeição de origem não confiável, cookie seguro, sessão em cache, logout e restrição de acesso ao admin |
+| Django | Login por senha, CSRF obrigatório, rejeição de origem não confiável, cookie seguro, sessão em cache, logout e restrição de acesso ao admin |
 | E-mail | Endpoint público com EmailStr/email-validator/IDNA reais; normalização de domínio Unicode/punycode e rejeição sem gravação/envio em entradas inválidas |
 | QuitérIA | Dois modelos BERT reais em CPU, hashes dos oito arquivos, tokenização, truncamento em 512 tokens, categorias, favorabilidade e vetores de probabilidades |
 

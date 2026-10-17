@@ -47,53 +47,23 @@ actions conforme a [política de atualizações](dependency-updates.md). Versõe
 embutidas em comandos, como pip-audit e o binário/checksum do Gitleaks, ainda
 exigem revisão manual.
 
-## Correções de dependências Python
+## Pendências encontradas em 2026-10-16
 
-A auditoria inicial de 2026-10-16 reportou 68 entradas de advisories em 13
-pacotes, incluindo aliases/entradas repetidas. As correções seguem commits
-individuais, do menor impacto esperado no produto ao maior, com push e
-verificação do CI de cada commit antes da próxima atualização.
+A atualização do MJML para `5.4.1` eliminou os 33 findings altos reportados pelo
+`npm audit`; os dois templates compilam com a nova versão.
 
-| Ordem | Pacote | Versão anterior → corrigida | Uso principal |
-| --- | --- | --- | --- |
-| 1 | msgpack | 1.1.2 → 1.2.1 | Locust, desenvolvimento |
-| 2 | python-engineio | 4.13.1 → 4.13.2 | Locust, desenvolvimento |
-| 3 | python-socketio | 5.16.1 → 5.16.2 | Locust, desenvolvimento |
-| 4 | werkzeug | 3.1.8 → 3.1.9 | Locust/Flask, desenvolvimento |
-| 5 | sqlparse | 0.5.5 → 0.6.0 | Parser usado pelo Django |
-| 6 | idna | 3.12 → 3.15 | Domínios e validação de e-mail |
-| 7 | anyio | 4.13.0 → 4.14.2 | HTTP assíncrono via HTTPX |
-| 8 | urllib3 | 2.6.3 → 2.8.0 | Boto3/SES, Requests e outros clientes HTTP |
-| 9 | pypdf | 6.13.2 → 6.19.0 | Extração de documentos externos |
-| 10 | torch | 2.12.0+cpu → 2.13.0+cpu | Inferência QuitérIA |
-| 11 | setuptools | 81.0.0 → 83.0.0 | Dependência do PyTorch |
-| 12 | transformers | 5.7.0 → 5.10.4 | Tokenização e inferência QuitérIA |
-| 13 | Django | 5.1.15 → 5.2.18 LTS | Framework, autenticação e ORM |
+A auditoria Python estrita reportou 68 entradas de advisories em 13 pacotes:
+`anyio`, `django`, `idna`, `msgpack`, `pypdf`, `python-engineio`,
+`python-socketio`, `setuptools`, `sqlparse`, `torch`, `transformers`, `urllib3`
+e `werkzeug`. O total pode incluir aliases/entradas repetidas do mesmo advisory.
+Isso não significa que todos os caminhos vulneráveis sejam usados pela API.
 
-Setuptools foi adiado até a atualização do PyTorch: a wheel CPU 2.12 exigia
-`setuptools<82`, incompatível com a correção em 83. A wheel CPU 2.13 remove
-esse teto. Transformers 5.10.0 foi retirado pelos mantenedores; o pin usa
-5.10.4, uma versão não retirada da mesma série. Os pins de PyTorch e
-Transformers continuam explícitos, e o índice CPU permanece obrigatório em
-Linux x86_64. O lock universal também atualiza cuda-toolkit e Triton exigidos
-pelo PyTorch em outras plataformas; eles não são instalados no Linux x86_64.
-Django fica restrito à série LTS 5.2 (`>=5.2.18,<5.3`).
-
-O baseline de inferência anterior às correções não foi regenerado nem teve
-suas tolerâncias ampliadas. PDF/OCR, HTTP, autenticação, e-mail e os dois
-modelos reais são verificados pelos
-[testes de compatibilidade](dependency-compatibility-tests.md). O teste de
-senha legada é executado com PBKDF2 real, em vez do MD5 rápido da suíte.
-
-As auditorias permanecem estritas, sem exceções de vulnerabilidades. O relatório
-`python-audit.json` de cada execução registra os pacotes ainda afetados naquele
-commit. Execuções intermediárias mantêm `CI passed` vermelho enquanto existem
-outros pacotes vulneráveis; o resultado final exige também a auditoria limpa.
-Os resultados individuais estão no histórico de checks do
-[PR #15](https://github.com/institutoazmina/elas-no-congresso-api/pull/15).
-
-A atualização do MJML para `5.4.1` também eliminou os 33 findings altos
-reportados inicialmente pelo `npm audit`; os dois templates compilam com ela.
+**O audit Python e o CI ficarão vermelhos com o lockfile atual, bloqueando merge
+e deploy.** Não foram adicionadas exceções. A correção requer atualizar e validar
+essas dependências, incluindo sair do Django 5.1 e revisar os pins de PyTorch e
+Transformers usados pela QuitérIA. Consulte o JSON do audit para versões
+corrigidas e detalhes atualizados; um dos advisories de Transformers foi
+reportado sem versão de correção pelo serviço.
 
 ## Reprodução local
 
@@ -111,5 +81,5 @@ Para verificar localmente um SARIF produzido pelo CodeQL:
 python scripts/check_codeql_results.py /caminho/dos/relatorios
 ```
 
-As análises CodeQL são executadas no GitHub em cada PR. O comando acima
-apenas valida os relatórios SARIF locais; ele não inicia análises remotas.
+O CodeQL será validado no GitHub após o envio dos workflows. A configuração
+local não inicia análises remotas nem publica alterações no repositório.

@@ -4,7 +4,6 @@ from unittest.mock import Mock
 
 import pytest
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import PBKDF2PasswordHasher
 from django.core.cache import cache
 from django.test import Client
 from django.urls import reverse
@@ -73,23 +72,6 @@ def test_non_staff_password_login_cannot_open_admin():
     response = client.get(reverse("admin:index"))
     assert response.status_code == 302
     assert reverse("admin:login") in response.url
-
-
-def test_django_51_password_hash_authenticates_and_uses_current_work_factor(settings):
-    settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.PBKDF2PasswordHasher"]
-    hasher = PBKDF2PasswordHasher()
-    password = "legacy-compatibility-password"
-    user = get_user_model().objects.create_user(username="legacy-staff", is_staff=True)
-    # Django 5.1's production default; bypass the fast MD5 test hasher.
-    user.password = hasher.encode(password, "compatibility-test-salt", iterations=870_000)
-    user.save(update_fields=["password"])
-
-    client = Client()
-    assert client.login(username=user.username, password=password)
-    assert client.get(reverse("admin:index"), secure=True).status_code == 200
-    user.refresh_from_db()
-    assert hasher.verify(password, user.password)
-    assert hasher.decode(user.password)["iterations"] == hasher.iterations
 
 
 @pytest.mark.parametrize(
