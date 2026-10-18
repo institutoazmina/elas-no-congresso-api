@@ -85,6 +85,10 @@ class HeroPage(CmsPage):
     class Meta:
         abstract = True
 
+    @classmethod
+    def default_images(cls):
+        return [("hero_image", cls.DEFAULT_HERO_IMAGE, cls.HERO_IMAGE)]
+
 
 class AlertsPage(HeroPage):
     DEFAULT_HERO_IMAGE = "alerts-hero.png"
@@ -135,3 +139,249 @@ class ActivityPage(HeroPage):
 
     def __str__(self):
         return "Página de atividade legislativa"
+
+
+class FeministAIPage(CmsPage):
+    """Conteúdo editorial da página QuitérIA, com layout fixo no site."""
+
+    HERO_IMAGE = ImageSpec(743, 1349)
+    FLOW_DESKTOP_IMAGE = ImageSpec(820, 574)
+    FLOW_MOBILE_IMAGE = ImageSpec(524, 574)
+
+    seo_title = models.CharField("Título para busca", max_length=120)
+    seo_description = models.CharField("Descrição para busca", max_length=200)
+
+    hero_title_prefix = models.CharField("Início do título", max_length=30)
+    hero_title_emphasis = models.CharField("Destaque do título", max_length=40)
+    hero_description = models.TextField("Texto do topo", max_length=600)
+    hero_image_width = models.PositiveIntegerField(default=743, editable=False)
+    hero_image_height = models.PositiveIntegerField(default=1349, editable=False)
+    hero_image = models.ImageField(
+        "Ilustração de Maria Quitéria",
+        upload_to="cms/ia-feminista/",
+        storage=CmsStorage(),
+        width_field="hero_image_width",
+        height_field="hero_image_height",
+        default="cms/ia-feminista/hero.webp",
+        help_text="PNG, JPEG ou WebP com proporção de 743×1349 px, até 5 MB.",
+    )
+    hero_image_alt = models.CharField("Descrição da ilustração", max_length=160)
+
+    differential_heading = models.CharField("Título da seção", max_length=100)
+    differential_paragraph_1 = models.TextField("Parágrafo 1", max_length=1000)
+    differential_paragraph_2 = models.TextField("Parágrafo 2", max_length=1000)
+    differential_paragraph_3 = models.TextField("Parágrafo 3", max_length=1000)
+    flow_heading = models.CharField("Título do fluxograma", max_length=100)
+    flow_image_alt = models.CharField("Descrição do fluxograma", max_length=160)
+    flow_desktop_width = models.PositiveIntegerField(default=820, editable=False)
+    flow_desktop_height = models.PositiveIntegerField(default=574, editable=False)
+    flow_desktop_image = models.ImageField(
+        "Fluxograma para computador",
+        upload_to="cms/ia-feminista/",
+        storage=CmsStorage(),
+        width_field="flow_desktop_width",
+        height_field="flow_desktop_height",
+        default="cms/ia-feminista/flow-desktop.webp",
+        help_text="PNG, JPEG ou WebP com proporção de 820×574 px, até 5 MB.",
+    )
+    flow_mobile_width = models.PositiveIntegerField(default=524, editable=False)
+    flow_mobile_height = models.PositiveIntegerField(default=574, editable=False)
+    flow_mobile_image = models.ImageField(
+        "Fluxograma para celular",
+        upload_to="cms/ia-feminista/",
+        storage=CmsStorage(),
+        width_field="flow_mobile_width",
+        height_field="flow_mobile_height",
+        default="cms/ia-feminista/flow-mobile.webp",
+        help_text="PNG, JPEG ou WebP com proporção de 524×574 px, até 5 MB.",
+    )
+    architecture_heading = models.CharField("Título dos cartões", max_length=100)
+    architecture_card_1_title = models.CharField("Cartão 1: título", max_length=100)
+    architecture_card_1_text = models.TextField("Cartão 1: texto", max_length=500)
+    architecture_card_1_highlight = models.CharField("Cartão 1: destaque", max_length=80)
+    architecture_card_1_note = models.CharField("Cartão 1: complemento", max_length=120)
+    architecture_card_2_title = models.CharField("Cartão 2: título", max_length=100)
+    architecture_card_2_text = models.TextField("Cartão 2: texto", max_length=500)
+
+    feminism_heading = models.CharField("Título da seção", max_length=100)
+    feminism_paragraph_1_before_link = models.TextField(
+        "Parágrafo 1: antes do link", max_length=500
+    )
+    feminism_paragraph_1_link_text = models.CharField("Parágrafo 1: texto do link", max_length=160)
+    feminism_paragraph_1_link_url = models.URLField("Parágrafo 1: endereço do link")
+    feminism_paragraph_1_after_link = models.TextField(
+        "Parágrafo 1: depois do link", max_length=300
+    )
+    feminism_paragraph_2 = models.TextField("Parágrafo 2", max_length=1000)
+    feminism_paragraph_3_before_highlight = models.TextField(
+        "Parágrafo 3: antes do destaque", max_length=300
+    )
+    feminism_paragraph_3_highlight = models.CharField("Parágrafo 3: destaque", max_length=160)
+    feminism_paragraph_3_after_highlight = models.TextField(
+        "Parágrafo 3: depois do destaque", max_length=500
+    )
+    categories_heading = models.CharField("Título da tabela", max_length=100)
+    categories_name_column = models.CharField("Coluna: categoria", max_length=80)
+    categories_concept_column = models.CharField("Coluna: conceito", max_length=80)
+
+    governance_heading = models.CharField("Título da seção", max_length=100)
+    governance_paragraph_1_before_link = models.TextField(
+        "Parágrafo 1: antes do link", max_length=1000
+    )
+    governance_paragraph_1_link_text = models.CharField(
+        "Parágrafo 1: texto do link", max_length=160
+    )
+    governance_paragraph_1_link_url = models.URLField("Parágrafo 1: endereço do link")
+    governance_paragraph_1_after_link = models.TextField(
+        "Parágrafo 1: depois do link", max_length=500
+    )
+    governance_paragraph_2 = models.TextField("Parágrafo 2", max_length=1500)
+    supervision_heading = models.CharField("Título dos comitês", max_length=100)
+    supervision_card_1_title = models.CharField("Comitê 1: título", max_length=100)
+    supervision_card_1_text = models.TextField("Comitê 1: texto", max_length=500)
+    supervision_card_1_note = models.CharField("Comitê 1: período", max_length=160)
+    supervision_card_2_title = models.CharField("Comitê 2: título", max_length=100)
+    supervision_card_2_text = models.TextField("Comitê 2: texto", max_length=500)
+    supervision_card_2_note = models.CharField("Comitê 2: período", max_length=160)
+    limitations_heading = models.CharField("Título das limitações", max_length=100)
+    limitations_intro = models.TextField("Introdução das limitações", max_length=500)
+
+    performance_heading = models.CharField("Título da seção", max_length=100)
+    evaluation_caption = models.CharField("Legenda da comparação", max_length=160)
+    evaluation_metric_help_url = models.URLField("Link de ajuda: métricas")
+    evaluation_metric_column = models.CharField("Coluna: métrica", max_length=80)
+    evaluation_previous_column = models.CharField("Coluna da versão anterior", max_length=80)
+    evaluation_current_column = models.CharField("Coluna da versão atual", max_length=80)
+    evaluation_partition_caption = models.CharField("Legenda da partição", max_length=100)
+    evaluation_partition_name_column = models.CharField("Coluna: partição", max_length=80)
+    evaluation_partition_accuracy_column = models.CharField("Coluna: acurácia", max_length=80)
+    evaluation_partition_percent_column = models.CharField("Coluna: percentual", max_length=80)
+    evaluation_partition_count_column = models.CharField("Coluna: quantidade", max_length=80)
+    thematic_caption = models.CharField("Legenda da categorização", max_length=160)
+    thematic_partition_caption = models.CharField("Legenda da partição temática", max_length=100)
+    thematic_partition_name_column = models.CharField("Coluna: base", max_length=80)
+    thematic_partition_training_column = models.CharField("Coluna: treino", max_length=80)
+    thematic_partition_validation_column = models.CharField("Coluna: validação", max_length=80)
+    thematic_partition_test_column = models.CharField("Coluna: teste", max_length=80)
+
+    open_data_heading = models.CharField("Título da seção", max_length=100)
+    open_data_intro = models.TextField("Introdução", max_length=500)
+
+    class Meta:
+        verbose_name = "IA Feminista"
+        verbose_name_plural = "IA Feminista"
+        db_table = "cms_feminist_ai_page"
+
+    def __str__(self):
+        return "Página de IA Feminista"
+
+    @classmethod
+    def default_images(cls):
+        return [
+            ("hero_image", "feminist-ai-hero.png", cls.HERO_IMAGE),
+            ("flow_desktop_image", "feminist-ai-flow-desktop.png", cls.FLOW_DESKTOP_IMAGE),
+            ("flow_mobile_image", "feminist-ai-flow-mobile.png", cls.FLOW_MOBILE_IMAGE),
+        ]
+
+
+class FeministAIOrderedItem(models.Model):
+    page = models.ForeignKey(FeministAIPage, on_delete=models.CASCADE)
+    position = models.PositiveSmallIntegerField("Ordem")
+
+    class Meta:
+        abstract = True
+        ordering = ["position", "pk"]
+
+
+class FeministAICategory(FeministAIOrderedItem):
+    name = models.CharField("Categoria", max_length=160)
+    concept = models.TextField("Conceito", max_length=1500)
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Categoria temática"
+        verbose_name_plural = "Categorias temáticas"
+
+    def __str__(self):
+        return self.name
+
+
+class FeministAILimitation(FeministAIOrderedItem):
+    text = models.TextField("Texto", max_length=500)
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Limitação"
+        verbose_name_plural = "Limitações"
+
+    def __str__(self):
+        return self.text[:80]
+
+
+class FeministAIEvaluationMetric(FeministAIOrderedItem):
+    label = models.CharField("Métrica", max_length=100)
+    url = models.URLField("Link explicativo", blank=True)
+    previous = models.CharField("Versão anterior", max_length=50)
+    current = models.CharField("Versão atual", max_length=50)
+    trend = models.CharField(
+        "Tendência",
+        max_length=7,
+        choices=[("up", "Melhorou"), ("down", "Piorou"), ("neutral", "Sem comparação")],
+    )
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Métrica de desfavorabilidade"
+        verbose_name_plural = "Métricas de desfavorabilidade"
+
+    def __str__(self):
+        return self.label
+
+
+class FeministAIEvaluationPartition(FeministAIOrderedItem):
+    label = models.CharField("Partição", max_length=80)
+    accuracy = models.CharField("Acurácia", max_length=50)
+    percentage = models.CharField("Percentual da base", max_length=50)
+    count = models.CharField("Quantidade absoluta", max_length=50)
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Partição de desfavorabilidade"
+        verbose_name_plural = "Partições de desfavorabilidade"
+
+    def __str__(self):
+        return self.label
+
+
+class FeministAIThematicMetric(FeministAIOrderedItem):
+    label = models.CharField("Métrica", max_length=160)
+    value = models.CharField("Valor", max_length=50)
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Métrica de categorização temática"
+        verbose_name_plural = "Métricas de categorização temática"
+
+    def __str__(self):
+        return self.label
+
+
+class FeministAIThematicPartition(FeministAIOrderedItem):
+    label = models.CharField("Base", max_length=160)
+    training = models.CharField("Treino", max_length=50)
+    validation = models.CharField("Validação", max_length=50)
+    test = models.CharField("Teste", max_length=50)
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Partição temática"
+        verbose_name_plural = "Partições temáticas"
+
+    def __str__(self):
+        return self.label
+
+
+class FeministAIOpenLink(FeministAIOrderedItem):
+    label = models.CharField("Texto do link", max_length=160)
+    url = models.URLField("Endereço")
+
+    class Meta(FeministAIOrderedItem.Meta):
+        verbose_name = "Link de código e dados"
+        verbose_name_plural = "Links de código e dados"
+
+    def __str__(self):
+        return self.label

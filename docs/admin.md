@@ -15,9 +15,19 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
 ## CMS do site
 
 O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
-(hoje **Alertas**, **Reportagens** e **Atividade legislativa**: título, subtítulo e ilustração do topo). Cada página tem
+(**Alertas**, **Reportagens**, **Atividade legislativa** e **IA Feminista**). Cada página tem
 um registro único: o menu abre direto o formulário. Ver
 [ADR-006](decisions/006-cms-do-site.md).
+
+Na **IA Feminista**, os campos estão agrupados pelas seções da página. Títulos,
+parágrafos, links, cartões, descrições de imagens e legendas das tabelas são
+editáveis no formulário. As linhas de categorias, limitações, métricas,
+partições e links ficam em tabelas editáveis ao final do formulário; o campo
+**Ordem** controla a sequência exibida. Os números são textos para preservar a
+formatação editorial (`0,87`, `80,93%`, `2.518`). Alterar o nome de uma
+categoria nessa página não altera a taxonomia da API nem outros gráficos do
+site. Links dentro de parágrafos têm campos separados para texto antes do
+link, texto do link, endereço e texto depois, sem exigir HTML.
 
 - Os limites de texto e as exigências da imagem aparecem no formulário e vêm do
   layout do site. Imagens fora da proporção não são aceitas.
@@ -25,6 +35,9 @@ um registro único: o menu abre direto o formulário. Ver
   Salvamentos seguidos viram um único deploy.
 - Imagens só podem ser substituídas, não removidas. A primeira versão é a
   ilustração original, publicada pelo comando `cms_publish_defaults` no deploy.
+  Na IA Feminista há três imagens: ilustração de Maria Quitéria, fluxograma para
+  computador e fluxograma para celular. Cada uma exige a proporção informada no
+  campo; substituir um fluxograma não modifica automaticamente o outro.
 
 ## Curadoria de proposições
 

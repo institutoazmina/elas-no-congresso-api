@@ -29,7 +29,7 @@ ADRs consolidadas em 08/10/2026 a partir do código e das migrações versionada
 | --- | --- | --- |
 | [004](decisions/004-estrutura-do-banco.md) | Estrutura do banco | Implementada |
 | [005](decisions/005-sistema-de-alertas.md) | Sistema de alertas | Implementada |
-| [006](decisions/006-cms-do-site.md) | CMS do site no admin | Implementada para alertas, reportagens e atividade legislativa |
+| [006](decisions/006-cms-do-site.md) | CMS do site no admin | Implementada para alertas, reportagens, atividade legislativa e IA Feminista |
 | [001](decisions/001-weekly-substack-drafts.md) | Geração do rascunho do Substack | Implementada; agenda desativada por padrão |
 | [002](decisions/002-daily-ingestion-content-versions.md) | Ingestão dos raspadores e análise local de IA | Implementada |
 

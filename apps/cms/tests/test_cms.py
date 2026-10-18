@@ -14,7 +14,14 @@ from PIL import Image
 
 from apps.cms import deploy, storage, tasks
 from apps.cms.images import ImageSpec, normalize
-from apps.cms.models import ActivityPage, AlertsPage, ReportsPage
+from apps.cms.models import (
+    ActivityPage,
+    AlertsPage,
+    FeministAICategory,
+    FeministAIEvaluationMetric,
+    FeministAIPage,
+    ReportsPage,
+)
 
 pytestmark = pytest.mark.django_db
 
@@ -159,7 +166,7 @@ class TestAdmin:
     def change_url(self):
         return reverse("admin:cms_alertspage_change", args=[AlertsPage.SINGLETON_PK])
 
-    @pytest.mark.parametrize("model", [AlertsPage, ReportsPage, ActivityPage])
+    @pytest.mark.parametrize("model", [AlertsPage, ReportsPage, ActivityPage, FeministAIPage])
     def test_menu_abre_o_registro_unico(self, admin_client, model):
         name = model._meta.model_name
         response = admin_client.get(reverse(f"admin:cms_{name}_changelist"))
@@ -253,6 +260,13 @@ class TestPublishDefaults:
         for folder in ["alertas", "reportagens", "atividade-legislativa"]:
             image = Image.open(tmp_path / "cms" / folder / "hero.webp")
             assert (image.format, image.size) == ("WEBP", (1080, 1350))
+        for name, size in [
+            ("hero", (743, 1349)),
+            ("flow-desktop", (820, 574)),
+            ("flow-mobile", (524, 574)),
+        ]:
+            image = Image.open(tmp_path / "cms" / "ia-feminista" / f"{name}.webp")
+            assert (image.format, image.size) == ("WEBP", size)
 
         published.write_bytes(b"substituida no admin")
         out = io.StringIO()
@@ -270,6 +284,9 @@ class TestPublishDefaults:
             "cms/alertas/hero.webp",
             "cms/reportagens/hero.webp",
             "cms/atividade-legislativa/hero.webp",
+            "cms/ia-feminista/hero.webp",
+            "cms/ia-feminista/flow-desktop.webp",
+            "cms/ia-feminista/flow-mobile.webp",
         ]
         assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
 
@@ -282,7 +299,87 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_count == 3
+        assert bucket.put_object.call_count == 6
+
+
+class TestFeministAIPage:
+    def test_migracao_inicializa_pagina_publicada_e_tabelas(self):
+        page = FeministAIPage.objects.get(pk=1)
+
+        assert page.hero_title_emphasis == "Maria Quitéria?"
+        assert page.architecture_card_1_highlight == "87% de acurácia"
+        assert FeministAICategory.objects.filter(page=page).count() == 10
+        assert FeministAIEvaluationMetric.objects.filter(page=page).count() == 8
+
+    def test_api_devolve_todo_o_conteudo_em_ordem(self):
+        response = Client().get("/api/v1/cms/feminist-ai")
+
+        assert response.status_code == 200
+        assert response["Cache-Control"] == "no-store"
+        data = response.json()
+        assert data["content"]["feminism_paragraph_3_highlight"] == (
+            "Atualmente estamos no segundo ciclo."
+        )
+        assert data["images"]["hero"]["width"] == 743
+        assert data["images"]["flow_desktop"]["height"] == 574
+        assert data["images"]["flow_mobile"]["url"].startswith(
+            "/media/cms/ia-feminista/flow-mobile.webp?v="
+        )
+        assert data["categories"][0]["name"] == "Violências de Gênero"
+        assert len(data["categories"]) == 10
+        assert len(data["limitations"]) == 6
+        assert len(data["evaluation_metrics"]) == 8
+        assert len(data["evaluation_partitions"]) == 3
+        assert len(data["thematic_metrics"]) == 14
+        assert len(data["thematic_partitions"]) == 11
+        assert len(data["open_links"]) == 3
+
+    def test_admin_permite_editar_texto_e_linhas_sem_html_ou_json(self, admin_client):
+        url = reverse("admin:cms_feministaipage_change", args=[1])
+        response = admin_client.get(url)
+        assert response.status_code == 200
+        assert "Feminismo de dados" in response.content.decode()
+        assert "Categorias temáticas" in response.content.decode()
+
+        page = FeministAIPage.objects.get(pk=1)
+        data = {
+            field.name: getattr(page, field.name)
+            for field in page._meta.fields
+            if field.editable
+            and field.name
+            not in {"id", "updated_at", "hero_image", "flow_desktop_image", "flow_mobile_image"}
+        }
+        data["hero_title_emphasis"] = "QuitérIA?"
+        for relation in [
+            "feministaicategory_set",
+            "feministailimitation_set",
+            "feministaievaluationmetric_set",
+            "feministaievaluationpartition_set",
+            "feministaithematicmetric_set",
+            "feministaithematicpartition_set",
+            "feministaiopenlink_set",
+        ]:
+            objects = list(getattr(page, relation).all())
+            data[f"{relation}-TOTAL_FORMS"] = len(objects)
+            data[f"{relation}-INITIAL_FORMS"] = len(objects)
+            data[f"{relation}-MIN_NUM_FORMS"] = 0
+            data[f"{relation}-MAX_NUM_FORMS"] = 1000
+            for index, obj in enumerate(objects):
+                data[f"{relation}-{index}-id"] = obj.pk
+                data[f"{relation}-{index}-page"] = page.pk
+                for field in obj._meta.fields:
+                    if field.name not in {"id", "page"}:
+                        data[f"{relation}-{index}-{field.name}"] = getattr(obj, field.name)
+        data["feministaicategory_set-0-concept"] = "Novo conceito editorial."
+        data["feministaievaluationmetric_set-0-current"] = "0,90"
+
+        response = admin_client.post(url, data)
+
+        assert response.status_code == 302, response.content.decode()[:1000]
+        body = Client().get("/api/v1/cms/feminist-ai").json()
+        assert body["content"]["hero_title_emphasis"] == "QuitérIA?"
+        assert body["categories"][0]["concept"] == "Novo conceito editorial."
+        assert body["evaluation_metrics"][0]["current"] == "0,90"
 
 
 class TestDeploy:
