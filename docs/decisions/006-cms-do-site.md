@@ -3,7 +3,7 @@
 ## Estado e contexto
 
 **Implementada para alertas, reportagens e atividade legislativa em 14/10/2026;
-estendida à IA Feminista em 17/10/2026.**
+estendida à IA Feminista em 17/10/2026 e à página Sobre em 18/10/2026.**
 
 Textos e imagens do site estático (Astro, S3 + CloudFront) estavam no código:
 cada ajuste editorial exigia um desenvolvedor e um deploy. A equipe precisa
@@ -55,15 +55,26 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   `defaults/feminist-ai-content.json` é parte histórica dessa migração e não
   deve ser alterado para publicar atualizações futuras. A tabela de categorias
   nessa página é editorial e não altera a taxonomia usada pela API.
+- **Página Sobre**: o registro único guarda SEO, ilustração e nota da timeline.
+  A página publicada tem muitos trechos com formatação e links intercalados;
+  `AboutCopy` expõe cada trecho como texto simples, filtrável por seção e
+  editável em lote no admin. As posições do markup ficam no Astro, de modo que
+  a equipe não edita HTML. Marcos, desafios e organizações parceiras são linhas
+  ordenadas próprias: a timeline aceita qualquer quantidade de marcos e usa
+  etiquetas visuais repetíveis. Logos novos aceitam proporções variadas, são
+  regravados em WebP com até 640 px e substituídos em uma URL estável. Os
+  logos originais das organizações atuais continuam nos assets do site até
+  serem substituídos. `defaults/about-content.json` é o snapshot da migração
+  de dados inicial, não um arquivo de edição editorial.
 
 ## Consequências
 
 - Sem rascunho: salvar publica após um build. O histórico do admin mostra quem
   alterou, mas não guarda versões do conteúdo.
 - Se a API cair, o build do site falha, como já acontece com os dados.
-- Novo campo editável exige migração e deploy da API e do site. A página de IA
-  Feminista também exige um PR do site para trocar o conteúdo fixo pela leitura
-  de `/api/v1/cms/feminist-ai` no build.
+- Novo campo editável exige migração e deploy da API e do site. As páginas de IA
+  Feminista e Sobre têm PRs pareados no site para trocar o conteúdo fixo pela
+  leitura de `/api/v1/cms/feminist-ai` e `/api/v1/cms/about` no build.
 - A imagem nova vale assim que é salva, alguns minutos antes do texto, que
   depende do deploy.
 - A role do EC2 precisa de `s3:GetObject`/`s3:PutObject` em `cms/*` e

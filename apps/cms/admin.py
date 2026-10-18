@@ -9,8 +9,13 @@ from django.urls import reverse
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.widgets import UnfoldAdminTextareaWidget
 
-from .images import ImageSpec, normalize
+from .images import ImageSpec, normalize, normalize_logo
 from .models import (
+    AboutChallenge,
+    AboutCopy,
+    AboutPage,
+    AboutPartner,
+    AboutTimelineEvent,
     ActivityPage,
     AlertsPage,
     FeministAICategory,
@@ -283,3 +288,100 @@ class FeministAIPageAdmin(CmsPageAdmin):
         FeministAIThematicPartitionInline,
         FeministAIOpenLinkInline,
     ]
+
+
+class AboutPageForm(CmsPageForm):
+    class Meta:
+        model = AboutPage
+        fields = "__all__"
+
+    def image_specs(self):
+        return {"hero_image": (AboutPage.HERO_IMAGE, "hero")}
+
+
+class AboutTimelineInline(TabularInline):
+    model = AboutTimelineEvent
+    fields = [
+        "position",
+        "date_prefix",
+        "year",
+        "description_before_link",
+        "link_text",
+        "link_url",
+        "description_after_link",
+        "tag",
+    ]
+    extra = 0
+
+
+class AboutChallengeInline(TabularInline):
+    model = AboutChallenge
+    fields = ["position", "title", "text"]
+    extra = 0
+
+
+class AboutPartnerForm(forms.ModelForm):
+    class Meta:
+        model = AboutPartner
+        fields = "__all__"
+
+    def clean_logo_image(self):
+        value = self.cleaned_data.get("logo_image")
+        if isinstance(value, UploadedFile):
+            return normalize_logo(value)
+        return value
+
+
+class AboutPartnerInline(TabularInline):
+    model = AboutPartner
+    form = AboutPartnerForm
+    fields = ["position", "name", "logo_image"]
+    extra = 0
+
+
+@admin.register(AboutPage)
+class AboutPageAdmin(CmsPageAdmin):
+    form = AboutPageForm
+    fieldsets = [
+        ("Busca e compartilhamento", {"fields": ["seo_title", "seo_description"]}),
+        ("Ilustração da abertura", {"fields": ["hero_image"]}),
+        (
+            "Nota da linha do tempo",
+            {
+                "fields": [
+                    "timeline_note_link_text",
+                    "timeline_note_link_url",
+                    "timeline_note_after_link",
+                ]
+            },
+        ),
+        ("Publicação", {"fields": ["updated_at"]}),
+    ]
+    inlines = [AboutTimelineInline, AboutChallengeInline, AboutPartnerInline]
+
+
+class AboutCopyForm(forms.ModelForm):
+    class Meta:
+        model = AboutCopy
+        fields = ["value"]
+        widgets = {"value": forms.Textarea(attrs={"rows": 2, "cols": 70})}
+
+
+@admin.register(AboutCopy)
+class AboutCopyAdmin(ModelAdmin):
+    """Trechos separados por seção, com rótulos legíveis e sem edição de HTML."""
+
+    list_display = ["section", "label", "value"]
+    form = AboutCopyForm
+    list_editable = ["value"]
+    list_filter = ["section"]
+    search_fields = ["label", "value", "section"]
+    readonly_fields = ["section", "label"]
+    fields = ["section", "label", "value"]
+    list_per_page = 30
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

@@ -1,0 +1,1412 @@
+{
+  "seo_title": "Sobre o Elas no Congresso | AzMina",
+  "seo_description": "Conheça o Elas no Congresso, projeto do Instituto AzMina que usa jornalismo, dados e inteligência artificial feminista para monitorar pautas de gênero.",
+  "copy": [
+    {
+      "key": "s00_001",
+      "section": "Apresentação",
+      "label": "SPAN: Sobre",
+      "value": "Sobre",
+      "position": 1
+    },
+    {
+      "key": "s00_002",
+      "section": "Apresentação",
+      "label": "SPAN: o",
+      "value": "o",
+      "position": 2
+    },
+    {
+      "key": "s00_003",
+      "section": "Apresentação",
+      "label": "SPAN: Congresso",
+      "value": "Congresso",
+      "position": 3
+    },
+    {
+      "key": "s00_004",
+      "section": "Apresentação",
+      "label": "STRONG: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 4
+    },
+    {
+      "key": "s00_005",
+      "section": "Apresentação",
+      "label": "STRONG: Instituto AzMina.",
+      "value": "Instituto AzMina.",
+      "position": 5
+    },
+    {
+      "key": "s00_006",
+      "section": "Apresentação",
+      "label": "P: Monitoramos diariamente o que a Câmara dos Deputados e o Senado Federal produzem sobr",
+      "value": "Monitoramos diariamente o que a Câmara dos Deputados e o Senado Federal produzem sobre os direitos de mulheres, meninas e pessoas LGBTQIAPN+, e traduzimos isso em informação acessível para jornalistas, pesquisadores, movimentos sociais e qualquer pessoa interessada em acompanhar o Congresso. Desde 2025, o projeto conta com QuitérIA, a IA Feminista que facilita e agiliza esse trabalho.",
+      "position": 6
+    },
+    {
+      "key": "s01_007",
+      "section": "Nossa história",
+      "label": "H2: A nossa história",
+      "value": "A nossa história",
+      "position": 7
+    },
+    {
+      "key": "s01_008",
+      "section": "Nossa história",
+      "label": "P: Em 2020, diante do crescimento da disputa por pautas de gênero no Congresso Nacional,",
+      "value": "Em 2020, diante do crescimento da disputa por pautas de gênero no Congresso Nacional, o Instituto AzMina identificou a necessidade de tornar o monitoramento legislativo mais acessível. Desde então, a iniciativa analisa projetos apresentados a partir de 2019.",
+      "position": 8
+    },
+    {
+      "key": "s02_009",
+      "section": "Como avaliamos",
+      "label": "H2: Como avaliamos o legislativo",
+      "value": "Como avaliamos o legislativo",
+      "position": 9
+    },
+    {
+      "key": "s02_010",
+      "section": "Como avaliamos",
+      "label": "P: Cada proposição percorre quatro etapas: coleta, triagem pela IA, análise especializad",
+      "value": "Cada proposição percorre quatro etapas: coleta, triagem pela IA, análise especializada e curadoria editorial.",
+      "position": 10
+    },
+    {
+      "key": "s02_011",
+      "section": "Como avaliamos",
+      "label": "H3: 1. Coleta automatizada",
+      "value": "1. Coleta automatizada",
+      "position": 11
+    },
+    {
+      "key": "s02_012",
+      "section": "Como avaliamos",
+      "label": "P: O raspador do Elas no Congresso está conectado às APIs da Câmara dos Deputados e do S",
+      "value": "O raspador do Elas no Congresso está conectado às APIs da Câmara dos Deputados e do Senado Federal. A cada 24 horas, o código busca palavras-chave temáticas e armazena título, autoria, ementa e status na nossa API aberta. Se a ementa ou o texto integral contiver os termos mapeados, a matéria entra no fluxo de análise.",
+      "position": 12
+    },
+    {
+      "key": "s02_013",
+      "section": "Como avaliamos",
+      "label": "Link URL: https://docs.google.com/document/d/1I22AbP2MhRmCV-z2x9NUe9Zsp20PmwEjyQe1mYr7sTQ/edit?",
+      "value": "https://docs.google.com/document/d/1I22AbP2MhRmCV-z2x9NUe9Zsp20PmwEjyQe1mYr7sTQ/edit?usp=sharing",
+      "position": 13
+    },
+    {
+      "key": "s02_014",
+      "section": "Como avaliamos",
+      "label": "A: lista completa de palavras-chave",
+      "value": "lista completa de palavras-chave",
+      "position": 14
+    },
+    {
+      "key": "s02_015",
+      "section": "Como avaliamos",
+      "label": "SPAN: API",
+      "value": "API",
+      "position": 15
+    },
+    {
+      "key": "s02_016",
+      "section": "Como avaliamos",
+      "label": "SPAN: transexual",
+      "value": "transexual",
+      "position": 16
+    },
+    {
+      "key": "s02_017",
+      "section": "Como avaliamos",
+      "label": "SPAN: meninas",
+      "value": "meninas",
+      "position": 17
+    },
+    {
+      "key": "s02_018",
+      "section": "Como avaliamos",
+      "label": "SPAN: feminicídio",
+      "value": "feminicídio",
+      "position": 18
+    },
+    {
+      "key": "s02_019",
+      "section": "Como avaliamos",
+      "label": "SPAN: útero",
+      "value": "útero",
+      "position": 19
+    },
+    {
+      "key": "s02_020",
+      "section": "Como avaliamos",
+      "label": "SPAN: misoginia",
+      "value": "misoginia",
+      "position": 20
+    },
+    {
+      "key": "s02_021",
+      "section": "Como avaliamos",
+      "label": "SPAN: stalking",
+      "value": "stalking",
+      "position": 21
+    },
+    {
+      "key": "s02_022",
+      "section": "Como avaliamos",
+      "label": "H3: 2. Triagem pela QuitérIA",
+      "value": "2. Triagem pela QuitérIA",
+      "position": 22
+    },
+    {
+      "key": "s02_023",
+      "section": "Como avaliamos",
+      "label": "P: A QuitérIA faz a classificação inicial e a avaliação imediata das matérias coletadas,",
+      "value": "A QuitérIA faz a classificação inicial e a avaliação imediata das matérias coletadas, indicando tema e grau de desfavorabilidade. É o que permite dar conta do volume: o que antes levava semanas passa a estar disponível em horas. Nenhuma classificação da IA é publicada sem passar pela etapa seguinte.",
+      "position": 23
+    },
+    {
+      "key": "s02_024",
+      "section": "Como avaliamos",
+      "label": "Link URL: /ia-feminista",
+      "value": "/ia-feminista",
+      "position": 24
+    },
+    {
+      "key": "s02_025",
+      "section": "Como avaliamos",
+      "label": "A: QuitérIA",
+      "value": "QuitérIA",
+      "position": 25
+    },
+    {
+      "key": "s02_026",
+      "section": "Como avaliamos",
+      "label": "H3: 3. Análise especializada",
+      "value": "3. Análise especializada",
+      "position": 26
+    },
+    {
+      "key": "s02_027",
+      "section": "Como avaliamos",
+      "label": "P: Nossa base reúne atualmente mais de 3.100 proposições anotadas, apresentadas no Congr",
+      "value": "Nossa base reúne atualmente mais de 3.100 proposições anotadas, apresentadas no Congresso Nacional entre janeiro de 2019 e abril de 2026. Consideramos proposições da Câmara e do Senado (PECs, PLs, PLPs, PLVs, PDCs, PRCs, PLSs, PLNs, PRSs e PDSs) de autoria de parlamentares, comissões ou do Poder Executivo. Para evitar duplicidade, cada projeto é avaliado apenas na Casa em que se originou.",
+      "position": 27
+    },
+    {
+      "key": "s02_028",
+      "section": "Como avaliamos",
+      "label": "P: Especialistas de organizações parceiras analisam os projetos e atribuem uma classific",
+      "value": "Especialistas de organizações parceiras analisam os projetos e atribuem uma classificação de impacto:",
+      "position": 28
+    },
+    {
+      "key": "s02_029",
+      "section": "Como avaliamos",
+      "label": "B: Favorável",
+      "value": "Favorável",
+      "position": 29
+    },
+    {
+      "key": "s02_030",
+      "section": "Como avaliamos",
+      "label": "SPAN: amplia direitos, proteção ou acesso;",
+      "value": "amplia direitos, proteção ou acesso;",
+      "position": 30
+    },
+    {
+      "key": "s02_031",
+      "section": "Como avaliamos",
+      "label": "B: Favorável com ressalvas",
+      "value": "Favorável com ressalvas",
+      "position": 31
+    },
+    {
+      "key": "s02_032",
+      "section": "Como avaliamos",
+      "label": "SPAN: positiva em sua essência, mas com pontos de atenção;",
+      "value": "positiva em sua essência, mas com pontos de atenção;",
+      "position": 32
+    },
+    {
+      "key": "s02_033",
+      "section": "Como avaliamos",
+      "label": "B: Desfavorável com ressalvas",
+      "value": "Desfavorável com ressalvas",
+      "position": 33
+    },
+    {
+      "key": "s02_034",
+      "section": "Como avaliamos",
+      "label": "SPAN: prejudicial no geral, mas com pontos positivos aproveitáveis;",
+      "value": "prejudicial no geral, mas com pontos positivos aproveitáveis;",
+      "position": 34
+    },
+    {
+      "key": "s02_035",
+      "section": "Como avaliamos",
+      "label": "B: Desfavorável",
+      "value": "Desfavorável",
+      "position": 35
+    },
+    {
+      "key": "s02_036",
+      "section": "Como avaliamos",
+      "label": "SPAN: restringe direitos ou gera discriminação.",
+      "value": "restringe direitos ou gera discriminação.",
+      "position": 36
+    },
+    {
+      "key": "s02_037",
+      "section": "Como avaliamos",
+      "label": "P: Em cada proposição é possível ver qual organização fez a avaliação. Desde o segundo r",
+      "value": "Em cada proposição é possível ver qual organização fez a avaliação. Desde o segundo retreinamento da QuitérIA, as observações técnicas passaram a ser obrigatórias sempre que há algum nível de desfavorabilidade.",
+      "position": 37
+    },
+    {
+      "key": "s02_038",
+      "section": "Como avaliamos",
+      "label": "H3: 4. Curadoria editorial e distribuição",
+      "value": "4. Curadoria editorial e distribuição",
+      "position": 38
+    },
+    {
+      "key": "s02_039",
+      "section": "Como avaliamos",
+      "label": "P: Semanalmente, a equipe da AzMina valida as classificações da IA e faz a mediação jorn",
+      "value": "Semanalmente, a equipe da AzMina valida as classificações da IA e faz a mediação jornalística que traduz o “legislativês” em informação acessível. O resultado chega até você por três caminhos:",
+      "position": 39
+    },
+    {
+      "key": "s02_040",
+      "section": "Como avaliamos",
+      "label": "H3: Radar Diário",
+      "value": "Radar Diário",
+      "position": 40
+    },
+    {
+      "key": "s02_041",
+      "section": "Como avaliamos",
+      "label": "P: Alerta customizável por tema, casa legislativa, comissão ou proposição, entregue por ",
+      "value": "Alerta customizável por tema, casa legislativa, comissão ou proposição, entregue por e-mail.",
+      "position": 41
+    },
+    {
+      "key": "s02_042",
+      "section": "Como avaliamos",
+      "label": "Link URL: /alertas",
+      "value": "/alertas",
+      "position": 42
+    },
+    {
+      "key": "s02_043",
+      "section": "Como avaliamos",
+      "label": "A: Cadastre-se aqui",
+      "value": "Cadastre-se aqui",
+      "position": 43
+    },
+    {
+      "key": "s02_044",
+      "section": "Como avaliamos",
+      "label": "H3: Newsletter com Radar Semanal",
+      "value": "Newsletter com Radar Semanal",
+      "position": 44
+    },
+    {
+      "key": "s02_045",
+      "section": "Como avaliamos",
+      "label": "P: Principal canal de acompanhamento contínuo do projeto. Reúne, contextualiza e analisa",
+      "value": "Principal canal de acompanhamento contínuo do projeto. Reúne, contextualiza e analisa os impactos políticos das tramitações, funcionando como instrumento de transparência e mobilização para a sociedade civil. A newsletter é a mesma para todas as pessoas assinantes; o Radar Semanal que a acompanha é customizável por tema.",
+      "position": 45
+    },
+    {
+      "key": "s02_046",
+      "section": "Como avaliamos",
+      "label": "H3: Painel de Atividade Legislativa",
+      "value": "Painel de Atividade Legislativa",
+      "position": 46
+    },
+    {
+      "key": "s02_047",
+      "section": "Como avaliamos",
+      "label": "P: Na página",
+      "value": "Na página",
+      "position": 47
+    },
+    {
+      "key": "s02_048",
+      "section": "Como avaliamos",
+      "label": "Link URL: /atividade-legislativa",
+      "value": "/atividade-legislativa",
+      "position": 48
+    },
+    {
+      "key": "s02_049",
+      "section": "Como avaliamos",
+      "label": "A: Atividade Legislativa",
+      "value": "Atividade Legislativa",
+      "position": 49
+    },
+    {
+      "key": "s02_050",
+      "section": "Como avaliamos",
+      "label": "P: você navega pelas propostas, compara a avaliação da",
+      "value": "você navega pelas propostas, compara a avaliação da",
+      "position": 50
+    },
+    {
+      "key": "s02_051",
+      "section": "Como avaliamos",
+      "label": "STRONG: QuitérIA",
+      "value": "QuitérIA",
+      "position": 51
+    },
+    {
+      "key": "s02_052",
+      "section": "Como avaliamos",
+      "label": "P: com a avaliação humana e filtra por partido, tema e outros critérios.",
+      "value": "com a avaliação humana e filtra por partido, tema e outros critérios.",
+      "position": 52
+    },
+    {
+      "key": "s03_053",
+      "section": "Organizações parceiras",
+      "label": "H2: Rede de organizações parceiras",
+      "value": "Rede de organizações parceiras",
+      "position": 53
+    },
+    {
+      "key": "s03_054",
+      "section": "Organizações parceiras",
+      "label": "P: Em vez de centralizar as avaliações em uma única equipe, o projeto adota um modelo co",
+      "value": "Em vez de centralizar as avaliações em uma única equipe, o projeto adota um modelo colaborativo de produção de conhecimento. Cada organização contribui a partir de sua experiência temática, acumulada em anos de atuação em campos como direitos humanos, justiça de gênero, diversidade sexual e de gênero, enfrentamento à violência, saúde, comunicação, tecnologia, políticas urbanas, direitos reprodutivos e participação política.",
+      "position": 54
+    },
+    {
+      "key": "s03_055",
+      "section": "Organizações parceiras",
+      "label": "P: Essa diversidade de perspectivas fortalece a qualidade das avaliações, reduz vieses i",
+      "value": "Essa diversidade de perspectivas fortalece a qualidade das avaliações, reduz vieses individuais e amplia a capacidade do projeto de compreender os diferentes efeitos que uma proposição pode produzir sobre grupos sociais distintos. As justificativas técnicas registradas pelas organizações também alimentam a base de conhecimento do projeto: são elas a principal fonte de aprendizado da QuitérIA.",
+      "position": 55
+    },
+    {
+      "key": "s03_056",
+      "section": "Organizações parceiras",
+      "label": "STRONG: Fazem parte da rede:",
+      "value": "Fazem parte da rede:",
+      "position": 56
+    },
+    {
+      "key": "s03_057",
+      "section": "Organizações parceiras",
+      "label": "P: Anis Bioética, Artigo 19, Cepia - Cidadania, Estudo, Pesquisa, Informação e Ação, CFE",
+      "value": "Anis Bioética, Artigo 19, Cepia - Cidadania, Estudo, Pesquisa, Informação e Ação, CFEMEA - Centro Feminista de Estudos e Assessoria, Coletivo Feminista Sexualidade e Saúde, Coletivo Mana a Mana, deFEMde - Rede Feminista de Juristas, Ecos, Empodera, Gepô, Instituto + Diversidade, Instituto Maria da Penha, Instituto Marielle Franco, Instituto Patrícia Galvão, Instituto Update, Juristas Negras, LabCidade, Mulheres Negras Decidem, Observatório da Violência Obstétrica no Brasil, Plan International, Rede Liberdade, SOF - Sempreviva Organização Feminista, SPW - Sexuality Policy Watch, Themis e TretAqui.",
+      "position": 57
+    },
+    {
+      "key": "s04_058",
+      "section": "Dados abertos",
+      "label": "H2: Transparência e dados abertos",
+      "value": "Transparência e dados abertos",
+      "position": 58
+    },
+    {
+      "key": "s04_059",
+      "section": "Dados abertos",
+      "label": "P: O Elas no Congresso adota uma política rigorosa de dados abertos e Ciência Aberta:",
+      "value": "O Elas no Congresso adota uma política rigorosa de dados abertos e Ciência Aberta:",
+      "position": 59
+    },
+    {
+      "key": "s04_060",
+      "section": "Dados abertos",
+      "label": "B: API pública e gratuita",
+      "value": "API pública e gratuita",
+      "position": 60
+    },
+    {
+      "key": "s04_061",
+      "section": "Dados abertos",
+      "label": "LI: : permite integrar nossos dados estruturados a outras aplicações, pesquisas acadêmica",
+      "value": ": permite integrar nossos dados estruturados a outras aplicações, pesquisas acadêmicas e ferramentas de controle social.",
+      "position": 61
+    },
+    {
+      "key": "s04_062",
+      "section": "Dados abertos",
+      "label": "B: Código do raspador e bases reutilizáveis",
+      "value": "Código do raspador e bases reutilizáveis",
+      "position": 62
+    },
+    {
+      "key": "s04_063",
+      "section": "Dados abertos",
+      "label": "LI: : publicamos periodicamente as bases brutas e a documentação metodológica para audito",
+      "value": ": publicamos periodicamente as bases brutas e a documentação metodológica para auditoria e livre reuso por pessoas desenvolvedoras e jornalistas.",
+      "position": 63
+    },
+    {
+      "key": "s04_064",
+      "section": "Dados abertos",
+      "label": "B: Repositório de treinamento da QuitérIA",
+      "value": "Repositório de treinamento da QuitérIA",
+      "position": 64
+    },
+    {
+      "key": "s04_065",
+      "section": "Dados abertos",
+      "label": "LI: : todo o código usado no treinamento do modelo está aberto, e contribuições são bem-v",
+      "value": ": todo o código usado no treinamento do modelo está aberto, e contribuições são bem-vindas.",
+      "position": 65
+    },
+    {
+      "key": "s05_066",
+      "section": "Desafios",
+      "label": "H2: Desafios e limitações",
+      "value": "Desafios e limitações",
+      "position": 66
+    },
+    {
+      "key": "s05_067",
+      "section": "Desafios",
+      "label": "EM: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 67
+    },
+    {
+      "key": "s05_068",
+      "section": "Desafios",
+      "label": "P: enfrentam desafios técnicos, metodológicos e políticos contínuos.",
+      "value": "enfrentam desafios técnicos, metodológicos e políticos contínuos.",
+      "position": 68
+    },
+    {
+      "key": "s06_069",
+      "section": "Próximos passos",
+      "label": "H2: Próximos passos",
+      "value": "Próximos passos",
+      "position": 69
+    },
+    {
+      "key": "s06_070",
+      "section": "Próximos passos",
+      "label": "P: O",
+      "value": "O",
+      "position": 70
+    },
+    {
+      "key": "s06_071",
+      "section": "Próximos passos",
+      "label": "EM: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 71
+    },
+    {
+      "key": "s06_072",
+      "section": "Próximos passos",
+      "label": "P: é uma iniciativa em constante aperfeiçoamento, acompanhando as transformações do proc",
+      "value": "é uma iniciativa em constante aperfeiçoamento, acompanhando as transformações do processo legislativo, das categorias analíticas, das tecnologias de inteligência artificial e das necessidades da sociedade civil. Os próximos ciclos de desenvolvimento buscam consolidar o projeto como uma infraestrutura pública de monitoramento legislativo sensível a gênero, ampliando a cobertura, transparência e capacidade analítica.",
+      "position": 72
+    },
+    {
+      "key": "s06_073",
+      "section": "Próximos passos",
+      "label": "P: Entre as prioridades estão o fortalecimento da QuitérIA, com novos ciclos de treiname",
+      "value": "Entre as prioridades estão o fortalecimento da QuitérIA, com novos ciclos de treinamento sobre uma base continuamente ampliada e a adoção do Protocolo de Avaliação de Proposições Legislativas, que padroniza critérios e qualifica as anotações humanas, e a realização periódica de avaliações de desempenho do modelo, com monitoramento de vieses, testes comparativos, publicação de indicadores de qualidade e estudos com técnicas de explicabilidade.",
+      "position": 73
+    },
+    {
+      "key": "s06_074",
+      "section": "Próximos passos",
+      "label": "P: Queremos também seguir compartilhando metodologias, ferramentas e aprendizados com ou",
+      "value": "Queremos também seguir compartilhando metodologias, ferramentas e aprendizados com outras organizações da sociedade civil, estimulando novas iniciativas de monitoramento legislativo e de tecnologias cívicas comprometidas com os direitos humanos, a igualdade de gênero e o fortalecimento da democracia.",
+      "position": 74
+    },
+    {
+      "key": "s06_075",
+      "section": "Próximos passos",
+      "label": "Link URL: https://github.com/institutoazmina/ia-feminista-elas-no-congresso",
+      "value": "https://github.com/institutoazmina/ia-feminista-elas-no-congresso",
+      "position": 75
+    },
+    {
+      "key": "s06_076",
+      "section": "Próximos passos",
+      "label": "A: repositório público do projeto",
+      "value": "repositório público do projeto",
+      "position": 76
+    },
+    {
+      "key": "s06_077",
+      "section": "Próximos passos",
+      "label": "P: , onde estão registradas as funcionalidades implementadas, em desenvolvimento e plane",
+      "value": ", onde estão registradas as funcionalidades implementadas, em desenvolvimento e planejadas.",
+      "position": 77
+    },
+    {
+      "key": "s06_078",
+      "section": "Próximos passos",
+      "label": "Link URL: https://docs.google.com/document/d/19fUYvKdA2UI0ddlUVWnAVzgmIiH-rey3R-pdSemzZw4/edit",
+      "value": "https://docs.google.com/document/d/19fUYvKdA2UI0ddlUVWnAVzgmIiH-rey3R-pdSemzZw4/edit",
+      "position": 78
+    },
+    {
+      "key": "s06_079",
+      "section": "Próximos passos",
+      "label": "A: Veja como contribuir financeiramente com esta iniciativa",
+      "value": "Veja como contribuir financeiramente com esta iniciativa",
+      "position": 79
+    },
+    {
+      "key": "s07_080",
+      "section": "Reconhecimento",
+      "label": "H2: Reconhecimento e eventos",
+      "value": "Reconhecimento e eventos",
+      "position": 80
+    },
+    {
+      "key": "s07_081",
+      "section": "Reconhecimento",
+      "label": "P: Em 2020, o",
+      "value": "Em 2020, o",
+      "position": 81
+    },
+    {
+      "key": "s07_082",
+      "section": "Reconhecimento",
+      "label": "EM: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 82
+    },
+    {
+      "key": "s07_083",
+      "section": "Reconhecimento",
+      "label": "Link URL: https://premio.jornalismodedados.org.br/",
+      "value": "https://premio.jornalismodedados.org.br/",
+      "position": 83
+    },
+    {
+      "key": "s07_084",
+      "section": "Reconhecimento",
+      "label": "A: Prêmio Cláudio Weber Abramo de Jornalismo de Dados",
+      "value": "Prêmio Cláudio Weber Abramo de Jornalismo de Dados",
+      "position": 84
+    },
+    {
+      "key": "s07_085",
+      "section": "Reconhecimento",
+      "label": "Link URL: https://www.premiowsa.com.br/",
+      "value": "https://www.premiowsa.com.br/",
+      "position": 85
+    },
+    {
+      "key": "s07_086",
+      "section": "Reconhecimento",
+      "label": "A: WSA Brasil — World Summit Awards",
+      "value": "WSA Brasil — World Summit Awards",
+      "position": 86
+    },
+    {
+      "key": "s07_087",
+      "section": "Reconhecimento",
+      "label": "Link URL: https://icnm.net/",
+      "value": "https://icnm.net/",
+      "position": 87
+    },
+    {
+      "key": "s07_088",
+      "section": "Reconhecimento",
+      "label": "A: ICNM",
+      "value": "ICNM",
+      "position": 88
+    },
+    {
+      "key": "s07_089",
+      "section": "Reconhecimento",
+      "label": "STRONG: , organização austríaca sem fins lucrativos com sede em Salzburgo e Viena, na Áustria",
+      "value": ", organização austríaca sem fins lucrativos com sede em Salzburgo e Viena, na Áustria.",
+      "position": 89
+    },
+    {
+      "key": "s07_090",
+      "section": "Reconhecimento",
+      "label": "P: A iniciativa já foi apresentada em eventos como os Congressos da Abraji, o Simpósio I",
+      "value": "A iniciativa já foi apresentada em eventos como os Congressos da Abraji, o Simpósio Internacional LAVITS, a Cryptorave, o CODA, o Parlaméricas e uma audiência pública do Ministério das Mulheres.",
+      "position": 90
+    },
+    {
+      "key": "s08_091",
+      "section": "Expediente",
+      "label": "H2: Expediente",
+      "value": "Expediente",
+      "position": 91
+    },
+    {
+      "key": "s08_092",
+      "section": "Expediente",
+      "label": "H3: Equipe AzMina",
+      "value": "Equipe AzMina",
+      "position": 92
+    },
+    {
+      "key": "s08_093",
+      "section": "Expediente",
+      "label": "STRONG: Diego Rabatone Oliveira",
+      "value": "Diego Rabatone Oliveira",
+      "position": 93
+    },
+    {
+      "key": "s08_094",
+      "section": "Expediente",
+      "label": "SPAN: — Consultor de Desenvolvimento / ASK-AR",
+      "value": "— Consultor de Desenvolvimento / ASK-AR",
+      "position": 94
+    },
+    {
+      "key": "s08_095",
+      "section": "Expediente",
+      "label": "STRONG: Giulia Santos",
+      "value": "Giulia Santos",
+      "position": 95
+    },
+    {
+      "key": "s08_096",
+      "section": "Expediente",
+      "label": "SPAN: — Gerente de Arte",
+      "value": "— Gerente de Arte",
+      "position": 96
+    },
+    {
+      "key": "s08_097",
+      "section": "Expediente",
+      "label": "STRONG: Helena Bertho",
+      "value": "Helena Bertho",
+      "position": 97
+    },
+    {
+      "key": "s08_098",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria estratégica",
+      "value": "— Diretoria estratégica",
+      "position": 98
+    },
+    {
+      "key": "s08_099",
+      "section": "Expediente",
+      "label": "STRONG: Ingrid Fernandes",
+      "value": "Ingrid Fernandes",
+      "position": 99
+    },
+    {
+      "key": "s08_100",
+      "section": "Expediente",
+      "label": "SPAN: — Gerente de Tecnologia",
+      "value": "— Gerente de Tecnologia",
+      "position": 100
+    },
+    {
+      "key": "s08_101",
+      "section": "Expediente",
+      "label": "STRONG: Maria Ísis Santos",
+      "value": "Maria Ísis Santos",
+      "position": 101
+    },
+    {
+      "key": "s08_102",
+      "section": "Expediente",
+      "label": "SPAN: — Coordenadora de Projetos de Dados",
+      "value": "— Coordenadora de Projetos de Dados",
+      "position": 102
+    },
+    {
+      "key": "s08_103",
+      "section": "Expediente",
+      "label": "STRONG: Marília Moreira",
+      "value": "Marília Moreira",
+      "position": 103
+    },
+    {
+      "key": "s08_104",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria institucional",
+      "value": "— Diretoria institucional",
+      "position": 104
+    },
+    {
+      "key": "s08_105",
+      "section": "Expediente",
+      "label": "H3: Fornecedores",
+      "value": "Fornecedores",
+      "position": 105
+    },
+    {
+      "key": "s08_106",
+      "section": "Expediente",
+      "label": "STRONG: Letícia Oliveira",
+      "value": "Letícia Oliveira",
+      "position": 106
+    },
+    {
+      "key": "s08_107",
+      "section": "Expediente",
+      "label": "SPAN: — UX / NOMA Studio",
+      "value": "— UX / NOMA Studio",
+      "position": 107
+    },
+    {
+      "key": "s08_108",
+      "section": "Expediente",
+      "label": "STRONG: Mariana Nascimento",
+      "value": "Mariana Nascimento",
+      "position": 108
+    },
+    {
+      "key": "s08_109",
+      "section": "Expediente",
+      "label": "SPAN: — UX / NOMA Studio",
+      "value": "— UX / NOMA Studio",
+      "position": 109
+    },
+    {
+      "key": "s08_110",
+      "section": "Expediente",
+      "label": "STRONG: Rafael Chuluc",
+      "value": "Rafael Chuluc",
+      "position": 110
+    },
+    {
+      "key": "s08_111",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor backend / Wura",
+      "value": "— Desenvolvedor backend / Wura",
+      "position": 111
+    },
+    {
+      "key": "s08_112",
+      "section": "Expediente",
+      "label": "STRONG: Talita Santos",
+      "value": "Talita Santos",
+      "position": 112
+    },
+    {
+      "key": "s08_113",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedora frontend / Wura",
+      "value": "— Desenvolvedora frontend / Wura",
+      "position": 113
+    },
+    {
+      "key": "s08_114",
+      "section": "Expediente",
+      "label": "STRONG: Téo Calvo",
+      "value": "Téo Calvo",
+      "position": 114
+    },
+    {
+      "key": "s08_115",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor IA / Wura",
+      "value": "— Desenvolvedor IA / Wura",
+      "position": 115
+    },
+    {
+      "key": "s08_116",
+      "section": "Expediente",
+      "label": "STRONG: Vinicius Sueiro",
+      "value": "Vinicius Sueiro",
+      "position": 116
+    },
+    {
+      "key": "s08_117",
+      "section": "Expediente",
+      "label": "SPAN: — Visualização de Dados",
+      "value": "— Visualização de Dados",
+      "position": 117
+    },
+    {
+      "key": "s08_118",
+      "section": "Expediente",
+      "label": "H3: Comitê de Governança / QuitérIA",
+      "value": "Comitê de Governança / QuitérIA",
+      "position": 118
+    },
+    {
+      "key": "s08_119",
+      "section": "Expediente",
+      "label": "SPAN: Fernanda Martins",
+      "value": "Fernanda Martins",
+      "position": 119
+    },
+    {
+      "key": "s08_120",
+      "section": "Expediente",
+      "label": "SPAN: Haydée Svab",
+      "value": "Haydée Svab",
+      "position": 120
+    },
+    {
+      "key": "s08_121",
+      "section": "Expediente",
+      "label": "SPAN: Vitória Régia da Silva",
+      "value": "Vitória Régia da Silva",
+      "position": 121
+    },
+    {
+      "key": "s08_122",
+      "section": "Expediente",
+      "label": "H3: Comitê de Validação / QuitérIA",
+      "value": "Comitê de Validação / QuitérIA",
+      "position": 122
+    },
+    {
+      "key": "s08_123",
+      "section": "Expediente",
+      "label": "SPAN: Ana Carolina Araújo",
+      "value": "Ana Carolina Araújo",
+      "position": 123
+    },
+    {
+      "key": "s08_124",
+      "section": "Expediente",
+      "label": "SPAN: Rachel de Andrade",
+      "value": "Rachel de Andrade",
+      "position": 124
+    },
+    {
+      "key": "s08_125",
+      "section": "Expediente",
+      "label": "SPAN: Regina Célia Barbosa",
+      "value": "Regina Célia Barbosa",
+      "position": 125
+    },
+    {
+      "key": "s08_126",
+      "section": "Expediente",
+      "label": "SPAN: Roberta Viola",
+      "value": "Roberta Viola",
+      "position": 126
+    },
+    {
+      "key": "s08_127",
+      "section": "Expediente",
+      "label": "H3: Edições anteriores",
+      "value": "Edições anteriores",
+      "position": 127
+    },
+    {
+      "key": "s08_128",
+      "section": "Expediente",
+      "label": "STRONG: Adriano Belisário",
+      "value": "Adriano Belisário",
+      "position": 128
+    },
+    {
+      "key": "s08_129",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvimento de IA e modelagem de dados",
+      "value": "— Desenvolvimento de IA e modelagem de dados",
+      "position": 129
+    },
+    {
+      "key": "s08_130",
+      "section": "Expediente",
+      "label": "STRONG: Ana Carolina Araújo",
+      "value": "Ana Carolina Araújo",
+      "position": 130
+    },
+    {
+      "key": "s08_131",
+      "section": "Expediente",
+      "label": "SPAN: — Gestora de Programas e Projetos",
+      "value": "— Gestora de Programas e Projetos",
+      "position": 131
+    },
+    {
+      "key": "s08_132",
+      "section": "Expediente",
+      "label": "STRONG: Bárbara Libório",
+      "value": "Bárbara Libório",
+      "position": 132
+    },
+    {
+      "key": "s08_133",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria",
+      "value": "— Diretoria",
+      "position": 133
+    },
+    {
+      "key": "s08_134",
+      "section": "Expediente",
+      "label": "STRONG: Carolina Oms",
+      "value": "Carolina Oms",
+      "position": 134
+    },
+    {
+      "key": "s08_135",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria",
+      "value": "— Diretoria",
+      "position": 135
+    },
+    {
+      "key": "s08_136",
+      "section": "Expediente",
+      "label": "STRONG: Diego Rabatone Oliveira",
+      "value": "Diego Rabatone Oliveira",
+      "position": 136
+    },
+    {
+      "key": "s08_137",
+      "section": "Expediente",
+      "label": "STRONG: Haydée Svab",
+      "value": "Haydée Svab",
+      "position": 137
+    },
+    {
+      "key": "s08_138",
+      "section": "Expediente",
+      "label": "SPAN: — Consultora de Desenvolvimento / ASK-AR",
+      "value": "— Consultora de Desenvolvimento / ASK-AR",
+      "position": 138
+    },
+    {
+      "key": "s08_139",
+      "section": "Expediente",
+      "label": "STRONG: Helena Bertho",
+      "value": "Helena Bertho",
+      "position": 139
+    },
+    {
+      "key": "s08_140",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria Estratégica",
+      "value": "— Diretoria Estratégica",
+      "position": 140
+    },
+    {
+      "key": "s08_141",
+      "section": "Expediente",
+      "label": "STRONG: Ingrid Fernandes",
+      "value": "Ingrid Fernandes",
+      "position": 141
+    },
+    {
+      "key": "s08_142",
+      "section": "Expediente",
+      "label": "SPAN: — Gerente de Tecnologia",
+      "value": "— Gerente de Tecnologia",
+      "position": 142
+    },
+    {
+      "key": "s08_143",
+      "section": "Expediente",
+      "label": "STRONG: Lucas Ansei",
+      "value": "Lucas Ansei",
+      "position": 143
+    },
+    {
+      "key": "s08_144",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor e modelagem de dados / App Cívico",
+      "value": "— Desenvolvedor e modelagem de dados / App Cívico",
+      "position": 144
+    },
+    {
+      "key": "s08_145",
+      "section": "Expediente",
+      "label": "STRONG: Natali Carvalho",
+      "value": "Natali Carvalho",
+      "position": 145
+    },
+    {
+      "key": "s08_146",
+      "section": "Expediente",
+      "label": "SPAN: — Newsletter",
+      "value": "— Newsletter",
+      "position": 146
+    },
+    {
+      "key": "s08_147",
+      "section": "Expediente",
+      "label": "STRONG: Renata Hirota",
+      "value": "Renata Hirota",
+      "position": 147
+    },
+    {
+      "key": "s08_148",
+      "section": "Expediente",
+      "label": "SPAN: — Estatística",
+      "value": "— Estatística",
+      "position": 148
+    },
+    {
+      "key": "s08_149",
+      "section": "Expediente",
+      "label": "STRONG: Roberta Viola",
+      "value": "Roberta Viola",
+      "position": 149
+    },
+    {
+      "key": "s08_150",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvimento de IA e modelagem de dados",
+      "value": "— Desenvolvimento de IA e modelagem de dados",
+      "position": 150
+    },
+    {
+      "key": "s08_151",
+      "section": "Expediente",
+      "label": "STRONG: Robson Sobral",
+      "value": "Robson Sobral",
+      "position": 151
+    },
+    {
+      "key": "s08_152",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor de frontend / App Cívico",
+      "value": "— Desenvolvedor de frontend / App Cívico",
+      "position": 152
+    },
+    {
+      "key": "s08_153",
+      "section": "Expediente",
+      "label": "STRONG: Thais Fôlego",
+      "value": "Thais Fôlego",
+      "position": 153
+    },
+    {
+      "key": "s08_154",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria",
+      "value": "— Diretoria",
+      "position": 154
+    },
+    {
+      "key": "s08_155",
+      "section": "Expediente",
+      "label": "STRONG: Vinícius Pereira",
+      "value": "Vinícius Pereira",
+      "position": 155
+    },
+    {
+      "key": "s08_156",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor de dataviz",
+      "value": "— Desenvolvedor de dataviz",
+      "position": 156
+    },
+    {
+      "key": "s09_157",
+      "section": "Apoio",
+      "label": "H2: Apoio",
+      "value": "Apoio",
+      "position": 157
+    },
+    {
+      "key": "s09_158",
+      "section": "Apoio",
+      "label": "P: Este projeto conta com o apoio da Rede Feminista de IA da América Latina e do Caribe,",
+      "value": "Este projeto conta com o apoio da Rede Feminista de IA da América Latina e do Caribe, do Codesinfo (Fundo de Inovação para o Jornalismo, coordenado pelo Projor com apoio da Google News Initiative), do Fundo ELAS+ Doar Para Transformar e da Agence Française de Développement (AFD). As ideias e opiniões expressas neste projeto são de responsabilidade das autoras e não refletem, necessariamente, o ponto de vista destes apoiadores.",
+      "position": 158
+    },
+    {
+      "key": "s00_x001",
+      "section": "Apresentação",
+      "label": "SPAN: Elas",
+      "value": "Elas",
+      "position": 159
+    },
+    {
+      "key": "s00_x002",
+      "section": "Apresentação",
+      "label": "SPAN: no",
+      "value": "no",
+      "position": 160
+    },
+    {
+      "key": "s00_x003",
+      "section": "Apresentação",
+      "label": "P: é uma iniciativa de tecnologia cívica e comunicação feminista do",
+      "value": "é uma iniciativa de tecnologia cívica e comunicação feminista do",
+      "position": 161
+    },
+    {
+      "key": "s02_x004",
+      "section": "Como avaliamos",
+      "label": "ASIDE: Para ver todas as palavras, acesse a",
+      "value": "Para ver todas as palavras, acesse a",
+      "position": 162
+    },
+    {
+      "key": "s02_x005",
+      "section": "Como avaliamos",
+      "label": "ASIDE: Para entender a arquitetura, o treinamento e a governança da ferramenta, acesse a pág",
+      "value": "Para entender a arquitetura, o treinamento e a governança da ferramenta, acesse a página",
+      "position": 163
+    },
+    {
+      "key": "s05_x006",
+      "section": "Desafios",
+      "label": "P: O desenvolvimento e a manutenção do",
+      "value": "O desenvolvimento e a manutenção do",
+      "position": 164
+    },
+    {
+      "key": "s06_x007",
+      "section": "Próximos passos",
+      "label": "P: Os planos de evolução da plataforma, da metodologia e da inteligência artificial são ",
+      "value": "Os planos de evolução da plataforma, da metodologia e da inteligência artificial são atualizados continuamente e podem ser consultados no",
+      "position": 165
+    },
+    {
+      "key": "s06_x008",
+      "section": "Próximos passos",
+      "label": "P: Sistemas de monitoramento legislativo e inteligência cívica exigem adaptação permanen",
+      "value": "Sistemas de monitoramento legislativo e inteligência cívica exigem adaptação permanente às transformações políticas, tecnológicas e sociais, o que depende de financiamento contínuo para manutenção e hospedagem técnica, atualização metodológica, governança de dados e fortalecimento institucional.",
+      "position": 166
+    },
+    {
+      "key": "s07_x009",
+      "section": "Reconhecimento",
+      "label": "P: venceu o",
+      "value": "venceu o",
+      "position": 167
+    },
+    {
+      "key": "s07_x010",
+      "section": "Reconhecimento",
+      "label": "P: na categoria Inovação. Os jurados destacaram a transparência metodológica e a replica",
+      "value": "na categoria Inovação. Os jurados destacaram a transparência metodológica e a replicabilidade do projeto.",
+      "position": 168
+    },
+    {
+      "key": "s07_x011",
+      "section": "Reconhecimento",
+      "label": "STRONG: Em 2026, a QuitérIA venceu o prêmio",
+      "value": "Em 2026, a QuitérIA venceu o prêmio",
+      "position": 169
+    },
+    {
+      "key": "s07_x012",
+      "section": "Reconhecimento",
+      "label": "STRONG: , na categoria Engajamento do Governo e do Cidadão, que celebra soluções digitais cap",
+      "value": ", na categoria Engajamento do Governo e do Cidadão, que celebra soluções digitais capazes de ampliar o acesso à informação, fortalecer a transparência, estimular a participação e contribuir para processos democráticos mais inclusivos. A premiação é conduzida pela",
+      "position": 170
+    },
+    {
+      "key": "s08_x013",
+      "section": "Expediente",
+      "label": "SPAN: — Consultor de Desenvolvimento / ASK-AR",
+      "value": "— Consultor de Desenvolvimento / ASK-AR",
+      "position": 171
+    }
+  ],
+  "timeline": [
+    {
+      "position": 1,
+      "date_prefix": "Março de",
+      "year": "2020",
+      "description_before_link": "Lançamento da ",
+      "link_text": "robô @elasnocongresso no Twitter (X)",
+      "link_url": "https://azmina.com.br/reportagens/uma-robo-para-monitorar-direitos-das-mulheres-azmina-lanca-o-elas-no-congresso/",
+      "description_after_link": ", projeto selecionado pelo Google News Initiative entre mais de 300 concorrentes na América Latina. A automação acompanhou as tramitações diárias até junho de 2023, quando foi descontinuada com o fechamento do acesso gratuito à API da plataforma.",
+      "tag": "Nasce o projeto"
+    },
+    {
+      "position": 2,
+      "date_prefix": "Junho de",
+      "year": "2020",
+      "description_before_link": "Primeiro levantamento e análise de atividade legislativa, primeiro ranking parlamentar e estreia da newsletter, com curadoria de projetos e análise política semanal.",
+      "link_text": "",
+      "link_url": "",
+      "description_after_link": "",
+      "tag": "1ª newsletter"
+    },
+    {
+      "position": 3,
+      "date_prefix": "De 2020 a",
+      "year": "2024",
+      "description_before_link": "Edições periódicas do Ranking dos Parlamentares, metodologicamente inspirado no ",
+      "link_text": "Ruralômetro",
+      "link_url": "https://ruralometro.reporterbrasil.org.br/",
+      "description_after_link": " (Repórter Brasil).",
+      "tag": "Ranking"
+    },
+    {
+      "position": 4,
+      "date_prefix": "Ano de",
+      "year": "2024",
+      "description_before_link": "Na revisão metodológica que antecedeu a criação da inteligência artificial, optamos por descontinuar o ranking e concentrar esforços na análise qualitativa das proposições — tirando o foco da ação individual dos parlamentares em favor de uma abordagem mais contextual. No fim do ano, lançamos a QuitérIA.",
+      "link_text": "",
+      "link_url": "",
+      "description_after_link": "",
+      "tag": "Fim do ranking"
+    },
+    {
+      "position": 5,
+      "date_prefix": "Ano de",
+      "year": "2026",
+      "description_before_link": "Retreinamento da QuitérIA, criação da API, relançamento do site com evolução do painel público e sistema automatizado de alertas diários e semanais.",
+      "link_text": "",
+      "link_url": "",
+      "description_after_link": "",
+      "tag": "QuitérIA 2.0"
+    }
+  ],
+  "timeline_note_link_text": "Em 2025, a AzMina encerrou definitivamente suas atividades no X",
+  "timeline_note_link_url": "https://www.instagram.com/p/DFVVODpRP9A/",
+  "timeline_note_after_link": ".",
+  "challenges": [
+    {
+      "position": 1,
+      "title": "Volume e complexidade",
+      "text": "a produção parlamentar é altíssima, o que nos obriga a filtrar matérias por palavras-chave, um processo que pode deixar passar projetos com linguagem indireta, técnica ou incomum. Traduzir o “legislativês” também exige trabalho editorial constante."
+    },
+    {
+      "position": 2,
+      "title": "Dependência de fontes externas",
+      "text": "a coleta depende das APIs oficiais da Câmara e do Senado, sujeitas a instabilidades que afetam o ritmo de atualização da base. Além disso, emendas e substitutivos alteram os textos originais ao longo da tramitação, exigindo reavaliação permanente."
+    },
+    {
+      "position": 3,
+      "title": "Subjetividade da análise",
+      "text": "classificar pautas de gênero com consistência envolve gerenciar a subjetividade inerente à análise política e jurídica. Para isso, criamos critérios analíticos rigorosos aplicados pela rede colaborativa e duas instâncias de supervisão, o Comitê de Governança e o Comitê de Validação, além de enfrentar a resistência e a desconfiança legítimas sobre o uso de IA em direitos humanos. Erros, vieses e ambiguidades do modelo são mitigados por governança compartilhada e supervisão humana permanente."
+    },
+    {
+      "position": 4,
+      "title": "Dados e infraestrutura",
+      "text": "treinar um modelo de linguagem exige volume robusto de dados anotados. Podemos construir modelos cada vez mais acurados conforme avaliamos novos projetos ao longo do tempo, o que, por outro lado, demanda investimento em infraestrutura de hardware para comportar modelos maiores."
+    },
+    {
+      "position": 5,
+      "title": "Contexto político e sustentabilidade",
+      "text": "a iniciativa opera em um ambiente de forte disputa e de ataques diretos às pautas de gênero e aos direitos reprodutivos, somado ao desafio constante de captar financiamento para garantir a sustentabilidade, a escalabilidade e a autonomia da plataforma."
+    }
+  ],
+  "partners": [
+    {
+      "position": 1,
+      "name": "Anis Bioética",
+      "asset_key": "anis"
+    },
+    {
+      "position": 2,
+      "name": "Artigo 19",
+      "asset_key": "artigo19"
+    },
+    {
+      "position": 3,
+      "name": "Cepia - Cidadania, Estudo, Pesquisa, Informação e Ação",
+      "asset_key": "cepia"
+    },
+    {
+      "position": 4,
+      "name": "CFEMEA - Centro Feminista de Estudos e Assessoria",
+      "asset_key": "cfemea"
+    },
+    {
+      "position": 5,
+      "name": "Coletivo Feminista Sexualidade e Saúde",
+      "asset_key": "coletivoFeminista"
+    },
+    {
+      "position": 6,
+      "name": "Coletivo Mana a Mana",
+      "asset_key": "manaAMana"
+    },
+    {
+      "position": 7,
+      "name": "deFEMde - Rede Feminista de Juristas",
+      "asset_key": "deFEMde"
+    },
+    {
+      "position": 8,
+      "name": "Ecos",
+      "asset_key": "ecos"
+    },
+    {
+      "position": 9,
+      "name": "Empodera",
+      "asset_key": "empodera"
+    },
+    {
+      "position": 10,
+      "name": "Gepô",
+      "asset_key": "gepo"
+    },
+    {
+      "position": 11,
+      "name": "Instituto + Diversidade",
+      "asset_key": "maisDiversidade"
+    },
+    {
+      "position": 12,
+      "name": "Instituto Maria da Penha",
+      "asset_key": "mariaDaPenha"
+    },
+    {
+      "position": 13,
+      "name": "Instituto Marielle Franco",
+      "asset_key": "marielleFranco"
+    },
+    {
+      "position": 14,
+      "name": "Instituto Patrícia Galvão",
+      "asset_key": "patriciaGalvao"
+    },
+    {
+      "position": 15,
+      "name": "Instituto Update",
+      "asset_key": "update"
+    },
+    {
+      "position": 16,
+      "name": "Juristas Negras",
+      "asset_key": "juristasNegras"
+    },
+    {
+      "position": 17,
+      "name": "LabCidade",
+      "asset_key": "labCidade"
+    },
+    {
+      "position": 18,
+      "name": "Mulheres Negras Decidem",
+      "asset_key": "mulheresNegrasDecidem"
+    },
+    {
+      "position": 19,
+      "name": "Observatório da Violência Obstétrica no Brasil",
+      "asset_key": "ovoBr"
+    },
+    {
+      "position": 20,
+      "name": "Plan International",
+      "asset_key": "planInternational"
+    },
+    {
+      "position": 21,
+      "name": "Rede Liberdade",
+      "asset_key": "redeLiberdade"
+    },
+    {
+      "position": 22,
+      "name": "SOF - Sempreviva Organização Feminista",
+      "asset_key": "sof"
+    },
+    {
+      "position": 23,
+      "name": "SPW - Sexuality Policy Watch",
+      "asset_key": "spw"
+    },
+    {
+      "position": 24,
+      "name": "Themis",
+      "asset_key": "themis"
+    },
+    {
+      "position": 25,
+      "name": "TretAqui",
+      "asset_key": "tretaqui"
+    }
+  ]
+}

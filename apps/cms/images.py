@@ -56,3 +56,22 @@ def normalize(upload, spec: ImageSpec, *, stem: str) -> ContentFile:
     buffer = io.BytesIO()
     image.save(buffer, "WEBP", quality=90)
     return ContentFile(buffer.getvalue(), name=f"{stem}.webp")
+
+
+def normalize_logo(upload) -> ContentFile:
+    """Aceita proporções variadas, limita o tamanho e remove metadados do logo."""
+    if upload.size > MAX_UPLOAD_BYTES:
+        raise ValidationError("O logo deve ter no máximo 5 MB.")
+    upload.seek(0)
+    try:
+        image: Image.Image = Image.open(upload)
+        image.load()
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as exc:
+        raise ValidationError("Não foi possível ler o logo enviado.") from exc
+    if image.format not in ACCEPTED_FORMATS:
+        raise ValidationError("Envie o logo em PNG, JPEG ou WebP.")
+    image = ImageOps.exif_transpose(image)
+    image.thumbnail((640, 640), Image.Resampling.LANCZOS)
+    buffer = io.BytesIO()
+    image.convert("RGBA").save(buffer, "WEBP", quality=90)
+    return ContentFile(buffer.getvalue(), name="logo.webp")

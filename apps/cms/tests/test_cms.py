@@ -13,8 +13,13 @@ from django.urls import reverse
 from PIL import Image
 
 from apps.cms import deploy, storage, tasks
+from apps.cms.admin import AboutPartnerForm
 from apps.cms.images import ImageSpec, normalize
 from apps.cms.models import (
+    AboutCopy,
+    AboutPage,
+    AboutPartner,
+    AboutTimelineEvent,
     ActivityPage,
     AlertsPage,
     FeministAICategory,
@@ -257,7 +262,7 @@ class TestPublishDefaults:
         published = tmp_path / "cms" / "alertas" / "hero.webp"
 
         call_command("cms_publish_defaults", stdout=io.StringIO())
-        for folder in ["alertas", "reportagens", "atividade-legislativa"]:
+        for folder in ["alertas", "reportagens", "atividade-legislativa", "sobre"]:
             image = Image.open(tmp_path / "cms" / folder / "hero.webp")
             assert (image.format, image.size) == ("WEBP", (1080, 1350))
         for name, size in [
@@ -287,6 +292,7 @@ class TestPublishDefaults:
             "cms/ia-feminista/hero.webp",
             "cms/ia-feminista/flow-desktop.webp",
             "cms/ia-feminista/flow-mobile.webp",
+            "cms/sobre/hero.webp",
         ]
         assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
 
@@ -299,7 +305,7 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_count == 6
+        assert bucket.put_object.call_count == 7
 
 
 class TestFeministAIPage:
@@ -382,7 +388,95 @@ class TestFeministAIPage:
         assert body["evaluation_metrics"][0]["current"] == "0,90"
 
 
+class TestAboutPage:
+    def test_conteudo_publicado_e_timeline_migrados(self):
+        page = AboutPage.objects.get(pk=1)
+        assert page.seo_title == "Sobre o Elas no Congresso | AzMina"
+        assert page.copy.count() == 171
+        assert page.timeline.count() == 5
+        assert page.challenges.count() == 5
+        assert page.partners.count() == 25
+
+        response = Client().get("/api/v1/cms/about")
+        assert response.status_code == 200
+        assert response["Cache-Control"] == "no-store"
+        data = response.json()
+        assert data["content"]["seo_title"] == page.seo_title
+        assert data["hero_image"]["url"].startswith("/media/cms/sobre/hero.webp?v=")
+        assert data["timeline"][0]["tag"] == "Nasce o projeto"
+        assert data["timeline"][2]["link_text"] == "Ruralômetro"
+        assert data["partners"][0]["name"] == "Anis Bioética"
+
+    def test_marcos_livres_e_textos_editados_chegam_ao_site(self, admin_client):
+        page = AboutPage.objects.get(pk=1)
+        assert admin_client.get(reverse("admin:cms_aboutpage_change", args=[1])).status_code == 200
+        copy = AboutCopy.objects.get(key="s01_007")
+        assert (
+            admin_client.get(reverse("admin:cms_aboutcopy_change", args=[copy.pk])).status_code
+            == 200
+        )
+        copy.value = "Nossa trajetória"
+        copy.save()
+        page.timeline.all().delete()
+        AboutTimelineEvent.objects.create(
+            page=page,
+            position=2,
+            date_prefix="Ano de",
+            year="2027",
+            description_before_link="Novo marco.",
+            tag="Novo passo",
+        )
+        AboutTimelineEvent.objects.create(
+            page=page,
+            position=1,
+            date_prefix="Ano de",
+            year="2026",
+            description_before_link="Marco anterior.",
+            tag="Antes",
+        )
+        data = Client().get("/api/v1/cms/about").json()
+        assert data["content"]["s01_007"] == "Nossa trajetória"
+        assert [item["tag"] for item in data["timeline"]] == ["Antes", "Novo passo"]
+
+    def test_logo_novo_precisa_de_arquivo(self):
+        partner = AboutPartner(page=AboutPage.objects.get(pk=1), position=26, name="Nova rede")
+        with pytest.raises(ValidationError):
+            partner.full_clean()
+
+    def test_parceiro_novo_envia_logo_sem_exigir_proporcao_fixa(self, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        page = AboutPage.objects.get(pk=1)
+        form = AboutPartnerForm(
+            data={"page": page.pk, "position": 26, "name": "Nova rede"},
+            files={"logo_image": image_file(300, 100, name="rede.png")},
+        )
+        assert form.is_valid(), form.errors
+        partner = form.save()
+        assert partner.logo_image.name.startswith("cms/sobre/partners/")
+        with Image.open(tmp_path / partner.logo_image.name) as logo:
+            assert (logo.format, logo.size) == ("WEBP", (300, 100))
+        original_path = partner.logo_image.name
+        replacement = AboutPartnerForm(
+            data={"page": page.pk, "position": 26, "name": "Nova rede"},
+            files={"logo_image": image_file(400, 200, name="novo.png")},
+            instance=partner,
+        )
+        assert replacement.is_valid(), replacement.errors
+        replacement.save()
+        assert partner.logo_image.name == original_path
+
+
 class TestDeploy:
+    def test_editar_trecho_de_sobre_agenda_deploy(
+        self, deploy_task, django_capture_on_commit_callbacks
+    ):
+        copy = AboutCopy.objects.get(key="s01_007")
+        copy.value = "Nossa trajetória"
+        with django_capture_on_commit_callbacks(execute=True):
+            copy.save()
+
+        deploy_task.assert_called_once_with(countdown=30)
+
     def test_salvar_agenda_deploy_depois_do_commit(
         self, deploy_task, django_capture_on_commit_callbacks
     ):

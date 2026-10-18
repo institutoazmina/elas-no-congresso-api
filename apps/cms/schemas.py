@@ -64,3 +64,32 @@ class FeministAIPageSchema(Schema):
     thematic_metrics: list[FeministAIThematicMetricSchema]
     thematic_partitions: list[FeministAIThematicPartitionSchema]
     open_links: list[FeministAIOpenLinkSchema]
+
+
+class AboutTimelineEventSchema(Schema):
+    date_prefix: str
+    year: str
+    description_before_link: str
+    link_text: str
+    link_url: str
+    description_after_link: str
+    tag: str
+
+
+class AboutChallengeSchema(Schema):
+    title: str
+    text: str
+
+
+class AboutPartnerSchema(Schema):
+    name: str
+    asset_key: str
+    logo_url: str
+
+
+class AboutPageSchema(Schema):
+    content: dict[str, str]
+    hero_image: CmsImageSchema
+    timeline: list[AboutTimelineEventSchema]
+    challenges: list[AboutChallengeSchema]
+    partners: list[AboutPartnerSchema]

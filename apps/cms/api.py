@@ -2,8 +2,8 @@ from django.db import models
 from django.http import HttpResponse
 from ninja import Router
 
-from .models import ActivityPage, AlertsPage, FeministAIPage, HeroPage, ReportsPage
-from .schemas import FeministAIPageSchema, HeroPageSchema
+from .models import AboutPage, ActivityPage, AlertsPage, FeministAIPage, HeroPage, ReportsPage
+from .schemas import AboutPageSchema, FeministAIPageSchema, HeroPageSchema
 
 router = Router()
 
@@ -100,4 +100,47 @@ def feminist_ai_page(request, response: HttpResponse):
             page, "feministaithematicpartition_set", "label", "training", "validation", "test"
         ),
         "open_links": _items(page, "feministaiopenlink_set", "label", "url"),
+    }
+
+
+@router.get("/about", response=AboutPageSchema)
+def about_page(request, response: HttpResponse):
+    """Textos e marcos da página Sobre, lidos pelo build do site."""
+    response["Cache-Control"] = "no-store"
+    page = AboutPage.objects.prefetch_related("copy", "timeline", "challenges", "partners").get(
+        pk=AboutPage.SINGLETON_PK
+    )
+    version = int(page.updated_at.timestamp())
+    return {
+        "content": {
+            "seo_title": page.seo_title,
+            "seo_description": page.seo_description,
+            "timeline_note_link_text": page.timeline_note_link_text,
+            "timeline_note_link_url": page.timeline_note_link_url,
+            "timeline_note_after_link": page.timeline_note_after_link,
+            **{item.key: item.value for item in page.copy.all()},
+        },
+        "hero_image": _cms_image(
+            page.hero_image, page.hero_image_width, page.hero_image_height, version
+        ),
+        "timeline": _items(
+            page,
+            "timeline",
+            "date_prefix",
+            "year",
+            "description_before_link",
+            "link_text",
+            "link_url",
+            "description_after_link",
+            "tag",
+        ),
+        "challenges": _items(page, "challenges", "title", "text"),
+        "partners": [
+            {
+                "name": partner.name,
+                "asset_key": partner.asset_key,
+                "logo_url": f"{partner.logo_image.url}?v={version}" if partner.logo_image else "",
+            }
+            for partner in page.partners.all()
+        ],
     }

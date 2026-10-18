@@ -1,3 +1,7 @@
+import uuid
+from urllib.parse import urlparse
+
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from .images import ImageSpec
@@ -385,3 +389,141 @@ class FeministAIOpenLink(FeministAIOrderedItem):
 
     def __str__(self):
         return self.label
+
+
+class AboutPage(CmsPage):
+    """Conteúdo fixo da página Sobre e raiz da linha do tempo editável."""
+
+    HERO_IMAGE = ImageSpec(1080, 1350)
+    seo_title = models.CharField("Título para buscas", max_length=160)
+    seo_description = models.CharField("Descrição para buscas", max_length=300)
+    hero_image_width = models.PositiveIntegerField(default=1080, editable=False)
+    hero_image_height = models.PositiveIntegerField(default=1350, editable=False)
+    hero_image = hero_image_field("sobre")
+    timeline_note_link_text = models.CharField(
+        "Nota da linha do tempo: texto do link", max_length=200
+    )
+    timeline_note_link_url = models.URLField("Nota da linha do tempo: endereço")
+    timeline_note_after_link = models.CharField(
+        "Nota da linha do tempo: depois do link", max_length=200
+    )
+
+    class Meta:
+        verbose_name = "Sobre: página e linha do tempo"
+        verbose_name_plural = "Sobre: página e linha do tempo"
+        db_table = "cms_about_page"
+
+    def __str__(self):
+        return "Página Sobre"
+
+    @classmethod
+    def default_images(cls):
+        return [("hero_image", "about-hero.png", cls.HERO_IMAGE)]
+
+
+class AboutCopy(models.Model):
+    """Trecho editável de texto ou endereço; o layout e a formatação ficam no Astro."""
+
+    page = models.ForeignKey(AboutPage, on_delete=models.CASCADE, related_name="copy")
+    key = models.CharField("Identificador", max_length=20, unique=True, editable=False)
+    section = models.CharField("Seção", max_length=80, db_index=True, editable=False)
+    label = models.CharField("Identificação do trecho", max_length=110, editable=False)
+    value = models.TextField("Conteúdo", max_length=4000)
+    position = models.PositiveSmallIntegerField("Ordem", editable=False)
+
+    class Meta:
+        ordering = ["position"]
+        verbose_name = "Sobre: texto e link"
+        verbose_name_plural = "Sobre: textos e links"
+        db_table = "cms_about_copy"
+
+    def clean(self):
+        if self.label.startswith("Link URL"):
+            parsed = urlparse(self.value)
+            relative = self.value.startswith("/") and not self.value.startswith("//")
+            absolute = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+            if not (relative or absolute):
+                raise ValidationError(
+                    {"value": "Use um endereço https:// ou um caminho do site (/...)."}
+                )
+
+    def __str__(self):
+        return f"{self.section}: {self.label}"
+
+
+class AboutTimelineEvent(models.Model):
+    page = models.ForeignKey(AboutPage, on_delete=models.CASCADE, related_name="timeline")
+    position = models.PositiveSmallIntegerField("Ordem")
+    date_prefix = models.CharField("Período: antes do ano", max_length=60)
+    year = models.CharField("Ano", max_length=40)
+    description_before_link = models.TextField("Descrição", max_length=1500)
+    link_text = models.CharField("Texto do link", max_length=160, blank=True)
+    link_url = models.URLField("Endereço do link", blank=True)
+    description_after_link = models.TextField("Descrição após o link", max_length=1500, blank=True)
+    tag = models.CharField("Etiqueta", max_length=60)
+
+    class Meta:
+        ordering = ["position", "pk"]
+        verbose_name = "Marco da linha do tempo"
+        verbose_name_plural = "Marcos da linha do tempo"
+        db_table = "cms_about_timeline_event"
+
+    def __str__(self):
+        return f"{self.year}: {self.tag}"
+
+
+class AboutChallenge(models.Model):
+    page = models.ForeignKey(AboutPage, on_delete=models.CASCADE, related_name="challenges")
+    position = models.PositiveSmallIntegerField("Ordem")
+    title = models.CharField("Título", max_length=100)
+    text = models.TextField("Descrição", max_length=1500)
+
+    class Meta:
+        ordering = ["position", "pk"]
+        verbose_name = "Desafio"
+        verbose_name_plural = "Desafios"
+        db_table = "cms_about_challenge"
+
+    def __str__(self):
+        return self.title
+
+
+def partner_logo_path(instance, filename):
+    """URL estável quando a equipe substitui o logo de uma organização."""
+    if instance.pk:
+        previous = (
+            type(instance)
+            .objects.filter(pk=instance.pk)
+            .values_list("logo_image", flat=True)
+            .first()
+        )
+        if previous:
+            return previous
+    return f"cms/sobre/partners/{uuid.uuid4().hex}.webp"
+
+
+class AboutPartner(models.Model):
+    page = models.ForeignKey(AboutPage, on_delete=models.CASCADE, related_name="partners")
+    position = models.PositiveSmallIntegerField("Ordem")
+    name = models.CharField("Organização", max_length=160)
+    asset_key = models.CharField("Logo original", max_length=60, blank=True, editable=False)
+    logo_image = models.ImageField(
+        "Novo logo",
+        blank=True,
+        upload_to=partner_logo_path,
+        storage=CmsStorage(),
+        help_text="PNG, JPEG ou WebP com até 5 MB. O logo se ajusta ao espaço disponível.",
+    )
+
+    class Meta:
+        ordering = ["position", "pk"]
+        verbose_name = "Organização parceira"
+        verbose_name_plural = "Organizações parceiras"
+        db_table = "cms_about_partner"
+
+    def clean(self):
+        if not self.asset_key and not self.logo_image:
+            raise ValidationError({"logo_image": "Envie o logo da nova organização."})
+
+    def __str__(self):
+        return self.name

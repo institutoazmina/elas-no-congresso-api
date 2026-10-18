@@ -15,7 +15,7 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
 ## CMS do site
 
 O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
-(**Alertas**, **Reportagens**, **Atividade legislativa** e **IA Feminista**). Cada página tem
+(**Alertas**, **Reportagens**, **Atividade legislativa**, **IA Feminista** e **Sobre**). Cada página tem
 um registro único: o menu abre direto o formulário. Ver
 [ADR-006](decisions/006-cms-do-site.md).
 
@@ -29,6 +29,20 @@ categoria nessa página não altera a taxonomia da API nem outros gráficos do
 site. Links dentro de parágrafos têm campos separados para texto antes do
 link, texto do link, endereço e texto depois, sem exigir HTML.
 
+Em **Sobre: textos e links**, filtre pela seção (por exemplo, **Nossa história**
+ou **Expediente**) e edite os trechos diretamente na lista. Os rótulos mostram
+o texto publicado para facilitar a localização. Partes com negrito ou links
+aparecem em linhas separadas para preservar a formatação sem editar HTML. O
+campo **Conteúdo** pode ser salvo junto com outros trechos da mesma página.
+
+Em **Sobre: página e linha do tempo**, edite título e descrição de busca,
+ilustração do topo e a nota sob a timeline. Ao fim do formulário há listas de
+**marcos**, **desafios** e **organizações parceiras**. É possível adicionar,
+remover e mudar a ordem; não há limite de cinco marcos. Para um novo marco,
+preencha período, ano, descrição e etiqueta. O link no texto é opcional.
+Para uma nova organização, informe nome, ordem e envie um logo PNG, JPEG ou
+WebP; as organizações atuais conservam o logo original até ser substituído.
+
 - Os limites de texto e as exigências da imagem aparecem no formulário e vêm do
   layout do site. Imagens fora da proporção não são aceitas.
 - Salvar dispara o deploy do site; a alteração aparece em alguns minutos.
@@ -38,6 +52,8 @@ link, texto do link, endereço e texto depois, sem exigir HTML.
   Na IA Feminista há três imagens: ilustração de Maria Quitéria, fluxograma para
   computador e fluxograma para celular. Cada uma exige a proporção informada no
   campo; substituir um fluxograma não modifica automaticamente o outro.
+  A ilustração de Sobre exige proporção 4:5; logos das organizações aceitam
+  proporções variadas e são reduzidos a até 640 px.
 
 ## Curadoria de proposições
 
