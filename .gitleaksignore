@@ -1,7 +1,7 @@
 # Public SHA-256 checksums of pinned Hugging Face tokenizer artifacts, not keys.
 # Reviewed against the downloaded model revision and the baseline recorder.
 # Exact historical findings only: do not exclude the file or generic-api-key rule.
-dbe3c0f97cf890091be68d94949e3d4cc022b924:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:13
-dbe3c0f97cf890091be68d94949e3d4cc022b924:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:14
-dbe3c0f97cf890091be68d94949e3d4cc022b924:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:17
-dbe3c0f97cf890091be68d94949e3d4cc022b924:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:18
+de4295a917cfe24faac0370defd8d9880738e06d:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:13
+de4295a917cfe24faac0370defd8d9880738e06d:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:14
+de4295a917cfe24faac0370defd8d9880738e06d:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:17
+de4295a917cfe24faac0370defd8d9880738e06d:tests/fixtures/compatibility/quiteria-baseline.json:generic-api-key:18
