@@ -8,6 +8,6 @@
     "build:confirmation": "mjml src/confirmation.mjml -o dist/confirmation.html"
   },
   "devDependencies": {
-    "mjml": "^4.15.3"
+    "mjml": "5.4.1"
   }
 }
