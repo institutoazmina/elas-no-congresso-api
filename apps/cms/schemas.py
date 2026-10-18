@@ -11,3 +11,56 @@ class HeroPageSchema(Schema):
     title: str
     subtitle: str
     hero_image: CmsImageSchema
+
+
+class FeministAICategorySchema(Schema):
+    name: str
+    concept: str
+
+
+class FeministAILimitationSchema(Schema):
+    text: str
+
+
+class FeministAIEvaluationMetricSchema(Schema):
+    label: str
+    url: str
+    previous: str
+    current: str
+    trend: str
+
+
+class FeministAIEvaluationPartitionSchema(Schema):
+    label: str
+    accuracy: str
+    percentage: str
+    count: str
+
+
+class FeministAIThematicMetricSchema(Schema):
+    label: str
+    value: str
+
+
+class FeministAIThematicPartitionSchema(Schema):
+    label: str
+    training: str
+    validation: str
+    test: str
+
+
+class FeministAIOpenLinkSchema(Schema):
+    label: str
+    url: str
+
+
+class FeministAIPageSchema(Schema):
+    content: dict[str, str]
+    images: dict[str, CmsImageSchema]
+    categories: list[FeministAICategorySchema]
+    limitations: list[FeministAILimitationSchema]
+    evaluation_metrics: list[FeministAIEvaluationMetricSchema]
+    evaluation_partitions: list[FeministAIEvaluationPartitionSchema]
+    thematic_metrics: list[FeministAIThematicMetricSchema]
+    thematic_partitions: list[FeministAIThematicPartitionSchema]
+    open_links: list[FeministAIOpenLinkSchema]

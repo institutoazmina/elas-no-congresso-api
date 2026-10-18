@@ -2,7 +2,8 @@
 
 ## Estado e contexto
 
-**Implementada para as páginas de alertas, reportagens e atividade legislativa em 14/10/2026.**
+**Implementada para alertas, reportagens e atividade legislativa em 14/10/2026;
+estendida à IA Feminista em 17/10/2026.**
 
 Textos e imagens do site estático (Astro, S3 + CloudFront) estavam no código:
 cada ajuste editorial exigia um desenvolvedor e um deploy. A equipe precisa
@@ -45,13 +46,24 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   mantém só um pendente por grupo, e o build lê o conteúdo mais recente.
 - **Leitura pelo build**: `GET /api/v1/cms/<página>` com `Cache-Control:
   no-store`, para o build disparado não ler uma resposta em cache.
+- **Página longa de IA Feminista**: mantém o mesmo registro único para os textos,
+  títulos, links, cartões e três imagens. Categorias, limitações, métricas,
+  partições e links de código/dados são linhas ordenadas em models próprios,
+  editadas por inlines do admin. O layout e a quantidade de seções são fixos;
+  a equipe edita conteúdo sem HTML, JSON ou código. O conteúdo publicado em
+  17/10/2026 é o ponto de partida de uma migração de dados; o arquivo
+  `defaults/feminist-ai-content.json` é parte histórica dessa migração e não
+  deve ser alterado para publicar atualizações futuras. A tabela de categorias
+  nessa página é editorial e não altera a taxonomia usada pela API.
 
 ## Consequências
 
 - Sem rascunho: salvar publica após um build. O histórico do admin mostra quem
   alterou, mas não guarda versões do conteúdo.
 - Se a API cair, o build do site falha, como já acontece com os dados.
-- Novo campo editável exige migração e deploy da API e do site.
+- Novo campo editável exige migração e deploy da API e do site. A página de IA
+  Feminista também exige um PR do site para trocar o conteúdo fixo pela leitura
+  de `/api/v1/cms/feminist-ai` no build.
 - A imagem nova vale assim que é salva, alguns minutos antes do texto, que
   depende do deploy.
 - A role do EC2 precisa de `s3:GetObject`/`s3:PutObject` em `cms/*` e
