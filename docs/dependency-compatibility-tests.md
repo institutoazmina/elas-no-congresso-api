@@ -68,9 +68,11 @@ A tokenização deve preservar o tamanho e o hash dos IDs de tokens.
 
 O baseline registra versões, revisão do modelo e SHA-256 dos pesos/configs.
 Quatro checksums públicos de arquivos `tokenizer*.json` coincidem com a regra
-genérica de secrets. O `.gitleaksignore` registra somente os quatro fingerprints
-históricos revisados; o arquivo e a regra continuam sendo verificados em novas
-alterações. Não há exclusão geral do baseline.
+genérica de secrets. O `.gitleaks.toml` libera apenas valores de 64 caracteres
+hexadecimais, detectados pela regra `generic-api-key`, dentro de
+`quiteria-baseline.json`. A liberação não depende de SHAs de commit, que mudam
+em rebase ou squash; qualquer outro arquivo, regra ou formato continua sendo
+verificado. Não há exclusão geral do baseline.
 Ele não é regenerado pela suíte. Para gravar uma nova referência deliberadamente:
 
 ```bash
