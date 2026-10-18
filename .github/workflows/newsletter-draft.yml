@@ -55,7 +55,9 @@ jobs:
       DRY_RUN: ${{ inputs.dry_run }}
       ALLOW_INCOMPLETE: ${{ inputs.allow_incomplete }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Validate dates
         run: |
@@ -76,14 +78,14 @@ jobs:
               raise SystemExit("Require start_date <= end_date <= today (São Paulo)")
           PY
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # v1
         with:
           ruby-version: "3.3"
 
       - name: Install Kamal
         run: gem install kamal -v 2.12.0
 
-      - uses: webfactory/ssh-agent@v0.9.0
+      - uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
