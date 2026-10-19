@@ -11,7 +11,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 
 from apps.cms.images import normalize
-from apps.cms.models import AboutPage, FeministAIPage, HeroPage
+from apps.cms.models import AboutPage, FeministAIPage, HeroPage, HomePage
 
 DEFAULTS_DIR = Path(__file__).resolve().parents[2] / "defaults"
 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, force=False, **options):
-        for model in [*HeroPage.__subclasses__(), FeministAIPage, AboutPage]:
+        for model in [*HeroPage.__subclasses__(), FeministAIPage, AboutPage, HomePage]:
             for field_name, filename, spec in model.default_images():
                 field = model._meta.get_field(field_name)
                 name = field.default

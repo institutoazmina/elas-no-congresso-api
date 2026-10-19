@@ -25,6 +25,9 @@ from apps.cms.models import (
     FeministAICategory,
     FeministAIEvaluationMetric,
     FeministAIPage,
+    FooterAlertsPage,
+    HomeCopy,
+    HomePage,
     ReportsPage,
 )
 
@@ -272,6 +275,13 @@ class TestPublishDefaults:
         ]:
             image = Image.open(tmp_path / "cms" / "ia-feminista" / f"{name}.webp")
             assert (image.format, image.size) == ("WEBP", size)
+        for name, size in [
+            ("hero", (513, 389)),
+            ("explore", (1440, 1080)),
+            ("quiteria", (1920, 1080)),
+        ]:
+            image = Image.open(tmp_path / "cms" / "home" / f"{name}.webp")
+            assert (image.format, image.size) == ("WEBP", size)
 
         published.write_bytes(b"substituida no admin")
         out = io.StringIO()
@@ -293,6 +303,9 @@ class TestPublishDefaults:
             "cms/ia-feminista/flow-desktop.webp",
             "cms/ia-feminista/flow-mobile.webp",
             "cms/sobre/hero.webp",
+            "cms/home/hero.webp",
+            "cms/home/explore.webp",
+            "cms/home/quiteria.webp",
         ]
         assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
 
@@ -305,7 +318,7 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_count == 7
+        assert bucket.put_object.call_count == 10
 
 
 class TestFeministAIPage:
@@ -533,3 +546,73 @@ class TestDeploy:
 
         with pytest.raises(error):
             deploy.dispatch_site_deploy()
+
+
+class TestHomePage:
+    def test_admin_substitui_uma_imagem_sem_exigir_as_outras(self, admin_client, bucket):
+        response = admin_client.post(
+            reverse("admin:cms_homepage_change", args=[1]),
+            {"hero_image": image_file(513, 389)},
+        )
+
+        assert response.status_code == 302
+        assert HomePage.objects.get().hero_image.name == "cms/home/hero.webp"
+        assert bucket.put_object.call_args.kwargs["Key"] == "cms/home/hero.webp"
+
+    def test_migracao_e_api_preservam_conteudo_editorial_sem_dados_dos_graficos(self):
+        assert HomePage.objects.filter(pk=1).exists()
+        assert HomeCopy.objects.count() == 70
+
+        response = Client().get("/api/v1/cms/home")
+
+        assert response.status_code == 200
+        assert response["Cache-Control"] == "no-store"
+        data = response.json()
+        assert data["content"]["hero_title_before_nas"] == "De olho "
+        assert data["content"]["women_postit_before"].startswith("A cada 100")
+        assert data["content"]["rights_postit_desktop_url"].startswith("https://azmina.com.br/")
+        assert data["images"]["explore"]["width"] == 1440
+        assert data["images"]["quiteria"]["height"] == 1080
+        assert "charts" not in data and "news" not in data and "maps" not in data
+
+    def test_trecho_editado_aparece_na_api_e_dispara_deploy(
+        self, admin_client, deploy_task, django_capture_on_commit_callbacks
+    ):
+        copy = HomeCopy.objects.get(key="reports_title")
+        with django_capture_on_commit_callbacks(execute=True):
+            response = admin_client.post(
+                reverse("admin:cms_homecopy_change", args=[copy.pk]),
+                {"value": "Nossas reportagens", "_save": "Salvar"},
+            )
+
+        assert response.status_code == 302
+        assert Client().get("/api/v1/cms/home").json()["content"]["reports_title"] == (
+            "Nossas reportagens"
+        )
+        deploy_task.assert_called_once_with(countdown=30)
+
+    def test_footer_global_e_editavel(self, admin_client):
+        response = Client().get("/api/v1/cms/footer-alerts")
+        assert response.json() == {
+            "title": "Receba nossos alertas",
+            "text": "Quer saber quando uma nova proposta sobre gênero é apresentada, "
+            "ou quando algo de muita importância avança? A gente te avisa!",
+            "cta_text": "Saiba mais",
+            "cta_url": "/alertas",
+        }
+        assert response["Cache-Control"] == "no-store"
+        assert FooterAlertsPage.objects.count() == 1
+
+        response = admin_client.post(
+            reverse("admin:cms_footeralertspage_change", args=[1]),
+            {
+                "title": "Acompanhe os alertas",
+                "text": "Novidades do Congresso.",
+                "cta_text": "Acessar",
+                "cta_url": "/alertas",
+            },
+        )
+        assert response.status_code == 302
+        assert Client().get("/api/v1/cms/footer-alerts").json()["title"] == (
+            "Acompanhe os alertas"
+        )

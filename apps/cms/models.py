@@ -527,3 +527,125 @@ class AboutPartner(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class HomePage(CmsPage):
+    """Imagens da home e raiz dos trechos editoriais, sem dados dos gráficos."""
+
+    HERO_IMAGE = ImageSpec(513, 389)
+    EXPLORE_IMAGE = ImageSpec(1440, 1080)
+    QUITERIA_IMAGE = ImageSpec(1920, 1080)
+
+    hero_image_width = models.PositiveIntegerField(default=513, editable=False)
+    hero_image_height = models.PositiveIntegerField(default=389, editable=False)
+    hero_image = models.ImageField(
+        "Ilustração da abertura",
+        upload_to="cms/home/",
+        storage=CmsStorage(),
+        width_field="hero_image_width",
+        height_field="hero_image_height",
+        default="cms/home/hero.webp",
+        help_text="PNG, JPEG ou WebP, proporção 513×389, até 5 MB.",
+    )
+    explore_image_width = models.PositiveIntegerField(default=1440, editable=False)
+    explore_image_height = models.PositiveIntegerField(default=1080, editable=False)
+    explore_image = models.ImageField(
+        "Imagem da seção Explore",
+        upload_to="cms/home/",
+        storage=CmsStorage(),
+        width_field="explore_image_width",
+        height_field="explore_image_height",
+        default="cms/home/explore.webp",
+        help_text="PNG, JPEG ou WebP, proporção 4:3, até 5 MB.",
+    )
+    quiteria_image_width = models.PositiveIntegerField(default=1920, editable=False)
+    quiteria_image_height = models.PositiveIntegerField(default=1080, editable=False)
+    quiteria_image = models.ImageField(
+        "Imagem da seção QuitérIA",
+        upload_to="cms/home/",
+        storage=CmsStorage(),
+        width_field="quiteria_image_width",
+        height_field="quiteria_image_height",
+        default="cms/home/quiteria.webp",
+        help_text="PNG, JPEG ou WebP, proporção 16:9, até 5 MB.",
+    )
+
+    class Meta:
+        verbose_name = "Home: imagens e textos"
+        verbose_name_plural = "Home: imagens e textos"
+        db_table = "cms_home_page"
+
+    def __str__(self):
+        return "Home"
+
+    @classmethod
+    def default_images(cls):
+        return [
+            ("hero_image", "home-hero.webp", cls.HERO_IMAGE),
+            ("explore_image", "home-explore.png", cls.EXPLORE_IMAGE),
+            ("quiteria_image", "home-quiteria.png", cls.QUITERIA_IMAGE),
+        ]
+
+
+class HomeCopy(models.Model):
+    """Campo nomeado da home; os rótulos e a seção ajudam a edição no admin."""
+
+    page = models.ForeignKey(HomePage, on_delete=models.CASCADE, related_name="copy")
+    key = models.CharField("Identificador", max_length=50, unique=True, editable=False)
+    section = models.CharField("Seção", max_length=80, db_index=True, editable=False)
+    label = models.CharField("Campo", max_length=110, editable=False)
+    value = models.TextField("Conteúdo", max_length=2000)
+    position = models.PositiveSmallIntegerField("Ordem", editable=False)
+
+    class Meta:
+        ordering = ["position"]
+        verbose_name = "Home: texto e link"
+        verbose_name_plural = "Home: textos e links"
+        db_table = "cms_home_copy"
+
+    def clean(self):
+        if self.label.startswith("Endereço"):
+            parsed = urlparse(self.value)
+            relative = self.value.startswith("/") and not self.value.startswith("//")
+            anchor = self.value.startswith("#") and len(self.value) > 1
+            absolute = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+            if not (relative or anchor or absolute):
+                raise ValidationError(
+                    {"value": "Use https://, um caminho (/...) ou uma âncora (#...)."}
+                )
+
+    def __str__(self):
+        return f"{self.section}: {self.label}"
+
+
+class FooterAlertsPage(CmsPage):
+    """Chamada para alertas compartilhada por todas as páginas do site."""
+
+    title = models.CharField("Título", max_length=100, default="Receba nossos alertas")
+    text = models.TextField(
+        "Texto",
+        max_length=500,
+        default=(
+            "Quer saber quando uma nova proposta sobre gênero é apresentada, "
+            "ou quando algo de muita importância avança? A gente te avisa!"
+        ),
+    )
+    cta_text = models.CharField("Texto do botão", max_length=80, default="Saiba mais")
+    cta_url = models.CharField("Endereço do botão", max_length=500, default="/alertas")
+
+    class Meta:
+        verbose_name = "Footer: receba nossos alertas"
+        verbose_name_plural = "Footer: receba nossos alertas"
+        db_table = "cms_footer_alerts_page"
+
+    def clean(self):
+        parsed = urlparse(self.cta_url)
+        relative = self.cta_url.startswith("/") and not self.cta_url.startswith("//")
+        absolute = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+        if not (relative or absolute):
+            raise ValidationError(
+                {"cta_url": "Use um endereço https:// ou caminho do site (/...)."}
+            )
+
+    def __str__(self):
+        return "Receba nossos alertas"

@@ -2,8 +2,23 @@ from django.db import models
 from django.http import HttpResponse
 from ninja import Router
 
-from .models import AboutPage, ActivityPage, AlertsPage, FeministAIPage, HeroPage, ReportsPage
-from .schemas import AboutPageSchema, FeministAIPageSchema, HeroPageSchema
+from .models import (
+    AboutPage,
+    ActivityPage,
+    AlertsPage,
+    FeministAIPage,
+    FooterAlertsPage,
+    HeroPage,
+    HomePage,
+    ReportsPage,
+)
+from .schemas import (
+    AboutPageSchema,
+    FeministAIPageSchema,
+    FooterAlertsPageSchema,
+    HeroPageSchema,
+    HomePageSchema,
+)
 
 router = Router()
 
@@ -143,4 +158,39 @@ def about_page(request, response: HttpResponse):
             }
             for partner in page.partners.all()
         ],
+    }
+
+
+@router.get("/home", response=HomePageSchema)
+def home_page(request, response: HttpResponse):
+    """Conteúdo editorial da home; gráficos, cards e mapas usam as APIs próprias."""
+    response["Cache-Control"] = "no-store"
+    page = HomePage.objects.prefetch_related("copy").get(pk=HomePage.SINGLETON_PK)
+    version = int(page.updated_at.timestamp())
+    return {
+        "content": {item.key: item.value for item in page.copy.all()},
+        "images": {
+            "hero": _cms_image(
+                page.hero_image, page.hero_image_width, page.hero_image_height, version
+            ),
+            "explore": _cms_image(
+                page.explore_image, page.explore_image_width, page.explore_image_height, version
+            ),
+            "quiteria": _cms_image(
+                page.quiteria_image, page.quiteria_image_width, page.quiteria_image_height, version
+            ),
+        },
+    }
+
+
+@router.get("/footer-alerts", response=FooterAlertsPageSchema)
+def footer_alerts_page(request, response: HttpResponse):
+    """Chamada compartilhada no rodapé de todas as páginas."""
+    response["Cache-Control"] = "no-store"
+    page = FooterAlertsPage.current()
+    return {
+        "title": page.title,
+        "text": page.text,
+        "cta_text": page.cta_text,
+        "cta_url": page.cta_url,
     }

@@ -93,3 +93,15 @@ class AboutPageSchema(Schema):
     timeline: list[AboutTimelineEventSchema]
     challenges: list[AboutChallengeSchema]
     partners: list[AboutPartnerSchema]
+
+
+class HomePageSchema(Schema):
+    content: dict[str, str]
+    images: dict[str, CmsImageSchema]
+
+
+class FooterAlertsPageSchema(Schema):
+    title: str
+    text: str
+    cta_text: str
+    cta_url: str

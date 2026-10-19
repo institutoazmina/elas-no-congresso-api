@@ -15,7 +15,7 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
 ## CMS do site
 
 O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
-(**Alertas**, **Reportagens**, **Atividade legislativa**, **IA Feminista** e **Sobre**). Cada página tem
+(**Alertas**, **Reportagens**, **Atividade legislativa**, **IA Feminista**, **Sobre** e **Home**). Cada página tem
 um registro único: o menu abre direto o formulário. Ver
 [ADR-006](decisions/006-cms-do-site.md).
 
@@ -42,6 +42,18 @@ remover e mudar a ordem; não há limite de cinco marcos. Para um novo marco,
 preencha período, ano, descrição e etiqueta. O link no texto é opcional.
 Para uma nova organização, informe nome, ordem e envie um logo PNG, JPEG ou
 WebP; as organizações atuais conservam o logo original até ser substituído.
+
+Na **Home: textos e links**, filtre pela seção e edite títulos, textos,
+post-its, legendas, botões e endereços diretamente na lista. Trechos com
+destaque visual aparecem separados, com rótulos como **antes do destaque** e
+**depois do destaque**. O percentual do post-it em **Mulheres na defesa** vem
+dos dados do gráfico; edite apenas as frases ao redor dele. Em **Home: imagens
+e textos**, substitua as imagens da abertura (513×389), Explore (4:3) e
+QuitérIA (16:9). Gráficos, cards de notícias, tabelas e mapas não são editados
+pelo CMS.
+
+Em **Footer: receba nossos alertas**, edite título, texto, chamada e endereço
+do botão. Esse bloco é compartilhado e a alteração aparece em todo o site.
 
 - Os limites de texto e as exigências da imagem aparecem no formulário e vêm do
   layout do site. Imagens fora da proporção não são aceitas.

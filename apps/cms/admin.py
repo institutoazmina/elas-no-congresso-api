@@ -26,7 +26,10 @@ from .models import (
     FeministAIPage,
     FeministAIThematicMetric,
     FeministAIThematicPartition,
+    FooterAlertsPage,
     HeroPage,
+    HomeCopy,
+    HomePage,
     ReportsPage,
 )
 
@@ -385,3 +388,64 @@ class AboutCopyAdmin(ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+class HomePageForm(CmsPageForm):
+    class Meta:
+        model = HomePage
+        fields = "__all__"
+
+    def image_specs(self):
+        return {
+            "hero_image": (HomePage.HERO_IMAGE, "hero"),
+            "explore_image": (HomePage.EXPLORE_IMAGE, "explore"),
+            "quiteria_image": (HomePage.QUITERIA_IMAGE, "quiteria"),
+        }
+
+
+@admin.register(HomePage)
+class HomePageAdmin(CmsPageAdmin):
+    form = HomePageForm
+    fieldsets = [
+        ("Abertura", {"fields": ["hero_image"]}),
+        ("Explore", {"fields": ["explore_image"]}),
+        ("QuitérIA", {"fields": ["quiteria_image"]}),
+        ("Publicação", {"fields": ["updated_at"]}),
+    ]
+
+
+class HomeCopyForm(forms.ModelForm):
+    class Meta:
+        model = HomeCopy
+        fields = ["value"]
+        widgets = {"value": forms.Textarea(attrs={"rows": 2, "cols": 70})}
+
+
+@admin.register(HomeCopy)
+class HomeCopyAdmin(ModelAdmin):
+    """Trechos agrupados por seção, sem exigir HTML da equipe editorial."""
+
+    list_display = ["section", "label", "value"]
+    form = HomeCopyForm
+    list_editable = ["value"]
+    list_filter = ["section"]
+    search_fields = ["section", "label", "value"]
+    readonly_fields = ["section", "label"]
+    fields = ["section", "label", "value"]
+    list_per_page = 50
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(FooterAlertsPage)
+class FooterAlertsPageAdmin(CmsPageAdmin):
+    fieldsets = [
+        (
+            "Receba nossos alertas em todo o site",
+            {"fields": ["title", "text", "cta_text", "cta_url", "updated_at"]},
+        ),
+    ]

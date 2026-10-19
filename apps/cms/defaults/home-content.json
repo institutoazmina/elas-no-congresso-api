@@ -1,0 +1,494 @@
+{
+  "copy": [
+    {
+      "section": "Busca",
+      "key": "seo_title",
+      "label": "Título para buscas",
+      "value": "Elas no Congresso: monitoramento de pautas de gênero",
+      "position": 1
+    },
+    {
+      "section": "Busca",
+      "key": "seo_description",
+      "label": "Descrição para buscas",
+      "value": "Acompanhe a atuação parlamentar sobre direitos das mulheres e pessoas LGBTQIAPN+ com uma inteligência artificial feminista.",
+      "position": 2
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_title_before_nas",
+      "label": "Título: antes de “nas”",
+      "value": "De olho ",
+      "position": 3
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_title_nas",
+      "label": "Título: palavra estreita",
+      "value": "nas",
+      "position": 4
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_title_after_nas",
+      "label": "Título: depois de “nas”",
+      "value": " pautas de gênero",
+      "position": 5
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_title_no",
+      "label": "Título: palavra da segunda linha",
+      "value": "no",
+      "position": 6
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_title_after_no",
+      "label": "Título: fim da segunda linha",
+      "value": " Congresso Nacional",
+      "position": 7
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_subtitle_before",
+      "label": "Subtítulo: antes do destaque",
+      "value": "Nos últimos 8 anos, mais de 700 proposições apresentadas na Câmara dos Deputados e no Senado Federal são ",
+      "position": 8
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_subtitle_highlight",
+      "label": "Subtítulo: texto destacado",
+      "value": "desfavoráveis",
+      "position": 9
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_subtitle_after",
+      "label": "Subtítulo: depois do destaque",
+      "value": " aos direitos de mulheres, meninas e pessoas LGBTQIAPN+",
+      "position": 10
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_scroll_text",
+      "label": "Botão de rolagem: texto",
+      "value": "O que descobrimos?",
+      "position": 11
+    },
+    {
+      "section": "Abertura",
+      "key": "hero_scroll_url",
+      "label": "Endereço do botão de rolagem",
+      "value": "#o-que-descobrimos",
+      "position": 12
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_title",
+      "label": "Título",
+      "value": "Os direitos das mulheres e pessoas LGBTQIA+ nunca foram tão atacados",
+      "position": 13
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_text",
+      "label": "Texto",
+      "value": "Legislar sobre nossos direitos não é sinônimo de fortalecê-los. Muito do trabalho legislativo faz o contrário: retrocesso e restrição de direitos já conquistados. E o atual Congresso tem sido campeão nos ataques:",
+      "position": 14
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_postit_text",
+      "label": "Post-it: texto",
+      "value": "Em 2023 começou o mandato da bancada mais conservadora desde 1964",
+      "position": 15
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_postit_cta",
+      "label": "Post-it: chamada do link",
+      "value": "Ler mais →",
+      "position": 16
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_postit_mobile_url",
+      "label": "Endereço do post-it no celular",
+      "value": "https://hoy.bio/8b8bfhoigr",
+      "position": 17
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_postit_desktop_url",
+      "label": "Endereço do post-it no computador",
+      "value": "https://azmina.com.br/reportagens/ataques-direitos-lgbtqia-aborto-congresso/",
+      "position": 18
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_caption",
+      "label": "Legenda abaixo do gráfico",
+      "value": "Cada folha representa 1 proposição",
+      "position": 19
+    },
+    {
+      "section": "Direitos atacados",
+      "key": "rights_footnote",
+      "label": "Nota abaixo do gráfico",
+      "value": "*Foram avaliadas proposições até março de 2026",
+      "position": 20
+    },
+    {
+      "section": "Temas em retrocesso",
+      "key": "setbacks_title",
+      "label": "Título",
+      "value": "Estes são Os temas com mais retrocesso no legislativo",
+      "position": 21
+    },
+    {
+      "section": "Temas em retrocesso",
+      "key": "setbacks_text",
+      "label": "Texto",
+      "value": "Violência contra a mulher, direito ao aborto e de pessoas LGBTQIAPN+ são os mais atacados no Congresso",
+      "position": 22
+    },
+    {
+      "section": "Temas em retrocesso",
+      "key": "setbacks_caption",
+      "label": "Legenda com link",
+      "value": "Acesse a aba Atividade de Legislativa para ver em detalhes",
+      "position": 23
+    },
+    {
+      "section": "Temas em retrocesso",
+      "key": "setbacks_caption_url",
+      "label": "Endereço da legenda",
+      "value": "/atividade-legislativa",
+      "position": 24
+    },
+    {
+      "section": "Reportagens",
+      "key": "reports_title",
+      "label": "Título",
+      "value": "Reportagens",
+      "position": 25
+    },
+    {
+      "section": "Reportagens",
+      "key": "reports_subtitle",
+      "label": "Subtítulo",
+      "value": "O que os dados do Elas no Congresso revelam sobre o que está em disputa no Congresso e na vida das mulheres",
+      "position": 26
+    },
+    {
+      "section": "Mulheres na defesa",
+      "key": "women_title",
+      "label": "Título",
+      "value": "Mulheres na defesa",
+      "position": 27
+    },
+    {
+      "section": "Mulheres na defesa",
+      "key": "women_text",
+      "label": "Texto",
+      "value": "O número de projetos protocolados por mulheres deu um salto na última legislatura, refletindo o aumento histórico de mulheres eleitas em 2022 e o seu engajamento em blindar direitos já conquistados.",
+      "position": 28
+    },
+    {
+      "section": "Mulheres na defesa",
+      "key": "women_postit_before",
+      "label": "Post-it: antes do percentual",
+      "value": "A cada 100 proposições sobre gênero assinadas por mulheres, ",
+      "position": 29
+    },
+    {
+      "section": "Mulheres na defesa",
+      "key": "women_postit_after",
+      "label": "Post-it: depois do percentual",
+      "value": " são favoráveis",
+      "position": 30
+    },
+    {
+      "section": "Mulheres na defesa",
+      "key": "women_caption",
+      "label": "Legenda",
+      "value": "No Congresso Nacional não há dados sobre pessoas não-binárias",
+      "position": 31
+    },
+    {
+      "section": "Mulheres na defesa",
+      "key": "women_followup",
+      "label": "Texto após o gráfico",
+      "value": "A extrema direita saiu fortalecida das urnas em 2026 e terá ainda mais poder para definir os rumos do próximo Congresso. Veja como partidos como o PL, que elegeu 121 deputados federais e 19 senadores, costuma atuar em projetos sensíveis a gênero.",
+      "position": 32
+    },
+    {
+      "section": "Partidos",
+      "key": "party_title_before",
+      "label": "Título: antes do seletor",
+      "value": "Estes são os partidos que mais têm",
+      "position": 33
+    },
+    {
+      "section": "Partidos",
+      "key": "party_title_after",
+      "label": "Título: depois do seletor",
+      "value": "Nossos direitos",
+      "position": 34
+    },
+    {
+      "section": "Partidos",
+      "key": "party_subtitle",
+      "label": "Subtítulo",
+      "value": "Extrema-direita, centro e esquerda têm atuação diferente em relação ao gênero",
+      "position": 35
+    },
+    {
+      "section": "Partidos",
+      "key": "party_caption",
+      "label": "Legenda com link",
+      "value": "Acesse a aba Atividade de Legislativa para ver em detalhes",
+      "position": 36
+    },
+    {
+      "section": "Partidos",
+      "key": "party_caption_url",
+      "label": "Endereço da legenda",
+      "value": "/atividade-legislativa",
+      "position": 37
+    },
+    {
+      "section": "Estados",
+      "key": "uf_title",
+      "label": "Título",
+      "value": "Estas são as UFs dos parlamentares que apresentam mais projetos",
+      "position": 38
+    },
+    {
+      "section": "Estados",
+      "key": "uf_subtitle",
+      "label": "Subtítulo",
+      "value": "Boa parte das bancadas dos estados do Centro-Oeste, além das de Tocantins, Espírito Santo e Santa Catarina, lidera a apresentação de propostas que restringem direitos de mulheres, meninas e da população LGBTQIAPN+",
+      "position": 39
+    },
+    {
+      "section": "Estados",
+      "key": "uf_caption",
+      "label": "Legenda",
+      "value": "A atuação das bancadas regionais revela estados com atuação mais conservadora",
+      "position": 40
+    },
+    {
+      "section": "Estados",
+      "key": "uf_cta_text",
+      "label": "Botão: texto",
+      "value": "Veja como está o seu estado",
+      "position": 41
+    },
+    {
+      "section": "Estados",
+      "key": "uf_cta_url",
+      "label": "Endereço do botão",
+      "value": "/atividade-legislativa",
+      "position": 42
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_title",
+      "label": "Título",
+      "value": "A gente te avisa",
+      "position": 43
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_intro",
+      "label": "Texto principal",
+      "value": "Pra evitar retrocessos, é essencial saber o que está acontecendo no Congresso e agir!",
+      "position": 44
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_detail_before",
+      "label": "Texto: antes do destaque",
+      "value": "Por isso, temos uma IA que faz esse ",
+      "position": 45
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_detail_highlight",
+      "label": "Texto: destaque",
+      "value": "monitoramento",
+      "position": 46
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_detail_after",
+      "label": "Texto: depois do destaque",
+      "value": " pra você",
+      "position": 47
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_cta_text",
+      "label": "Botão: texto",
+      "value": "Receba alertas",
+      "position": 48
+    },
+    {
+      "section": "Alertas",
+      "key": "alerts_cta_url",
+      "label": "Endereço do botão",
+      "value": "/alertas",
+      "position": 49
+    },
+    {
+      "section": "Carrossel rápido",
+      "key": "fast_title",
+      "label": "Título",
+      "value": "Veja o que restringe nossos direitos e tá tramitando rapidinho",
+      "position": 50
+    },
+    {
+      "section": "Carrossel rápido",
+      "key": "fast_subtitle",
+      "label": "Subtítulo",
+      "value": "Projetos desfavoráveis que estão avançando nas comissões e no Plenário",
+      "position": 51
+    },
+    {
+      "section": "Carrossel lento",
+      "key": "slow_title",
+      "label": "Título",
+      "value": "E o que é bom pra gente, mas tá indo beeeem devagar:",
+      "position": 52
+    },
+    {
+      "section": "Carrossel lento",
+      "key": "slow_subtitle",
+      "label": "Subtítulo",
+      "value": "Projetos favoráveis que ainda aguardam relatoria, parecer ou votação",
+      "position": 53
+    },
+    {
+      "section": "Projetos que viraram lei",
+      "key": "enacted_title",
+      "label": "Título",
+      "value": "Projetos que viraram lei",
+      "position": 54
+    },
+    {
+      "section": "Projetos que viraram lei",
+      "key": "enacted_subtitle",
+      "label": "Subtítulo",
+      "value": "Projetos favoráveis e desfavoráveis que viraram lei",
+      "position": 55
+    },
+    {
+      "section": "Explore",
+      "key": "explore_title",
+      "label": "Título",
+      "value": "Explore",
+      "position": 56
+    },
+    {
+      "section": "Explore",
+      "key": "explore_subtitle",
+      "label": "Subtítulo",
+      "value": "Quer saber mais sobre o que tá tramitando sobre pautas de gênero, raça e LGBTQIAPN+?",
+      "position": 57
+    },
+    {
+      "section": "Explore",
+      "key": "explore_image_alt",
+      "label": "Descrição da imagem",
+      "value": "Prévia da ferramenta de atividade legislativa",
+      "position": 58
+    },
+    {
+      "section": "Explore",
+      "key": "explore_cta_text",
+      "label": "Botão: texto",
+      "value": "Explore a produção do Congresso",
+      "position": 59
+    },
+    {
+      "section": "Explore",
+      "key": "explore_cta_url",
+      "label": "Endereço do botão",
+      "value": "/atividade-legislativa",
+      "position": 60
+    },
+    {
+      "section": "Parlamentares",
+      "key": "parliamentarians_title",
+      "label": "Título",
+      "value": "Parlamentares que jogam contra",
+      "position": 61
+    },
+    {
+      "section": "Parlamentares",
+      "key": "parliamentarians_subtitle",
+      "label": "Subtítulo",
+      "value": "Esses são os políticos que mais apresentam projetos desfavoráveis aos direitos de meninas, mulheres e pessoas LGBTQIAPN+. Consideramos parlamentares com cinco ou mais proposições, das quais 40% ou mais são desfavoráveis.",
+      "position": 62
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_before_name",
+      "label": "Texto: antes do nome",
+      "value": "Nossos levantamentos são feitos com base em análises da ",
+      "position": 63
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_name",
+      "label": "Texto: nome destacado",
+      "value": "QuitérIA",
+      "position": 64
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_between",
+      "label": "Texto: entre os destaques",
+      "value": ", que segue os princípios da ",
+      "position": 65
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_ai",
+      "label": "Texto: conceito destacado",
+      "value": "IA feminista",
+      "position": 66
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_after",
+      "label": "Texto: depois do destaque",
+      "value": " e monitora pautas de gênero no Congresso Nacional diariamente, e com validação humana.",
+      "position": 67
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_image_alt",
+      "label": "Descrição da imagem",
+      "value": "QuitérIA, inteligência artificial feminista",
+      "position": 68
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_cta_text",
+      "label": "Botão: texto",
+      "value": "Veja como ela funciona",
+      "position": 69
+    },
+    {
+      "section": "QuitérIA",
+      "key": "quiteria_cta_url",
+      "label": "Endereço do botão",
+      "value": "/ia-feminista",
+      "position": 70
+    }
+  ]
+}
