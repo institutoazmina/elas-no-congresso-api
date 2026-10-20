@@ -37,6 +37,35 @@ from .theme_assert import assert_theme
 logger = logging.getLogger(__name__)
 
 
+def enqueue_manual_links(identities):
+    """Create durable, independently retryable runs for selected official IDs."""
+    from .tasks import sync_daily_batch
+
+    runs = []
+    today = timezone.localdate()
+    with transaction.atomic():
+        for house in ("camara", "senado"):
+            ids = list(
+                dict.fromkeys(external_id for source, external_id in identities if source == house)
+            )
+            if not ids:
+                continue
+            run = IngestionRun.objects.create(
+                house=house,
+                kind="manual",
+                window_start=today,
+                window_end=today + timedelta(days=1),
+                discovery_complete=True,
+                fetched_count=len(ids),
+            )
+            IngestionItem.objects.bulk_create(
+                [IngestionItem(run=run, external_id=external_id) for external_id in ids]
+            )
+            transaction.on_commit(lambda run_id=run.pk: sync_daily_batch.delay(run_id))
+            runs.append(run)
+    return runs
+
+
 def begin_daily(house, client_factory):
     key = f"ingestion:discovery:{house}"
     if not cache.add(key, True, timeout=1800):
@@ -226,6 +255,7 @@ def sync_item(item, client, *, reconcile=False):
     existing = Proposition.objects.filter(
         house=item.run.house, external_id=item.external_id
     ).first()
+    manual = item.run.kind == "manual"
     summary = item.summary
     relevance = {"row_relevant": False, "temas": []}
     authors, process_id = None, None
@@ -236,7 +266,7 @@ def sync_item(item, client, *, reconcile=False):
         fields = map_camara_proposition({**summary, "id": item.external_id}, detail)
         if detail.get("ementa"):
             fields["ementa"] = detail["ementa"]
-        if not existing:
+        if not existing and not manual:
             relevance = _discovery_relevance(
                 fields, summary.get("ementa"), detail.get("ementaDetalhada")
             )
@@ -279,6 +309,18 @@ def sync_item(item, client, *, reconcile=False):
                 if author["external_id"]:
                     enrich_camara_author(author, client.fetch_deputy(author["external_id"]))
     else:
+        if manual:
+            found = client.find_process(item.external_id)
+            if not found:
+                raise ValueError("Senate process mapping missing")
+            summary = {
+                "_process_summary": found,
+                "Ementa": found.get("ementa", ""),
+                "IdentificacaoMateria": {
+                    "CodigoMateria": item.external_id,
+                    "IdentificacaoProcesso": found["id"],
+                },
+            }
         ident = summary.get("IdentificacaoMateria", {})
         process_id = ident.get("IdentificacaoProcesso") or (
             (existing.raw_payload or {}).get("_senado_process_id") if existing else None
@@ -342,9 +384,10 @@ def sync_item(item, client, *, reconcile=False):
             )
             if process_ementa:
                 fields["ementa"] = process_ementa
-            relevance = _discovery_relevance(fields, summary.get("Ementa"))
-            if not relevance["row_relevant"]:
-                return None
+            if not manual:
+                relevance = _discovery_relevance(fields, summary.get("Ementa"))
+                if not relevance["row_relevant"]:
+                    return None
             authors = (
                 parse_senado_authors_from_autoria(client.fetch_authors(item.external_id))
                 if item.external_id > 0
@@ -356,7 +399,15 @@ def sync_item(item, client, *, reconcile=False):
             authors = parse_senado_authors_from_autoria(client.fetch_authors(item.external_id))
         fields.update(map_senado_process_status(process))
         fields.update(_enactment_fields(map_senado_enactment(process)))
-    pk = _persist(fields, mapped_events, authors, relevance["temas"] if not existing else [])
+    if manual:
+        relevance = assert_theme(fields.get("ementa"))
+    pk = _persist(
+        fields,
+        mapped_events,
+        authors,
+        relevance["temas"] if not existing else [],
+        approve=manual,
+    )
     prop = Proposition.objects.get(pk=pk)
     recent_events = [
         e for e in mapped_events if timezone.localdate(e["event_at"]) >= item.run.window_start
@@ -367,7 +418,7 @@ def sync_item(item, client, *, reconcile=False):
         recent_events,
         verify=reconcile,
         process_id=process_id,
-        baseline=bool(existing and not existing.reconciled_at),
+        baseline=bool(existing and not existing.reconciled_at and not manual),
     )
     if reconcile or existing is None:
         Proposition.objects.filter(pk=pk).update(reconciled_at=timezone.now())
@@ -423,7 +474,7 @@ def process_batch(run_id, client_factory):
         ).order_by("pk")[: settings.INGESTION_BATCH_SIZE]:
             item.attempts += 1
             try:
-                prop = sync_item(item, client, reconcile=run.kind == "reconcile")
+                prop = sync_item(item, client, reconcile=run.kind in {"reconcile", "manual"})
                 item.status = item.Status.SUCCEEDED if prop else item.Status.SKIPPED
                 item.error = ""
                 if prop:

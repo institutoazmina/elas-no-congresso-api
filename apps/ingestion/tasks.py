@@ -58,12 +58,16 @@ def _persist(
     event_kwargs: dict | list[dict] | None,
     authors: list[dict] | None,
     temas: list[str],
+    *,
+    approve: bool = False,
 ) -> int:
     """Upsert idempotente de uma proposição + histórico + autores + temas.
 
     Retorna o pk da Proposition. Toda a escrita roda numa transação.
     """
     prop_kwargs = prop_kwargs.copy()
+    if approve:
+        prop_kwargs["is_approved"] = True
     house = prop_kwargs["house"]
     external_id = prop_kwargs.pop("external_id")
     with transaction.atomic():
@@ -133,12 +137,16 @@ def _persist(
             if not link_created and link.rank != rank:
                 PropositionTheme.objects.filter(pk=link.pk).update(rank=rank)
 
+        if approve and not prop.is_approved:
+            prop.is_approved = True
+            prop.save(update_fields=["is_approved"])
+
         from .content import register_fallback
 
         register_fallback(
             prop.pk,
             analyze=not prop.full_text_url
-            and (created or (not prop.full_text and old_ementa != prop.ementa)),
+            and (approve or created or (not prop.full_text and old_ementa != prop.ementa)),
         )
 
     return prop.pk
