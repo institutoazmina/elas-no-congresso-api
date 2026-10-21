@@ -25,9 +25,10 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   direto o formulário; criar e excluir são bloqueados. Só texto e imagens são
   editáveis; rotas, rótulos de interface e layout continuam no site.
 - **Limites vêm do layout**: `max_length` medido com a fonte do site (o título
-  do topo tem até 24 caracteres, no máximo duas linhas). Imagens
-  precisam da proporção do recorte (±2%), têm no máximo 5 MB, aceitam PNG, JPEG
-  ou WebP (SVG não) e são regravadas em WebP no tamanho exato.
+  do topo tem até 24 caracteres, no máximo duas linhas). Imagens têm no máximo
+  5 MB, aceitam PNG, JPEG ou WebP (SVG não) e são regravadas em WebP. A imagem
+  de Alertas aceita qualquer dimensão e é enquadrada pelo CSS; as demais seguem
+  a proporção do recorte (±2%) e são regravadas no tamanho exato.
 - **Imagens direto no bucket do site**, como as imagens de compartilhamento
   (`apps.og`), num arquivo fixo por campo: `cms/<página>/<campo>.webp`. Enviar
   outra imagem sobrescreve o arquivo e invalida o caminho no CloudFront. Não

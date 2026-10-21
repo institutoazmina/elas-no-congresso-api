@@ -240,15 +240,16 @@ class TestAdmin:
 
         assert [p.name for p in (tmp_path / "cms" / "alertas").iterdir()] == ["hero.webp"]
 
-    def test_imagem_fora_da_proporcao_nao_salva(self, admin_client, bucket):
+    def test_alertas_aceita_imagem_em_qualquer_resolucao(self, admin_client, bucket):
         response = admin_client.post(
             self.change_url(),
-            {"title": "Alertas", "subtitle": "x", "hero_image": image_file(1080, 1080)},
+            {"title": "Alertas", "subtitle": "x", "hero_image": image_file(320, 180)},
         )
 
-        assert response.status_code == 200
-        assert "mesma proporção" in response.content.decode()
-        bucket.put_object.assert_not_called()
+        assert response.status_code == 302
+        page = AlertsPage.objects.get()
+        assert (page.hero_image_width, page.hero_image_height) == (320, 180)
+        assert bucket.put_object.call_args.kwargs["Key"] == "cms/alertas/hero.webp"
 
     def test_titulo_acima_do_limite_nao_salva(self, admin_client):
         response = admin_client.post(

@@ -55,8 +55,9 @@ pelo CMS.
 Em **Footer: receba nossos alertas**, edite título, texto, chamada e endereço
 do botão. Esse bloco é compartilhado e a alteração aparece em todo o site.
 
-- Os limites de texto e as exigências da imagem aparecem no formulário e vêm do
-  layout do site. Imagens fora da proporção não são aceitas.
+- Os limites de texto e as exigências da imagem aparecem no formulário. Em
+  **Alertas**, a ilustração aceita qualquer dimensão e é ajustada pelo site; as
+  demais imagens com proporção indicada no campo precisam respeitá-la.
 - Salvar dispara o deploy do site; a alteração aparece em alguns minutos.
   Salvamentos seguidos viram um único deploy.
 - Imagens só podem ser substituídas, não removidas. A primeira versão é a

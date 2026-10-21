@@ -56,7 +56,7 @@ def subtitle_field(default: str):
     )
 
 
-def hero_image_field(folder: str):
+def hero_image_field(folder: str, *, unconstrained: bool = False):
     # Obrigatória: ``cms_publish_defaults`` publica a ilustração original neste
     # caminho, e cada envio a substitui no mesmo arquivo.
     return models.ImageField(
@@ -67,14 +67,17 @@ def hero_image_field(folder: str):
         height_field="hero_image_height",
         default=f"cms/{folder}/hero.webp",
         help_text=(
-            f"Para substituir, envie PNG, JPEG ou WebP com a proporção de "
+            "Para substituir, envie PNG, JPEG ou WebP em qualquer dimensão, até 5 MB. "
+            "O site ajusta a imagem automaticamente. Some no celular."
+            if unconstrained
+            else f"Para substituir, envie PNG, JPEG ou WebP com a proporção de "
             f"{HeroPage.HERO_IMAGE.label} (4:5), até 5 MB. Some no celular."
         ),
     )
 
 
 class HeroPage(CmsPage):
-    """Página com o topo padrão do site: título, subtítulo e ilustração 4:5.
+    """Página com o topo padrão do site: título, subtítulo e ilustração.
 
     Cada página declara os campos com seus valores padrão e o arquivo original
     da ilustração em ``apps/cms/defaults/``.
@@ -99,7 +102,7 @@ class AlertsPage(HeroPage):
 
     title = title_field("Alertas")
     subtitle = subtitle_field("Acompanhe as movimentações do Legislativo no Radar do Congresso")
-    hero_image = hero_image_field("alertas")
+    hero_image = hero_image_field("alertas", unconstrained=True)
 
     class Meta:
         verbose_name = "Alertas"

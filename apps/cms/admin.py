@@ -9,7 +9,7 @@ from django.urls import reverse
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.widgets import UnfoldAdminTextareaWidget
 
-from .images import ImageSpec, normalize, normalize_logo
+from .images import ImageSpec, normalize, normalize_logo, normalize_unconstrained
 from .models import (
     AboutChallenge,
     AboutCopy,
@@ -38,7 +38,7 @@ class CmsPageForm(forms.ModelForm):
     """Valida e regrava as imagens enviadas. Imagens são obrigatórias no model:
     sem a opção "limpar", só substituir."""
 
-    def image_specs(self) -> dict[str, tuple[ImageSpec, str]]:
+    def image_specs(self) -> dict[str, tuple[ImageSpec | None, str]]:
         """Campo -> (especificação, nome do arquivo no bucket)."""
         return {}
 
@@ -53,7 +53,11 @@ class CmsPageForm(forms.ModelForm):
             value = cleaned.get(field)
             if isinstance(value, UploadedFile):
                 try:
-                    cleaned[field] = normalize(value, spec, stem=stem)
+                    cleaned[field] = (
+                        normalize(value, spec, stem=stem)
+                        if spec
+                        else normalize_unconstrained(value, stem=stem)
+                    )
                 except ValidationError as exc:
                     self.add_error(field, exc)
             else:
@@ -92,10 +96,17 @@ class HeroPageForm(CmsPageForm):
         return {"hero_image": (self._meta.model.HERO_IMAGE, "hero")}
 
 
-def hero_page_form(model: type[HeroPage]) -> type[forms.ModelForm]:
+class AlertsPageForm(HeroPageForm):
+    def image_specs(self):
+        return {"hero_image": (None, "hero")}
+
+
+def hero_page_form(
+    model: type[HeroPage], form: type[HeroPageForm] = HeroPageForm
+) -> type[forms.ModelForm]:
     return modelform_factory(
         model,
-        form=HeroPageForm,
+        form=form,
         fields=["title", "subtitle", "hero_image"],
         widgets={"subtitle": UnfoldAdminTextareaWidget(attrs={"rows": 3})},
     )
@@ -107,7 +118,7 @@ class HeroPageAdmin(CmsPageAdmin):
 
 @admin.register(AlertsPage)
 class AlertsPageAdmin(HeroPageAdmin):
-    form = hero_page_form(AlertsPage)
+    form = hero_page_form(AlertsPage, AlertsPageForm)
 
 
 @admin.register(ReportsPage)
