@@ -1,7 +1,14 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import path
 from unfold.admin import ModelAdmin, TabularInline
 
+from apps.ingestion.sync import enqueue_manual_links
+
 from .admin_cache import ActivityCacheAdminMixin
+from .admin_forms import PropositionLinksForm
 from .models import (
     AssessmentOrganization,
     Proposition,
@@ -64,6 +71,7 @@ class AnnotationInline(TabularInline):
 
 @admin.register(Proposition)
 class PropositionAdmin(ModelAdmin):
+    change_list_template = "admin/propositions/proposition/change_list.html"
     list_display = [
         "number_label",
         "year",
@@ -87,6 +95,41 @@ class PropositionAdmin(ModelAdmin):
     readonly_fields = ["created_at", "updated_at"]
     inlines = [AuthorInline, RapporteurInline, AnalysisInline, AnnotationInline]
     ordering = ["-presented_at"]
+
+    def get_urls(self):
+        return [
+            path(
+                "add-links/",
+                self.admin_site.admin_view(self.add_links),
+                name="propositions_proposition_add_links",
+            ),
+        ] + super().get_urls()
+
+    def add_links(self, request):
+        if not self.has_add_permission(request):
+            raise PermissionDenied
+
+        form = PropositionLinksForm(request.POST or None)
+        if request.method == "POST" and form.is_valid():
+            runs = enqueue_manual_links(form.cleaned_data["links"])
+            count = len(form.cleaned_data["links"])
+            run_ids = ", ".join(str(run.pk) for run in runs)
+            self.message_user(
+                request,
+                f"{count} proposição(ões) enfileirada(s) para coleta e avaliação. "
+                f"Execução(ões): {run_ids}. Serão aprovadas automaticamente após a coleta.",
+                messages.SUCCESS,
+            )
+            return redirect("admin:propositions_proposition_changelist")
+
+        context = {
+            **self.admin_site.each_context(request),
+            "opts": self.model._meta,
+            "title": "Adicionar proposições por link",
+            "form": form,
+        }
+        request.current_app = self.admin_site.name
+        return TemplateResponse(request, "admin/propositions/proposition/add_links.html", context)
 
 
 @admin.register(PropositionEvent)
