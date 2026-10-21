@@ -37,22 +37,34 @@ class CmsPage(models.Model):
         return cls.objects.filter(pk=cls.SINGLETON_PK).first() or cls(pk=cls.SINGLETON_PK)
 
 
+def validate_header_title(value: str):
+    if len(value.replace("**", "")) > 24:
+        raise ValidationError("Use no máximo 24 caracteres de texto.")
+
+
+def validate_header_subtitle(value: str):
+    if len(value.replace("**", "")) > 160:
+        raise ValidationError("Use no máximo 160 caracteres de texto.")
+
+
 def title_field(default: str):
     return models.CharField(
-        verbose_name="Título",
+        verbose_name="Título (ex.: texto com **destaque**)",
         # Duas linhas no máximo, no celular e ao lado da ilustração no computador.
-        max_length=24,
-        default=default,
-        help_text="Até 24 caracteres, no máximo duas linhas.",
+        max_length=40,
+        default=f"**{default}**",
+        validators=[validate_header_title],
+        help_text="Use **texto** para negrito. Até 24 caracteres de texto.",
     )
 
 
 def subtitle_field(default: str):
     return models.CharField(
-        verbose_name="Subtítulo",
-        max_length=160,
-        default=default,
-        help_text="Até 160 caracteres, cerca de três linhas no computador.",
+        verbose_name="Subtítulo (ex.: texto com **destaque**)",
+        max_length=180,
+        default=f"**{default}**",
+        validators=[validate_header_subtitle],
+        help_text="Use **texto** para negrito. Até 160 caracteres de texto.",
     )
 
 
@@ -155,9 +167,16 @@ class FeministAIPage(CmsPage):
     seo_title = models.CharField("Título para busca", max_length=120)
     seo_description = models.CharField("Descrição para busca", max_length=200)
 
-    hero_title_prefix = models.CharField("Início do título", max_length=30)
-    hero_title_emphasis = models.CharField("Destaque do título", max_length=40)
-    hero_description = models.TextField("Texto do topo", max_length=600)
+    hero_title = models.CharField(
+        "Título (ex.: Quem foi **Maria Quitéria?**)",
+        max_length=120,
+        default="Quem foi **Maria Quitéria?**",
+    )
+    hero_description = models.TextField(
+        "Texto do topo (ex.: texto com **destaque**)",
+        max_length=600,
+        help_text="Use **texto** para negrito.",
+    )
     hero_image_width = models.PositiveIntegerField(default=743, editable=False)
     hero_image_height = models.PositiveIntegerField(default=1349, editable=False)
     hero_image = models.ImageField(

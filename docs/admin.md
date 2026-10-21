@@ -58,6 +58,8 @@ do botão. Esse bloco é compartilhado e a alteração aparece em todo o site.
 - Os limites de texto e as exigências da imagem aparecem no formulário. Em
   todas as ilustrações de abertura aceitam qualquer dimensão e são ajustadas
   pelo site; imagens internas com proporção indicada no campo precisam respeitá-la.
+- Nos textos de abertura, use `**texto**` para exibir apenas esse trecho em
+  negrito, como em `Quem foi **Maria Quitéria?**`. HTML não é aceito.
 - Salvar dispara o deploy do site; a alteração aparece em alguns minutos.
   Salvamentos seguidos viram um único deploy.
 - Imagens só podem ser substituídas, não removidas. A primeira versão é a

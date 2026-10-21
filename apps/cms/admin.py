@@ -188,8 +188,7 @@ class FeministAIPageAdmin(CmsPageAdmin):
             "Quem foi Maria Quitéria?",
             {
                 "fields": [
-                    "hero_title_prefix",
-                    "hero_title_emphasis",
+                    "hero_title",
                     "hero_description",
                     "hero_image",
                     "hero_image_alt",
@@ -373,6 +372,11 @@ class AboutCopyForm(forms.ModelForm):
         fields = ["value"]
         widgets = {"value": forms.Textarea(attrs={"rows": 2, "cols": 70})}
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.key.startswith("s00_"):
+            self.fields["value"].label = "Conteúdo (ex.: texto com **destaque**)"
+
 
 @admin.register(AboutCopy)
 class AboutCopyAdmin(ModelAdmin):
@@ -423,6 +427,11 @@ class HomeCopyForm(forms.ModelForm):
         model = HomeCopy
         fields = ["value"]
         widgets = {"value": forms.Textarea(attrs={"rows": 2, "cols": 70})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.key.startswith(("hero_title_", "hero_subtitle_")):
+            self.fields["value"].label = "Conteúdo (ex.: texto com **destaque**)"
 
 
 @admin.register(HomeCopy)

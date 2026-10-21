@@ -14,7 +14,7 @@ from django.urls import reverse
 from PIL import Image
 
 from apps.cms import deploy, storage, tasks
-from apps.cms.admin import AboutPartnerForm
+from apps.cms.admin import AboutCopyForm, AboutPartnerForm, HomeCopyForm
 from apps.cms.images import ImageSpec, normalize
 from apps.cms.models import (
     AboutCopy,
@@ -86,23 +86,23 @@ PAGES = [
     (
         "/api/v1/cms/alerts",
         AlertsPage,
-        "Alertas",
-        "Acompanhe as movimentações do Legislativo no Radar do Congresso",
+        "**Alertas**",
+        "**Acompanhe as movimentações do Legislativo no Radar do Congresso**",
         "alertas",
     ),
     (
         "/api/v1/cms/reports",
         ReportsPage,
-        "Reportagens",
-        "Veja as histórias que os dados do Congresso nos contam.",
+        "**Reportagens**",
+        "**Veja as histórias que os dados do Congresso nos contam.**",
         "reportagens",
     ),
     (
         "/api/v1/cms/activity",
         ActivityPage,
-        "Atividade Legislativa",
-        "Use filtros e explore as movimentações do Legislativo sensíveis a gênero, "
-        "atualizadas diariamente pela nossa robô que monitora o Congresso.",
+        "**Atividade Legislativa**",
+        "**Use filtros e explore as movimentações do Legislativo sensíveis a gênero, "
+        "atualizadas diariamente pela nossa robô que monitora o Congresso.**",
         "atividade-legislativa",
     ),
 ]
@@ -266,7 +266,7 @@ class TestAdmin:
         )
 
         assert response.status_code == 200
-        assert AlertsPage.objects.get().title == "Alertas"
+        assert AlertsPage.objects.get().title == "**Alertas**"
 
 
 class TestPublishDefaults:
@@ -335,7 +335,7 @@ class TestFeministAIPage:
     def test_migracao_inicializa_pagina_publicada_e_tabelas(self):
         page = FeministAIPage.objects.get(pk=1)
 
-        assert page.hero_title_emphasis == "Maria Quitéria?"
+        assert page.hero_title == "Quem foi **Maria Quitéria?**"
         assert page.architecture_card_1_highlight == "87% de acurácia"
         assert FeministAICategory.objects.filter(page=page).count() == 10
         assert FeministAIEvaluationMetric.objects.filter(page=page).count() == 8
@@ -378,7 +378,7 @@ class TestFeministAIPage:
             and field.name
             not in {"id", "updated_at", "hero_image", "flow_desktop_image", "flow_mobile_image"}
         }
-        data["hero_title_emphasis"] = "QuitérIA?"
+        data["hero_title"] = "Quem criou a **QuitérIA?**"
         for relation in [
             "feministaicategory_set",
             "feministailimitation_set",
@@ -406,7 +406,7 @@ class TestFeministAIPage:
 
         assert response.status_code == 302, response.content.decode()[:1000]
         body = Client().get("/api/v1/cms/feminist-ai").json()
-        assert body["content"]["hero_title_emphasis"] == "QuitérIA?"
+        assert body["content"]["hero_title"] == "Quem criou a **QuitérIA?**"
         assert body["categories"][0]["concept"] == "Novo conceito editorial."
         assert body["evaluation_metrics"][0]["current"] == "0,90"
 
@@ -429,6 +429,11 @@ class TestAboutPage:
         assert data["timeline"][0]["tag"] == "Nasce o projeto"
         assert data["timeline"][2]["link_text"] == "Ruralômetro"
         assert data["partners"][0]["name"] == "Anis Bioética"
+
+    def test_texto_do_header_mostra_exemplo_de_negrito(self):
+        copy = AboutCopy.objects.get(key="s00_006")
+
+        assert "**destaque**" in AboutCopyForm(instance=copy).fields["value"].label
 
     def test_marcos_livres_e_textos_editados_chegam_ao_site(self, admin_client):
         page = AboutPage.objects.get(pk=1)
@@ -559,6 +564,11 @@ class TestDeploy:
 
 
 class TestHomePage:
+    def test_texto_do_header_mostra_exemplo_de_negrito(self):
+        copy = HomeCopy.objects.get(key="hero_title_before_nas")
+
+        assert "**destaque**" in HomeCopyForm(instance=copy).fields["value"].label
+
     def test_admin_substitui_uma_imagem_sem_exigir_as_outras(self, admin_client, bucket):
         response = admin_client.post(
             reverse("admin:cms_homepage_change", args=[1]),

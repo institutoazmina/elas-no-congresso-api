@@ -29,6 +29,8 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   5 MB, aceitam PNG, JPEG ou WebP (SVG não) e são regravadas em WebP. A imagem
   de abertura aceita qualquer dimensão e é enquadrada pelo CSS; imagens internas
   com proporção indicada seguem o recorte (±2%) e são regravadas no tamanho exato.
+- **Formatação mínima nos headers**: `**texto**` gera negrito. O site interpreta
+  apenas essa marcação e renderiza o conteúdo como texto; HTML continua escapado.
 - **Imagens direto no bucket do site**, como as imagens de compartilhamento
   (`apps.og`), num arquivo fixo por campo: `cms/<página>/<campo>.webp`. Enviar
   outra imagem sobrescreve o arquivo e invalida o caminho no CloudFront. Não
