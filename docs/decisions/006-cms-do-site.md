@@ -21,14 +21,14 @@ compartilhado não tem folga de memória para outro processo.
 Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
 
 - **Uma página, um model de registro único** (`CmsPage`, `pk=1`). Páginas com o
-  topo padrão do site (título, subtítulo, ilustração 4:5) herdam de `HeroPage`. O menu abre
+  topo padrão do site (título, subtítulo e ilustração) herdam de `HeroPage`. O menu abre
   direto o formulário; criar e excluir são bloqueados. Só texto e imagens são
   editáveis; rotas, rótulos de interface e layout continuam no site.
 - **Limites vêm do layout**: `max_length` medido com a fonte do site (o título
   do topo tem até 24 caracteres, no máximo duas linhas). Imagens têm no máximo
   5 MB, aceitam PNG, JPEG ou WebP (SVG não) e são regravadas em WebP. A imagem
-  de Alertas aceita qualquer dimensão e é enquadrada pelo CSS; as demais seguem
-  a proporção do recorte (±2%) e são regravadas no tamanho exato.
+  de abertura aceita qualquer dimensão e é enquadrada pelo CSS; imagens internas
+  com proporção indicada seguem o recorte (±2%) e são regravadas no tamanho exato.
 - **Imagens direto no bucket do site**, como as imagens de compartilhamento
   (`apps.og`), num arquivo fixo por campo: `cms/<página>/<campo>.webp`. Enviar
   outra imagem sobrescreve o arquivo e invalida o caminho no CloudFront. Não

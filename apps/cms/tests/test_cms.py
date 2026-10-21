@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import httpx
 import pytest
 from botocore.exceptions import ClientError
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -250,6 +251,14 @@ class TestAdmin:
         page = AlertsPage.objects.get()
         assert (page.hero_image_width, page.hero_image_height) == (320, 180)
         assert bucket.put_object.call_args.kwargs["Key"] == "cms/alertas/hero.webp"
+
+    @pytest.mark.parametrize(
+        "model", [AlertsPage, ReportsPage, ActivityPage, FeministAIPage, AboutPage, HomePage]
+    )
+    def test_todos_os_headers_aceitam_qualquer_resolucao(self, model):
+        form = admin.site._registry[model].form()
+
+        assert form.image_specs()["hero_image"] == (None, "hero")
 
     def test_titulo_acima_do_limite_nao_salva(self, admin_client):
         response = admin_client.post(
@@ -553,11 +562,13 @@ class TestHomePage:
     def test_admin_substitui_uma_imagem_sem_exigir_as_outras(self, admin_client, bucket):
         response = admin_client.post(
             reverse("admin:cms_homepage_change", args=[1]),
-            {"hero_image": image_file(513, 389)},
+            {"hero_image": image_file(320, 180)},
         )
 
         assert response.status_code == 302
-        assert HomePage.objects.get().hero_image.name == "cms/home/hero.webp"
+        page = HomePage.objects.get()
+        assert page.hero_image.name == "cms/home/hero.webp"
+        assert (page.hero_image_width, page.hero_image_height) == (320, 180)
         assert bucket.put_object.call_args.kwargs["Key"] == "cms/home/hero.webp"
 
     def test_migracao_e_api_preservam_conteudo_editorial_sem_dados_dos_graficos(self):

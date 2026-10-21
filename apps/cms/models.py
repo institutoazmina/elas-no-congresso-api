@@ -56,7 +56,7 @@ def subtitle_field(default: str):
     )
 
 
-def hero_image_field(folder: str, *, unconstrained: bool = False):
+def hero_image_field(folder: str):
     # Obrigatória: ``cms_publish_defaults`` publica a ilustração original neste
     # caminho, e cada envio a substitui no mesmo arquivo.
     return models.ImageField(
@@ -69,9 +69,6 @@ def hero_image_field(folder: str, *, unconstrained: bool = False):
         help_text=(
             "Para substituir, envie PNG, JPEG ou WebP em qualquer dimensão, até 5 MB. "
             "O site ajusta a imagem automaticamente. Some no celular."
-            if unconstrained
-            else f"Para substituir, envie PNG, JPEG ou WebP com a proporção de "
-            f"{HeroPage.HERO_IMAGE.label} (4:5), até 5 MB. Some no celular."
         ),
     )
 
@@ -102,7 +99,7 @@ class AlertsPage(HeroPage):
 
     title = title_field("Alertas")
     subtitle = subtitle_field("Acompanhe as movimentações do Legislativo no Radar do Congresso")
-    hero_image = hero_image_field("alertas", unconstrained=True)
+    hero_image = hero_image_field("alertas")
 
     class Meta:
         verbose_name = "Alertas"
@@ -170,7 +167,10 @@ class FeministAIPage(CmsPage):
         width_field="hero_image_width",
         height_field="hero_image_height",
         default="cms/ia-feminista/hero.webp",
-        help_text="PNG, JPEG ou WebP com proporção de 743×1349 px, até 5 MB.",
+        help_text=(
+            "PNG, JPEG ou WebP em qualquer dimensão, até 5 MB. "
+            "O site ajusta a imagem automaticamente."
+        ),
     )
     hero_image_alt = models.CharField("Descrição da ilustração", max_length=160)
 
@@ -548,7 +548,10 @@ class HomePage(CmsPage):
         width_field="hero_image_width",
         height_field="hero_image_height",
         default="cms/home/hero.webp",
-        help_text="PNG, JPEG ou WebP, proporção 513×389, até 5 MB.",
+        help_text=(
+            "PNG, JPEG ou WebP em qualquer dimensão, até 5 MB. "
+            "O site ajusta a imagem automaticamente."
+        ),
     )
     explore_image_width = models.PositiveIntegerField(default=1440, editable=False)
     explore_image_height = models.PositiveIntegerField(default=1080, editable=False)

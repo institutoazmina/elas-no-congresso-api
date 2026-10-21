@@ -93,20 +93,13 @@ class CmsPageAdmin(ModelAdmin):
 
 class HeroPageForm(CmsPageForm):
     def image_specs(self):
-        return {"hero_image": (self._meta.model.HERO_IMAGE, "hero")}
-
-
-class AlertsPageForm(HeroPageForm):
-    def image_specs(self):
         return {"hero_image": (None, "hero")}
 
 
-def hero_page_form(
-    model: type[HeroPage], form: type[HeroPageForm] = HeroPageForm
-) -> type[forms.ModelForm]:
+def hero_page_form(model: type[HeroPage]) -> type[forms.ModelForm]:
     return modelform_factory(
         model,
-        form=form,
+        form=HeroPageForm,
         fields=["title", "subtitle", "hero_image"],
         widgets={"subtitle": UnfoldAdminTextareaWidget(attrs={"rows": 3})},
     )
@@ -118,7 +111,7 @@ class HeroPageAdmin(CmsPageAdmin):
 
 @admin.register(AlertsPage)
 class AlertsPageAdmin(HeroPageAdmin):
-    form = hero_page_form(AlertsPage, AlertsPageForm)
+    form = hero_page_form(AlertsPage)
 
 
 @admin.register(ReportsPage)
@@ -138,7 +131,7 @@ class FeministAIPageForm(CmsPageForm):
 
     def image_specs(self):
         return {
-            "hero_image": (FeministAIPage.HERO_IMAGE, "hero"),
+            "hero_image": (None, "hero"),
             "flow_desktop_image": (FeministAIPage.FLOW_DESKTOP_IMAGE, "flow-desktop"),
             "flow_mobile_image": (FeministAIPage.FLOW_MOBILE_IMAGE, "flow-mobile"),
         }
@@ -310,7 +303,7 @@ class AboutPageForm(CmsPageForm):
         fields = "__all__"
 
     def image_specs(self):
-        return {"hero_image": (AboutPage.HERO_IMAGE, "hero")}
+        return {"hero_image": (None, "hero")}
 
 
 class AboutTimelineInline(TabularInline):
@@ -408,7 +401,7 @@ class HomePageForm(CmsPageForm):
 
     def image_specs(self):
         return {
-            "hero_image": (HomePage.HERO_IMAGE, "hero"),
+            "hero_image": (None, "hero"),
             "explore_image": (HomePage.EXPLORE_IMAGE, "explore"),
             "quiteria_image": (HomePage.QUITERIA_IMAGE, "quiteria"),
         }

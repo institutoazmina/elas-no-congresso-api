@@ -39,7 +39,7 @@ Ambiente:
 
 - [ ] Alterar título e subtítulo, salvar e conferir em `/reportagens`.
 - [ ] Substituir a ilustração por uma imagem válida e conferir no site.
-- [ ] Confirmar que imagem fora da proporção indicada é recusada.
+- [ ] Enviar ilustrações horizontal, vertical e quadrada e conferir que não deformam nem cortam.
 - [ ] Conferir as versões desktop e celular.
 - [ ] Confirmar que listagem, paginação e links das reportagens continuam funcionando.
 - [ ] Restaurar o conteúdo desejado ao terminar.
@@ -48,7 +48,7 @@ Ambiente:
 
 - [ ] Alterar título e subtítulo, salvar e conferir em `/atividade-legislativa`.
 - [ ] Substituir a ilustração por uma imagem válida e conferir no site.
-- [ ] Confirmar que imagem fora da proporção indicada é recusada.
+- [ ] Enviar ilustrações horizontal, vertical e quadrada e conferir que não deformam nem cortam.
 - [ ] Conferir as versões desktop e celular.
 - [ ] Confirmar que filtros, resultados e links de proposições continuam funcionando.
 - [ ] Restaurar o conteúdo desejado ao terminar.
@@ -58,6 +58,7 @@ Ambiente:
 - [ ] Alterar título SEO e descrição SEO.
 - [ ] Alterar título, destaque e descrição da abertura.
 - [ ] Substituir a ilustração da abertura e conferir no site.
+- [ ] Enviar ilustrações horizontal, vertical e quadrada e conferir que não deformam nem cortam.
 - [ ] Alterar textos das seções e conferir destaques e links.
 - [ ] Adicionar, editar, reordenar e remover uma categoria.
 - [ ] Adicionar, editar, reordenar e remover uma limitação.
@@ -65,7 +66,7 @@ Ambiente:
 - [ ] Editar partições e conferir as tabelas.
 - [ ] Substituir os fluxogramas desktop e celular.
 - [ ] Conferir que cada fluxograma aparece no breakpoint correto.
-- [ ] Confirmar que imagens fora das proporções indicadas são recusadas.
+- [ ] Confirmar que fluxogramas fora das proporções indicadas são recusados.
 - [ ] Restaurar o conteúdo desejado ao terminar.
 
 ## Sobre
@@ -73,6 +74,7 @@ Ambiente:
 - [ ] Alterar título SEO e descrição SEO.
 - [ ] Alterar textos e links da abertura.
 - [ ] Substituir a ilustração da abertura e conferir no site.
+- [ ] Enviar ilustrações horizontal, vertical e quadrada e conferir que não deformam nem cortam.
 - [ ] Adicionar, editar, reordenar e remover um marco da linha do tempo.
 - [ ] Conferir a rolagem horizontal da linha do tempo no celular.
 - [ ] Adicionar, editar, reordenar e remover um desafio.
@@ -87,6 +89,7 @@ Ambiente:
 - [ ] Alterar título SEO e descrição SEO.
 - [ ] Alterar textos e destaques da abertura.
 - [ ] Substituir a imagem da abertura.
+- [ ] Enviar imagens de abertura horizontal, vertical e quadrada e conferir que não deformam nem cortam.
 - [ ] Alterar títulos, textos, legendas, post-its e chamadas das seções.
 - [ ] Conferir se links internos e externos continuam corretos.
 - [ ] Substituir as imagens de Explore e QuitérIA.

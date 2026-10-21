@@ -48,25 +48,25 @@ post-its, legendas, botões e endereços diretamente na lista. Trechos com
 destaque visual aparecem separados, com rótulos como **antes do destaque** e
 **depois do destaque**. O percentual do post-it em **Mulheres na defesa** vem
 dos dados do gráfico; edite apenas as frases ao redor dele. Em **Home: imagens
-e textos**, substitua as imagens da abertura (513×389), Explore (4:3) e
-QuitérIA (16:9). Gráficos, cards de notícias, tabelas e mapas não são editados
-pelo CMS.
+e textos**, substitua a imagem da abertura em qualquer dimensão e as imagens
+de Explore (4:3) e QuitérIA (16:9). Gráficos, cards de notícias, tabelas e mapas
+não são editados pelo CMS.
 
 Em **Footer: receba nossos alertas**, edite título, texto, chamada e endereço
 do botão. Esse bloco é compartilhado e a alteração aparece em todo o site.
 
 - Os limites de texto e as exigências da imagem aparecem no formulário. Em
-  **Alertas**, a ilustração aceita qualquer dimensão e é ajustada pelo site; as
-  demais imagens com proporção indicada no campo precisam respeitá-la.
+  todas as ilustrações de abertura aceitam qualquer dimensão e são ajustadas
+  pelo site; imagens internas com proporção indicada no campo precisam respeitá-la.
 - Salvar dispara o deploy do site; a alteração aparece em alguns minutos.
   Salvamentos seguidos viram um único deploy.
 - Imagens só podem ser substituídas, não removidas. A primeira versão é a
   ilustração original, publicada pelo comando `cms_publish_defaults` no deploy.
-  Na IA Feminista há três imagens: ilustração de Maria Quitéria, fluxograma para
-  computador e fluxograma para celular. Cada uma exige a proporção informada no
-  campo; substituir um fluxograma não modifica automaticamente o outro.
-  A ilustração de Sobre exige proporção 4:5; logos das organizações aceitam
-  proporções variadas e são reduzidos a até 640 px.
+  Na IA Feminista, a ilustração de Maria Quitéria aceita qualquer dimensão; os
+  fluxogramas para computador e celular exigem as proporções informadas nos
+  campos. Substituir um fluxograma não modifica automaticamente o outro. A
+  ilustração de Sobre também aceita qualquer dimensão; logos das organizações
+  aceitam proporções variadas e são reduzidos a até 640 px.
 
 ## Curadoria de proposições
 
