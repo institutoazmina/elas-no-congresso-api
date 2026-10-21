@@ -7,10 +7,14 @@ Kept dependency-free (plain Django views) so a probe never drags in the
 full API stack.
 """
 
+import logging
+
 from django.db import connections
 from django.db.utils import OperationalError
 from django.http import JsonResponse
 from django.views.decorators.cache import never_cache
+
+logger = logging.getLogger(__name__)
 
 
 @never_cache
@@ -26,8 +30,9 @@ def readiness(request):
     try:
         connections["default"].cursor().execute("SELECT 1")
         checks["database"] = "ok"
-    except OperationalError as exc:
-        checks["database"] = f"error: {exc}"
+    except OperationalError:
+        logger.exception("Readiness check failed: database")
+        checks["database"] = "error"
 
     # Redis cache
     try:
@@ -35,8 +40,9 @@ def readiness(request):
 
         cache.set("healthcheck", "1", timeout=5)
         checks["cache"] = "ok" if cache.get("healthcheck") == "1" else "error: readback failed"
-    except Exception as exc:  # noqa: BLE001 — surface any backend error as unhealthy
-        checks["cache"] = f"error: {exc}"
+    except Exception:  # noqa: BLE001 — surface any backend error as unhealthy
+        logger.exception("Readiness check failed: cache")
+        checks["cache"] = "error"
 
     healthy = all(v == "ok" for v in checks.values())
     return JsonResponse(

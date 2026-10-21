@@ -1,4 +1,4 @@
-.PHONY: help up down migrate seed test test-integration loadtest lint clean
+.PHONY: help up down migrate seed test test-integration test-compatibility test-ml loadtest lint clean
 
 help:
 	@echo "Elas no Congresso API - Comandos disponíveis:"
@@ -8,6 +8,8 @@ help:
 	@echo "  make seed           - Popula dados sintéticos"
 	@echo "  make test           - Executa testes unitários e dos apps"
 	@echo "  make test-integration - Executa testes de integração"
+	@echo "  make test-compatibility - Valida PDF/OCR, HTTP e contratos Django"
+	@echo "  make test-ml          - Valida inferência real (QUITERIA_TEST_MODEL_DIR obrigatório)"
 	@echo "  make loadtest       - Executa testes de carga"
 	@echo "  make lint           - Executa lint e type check"
 	@echo "  make clean           - Limpa containers e volumes"
@@ -38,6 +40,12 @@ test:
 
 test-integration:
 	uv run pytest tests/integration/ --reuse-db
+
+test-compatibility:
+	uv run pytest tests/compatibility/ tests/integration/test_framework_compatibility.py -m "not ml"
+
+test-ml:
+	uv run pytest tests/compatibility/test_quiteria_model.py --run-ml -m ml
 
 loadtest:
 	uv run locust -f tests/load/test_load.py --host http://localhost:8000
