@@ -8,7 +8,7 @@ import apps.cms.storage
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = []
+    dependencies = [("core", "0002_prune_wagtail")]
 
     operations = [
         migrations.CreateModel(
