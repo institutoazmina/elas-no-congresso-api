@@ -29,6 +29,8 @@ def _hero(model: type[HeroPage], response: HttpResponse) -> dict:
     page = model.current()
     version = int(page.updated_at.timestamp()) if page.updated_at else 0
     return {
+        "seo_title": page.seo_title,
+        "seo_description": page.seo_description,
         "title": page.title,
         "subtitle": page.subtitle,
         # Dimensões gravadas no upload: ler `hero_image.width` baixaria o arquivo.
@@ -147,7 +149,7 @@ def home_page(request, response: HttpResponse):
         "title": page.hero_title,
         "subtitle": page.hero_description,
         "cta_text": page.hero_cta_text,
-        "cta_url": page.hero_cta_url,
+        "cta_url": "#o-que-descobrimos",
         "hero_image": _cms_image(
             page.hero_image, page.hero_image_width, page.hero_image_height, version
         ),

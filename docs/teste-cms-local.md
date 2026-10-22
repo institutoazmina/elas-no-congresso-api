@@ -23,6 +23,7 @@ Ambiente:
 
 ## Alertas
 
+- [ ] Alterar título SEO e descrição SEO.
 - [x] Alterar título e subtítulo, salvar e conferir em `/alertas`.
 - [x] Enviar uma imagem horizontal e salvar com sucesso.
 - [x] Enviar uma imagem vertical e salvar com sucesso.
@@ -37,6 +38,7 @@ Ambiente:
 
 ## Reportagens
 
+- [ ] Alterar título SEO e descrição SEO.
 - [x] Alterar título e subtítulo, salvar e conferir em `/reportagens`.
 - [x] Substituir a ilustração por uma imagem válida e conferir no site.
 - [ ] Confirmar que imagem fora da proporção indicada é recusada.
@@ -46,6 +48,7 @@ Ambiente:
 
 ## Atividade Legislativa
 
+- [ ] Alterar título SEO e descrição SEO.
 - [x] Alterar título e subtítulo, salvar e conferir em `/atividade-legislativa`.
 - [x] Substituir a ilustração por uma imagem válida e conferir no site.
 - [ ] Confirmar que imagem fora da proporção indicada é recusada.
@@ -85,7 +88,7 @@ Ambiente:
 ## Home
 
 - [ ] Alterar título SEO e descrição SEO.
-- [ ] Alterar o título com `**negrito**`, a descrição com `~~desfavorável~~` e o CTA de rolagem.
+- [ ] Alterar o título com `**negrito**`, a descrição com `~~desfavorável~~` e o texto do CTA de rolagem.
 - [ ] Substituir a imagem da abertura.
 - [ ] Alterar títulos, textos, legendas, post-its e chamadas no Markdown.
 - [ ] Mover os marcadores `::: chart ... :::` e confirmar que os gráficos acompanham a nova ordem.
@@ -98,7 +101,7 @@ Ambiente:
 
 ## Chamada global de alertas
 
-- [ ] Alterar título, texto, chamada e URL do botão no item **Footer: receba nossos alertas**.
+- [ ] Alterar título, texto, chamada e URL do botão no item **Rodapé: receba nossos alertas**.
 - [ ] Conferir a alteração na Home.
 - [ ] Conferir a alteração em Alertas, Reportagens, Atividade, IA Feminista e Sobre.
 - [ ] Conferir o botão com URL interna.

@@ -12,6 +12,7 @@ from django.core.management import call_command
 from django.test import Client
 from django.urls import reverse
 from PIL import Image
+from unfold.widgets import UnfoldAdminTextareaWidget
 from unfold_markdown.widgets import MarkdownWidget
 
 from apps.cms import deploy, storage, tasks
@@ -21,6 +22,7 @@ from apps.cms.admin import (
     CmsMarkdownWidget,
     FeministAIMarkdownWidget,
     FeministAIPageForm,
+    HomePageForm,
 )
 from apps.cms.images import ImageSpec, normalize
 from apps.cms.models import (
@@ -96,6 +98,11 @@ PAGES = [
         "**Alertas**",
         "**Acompanhe as movimentações do Legislativo no Radar do Congresso**",
         "alertas",
+        "Receba alertas sobre gênero no Congresso | Elas no Congresso",
+        (
+            "Receba alertas sobre projetos de lei e pautas de gênero que afetam os direitos "
+            "de meninas, mulheres e pessoas LGBTQIAPN+ no Congresso Nacional."
+        ),
     ),
     (
         "/api/v1/cms/reports",
@@ -103,6 +110,11 @@ PAGES = [
         "**Reportagens**",
         "**Veja as histórias que os dados do Congresso nos contam.**",
         "reportagens",
+        "Reportagens: Congresso e política de gênero | AzMina",
+        (
+            "Leia reportagens da Revista AzMina sobre o Congresso Nacional, projetos de lei, "
+            "política de gênero e direitos das mulheres e pessoas LGBTQIAPN+."
+        ),
     ),
     (
         "/api/v1/cms/activity",
@@ -111,17 +123,29 @@ PAGES = [
         "**Use filtros e explore as movimentações do Legislativo sensíveis a gênero, "
         "atualizadas diariamente pela nossa robô que monitora o Congresso.**",
         "atividade-legislativa",
+        "Atividade Legislativa e pautas de gênero | Elas no Congresso",
+        (
+            "Explore dados sobre projetos de lei e pautas de gênero no Congresso Nacional em "
+            "um dashboard interativo sobre atividade legislativa e direitos."
+        ),
     ),
 ]
 
 
 class TestEndpoint:
-    @pytest.mark.parametrize(("path", "model", "title", "subtitle", "folder"), PAGES)
-    def test_sem_registro_devolve_padroes_sem_gravar(self, path, model, title, subtitle, folder):
+    @pytest.mark.parametrize(
+        ("path", "model", "title", "subtitle", "folder", "seo_title", "seo_description"),
+        PAGES,
+    )
+    def test_sem_registro_devolve_padroes_sem_gravar(
+        self, path, model, title, subtitle, folder, seo_title, seo_description
+    ):
         response = Client().get(path)
 
         assert response["Cache-Control"] == "no-store"
         assert response.json() == {
+            "seo_title": seo_title,
+            "seo_description": seo_description,
             "title": title,
             "subtitle": subtitle,
             "hero_image": {
@@ -182,6 +206,17 @@ class TestAdmin:
     def change_url(self):
         return reverse("admin:cms_alertspage_change", args=[AlertsPage.SINGLETON_PK])
 
+    @staticmethod
+    def form_data(model=AlertsPage, **updates):
+        page = model.load()
+        data = {
+            "seo_title": page.seo_title,
+            "seo_description": page.seo_description,
+            "title": page.title,
+            "subtitle": page.subtitle,
+        }
+        return data | updates
+
     @pytest.mark.parametrize("model", [AlertsPage, ReportsPage, ActivityPage, FeministAIPage])
     def test_menu_abre_o_registro_unico(self, admin_client, model):
         name = model._meta.model_name
@@ -191,11 +226,58 @@ class TestAdmin:
         assert response["Location"] == reverse(f"admin:cms_{name}_change", args=[1])
         assert model.objects.count() == 1
 
+    @pytest.mark.parametrize(
+        "model", [HomePage, ActivityPage, AlertsPage, FeministAIPage, ReportsPage, AboutPage]
+    )
+    def test_todas_as_paginas_exibem_secao_seo(self, model):
+        model_admin = admin.site._registry[model]
+
+        assert model_admin.fieldsets[0] == (
+            "SEO",
+            {"fields": ["seo_title", "seo_description"]},
+        )
+        assert {"seo_title", "seo_description"} <= set(model_admin.form.base_fields)
+
+    @pytest.mark.parametrize(
+        ("model", "title_field", "description_field"),
+        [
+            (HomePage, "hero_title", "hero_description"),
+            (ActivityPage, "title", "subtitle"),
+            (AlertsPage, "title", "subtitle"),
+            (FeministAIPage, "hero_title", "hero_description"),
+            (ReportsPage, "title", "subtitle"),
+            (AboutPage, "hero_title", "hero_description"),
+        ],
+    )
+    def test_instrucoes_do_topo_ficam_abaixo_dos_campos(
+        self, model, title_field, description_field
+    ):
+        fields = admin.site._registry[model].form.base_fields
+        title = fields[title_field]
+        description = fields[description_field]
+
+        assert title.label == "Título"
+        assert description.label == "Descrição"
+        assert fields["hero_image"].label == "Ilustração"
+        for field in [title, description]:
+            assert "**texto**" in field.help_text
+            assert "quebra de linha" in field.help_text
+            assert "**" not in field.label
+            assert "~~" not in field.label
+
+        if model is HomePage:
+            assert "~~texto~~ para taxado" in description.help_text
+
     def test_reportagens_usa_a_propria_pasta(self, admin_client, bucket):
         ReportsPage.load()
         response = admin_client.post(
             reverse("admin:cms_reportspage_change", args=[1]),
-            {"title": "Reportagens", "subtitle": "x", "hero_image": image_file()},
+            self.form_data(
+                ReportsPage,
+                title="Reportagens",
+                subtitle="x",
+                hero_image=image_file(),
+            ),
         )
 
         assert response.status_code == 302
@@ -210,7 +292,7 @@ class TestAdmin:
         for subtitle in ["Primeira", "Segunda"]:
             response = admin_client.post(
                 self.change_url(),
-                {"title": "Radar", "subtitle": subtitle, "hero_image": image_file()},
+                self.form_data(title="Radar", subtitle=subtitle, hero_image=image_file()),
             )
             assert response.status_code == 302
 
@@ -231,7 +313,8 @@ class TestAdmin:
         assert "hero_image-clear" not in form
 
         response = admin_client.post(
-            self.change_url(), {"title": "Radar", "subtitle": "x", "hero_image-clear": "on"}
+            self.change_url(),
+            self.form_data(title="Radar", subtitle="x", **{"hero_image-clear": "on"}),
         )
 
         assert response.status_code == 302
@@ -243,7 +326,8 @@ class TestAdmin:
         settings.MEDIA_ROOT = tmp_path
         for _ in range(2):
             admin_client.post(
-                self.change_url(), {"title": "Radar", "subtitle": "x", "hero_image": image_file()}
+                self.change_url(),
+                self.form_data(title="Radar", subtitle="x", hero_image=image_file()),
             )
 
         assert [p.name for p in (tmp_path / "cms" / "alertas").iterdir()] == ["hero.webp"]
@@ -251,7 +335,7 @@ class TestAdmin:
     def test_alertas_aceita_imagem_em_qualquer_resolucao(self, admin_client, bucket):
         response = admin_client.post(
             self.change_url(),
-            {"title": "Alertas", "subtitle": "x", "hero_image": image_file(320, 180)},
+            self.form_data(title="Alertas", subtitle="x", hero_image=image_file(320, 180)),
         )
 
         assert response.status_code == 302
@@ -269,7 +353,8 @@ class TestAdmin:
 
     def test_titulo_acima_do_limite_nao_salva(self, admin_client):
         response = admin_client.post(
-            self.change_url(), {"title": "Alertas diários do Congresso", "subtitle": "x"}
+            self.change_url(),
+            self.form_data(title="Alertas diários do Congresso", subtitle="x"),
         )
 
         assert response.status_code == 200
@@ -387,6 +472,8 @@ class TestFeministAIPage:
         assert "unfold_markdown/js/easymde.min.js" in html
         assert "cms/js/markdown-components.js" in html
         assert "cms/css/markdown-components.css" in html
+        assert 'name="seo_title"' in html
+        assert 'name="seo_description"' in html
         assert 'name="hero_title"' in html
         assert 'name="hero_description"' in html
         assert 'name="hero_image"' in html
@@ -400,6 +487,8 @@ class TestFeministAIPage:
         response = admin_client.post(
             url,
             {
+                "seo_title": page.seo_title,
+                "seo_description": page.seo_description,
                 "hero_title": "Conheça a **QuitérIA**",
                 "hero_description": page.hero_description,
                 "content": content,
@@ -414,7 +503,14 @@ class TestFeministAIPage:
     def test_formulario_usa_widget_markdown(self):
         form = FeministAIPageForm(instance=FeministAIPage.objects.get(pk=1))
 
-        assert list(form.fields) == ["hero_title", "hero_description", "hero_image", "content"]
+        assert list(form.fields) == [
+            "seo_title",
+            "seo_description",
+            "hero_title",
+            "hero_description",
+            "hero_image",
+            "content",
+        ]
         assert isinstance(form.fields["content"].widget, MarkdownWidget)
         assert isinstance(form.fields["content"].widget, FeministAIMarkdownWidget)
         assert form.fields["content"].widget.media._js[-1] == ("cms/js/markdown-components.js")
@@ -623,7 +719,6 @@ class TestHomePage:
             "hero_title": page.hero_title,
             "hero_description": page.hero_description,
             "hero_cta_text": page.hero_cta_text,
-            "hero_cta_url": page.hero_cta_url,
             "content": page.content,
         }
         return data | updates
@@ -637,11 +732,17 @@ class TestHomePage:
         assert 'name="hero_title"' in html
         assert 'name="hero_description"' in html
         assert 'name="hero_cta_text"' in html
+        assert 'name="hero_cta_url"' not in html
         assert 'name="content"' in html
         assert 'name="hero_image"' in html
         assert 'name="explore_image"' in html
         assert 'name="quiteria_image"' in html
         assert HomeCopy not in admin.site._registry
+
+    def test_titulo_usa_widget_contornado_do_admin(self):
+        form = HomePageForm(instance=HomePage.objects.get())
+
+        assert isinstance(form.fields["hero_title"].widget, UnfoldAdminTextareaWidget)
 
     def test_admin_substitui_uma_imagem_sem_exigir_as_outras(self, admin_client, bucket):
         page = HomePage.objects.get()

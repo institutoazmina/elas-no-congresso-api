@@ -118,13 +118,17 @@ def hero_page_form(model: type[HeroPage]) -> type[forms.ModelForm]:
     return modelform_factory(
         model,
         form=HeroPageForm,
-        fields=["title", "subtitle", "hero_image"],
+        fields=["seo_title", "seo_description", "title", "subtitle", "hero_image"],
         widgets={"subtitle": UnfoldAdminTextareaWidget(attrs={"rows": 3})},
     )
 
 
 class HeroPageAdmin(CmsPageAdmin):
-    fieldsets = [("Topo da página", {"fields": ["title", "subtitle", "hero_image", "updated_at"]})]
+    fieldsets = [
+        ("SEO", {"fields": ["seo_title", "seo_description"]}),
+        ("Topo da página", {"fields": ["title", "subtitle", "hero_image"]}),
+        ("Publicação", {"fields": ["updated_at"]}),
+    ]
 
 
 @admin.register(AlertsPage)
@@ -145,7 +149,14 @@ class ActivityPageAdmin(HeroPageAdmin):
 class FeministAIPageForm(CmsPageForm):
     class Meta:
         model = FeministAIPage
-        fields = ["hero_title", "hero_description", "hero_image", "content"]
+        fields = [
+            "seo_title",
+            "seo_description",
+            "hero_title",
+            "hero_description",
+            "hero_image",
+            "content",
+        ]
         widgets = {"content": FeministAIMarkdownWidget()}
 
     def image_specs(self):
@@ -198,6 +209,7 @@ class FeministAIOpenLinkInline(TabularInline):
 class FeministAIPageAdmin(CmsPageAdmin):
     form = FeministAIPageForm
     fieldsets = [
+        ("SEO", {"fields": ["seo_title", "seo_description"]}),
         ("Topo da página", {"fields": ["hero_title", "hero_description", "hero_image"]}),
         ("Corpo da página em Markdown", {"fields": ["content"]}),
         ("Publicação", {"fields": ["updated_at"]}),
@@ -250,7 +262,7 @@ class AboutTeamMemberInline(TabularInline):
 class AboutPageAdmin(CmsPageAdmin):
     form = AboutPageForm
     fieldsets = [
-        ("Busca e compartilhamento", {"fields": ["seo_title", "seo_description"]}),
+        ("SEO", {"fields": ["seo_title", "seo_description"]}),
         ("Topo da página", {"fields": ["hero_title", "hero_description", "hero_image"]}),
         ("Corpo da página em Markdown", {"fields": ["content"]}),
         ("Publicação", {"fields": ["updated_at"]}),
@@ -267,14 +279,13 @@ class HomePageForm(CmsPageForm):
             "hero_title",
             "hero_description",
             "hero_cta_text",
-            "hero_cta_url",
             "hero_image",
             "content",
             "explore_image",
             "quiteria_image",
         ]
         widgets = {
-            "hero_title": forms.Textarea(attrs={"rows": 2}),
+            "hero_title": UnfoldAdminTextareaWidget(attrs={"rows": 2}),
             "content": CmsMarkdownWidget(),
         }
 
@@ -290,7 +301,7 @@ class HomePageForm(CmsPageForm):
 class HomePageAdmin(CmsPageAdmin):
     form = HomePageForm
     fieldsets = [
-        ("Busca e compartilhamento", {"fields": ["seo_title", "seo_description"]}),
+        ("SEO", {"fields": ["seo_title", "seo_description"]}),
         (
             "Topo da página",
             {
@@ -298,7 +309,6 @@ class HomePageAdmin(CmsPageAdmin):
                     "hero_title",
                     "hero_description",
                     "hero_cta_text",
-                    "hero_cta_url",
                     "hero_image",
                 ]
             },

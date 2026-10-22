@@ -49,22 +49,28 @@ def validate_header_subtitle(value: str):
 
 def title_field(default: str):
     return models.CharField(
-        verbose_name="Título (ex.: texto com **destaque**)",
+        verbose_name="Título",
         # Duas linhas no máximo, no celular e ao lado da ilustração no computador.
         max_length=40,
         default=f"**{default}**",
         validators=[validate_header_title],
-        help_text="Use **texto** para negrito. Até 24 caracteres de texto.",
+        help_text=(
+            "Use **texto** para negrito. A quebra de linha é automática. "
+            "Até 24 caracteres de texto."
+        ),
     )
 
 
 def subtitle_field(default: str):
     return models.CharField(
-        verbose_name="Subtítulo (ex.: texto com **destaque**)",
+        verbose_name="Descrição",
         max_length=180,
         default=f"**{default}**",
         validators=[validate_header_subtitle],
-        help_text="Use **texto** para negrito. Até 160 caracteres de texto.",
+        help_text=(
+            "Use **texto** para negrito. A quebra de linha é automática. "
+            "Até 160 caracteres de texto."
+        ),
     )
 
 
@@ -109,6 +115,19 @@ class HeroPage(CmsPage):
 class AlertsPage(HeroPage):
     DEFAULT_HERO_IMAGE = "alerts-hero.png"
 
+    seo_title = models.CharField(
+        "Título para buscas",
+        max_length=160,
+        default="Receba alertas sobre gênero no Congresso | Elas no Congresso",
+    )
+    seo_description = models.CharField(
+        "Descrição para buscas",
+        max_length=300,
+        default=(
+            "Receba alertas sobre projetos de lei e pautas de gênero que afetam os direitos "
+            "de meninas, mulheres e pessoas LGBTQIAPN+ no Congresso Nacional."
+        ),
+    )
     title = title_field("Alertas")
     subtitle = subtitle_field("Acompanhe as movimentações do Legislativo no Radar do Congresso")
     hero_image = hero_image_field("alertas")
@@ -125,6 +144,19 @@ class AlertsPage(HeroPage):
 class ReportsPage(HeroPage):
     DEFAULT_HERO_IMAGE = "reports-hero.png"
 
+    seo_title = models.CharField(
+        "Título para buscas",
+        max_length=160,
+        default="Reportagens: Congresso e política de gênero | AzMina",
+    )
+    seo_description = models.CharField(
+        "Descrição para buscas",
+        max_length=300,
+        default=(
+            "Leia reportagens da Revista AzMina sobre o Congresso Nacional, projetos de lei, "
+            "política de gênero e direitos das mulheres e pessoas LGBTQIAPN+."
+        ),
+    )
     title = title_field("Reportagens")
     subtitle = subtitle_field("Veja as histórias que os dados do Congresso nos contam.")
     hero_image = hero_image_field("reportagens")
@@ -141,6 +173,19 @@ class ReportsPage(HeroPage):
 class ActivityPage(HeroPage):
     DEFAULT_HERO_IMAGE = "activity-hero.png"
 
+    seo_title = models.CharField(
+        "Título para buscas",
+        max_length=160,
+        default="Atividade Legislativa e pautas de gênero | Elas no Congresso",
+    )
+    seo_description = models.CharField(
+        "Descrição para buscas",
+        max_length=300,
+        default=(
+            "Explore dados sobre projetos de lei e pautas de gênero no Congresso Nacional em "
+            "um dashboard interativo sobre atividade legislativa e direitos."
+        ),
+    )
     title = title_field("Atividade Legislativa")
     subtitle = subtitle_field(
         "Use filtros e explore as movimentações do Legislativo sensíveis a gênero, "
@@ -164,8 +209,8 @@ class FeministAIPage(CmsPage):
     FLOW_DESKTOP_IMAGE = ImageSpec(820, 574)
     FLOW_MOBILE_IMAGE = ImageSpec(524, 574)
 
-    seo_title = models.CharField("Título para busca", max_length=120)
-    seo_description = models.CharField("Descrição para busca", max_length=200)
+    seo_title = models.CharField("Título para buscas", max_length=160)
+    seo_description = models.CharField("Descrição para buscas", max_length=300)
     content = models.TextField(
         "Conteúdo",
         help_text=(
@@ -175,19 +220,20 @@ class FeministAIPage(CmsPage):
     )
 
     hero_title = models.CharField(
-        "Título (ex.: Quem foi **Maria Quitéria?**)",
+        "Título",
         max_length=120,
         default="Quem foi **Maria Quitéria?**",
+        help_text="Use **texto** para negrito. A quebra de linha é automática.",
     )
     hero_description = models.TextField(
-        "Texto do topo (ex.: texto com **destaque**)",
+        "Descrição",
         max_length=600,
-        help_text="Use **texto** para negrito.",
+        help_text="Use **texto** para negrito. A quebra de linha é automática.",
     )
     hero_image_width = models.PositiveIntegerField(default=743, editable=False)
     hero_image_height = models.PositiveIntegerField(default=1349, editable=False)
     hero_image = models.ImageField(
-        "Ilustração de Maria Quitéria",
+        "Ilustração",
         upload_to="cms/ia-feminista/",
         storage=CmsStorage(),
         width_field="hero_image_width",
@@ -427,14 +473,14 @@ class AboutPage(CmsPage):
     seo_title = models.CharField("Título para buscas", max_length=160)
     seo_description = models.CharField("Descrição para buscas", max_length=300)
     hero_title = models.CharField(
-        "Título (use **texto** para negrito)",
+        "Título",
         max_length=160,
-        help_text="O topo é renderizado separadamente do conteúdo em Markdown.",
+        help_text="Use **texto** para negrito. A quebra de linha é automática.",
     )
     hero_description = models.TextField(
         "Descrição",
         max_length=1200,
-        help_text="Use **texto** para negrito.",
+        help_text="Use **texto** para negrito. A quebra de linha é automática.",
     )
     content = models.TextField(
         "Conteúdo",
@@ -604,17 +650,19 @@ class HomePage(CmsPage):
     seo_title = models.CharField("Título para buscas", max_length=160)
     seo_description = models.CharField("Descrição para buscas", max_length=300)
     hero_title = models.TextField(
-        "Título (use **texto** para negrito)",
+        "Título",
         max_length=160,
-        help_text="Use uma nova linha para forçar a quebra no título.",
+        help_text="Use **texto** para negrito. Para forçar a quebra de linha, use uma nova linha.",
     )
     hero_description = models.TextField(
         "Descrição",
         max_length=1200,
-        help_text="Use **texto** para negrito e ~~texto~~ para destacar desfavorabilidade.",
+        help_text=(
+            "Use **texto** para negrito e ~~texto~~ para taxado. "
+            "Para forçar a quebra de linha, use uma nova linha."
+        ),
     )
     hero_cta_text = models.CharField("CTA de rolagem: texto", max_length=80)
-    hero_cta_url = models.CharField("CTA de rolagem: destino", max_length=500)
     content = models.TextField(
         "Conteúdo",
         help_text=(
@@ -626,7 +674,7 @@ class HomePage(CmsPage):
     hero_image_width = models.PositiveIntegerField(default=513, editable=False)
     hero_image_height = models.PositiveIntegerField(default=389, editable=False)
     hero_image = models.ImageField(
-        "Ilustração da abertura",
+        "Ilustração",
         upload_to="cms/home/",
         storage=CmsStorage(),
         width_field="hero_image_width",
@@ -667,16 +715,6 @@ class HomePage(CmsPage):
 
     def __str__(self):
         return "Home"
-
-    def clean(self):
-        parsed = urlparse(self.hero_cta_url)
-        relative = self.hero_cta_url.startswith("/") and not self.hero_cta_url.startswith("//")
-        anchor = self.hero_cta_url.startswith("#") and len(self.hero_cta_url) > 1
-        absolute = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
-        if not (relative or anchor or absolute):
-            raise ValidationError(
-                {"hero_cta_url": "Use https://, um caminho (/...) ou uma âncora (#...)."}
-            )
 
     @classmethod
     def default_images(cls):
@@ -734,8 +772,8 @@ class FooterAlertsPage(CmsPage):
     cta_url = models.CharField("Endereço do botão", max_length=500, default="/alertas")
 
     class Meta:
-        verbose_name = "Footer: receba nossos alertas"
-        verbose_name_plural = "Footer: receba nossos alertas"
+        verbose_name = "Rodapé: receba nossos alertas"
+        verbose_name_plural = "Rodapé: receba nossos alertas"
         db_table = "cms_footer_alerts_page"
 
     def clean(self):

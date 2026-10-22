@@ -8,6 +8,8 @@ class CmsImageSchema(Schema):
 
 
 class HeroPageSchema(Schema):
+    seo_title: str
+    seo_description: str
     title: str
     subtitle: str
     hero_image: CmsImageSchema

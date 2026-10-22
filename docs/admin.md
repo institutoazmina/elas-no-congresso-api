@@ -52,7 +52,7 @@ e textos**, substitua a imagem da abertura em qualquer dimensão e as imagens
 de Explore (4:3) e QuitérIA (16:9). Gráficos, cards de notícias, tabelas e mapas
 não são editados pelo CMS.
 
-Em **Footer: receba nossos alertas**, edite título, texto, chamada e endereço
+Em **Rodapé: receba nossos alertas**, edite título, texto, chamada e endereço
 do botão. Esse bloco é compartilhado e a alteração aparece em todo o site.
 
 - Os limites de texto e as exigências da imagem aparecem no formulário. Em
