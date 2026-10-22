@@ -1,0 +1,75 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'cms/css/markdown-components.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'cms/js/image-chooser.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<main class="markdown-image-chooser">
+    {% if can_add %}
+        <details class="markdown-image-upload" {% if form.errors %}open{% endif %}>
+            <summary>Enviar nova imagem</summary>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="markdown-image-field">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                        {% if field.help_text %}<p>{{ field.help_text }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="markdown-image-primary">Enviar imagem</button>
+            </form>
+        </details>
+    {% endif %}
+
+    <form method="get" class="markdown-image-search" role="search">
+        <label for="image-search">Buscar na galeria</label>
+        <div>
+            <input id="image-search" type="search" name="q" value="{{ query }}" placeholder="Título ou texto alternativo">
+            <button type="submit">Buscar</button>
+        </div>
+    </form>
+
+    <section class="markdown-image-grid" aria-label="Imagens disponíveis">
+        {% for image in page_obj %}
+            <article class="markdown-image-card">
+                <img src="{{ image.image.url }}" alt="">
+                <div class="markdown-image-card-body">
+                    <strong>{{ image.title }}</strong>
+                    <label for="alt-{{ image.pk }}">Texto alternativo</label>
+                    <input id="alt-{{ image.pk }}" class="markdown-image-alt" value="{{ image.alt_text }}" maxlength="240" required>
+                    <button
+                        type="button"
+                        class="markdown-image-select markdown-image-primary"
+                        data-image-url="{{ image.image.url }}"
+                    >Usar esta imagem</button>
+                </div>
+            </article>
+        {% empty %}
+            <p class="markdown-image-empty">Nenhuma imagem encontrada.</p>
+        {% endfor %}
+    </section>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="markdown-image-pagination" aria-label="Paginação">
+            {% if page_obj.has_previous %}
+                <a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">Próxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+</main>
+{% endblock %}

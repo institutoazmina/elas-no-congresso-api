@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
+from django.db.models.deletion import ProtectedError
 from django.test import Client
 from django.urls import reverse
 from PIL import Image
@@ -23,6 +24,7 @@ from apps.cms.admin import (
     FeministAIMarkdownWidget,
     FeministAIPageForm,
     HomePageForm,
+    MarkdownImageForm,
 )
 from apps.cms.images import ImageSpec, normalize
 from apps.cms.models import (
@@ -38,6 +40,7 @@ from apps.cms.models import (
     FooterAlertsPage,
     HomeCopy,
     HomePage,
+    MarkdownImage,
     ReportsPage,
 )
 
@@ -361,6 +364,103 @@ class TestAdmin:
         assert AlertsPage.objects.get().title == "**Alertas**"
 
 
+class TestMarkdownImageGallery:
+    def test_upload_normaliza_e_guarda_metadados(self, settings, tmp_path, admin_client):
+        settings.MEDIA_ROOT = tmp_path
+        user = get_user_model().objects.get(username="editora")
+        form = MarkdownImageForm(
+            data={"title": "Plenário", "alt_text": "Plenário da Câmara dos Deputados"},
+            files={"image": image_file(640, 360, name="foto.png")},
+        )
+
+        assert form.is_valid(), form.errors
+        image = form.save(commit=False)
+        image.uploaded_by = user
+        image.save()
+
+        assert image.image.name == f"cms/markdown/{image.pk.hex}.webp"
+        assert (image.width, image.height) == (640, 360)
+        with Image.open(tmp_path / image.image.name) as stored:
+            assert stored.format == "WEBP"
+
+    def test_seletor_exige_login_e_exibe_imagens(self, admin_client, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        image = MarkdownImage.objects.create(
+            title="Plenário",
+            alt_text="Plenário da Câmara",
+            image=image_file(320, 180),
+        )
+        url = reverse("admin:cms_markdownimage_chooser")
+
+        assert Client().get(url).status_code == 302
+        response = admin_client.get(url, {"q": "Plenário"})
+
+        assert response.status_code == 200
+        assert response["X-Frame-Options"] == "SAMEORIGIN"
+        html = response.content.decode()
+        assert "Plenário da Câmara" in html
+        assert image.image.url in html
+        assert "data-image-url=" in html
+
+    def test_seletor_permite_enviar_e_escolher_no_mesmo_fluxo(
+        self, admin_client, settings, tmp_path
+    ):
+        settings.MEDIA_ROOT = tmp_path
+        response = admin_client.post(
+            reverse("admin:cms_markdownimage_chooser"),
+            {
+                "title": "Comissão",
+                "alt_text": "Deputadas reunidas em comissão",
+                "image": image_file(400, 300),
+            },
+        )
+
+        assert response.status_code == 200
+        image = MarkdownImage.objects.get(title="Comissão")
+        assert image.uploaded_by.username == "editora"
+        assert image.image.url in response.content.decode()
+
+    @pytest.mark.parametrize("page_model", [HomePage, FeministAIPage, AboutPage])
+    def test_impede_excluir_imagem_referenciada(self, page_model, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        image = MarkdownImage.objects.create(
+            title="Congresso",
+            alt_text="Fachada do Congresso Nacional",
+            image=image_file(320, 180),
+        )
+        page = page_model.objects.get(pk=1)
+        page.content += f"\n\n![{image.alt_text}]({image.image.url})"
+        page.save(update_fields=["content"])
+
+        assert image.is_referenced
+        assert not admin.site._registry[MarkdownImage].has_delete_permission(Mock(), image)
+        with pytest.raises(ProtectedError, match="está em uso"):
+            image.delete()
+
+    def test_exclui_imagem_sem_referencia_e_seu_arquivo(self, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        image = MarkdownImage.objects.create(
+            title="Congresso",
+            alt_text="Fachada do Congresso Nacional",
+            image=image_file(320, 180),
+        )
+        path = tmp_path / image.image.name
+
+        image.delete()
+
+        assert not MarkdownImage.objects.filter(pk=image.pk).exists()
+        assert not path.exists()
+
+    @pytest.mark.parametrize("model", [HomePage, FeministAIPage, AboutPage])
+    def test_editor_markdown_recebe_o_seletor(self, admin_client, model):
+        response = admin_client.get(reverse(f"admin:cms_{model._meta.model_name}_change", args=[1]))
+        html = response.content.decode()
+
+        assert reverse("admin:cms_markdownimage_chooser") in html
+        assert "cms/js/markdown-image-chooser.js" in html
+        assert "cms/css/markdown-components.css" in html
+
+
 class TestPublishDefaults:
     def test_publica_o_original_uma_vez_no_media_root(self, settings, tmp_path):
         settings.MEDIA_ROOT = tmp_path
@@ -513,7 +613,8 @@ class TestFeministAIPage:
         ]
         assert isinstance(form.fields["content"].widget, MarkdownWidget)
         assert isinstance(form.fields["content"].widget, FeministAIMarkdownWidget)
-        assert form.fields["content"].widget.media._js[-1] == ("cms/js/markdown-components.js")
+        assert "cms/js/markdown-components.js" in form.fields["content"].widget.media._js
+        assert "cms/js/markdown-image-chooser.js" in form.fields["content"].widget.media._js
 
 
 class TestAboutPage:

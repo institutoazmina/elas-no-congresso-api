@@ -71,6 +71,12 @@ class CmsStorage(Storage):
     def _open(self, name, mode="rb"):
         return default_storage.open(name, mode)
 
+    def delete(self, name):
+        if not settings.CMS_S3_BUCKET:
+            return default_storage.delete(name)
+        _client().delete_object(Bucket=settings.CMS_S3_BUCKET, Key=name)
+        invalidate(name)
+
     def exists(self, name):
         if not settings.CMS_S3_BUCKET:
             return default_storage.exists(name)

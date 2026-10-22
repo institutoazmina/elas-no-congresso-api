@@ -99,6 +99,18 @@ Ambiente:
 - [ ] Confirmar que dados legislativos não foram substituídos por conteúdo editorial.
 - [ ] Restaurar o conteúdo desejado ao terminar.
 
+## Galeria de imagens do Markdown
+
+- [ ] Abrir **Galeria de imagens** no grupo CMS e localizar uma imagem pela busca.
+- [ ] Em Home, IA Feminista e Sobre, abrir a galeria pelo botão de imagem do editor.
+- [ ] Enviar PNG, JPEG e WebP válidos, sempre com título e texto alternativo.
+- [ ] Confirmar que arquivo acima de 5 MB e formato inválido são recusados.
+- [ ] Escolher uma imagem existente e conferir `![texto alternativo](URL)` na posição do cursor.
+- [ ] Editar o texto alternativo no seletor e confirmar que o texto editado é inserido.
+- [ ] Salvar a página e conferir a imagem e seu texto alternativo no site.
+- [ ] Confirmar que uma imagem em uso não pode ser excluída da galeria.
+- [ ] Remover a referência do Markdown, salvar e confirmar que a imagem pode ser excluída.
+
 ## Chamada global de alertas
 
 - [ ] Alterar título, texto, chamada e URL do botão no item **Rodapé: receba nossos alertas**.

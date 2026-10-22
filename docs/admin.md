@@ -15,9 +15,22 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
 ## CMS do site
 
 O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
-(**Alertas**, **Reportagens**, **Atividade legislativa**, **IA Feminista**, **Sobre** e **Home**). Cada página tem
+(**Alertas**, **Reportagens**, **Atividade legislativa**, **IA Feminista**, **Sobre** e **Home**) e a **Galeria de imagens**. Cada página tem
 um registro único: o menu abre direto o formulário. Ver
 [ADR-006](decisions/006-cms-do-site.md).
+
+### Galeria de imagens do Markdown
+
+Os editores Markdown de **Home**, **IA Feminista** e **Sobre** têm um botão de
+imagem que abre a galeria. Nela é possível buscar uma imagem existente, ajustar
+o texto alternativo para aquele uso ou enviar uma nova imagem sem sair do
+formulário. Ao escolher, o editor insere `![texto alternativo](URL)` na posição
+do cursor.
+
+Toda imagem nova exige título interno e texto alternativo. PNG, JPEG e WebP de
+até 5 MB são aceitos e armazenados como WebP. Uma imagem presente no Markdown
+de qualquer uma das três páginas não pode ser excluída; remova primeiro sua
+referência da página e salve a alteração.
 
 Na **IA Feminista**, os campos estão agrupados pelas seções da página. Títulos,
 parágrafos, links, cartões, descrições de imagens e legendas das tabelas são

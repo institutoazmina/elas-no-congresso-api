@@ -1,8 +1,10 @@
 import uuid
 from urllib.parse import urlparse
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.deletion import ProtectedError
 
 from .images import ImageSpec
 from .storage import CmsStorage
@@ -787,3 +789,70 @@ class FooterAlertsPage(CmsPage):
 
     def __str__(self):
         return "Receba nossos alertas"
+
+
+def markdown_image_path(instance, filename):
+    return f"cms/markdown/{instance.pk.hex}.webp"
+
+
+class MarkdownImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField("Título interno", max_length=160)
+    alt_text = models.CharField(
+        "Texto alternativo",
+        max_length=240,
+        help_text="Descreva objetivamente o conteúdo da imagem para quem não pode vê-la.",
+    )
+    width = models.PositiveIntegerField("Largura", editable=False)
+    height = models.PositiveIntegerField("Altura", editable=False)
+    image = models.ImageField(
+        "Imagem",
+        upload_to=markdown_image_path,
+        storage=CmsStorage(),
+        width_field="width",
+        height_field="height",
+        help_text="PNG, JPEG ou WebP em qualquer dimensão, até 5 MB.",
+    )
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Enviada por",
+        null=True,
+        blank=True,
+        editable=False,
+        on_delete=models.SET_NULL,
+    )
+    created_at = models.DateTimeField("Enviada em", auto_now_add=True)
+    updated_at = models.DateTimeField("Atualizada em", auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Imagem da galeria"
+        verbose_name_plural = "Galeria de imagens"
+        db_table = "cms_markdown_image"
+
+    def __str__(self):
+        return self.title
+
+    def references(self):
+        if not self.image:
+            return []
+        return [
+            page
+            for model in (HomePage, FeministAIPage, AboutPage)
+            for page in model.objects.filter(content__contains=self.image.name)
+        ]
+
+    @property
+    def is_referenced(self):
+        return bool(self.references())
+
+    def delete(self, *args, **kwargs):
+        references = self.references()
+        if references:
+            raise ProtectedError("Esta imagem está em uso em uma página do CMS.", references)
+        name = self.image.name
+        storage = self.image.storage
+        result = super().delete(*args, **kwargs)
+        if name:
+            storage.delete(name)
+        return result

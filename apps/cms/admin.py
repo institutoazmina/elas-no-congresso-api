@@ -3,9 +3,14 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.files.uploadedfile import UploadedFile
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.forms import modelform_factory
-from django.shortcuts import redirect
-from django.urls import reverse
+from django.shortcuts import redirect, render
+from django.urls import path, reverse
+from django.utils.decorators import method_decorator
+from django.utils.html import format_html
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.widgets import UnfoldAdminTextareaWidget
 from unfold_markdown.widgets import MarkdownWidget
@@ -28,11 +33,14 @@ from .models import (
     FooterAlertsPage,
     HeroPage,
     HomePage,
+    MarkdownImage,
     ReportsPage,
 )
 
 
 class CmsMarkdownWidget(MarkdownWidget):
+    template_name = "cms/widgets/markdown.html"
+
     class Media:
         extend = False
         css = {
@@ -46,10 +54,123 @@ class CmsMarkdownWidget(MarkdownWidget):
             "unfold_markdown/js/easymde.min.js",
             "unfold_markdown/js/markdown.config.js",
             "cms/js/markdown-components.js",
+            "cms/js/markdown-image-chooser.js",
         )
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["widget"]["image_chooser_url"] = reverse("admin:cms_markdownimage_chooser")
+        return context
 
 
 FeministAIMarkdownWidget = CmsMarkdownWidget
+
+
+class MarkdownImageForm(forms.ModelForm):
+    class Meta:
+        model = MarkdownImage
+        fields = ["title", "alt_text", "image"]
+
+    def clean_image(self):
+        image = self.cleaned_data["image"]
+        if isinstance(image, UploadedFile):
+            return normalize_unconstrained(image, stem=self.instance.pk.hex)
+        return image
+
+
+@admin.register(MarkdownImage)
+class MarkdownImageAdmin(ModelAdmin):
+    form = MarkdownImageForm
+    list_display = ["thumbnail", "title", "alt_text", "dimensions", "uploaded_by", "created_at"]
+    search_fields = ["title", "alt_text"]
+    readonly_fields = ["preview", "width", "height", "uploaded_by", "created_at", "updated_at"]
+    fields = [
+        "preview",
+        "title",
+        "alt_text",
+        "image",
+        "width",
+        "height",
+        "uploaded_by",
+        "created_at",
+        "updated_at",
+    ]
+
+    @admin.display(description="Prévia")
+    def thumbnail(self, obj):
+        return format_html(
+            '<img src="{}" alt="" style="width:72px;height:48px;object-fit:cover;border-radius:6px">',
+            obj.image.url,
+        )
+
+    @admin.display(description="Imagem")
+    def preview(self, obj):
+        if not obj:
+            return "—"
+        return format_html(
+            '<img src="{}" alt="" style="max-width:480px;max-height:320px;object-fit:contain">',
+            obj.image.url,
+        )
+
+    @admin.display(description="Dimensões")
+    def dimensions(self, obj):
+        return f"{obj.width} × {obj.height} px"
+
+    def save_model(self, request, obj, form, change):
+        if not obj.uploaded_by_id:
+            obj.uploaded_by = request.user
+        super().save_model(request, obj, form, change)
+
+    def has_delete_permission(self, request, obj=None):
+        return super().has_delete_permission(request, obj) and not (obj and obj.is_referenced)
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        actions.pop("delete_selected", None)
+        return actions
+
+    def get_urls(self):
+        return [
+            path(
+                "chooser/",
+                self.admin_site.admin_view(self.chooser_view),
+                name="cms_markdownimage_chooser",
+            )
+        ] + super().get_urls()
+
+    @method_decorator(xframe_options_sameorigin)
+    def chooser_view(self, request):
+        if not self.has_view_permission(request):
+            raise PermissionDenied
+
+        form = MarkdownImageForm()
+        if request.method == "POST":
+            if not self.has_add_permission(request):
+                raise PermissionDenied
+            form = MarkdownImageForm(request.POST, request.FILES)
+            if form.is_valid():
+                image = form.save(commit=False)
+                image.uploaded_by = request.user
+                image.save()
+                messages.success(request, "Imagem adicionada à galeria.")
+                form = MarkdownImageForm()
+
+        query = request.GET.get("q", "").strip()
+        images = self.get_queryset(request)
+        if query:
+            images = images.filter(Q(title__icontains=query) | Q(alt_text__icontains=query))
+        page_obj = Paginator(images, 24).get_page(request.GET.get("page"))
+        context = {
+            **self.admin_site.each_context(request),
+            "opts": self.model._meta,
+            "title": "Galeria de imagens",
+            "form": form,
+            "page_obj": page_obj,
+            "query": query,
+            "can_add": self.has_add_permission(request),
+            "is_popup": True,
+        }
+        return render(request, "admin/cms/markdownimage/chooser.html", context)
 
 
 class CmsPageForm(forms.ModelForm):
