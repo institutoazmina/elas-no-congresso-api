@@ -123,7 +123,7 @@ O CSV usa `;`, BOM UTF-8, todos os campos entre aspas e 11 colunas em português
 | `GET /cms/activity` | — | Topo de `/atividade-legislativa`, mesmo formato |
 | `GET /cms/feminist-ai` | — | Conteúdo de `/ia-feminista`: `content` (campos de texto e links), `images` (`hero`, `flow_desktop`, `flow_mobile`), `categories`, `limitations`, `evaluation_metrics`, `evaluation_partitions`, `thematic_metrics`, `thematic_partitions` e `open_links`; `Cache-Control: no-store` |
 | `GET /cms/about` | — | Conteúdo de `/sobre`: `content` (SEO, textos e links), `hero_image`, `timeline`, `challenges` e `partners`; `Cache-Control: no-store` |
-| `GET /cms/home` | — | Conteúdo editorial da home: `content` (títulos, textos, post-its, legendas e CTAs) e `images` (`hero`, `explore`, `quiteria`); `Cache-Control: no-store` |
+| `GET /cms/home` | — | Conteúdo editorial da home: `hero_image` e `content` (títulos, textos, imagens, post-its, legendas e CTAs); `Cache-Control: no-store` |
 | `GET /cms/footer-alerts` | — | Bloco global de alertas no rodapé: `{title, text, cta_text, cta_url}`; `Cache-Control: no-store` |
 
 Lido pelo build do site ([ADR-006](decisions/006-cms-do-site.md)).
@@ -139,7 +139,8 @@ outro logo; o site usa `logo_url` quando presente. O endpoint inclui `?v=` nas
 URLs das imagens enviadas para atualizar o cache.
 Em `/cms/home`, dados de gráficos, cards de notícias, tabelas e mapas seguem
 nas APIs existentes. O percentual do post-it feminino continua vindo da API
-de estatísticas. As três imagens incluem `{url, width, height}` e `?v=`.
+de estatísticas. A ilustração do topo inclui `{url, width, height}` e `?v=`; as
+imagens de Explore e QuitérIA usam Markdown padrão dentro de `content`.
 
 ## Inscrições em alertas
 

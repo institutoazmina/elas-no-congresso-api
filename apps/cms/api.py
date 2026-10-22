@@ -139,7 +139,7 @@ def about_page(request, response: HttpResponse):
 
 @router.get("/home", response=HomePageSchema)
 def home_page(request, response: HttpResponse):
-    """Hero, Markdown e imagens da Home; gráficos usam as APIs próprias."""
+    """Hero e Markdown da Home; gráficos usam as APIs próprias."""
     response["Cache-Control"] = "no-store"
     page = HomePage.objects.get(pk=HomePage.SINGLETON_PK)
     version = int(page.updated_at.timestamp())
@@ -154,14 +154,6 @@ def home_page(request, response: HttpResponse):
             page.hero_image, page.hero_image_width, page.hero_image_height, version
         ),
         "content": page.content,
-        "images": {
-            "explore": _cms_image(
-                page.explore_image, page.explore_image_width, page.explore_image_height, version
-            ),
-            "quiteria": _cms_image(
-                page.quiteria_image, page.quiteria_image_width, page.quiteria_image_height, version
-            ),
-        },
     }
 
 

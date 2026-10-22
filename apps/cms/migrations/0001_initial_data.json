@@ -1,0 +1,4385 @@
+[
+  {
+    "model": "cms.feministaipage",
+    "pk": 1,
+    "fields": {
+      "seo_title": "QuitérIA: inteligência artificial feminista no Congresso",
+      "seo_description": "Conheça a QuitérIA, inteligência artificial feminista que monitora, classifica e avalia projetos de lei sobre gênero e direitos no Congresso Nacional.",
+      "content": "## Diferencial tecnológico\n\nDiferente das IAs genéricas, treinadas com dados indeterminados da internet, a QuitérIA parte de um modelo de linguagem pré-treinado em português brasileiro (BERTimbau Base), com ajuste fino sobre um dataset construído ao longo de anos de avaliação humana de projetos de lei sensíveis a gênero na Câmara e no Senado.\n\nO foco estratégico está no Processamento de Linguagem Natural (PLN) aplicado tanto às ementas quanto ao inteiro teor das matérias, priorizando eixos como violência de gênero, direitos sexuais e reprodutivos e igualdade no trabalho.\n\nA escolha por modelos compactos e especializados, em vez de Large Language Models (LLMs), alia eficiência e soberania tecnológica: consomem significativamente menos energia e poder computacional, garantem maior autonomia operacional e facilitam futuros retreinamentos.\n\n### Veja como funciona\n\n![Fluxo de processamento da QuitérIA em cinco etapas](/media/cms/ia-feminista/flow-desktop.webp)\n\n### Arquitetura dos modelos\n\n:::: cards 2\n\n::: card\n#### Modelo de Desfavorabilidade\n\nPrincipal modelo da ferramenta. Baseado no BERTimbau Base, adaptado ao português brasileiro, com uma camada adicional de classificação para ajuste fino.\n\n**87% de acurácia**\n\n> na avaliação de matérias de gênero\n:::\n\n::: card\n#### Modelo de Temas\n\nMesma estratégia do modelo anterior, com o desafio adicional de classificação multi-label, cobrindo dez temas diferentes de projetos de lei.\n:::\n\n::::\n\n---\n\n## feminismo de dados e treinamento ético\n\nA QuitérIA aplica na prática os princípios do Feminismo de Dados e, como integrante da Rede Feminista de Inteligência Artificial da América Latina e do Caribe, [reconhece e adota sua declaração de princípios](https://iafeminista.lat/declaracion-de-principios/).\n\nNa prática, a IA faz a triagem, classifica as proposições por categoria e calcula uma pontuação de desfavorabilidade de 0 a 1. Mas nunca opera de forma 100% autônoma: projetos ambíguos ou divergentes são encaminhados para validação por analistas humanos, e as correções feitas pelas especialistas retroalimentam o sistema em ciclos contínuos de readequação e retreinamento.\n\nEsse processo prevê retreinamentos periódicos. **Atualmente estamos no segundo ciclo.** A cada ciclo, novas proposições são avaliadas e o modelo é atualizado com os ajustes feitos pela equipe humana.\n\n### As dez categorias temáticas\n\n| Categoria | Conceito |\n| --- | --- |\n| Violências de Gênero | Propostas relacionadas à prevenção, enfrentamento, responsabilização e reparação das diversas formas de violência baseadas em gênero, assédio, violência doméstica, sexual, política, institucional, obstétrica, digital e feminicídio, além de proposições sobre acesso a armas ou que alterem a Lei Maria da Penha. |\n| Direitos Sexuais e Reprodutivos | Autonomia corporal, direitos reprodutivos e sexuais, acesso à contracepção, aborto, planejamento familiar, reprodução assistida e garantia de direitos ligados à sexualidade. |\n| Saúde | Promoção, prevenção e acesso à saúde, com atenção às necessidades específicas de mulheres, pessoas gestantes, pessoas LGBTQIAPN+ e outros grupos em situação de vulnerabilidade. Abrange saúde materna, menstruação e dignidade menstrual, menopausa, climatério, cânceres do aparelho reprodutor, saúde mental, acesso a medicamentos, prevenção de doenças e organização dos serviços de saúde. |\n| Igualdade e Antidiscriminação | Iniciativas voltadas a promover igualdade de direitos e oportunidades e a combater discriminações baseadas em gênero, sexo, orientação sexual, identidade de gênero, raça, território e outras formas de desigualdade. |\n| LGBTQIAPN+ | Direitos, cidadania, proteção e reconhecimento das pessoas LGBTQIAPN+, incluindo identidade de gênero, orientação sexual, acesso a direitos e combate à violência e à discriminação. |\n| Família, Parentalidade e Relações Civis | Organização familiar, casamento, união estável, divórcio, filiação, guarda, adoção, poder familiar, registro civil e demais direitos e deveres nas relações familiares. |\n| Educação e Cultura | Educação formal e não formal, produção cultural, liberdade de ensino, conteúdos curriculares, memória e preservação histórica, homenagens e reconhecimento de personalidades ou marcos relevantes para a igualdade de gênero, a diversidade e os direitos humanos. |\n| Infância e Adolescência | Reúne proposições relacionadas à promoção, proteção e garantia dos direitos de crianças e adolescentes, com atenção especial aos impactos sobre meninas e adolescentes em perspectiva de gênero. Inclui temas como proteção integral, convivência familiar e comunitária, desenvolvimento infantil, primeira infância, violência contra crianças e adolescentes, trabalho infantil, acolhimento institucional, medidas socioeducativas, ambiente digital, proteção de dados, uso de tecnologias, participação social, acesso a direitos e políticas públicas voltadas à infância e à adolescência. |\n| Trabalho, Economia, Cuidado e Proteção Social | Mercado de trabalho, economia, geração de renda, empreendedorismo, previdência, seguridade e assistência social, políticas de proteção econômica e social, maternidade, licença-maternidade e outros direitos trabalhistas, acesso a creches e políticas de cuidado, valorização do trabalho doméstico e de cuidados, regulamentação ou direitos relacionados à prostituição, além de iniciativas sobre os impactos das mudanças climáticas e das políticas ambientais nas condições de vida, trabalho, cuidado e proteção social. |\n| Participação Política e Institucionalidade | Participação de mulheres e da população LGBTQIAPN+ nos espaços de poder, representação política, cargos e funcionamento das instituições públicas, mecanismos de participação social e políticas públicas de promoção da igualdade de gênero. |\n\n---\n\n## Governança humana e transparência\n\nInfraestruturas de dados e sistemas de inteligência artificial são, majoritariamente, orientados por lógicas institucionais, corporativas ou opacas. A QuitérIA propõe uma reapropriação crítica dessas tecnologias a partir de uma perspectiva feminista e voltada ao interesse público, concretizando, no campo do monitoramento legislativo, os princípios da [política de uso de inteligência artificial do Instituto AzMina](https://azmina.com.br/revista-azmina/#uso-de-inteligencia-artificial), que estabelece a revisão humana como condição inegociável, o compromisso com a transparência e a abertura de código sempre que possível.\n\nPor isso tornamos públicos não apenas os resultados do monitoramento, mas também os processos, critérios e metodologias usados na coleta, seleção e análise das proposições. Cada proposição monitorada vem acompanhada de informações sobre tramitação, autoria, situação legislativa, classificação de impacto e, quando aplicável, a organização responsável pela avaliação e sua justificativa técnica. A metodologia de coleta, os critérios de inclusão, o protocolo de avaliação e a documentação da IA também são públicos, permitindo escrutínio e aperfeiçoamento contínuo.\n\n### Duas instâncias de supervisão\n\n:::: cards 2\n\n::: card\n#### Comitê de Governança\n\nResponsável pelas diretrizes estratégicas, aprovação de protocolos metodológicos, gestão de riscos tecnológicos e salvaguarda dos princípios éticos.\n\n> Atuação vigente de junho a setembro de 2026.\n:::\n\n::: card\n#### Comitê de Validação\n\nInstância técnica encarregada de auditar as classificações da IA, monitorar possíveis vieses tecnológicos, avaliar indicadores de desempenho e propor ajustes nos dados de treino.\n\n> Atuação vigente de agosto a setembro de 2026.\n:::\n\n::::\n\n### O que a QuitérIA ~~não faz~~\n\nO papel do sistema é apoiar a análise, a organização e o monitoramento, e não automatizar decisões políticas complexas. A QuitérIA:\n\n- ~~x~~ não substitui decisões humanas em temas políticos, jurídicos ou de direitos humanos;\n- ~~x~~ não define sozinha, de forma definitiva, se uma proposta é favorável ou desfavorável;\n- ~~x~~ não toma decisões de moderação sem supervisão nem atua como autoridade jurídica;\n- ~~x~~ não invisibiliza divergências políticas legítimas;\n- ~~x~~ não substitui a análise contextual especializada, e opera com transparência sobre suas limitações e margens de erro;\n- ~~x~~ não reproduz vieses presentes nos dados legislativos ou nas anotações humanas sem mecanismos de auditoria e revisão crítica.\n\n---\n\n## desempenho do modelo\n\n### Métricas do modelo de avaliação de desfavorabilidade\n\n::: table transparent\n\n| [Métricas](https://ia.wiki.br/machine-learning/avaliacao/metricas/) | QuitérIA 1.0 (2025) | QuitérIA 2.0 (2026) | Tendência |\n| --- | --- | --- | --- |\n| [Acurácia](https://ia.wiki.br/machine-learning/avaliacao/metricas/acuracia/) | 0,82 | 0,87 | :::up::: |\n| [AUC](https://pt.wikipedia.org/wiki/Caracter%C3%ADstica_de_Opera%C3%A7%C3%A3o_do_Receptor) | – | 0,85 | – |\n| [F1 Score Índice 0](https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/) | 0,88 | 0,92 | :::up::: |\n| [F1 Score Índice 1](https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/) | 0,64 | 0,67 | :::up::: |\n| [Precisão Índice 0](https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/) | 0,91 | 0,89 | :::down::: |\n| [Precisão Índice 1](https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/) | 0,59 | 0,75 | :::up::: |\n| [Revocação Índice 0](https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/) | 0,86 | 0,94 | :::up::: |\n| [Revocação Índice 1](https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/) | 0,70 | 0,61 | :::down::: |\n\n:::\n\n### Partição dos dados\n\n::: table transparent\n\n| Partição | Acurácia | Percentual da base | Quantidade absoluta |\n| --- | --- | --- | --- |\n| Treino | 0,92 | 80,93% | 2.518 |\n| Validação | 0,84 | 9,03% | 281 |\n| Teste | 0,87 | 10,06% | 313 |\n\n:::\n\n### Métricas do modelo de categorização temática\n\n::: table transparent\n\n| Métricas | Valor |\n| --- | --- |\n| Acurácia | 0,82 |\n| F1 Macro | 0,71 |\n| Precisão Macro | 0,73 |\n| Recall Macro | 0,72 |\n| F1 Direitos Sexuais e Reprodutivos | 0,72 |\n| F1 Educação e Cultura | 0,73 |\n| F1 Família Parentalidade e Relações Civis | 0,73 |\n| F1 Igualdade e Antidiscriminação | 0,67 |\n| F1 Infância e Adolescência | 0,67 |\n| F1 LGBTQIAPN+ | 0,67 |\n| F1 Participação Política e Instituicionalidade | 0,59 |\n| F1 Saúde | 0,84 |\n| F1 Trabalho Economia Cuidado e Proteção Social | 0,81 |\n| F1 Violências de Gênero | 0,91 |\n\n:::\n\n### Partição dos dados\n\n::: table transparent\n\n| Base | Treino | Validação | Teste |\n| --- | --- | --- | --- |\n| Quantidade de Projetos | 2527 | 282 | 313 |\n| Direitos Sexuais e Reprodutivos | 294 (11,63%) | 31 (10,99%) | 25 (7,99%) |\n| Educação e Cultura | 127 (5,03%) | 14 (4,96%) | 13 (4,15%) |\n| Família, Parentalidade e Relações Civis | 126 (4,99%) | 8 (2,84%) | 11 (3,51%) |\n| Igualdade e Antidiscriminação | 48 (1,90%) | 3 (1,06%) | 5 (1,60%) |\n| Infância e Adolescência | 76 (3,01%) | 8 (2,84%) | 15 (4,79%) |\n| LGBTQIAPN+ | 123 (4,87%) | 20 (7,09%) | 12 (3,83%) |\n| Participação Política e Institucionalidade | 94 (3,72%) | 9 (3,19%) | 11 (3,51%) |\n| Saúde | 140 (5,54%) | 17 (6,03%) | 19 (6,07%) |\n| Trabalho, Economia, Cuidado e Proteção Social | 343 (13,57%) | 43 (15,25%) | 43 (13,74%) |\n| Violências de Gênero | 1156 (45,75%) | 129 (45,74%) | 159 (50,80%) |\n\n:::\n\n---\n\n## código e dados abertos\n\nA QuitérIA é um ecossistema aberto, transparente e replicável para outros campos da defesa dos direitos humanos. Visite os dados, códigos e documentação:\n\n- [Código e repositório da QuitérIA](https://github.com/institutoazmina/ia-feminista-elas-no-congresso)\n- [Modelo da QuitérIA 2.0 no Hugging Face](https://huggingface.co/azmina/quiteria-2.0)\n- [API pública e documentação](https://api.elasnocongresso.com.br/api/v1/docs)\n",
+      "hero_title": "Quem foi **Maria Quitéria?**",
+      "hero_description": "O nome da ferramenta homenageia a heroína baiana Maria Quitéria de Jesus (1792–1853), primeira mulher a integrar o Exército Brasileiro. Em 1822, ela se apresentou como homem, sob o pseudônimo \"Soldado Medeiros\", para lutar na Guerra de Independência do Brasil na Bahia. A QuitérIA carrega esse legado de coragem e resistência para o combate à opacidade legislativa.",
+      "hero_image_width": 743,
+      "hero_image_height": 1349,
+      "hero_image": "cms/ia-feminista/hero.webp",
+      "hero_image_alt": "Ilustração de Maria Quitéria",
+      "differential_heading": "Diferencial tecnológico",
+      "differential_paragraph_1": "Diferente das IAs genéricas, treinadas com dados indeterminados da internet, a QuitérIA parte de um modelo de linguagem pré-treinado em português brasileiro (BERTimbau Base), com ajuste fino sobre um dataset construído ao longo de anos de avaliação humana de projetos de lei sensíveis a gênero na Câmara e no Senado.",
+      "differential_paragraph_2": "O foco estratégico está no Processamento de Linguagem Natural (PLN) aplicado tanto às ementas quanto ao inteiro teor das matérias, priorizando eixos como violência de gênero, direitos sexuais e reprodutivos e igualdade no trabalho.",
+      "differential_paragraph_3": "A escolha por modelos compactos e especializados, em vez de Large Language Models (LLMs), alia eficiência e soberania tecnológica: consomem significativamente menos energia e poder computacional, garantem maior autonomia operacional e facilitam futuros retreinamentos.",
+      "flow_heading": "Veja como funciona",
+      "flow_image_alt": "Fluxo de processamento da QuitérIA em cinco etapas",
+      "flow_desktop_width": 820,
+      "flow_desktop_height": 574,
+      "flow_desktop_image": "cms/ia-feminista/flow-desktop.webp",
+      "flow_mobile_width": 524,
+      "flow_mobile_height": 574,
+      "flow_mobile_image": "cms/ia-feminista/flow-mobile.webp",
+      "architecture_heading": "Arquitetura dos modelos",
+      "architecture_card_1_title": "Modelo de Desfavorabilidade",
+      "architecture_card_1_text": "Principal modelo da ferramenta. Baseado no BERTimbau Base, adaptado ao português brasileiro, com uma camada adicional de classificação para ajuste fino.",
+      "architecture_card_1_highlight": "87% de acurácia",
+      "architecture_card_1_note": "na avaliação de matérias de gênero",
+      "architecture_card_2_title": "Modelo de Temas",
+      "architecture_card_2_text": "Mesma estratégia do modelo anterior, com o desafio adicional de classificação multi-label, cobrindo dez temas diferentes de projetos de lei.",
+      "feminism_heading": "feminismo de dados e treinamento ético",
+      "feminism_paragraph_1_before_link": "A QuitérIA aplica na prática os princípios do Feminismo de Dados e, como integrante da Rede Feminista de Inteligência Artificial da América Latina e do Caribe,",
+      "feminism_paragraph_1_link_text": "reconhece e adota sua declaração de princípios",
+      "feminism_paragraph_1_link_url": "https://iafeminista.lat/declaracion-de-principios/",
+      "feminism_paragraph_1_after_link": ".",
+      "feminism_paragraph_2": "Na prática, a IA faz a triagem, classifica as proposições por categoria e calcula uma pontuação de desfavorabilidade de 0 a 1. Mas nunca opera de forma 100% autônoma: projetos ambíguos ou divergentes são encaminhados para validação por analistas humanos, e as correções feitas pelas especialistas retroalimentam o sistema em ciclos contínuos de readequação e retreinamento.",
+      "feminism_paragraph_3_before_highlight": "Esse processo prevê retreinamentos periódicos.",
+      "feminism_paragraph_3_highlight": "Atualmente estamos no segundo ciclo.",
+      "feminism_paragraph_3_after_highlight": "A cada ciclo, novas proposições são avaliadas e o modelo é atualizado com os ajustes feitos pela equipe humana.",
+      "categories_heading": "As dez categorias temáticas",
+      "categories_name_column": "Categoria",
+      "categories_concept_column": "Conceito",
+      "governance_heading": "Governança humana e transparência",
+      "governance_paragraph_1_before_link": "Infraestruturas de dados e sistemas de inteligência artificial são, majoritariamente, orientados por lógicas institucionais, corporativas ou opacas. A QuitérIA propõe uma reapropriação crítica dessas tecnologias a partir de uma perspectiva feminista e voltada ao interesse público, concretizando, no campo do monitoramento legislativo, os princípios da",
+      "governance_paragraph_1_link_text": "política de uso de inteligência artificial do Instituto AzMina",
+      "governance_paragraph_1_link_url": "https://azmina.com.br/revista-azmina/#uso-de-inteligencia-artificial",
+      "governance_paragraph_1_after_link": ", que estabelece a revisão humana como condição inegociável, o compromisso com a transparência e a abertura de código sempre que possível.",
+      "governance_paragraph_2": "Por isso tornamos públicos não apenas os resultados do monitoramento, mas também os processos, critérios e metodologias usados na coleta, seleção e análise das proposições. Cada proposição monitorada vem acompanhada de informações sobre tramitação, autoria, situação legislativa, classificação de impacto e, quando aplicável, a organização responsável pela avaliação e sua justificativa técnica. A metodologia de coleta, os critérios de inclusão, o protocolo de avaliação e a documentação da IA também são públicos, permitindo escrutínio e aperfeiçoamento contínuo.",
+      "supervision_heading": "Duas instâncias de supervisão",
+      "supervision_card_1_title": "Comitê de Governança",
+      "supervision_card_1_text": "Responsável pelas diretrizes estratégicas, aprovação de protocolos metodológicos, gestão de riscos tecnológicos e salvaguarda dos princípios éticos.",
+      "supervision_card_1_note": "Atuação vigente de junho a setembro de 2026.",
+      "supervision_card_2_title": "Comitê de Validação",
+      "supervision_card_2_text": "Instância técnica encarregada de auditar as classificações da IA, monitorar possíveis vieses tecnológicos, avaliar indicadores de desempenho e propor ajustes nos dados de treino.",
+      "supervision_card_2_note": "Atuação vigente de agosto a setembro de 2026.",
+      "limitations_heading": "O que a QuitérIA não faz",
+      "limitations_intro": "O papel do sistema é apoiar a análise, a organização e o monitoramento, e não automatizar decisões políticas complexas. A QuitérIA:",
+      "performance_heading": "desempenho do modelo",
+      "evaluation_caption": "Métricas do modelo de avaliação de desfavorabilidade",
+      "evaluation_metric_help_url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/",
+      "evaluation_metric_column": "Métricas",
+      "evaluation_previous_column": "QuitérIA 1.0 (2025)",
+      "evaluation_current_column": "QuitérIA 2.0 (2026)",
+      "evaluation_partition_caption": "Partição dos dados",
+      "evaluation_partition_name_column": "Partição",
+      "evaluation_partition_accuracy_column": "Acurácia",
+      "evaluation_partition_percent_column": "Percentual da base",
+      "evaluation_partition_count_column": "Quantidade absoluta",
+      "thematic_caption": "Métricas do modelo de categorização temática",
+      "thematic_partition_caption": "Partição dos dados",
+      "thematic_partition_name_column": "Base",
+      "thematic_partition_training_column": "Treino",
+      "thematic_partition_validation_column": "Validação",
+      "thematic_partition_test_column": "Teste",
+      "open_data_heading": "código e dados abertos",
+      "open_data_intro": "A QuitérIA é um ecossistema aberto, transparente e replicável para outros campos da defesa dos direitos humanos. Visite os dados, códigos e documentação:"
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "name": "Violências de Gênero",
+      "concept": "Propostas relacionadas à prevenção, enfrentamento, responsabilização e reparação das diversas formas de violência baseadas em gênero, assédio, violência doméstica, sexual, política, institucional, obstétrica, digital e feminicídio, além de proposições sobre acesso a armas ou que alterem a Lei Maria da Penha."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "name": "Direitos Sexuais e Reprodutivos",
+      "concept": "Autonomia corporal, direitos reprodutivos e sexuais, acesso à contracepção, aborto, planejamento familiar, reprodução assistida e garantia de direitos ligados à sexualidade."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "name": "Saúde",
+      "concept": "Promoção, prevenção e acesso à saúde, com atenção às necessidades específicas de mulheres, pessoas gestantes, pessoas LGBTQIAPN+ e outros grupos em situação de vulnerabilidade. Abrange saúde materna, menstruação e dignidade menstrual, menopausa, climatério, cânceres do aparelho reprodutor, saúde mental, acesso a medicamentos, prevenção de doenças e organização dos serviços de saúde."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "name": "Igualdade e Antidiscriminação",
+      "concept": "Iniciativas voltadas a promover igualdade de direitos e oportunidades e a combater discriminações baseadas em gênero, sexo, orientação sexual, identidade de gênero, raça, território e outras formas de desigualdade."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "name": "LGBTQIAPN+",
+      "concept": "Direitos, cidadania, proteção e reconhecimento das pessoas LGBTQIAPN+, incluindo identidade de gênero, orientação sexual, acesso a direitos e combate à violência e à discriminação."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "position": 6,
+      "name": "Família, Parentalidade e Relações Civis",
+      "concept": "Organização familiar, casamento, união estável, divórcio, filiação, guarda, adoção, poder familiar, registro civil e demais direitos e deveres nas relações familiares."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "position": 7,
+      "name": "Educação e Cultura",
+      "concept": "Educação formal e não formal, produção cultural, liberdade de ensino, conteúdos curriculares, memória e preservação histórica, homenagens e reconhecimento de personalidades ou marcos relevantes para a igualdade de gênero, a diversidade e os direitos humanos."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "position": 8,
+      "name": "Infância e Adolescência",
+      "concept": "Reúne proposições relacionadas à promoção, proteção e garantia dos direitos de crianças e adolescentes, com atenção especial aos impactos sobre meninas e adolescentes em perspectiva de gênero. Inclui temas como proteção integral, convivência familiar e comunitária, desenvolvimento infantil, primeira infância, violência contra crianças e adolescentes, trabalho infantil, acolhimento institucional, medidas socioeducativas, ambiente digital, proteção de dados, uso de tecnologias, participação social, acesso a direitos e políticas públicas voltadas à infância e à adolescência."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "position": 9,
+      "name": "Trabalho, Economia, Cuidado e Proteção Social",
+      "concept": "Mercado de trabalho, economia, geração de renda, empreendedorismo, previdência, seguridade e assistência social, políticas de proteção econômica e social, maternidade, licença-maternidade e outros direitos trabalhistas, acesso a creches e políticas de cuidado, valorização do trabalho doméstico e de cuidados, regulamentação ou direitos relacionados à prostituição, além de iniciativas sobre os impactos das mudanças climáticas e das políticas ambientais nas condições de vida, trabalho, cuidado e proteção social."
+    }
+  },
+  {
+    "model": "cms.feministaicategory",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "position": 10,
+      "name": "Participação Política e Institucionalidade",
+      "concept": "Participação de mulheres e da população LGBTQIAPN+ nos espaços de poder, representação política, cargos e funcionamento das instituições públicas, mecanismos de participação social e políticas públicas de promoção da igualdade de gênero."
+    }
+  },
+  {
+    "model": "cms.feministailimitation",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "text": "não substitui decisões humanas em temas políticos, jurídicos ou de direitos humanos;"
+    }
+  },
+  {
+    "model": "cms.feministailimitation",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "text": "não define sozinha, de forma definitiva, se uma proposta é favorável ou desfavorável;"
+    }
+  },
+  {
+    "model": "cms.feministailimitation",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "text": "não toma decisões de moderação sem supervisão nem atua como autoridade jurídica;"
+    }
+  },
+  {
+    "model": "cms.feministailimitation",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "text": "não invisibiliza divergências políticas legítimas;"
+    }
+  },
+  {
+    "model": "cms.feministailimitation",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "text": "não substitui a análise contextual especializada, e opera com transparência sobre suas limitações e margens de erro;"
+    }
+  },
+  {
+    "model": "cms.feministailimitation",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "position": 6,
+      "text": "não reproduz vieses presentes nos dados legislativos ou nas anotações humanas sem mecanismos de auditoria e revisão crítica."
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "label": "Acurácia",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/acuracia/",
+      "previous": "0,82",
+      "current": "0,87",
+      "trend": "up"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "label": "AUC",
+      "url": "https://pt.wikipedia.org/wiki/Caracter%C3%ADstica_de_Opera%C3%A7%C3%A3o_do_Receptor",
+      "previous": "–",
+      "current": "0,85",
+      "trend": "neutral"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "label": "F1 Score Índice 0",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/",
+      "previous": "0,88",
+      "current": "0,92",
+      "trend": "up"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "label": "F1 Score Índice 1",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/",
+      "previous": "0,64",
+      "current": "0,67",
+      "trend": "up"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "label": "Precisão Índice 0",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+      "previous": "0,91",
+      "current": "0,89",
+      "trend": "down"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "position": 6,
+      "label": "Precisão Índice 1",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+      "previous": "0,59",
+      "current": "0,75",
+      "trend": "up"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "position": 7,
+      "label": "Revocação Índice 0",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+      "previous": "0,86",
+      "current": "0,94",
+      "trend": "up"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationmetric",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "position": 8,
+      "label": "Revocação Índice 1",
+      "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+      "previous": "0,70",
+      "current": "0,61",
+      "trend": "down"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationpartition",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "label": "Treino",
+      "accuracy": "0,92",
+      "percentage": "80,93%",
+      "count": "2.518"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationpartition",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "label": "Validação",
+      "accuracy": "0,84",
+      "percentage": "9,03%",
+      "count": "281"
+    }
+  },
+  {
+    "model": "cms.feministaievaluationpartition",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "label": "Teste",
+      "accuracy": "0,87",
+      "percentage": "10,06%",
+      "count": "313"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "label": "Acurácia",
+      "value": "0,82"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "label": "F1 Macro",
+      "value": "0,71"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "label": "Precisão Macro",
+      "value": "0,73"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "label": "Recall Macro",
+      "value": "0,72"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "label": "F1 Direitos Sexuais e Reprodutivos",
+      "value": "0,72"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "position": 6,
+      "label": "F1 Educação e Cultura",
+      "value": "0,73"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "position": 7,
+      "label": "F1 Família Parentalidade e Relações Civis",
+      "value": "0,73"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "position": 8,
+      "label": "F1 Igualdade e Antidiscriminação",
+      "value": "0,67"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "position": 9,
+      "label": "F1 Infância e Adolescência",
+      "value": "0,67"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "position": 10,
+      "label": "F1 LGBTQIAPN+",
+      "value": "0,67"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 11,
+    "fields": {
+      "page": 1,
+      "position": 11,
+      "label": "F1 Participação Política e Instituicionalidade",
+      "value": "0,59"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 12,
+    "fields": {
+      "page": 1,
+      "position": 12,
+      "label": "F1 Saúde",
+      "value": "0,84"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 13,
+    "fields": {
+      "page": 1,
+      "position": 13,
+      "label": "F1 Trabalho Economia Cuidado e Proteção Social",
+      "value": "0,81"
+    }
+  },
+  {
+    "model": "cms.feministaithematicmetric",
+    "pk": 14,
+    "fields": {
+      "page": 1,
+      "position": 14,
+      "label": "F1 Violências de Gênero",
+      "value": "0,91"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "label": "Quantidade de Projetos",
+      "training": "2527",
+      "validation": "282",
+      "test": "313"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "label": "Direitos Sexuais e Reprodutivos",
+      "training": "294 (11,63%)",
+      "validation": "31 (10,99%)",
+      "test": "25 (7,99%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "label": "Educação e Cultura",
+      "training": "127 (5,03%)",
+      "validation": "14 (4,96%)",
+      "test": "13 (4,15%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "label": "Família, Parentalidade e Relações Civis",
+      "training": "126 (4,99%)",
+      "validation": "8 (2,84%)",
+      "test": "11 (3,51%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "label": "Igualdade e Antidiscriminação",
+      "training": "48 (1,90%)",
+      "validation": "3 (1,06%)",
+      "test": "5 (1,60%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "position": 6,
+      "label": "Infância e Adolescência",
+      "training": "76 (3,01%)",
+      "validation": "8 (2,84%)",
+      "test": "15 (4,79%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "position": 7,
+      "label": "LGBTQIAPN+",
+      "training": "123 (4,87%)",
+      "validation": "20 (7,09%)",
+      "test": "12 (3,83%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "position": 8,
+      "label": "Participação Política e Institucionalidade",
+      "training": "94 (3,72%)",
+      "validation": "9 (3,19%)",
+      "test": "11 (3,51%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "position": 9,
+      "label": "Saúde",
+      "training": "140 (5,54%)",
+      "validation": "17 (6,03%)",
+      "test": "19 (6,07%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "position": 10,
+      "label": "Trabalho, Economia, Cuidado e Proteção Social",
+      "training": "343 (13,57%)",
+      "validation": "43 (15,25%)",
+      "test": "43 (13,74%)"
+    }
+  },
+  {
+    "model": "cms.feministaithematicpartition",
+    "pk": 11,
+    "fields": {
+      "page": 1,
+      "position": 11,
+      "label": "Violências de Gênero",
+      "training": "1156 (45,75%)",
+      "validation": "129 (45,74%)",
+      "test": "159 (50,80%)"
+    }
+  },
+  {
+    "model": "cms.feministaiopenlink",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "label": "Código e repositório da QuitérIA",
+      "url": "https://github.com/institutoazmina/ia-feminista-elas-no-congresso"
+    }
+  },
+  {
+    "model": "cms.feministaiopenlink",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "label": "Modelo da QuitérIA 2.0 no Hugging Face",
+      "url": "https://huggingface.co/azmina/quiteria-2.0"
+    }
+  },
+  {
+    "model": "cms.feministaiopenlink",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "label": "API pública e documentação",
+      "url": "https://api.elasnocongresso.com.br/api/v1/docs"
+    }
+  },
+  {
+    "model": "cms.aboutpage",
+    "pk": 1,
+    "fields": {
+      "seo_title": "Sobre o Elas no Congresso | AzMina",
+      "seo_description": "Conheça o Elas no Congresso, projeto do Instituto AzMina que usa jornalismo, dados e inteligência artificial feminista para monitorar pautas de gênero.",
+      "hero_title": "**Sobre** o **Elas** no **Congresso**",
+      "hero_description": "**Elas no Congresso** é uma iniciativa de tecnologia cívica e comunicação feminista do **Instituto AzMina.** Monitoramos diariamente o que a Câmara dos Deputados e o Senado Federal produzem sobre os direitos de mulheres, meninas e pessoas LGBTQIAPN+, e traduzimos isso em informação acessível para jornalistas, pesquisadores, movimentos sociais e qualquer pessoa interessada em acompanhar o Congresso. Desde 2025, o projeto conta com QuitérIA, a IA Feminista que facilita e agiliza esse trabalho.",
+      "content": "## A nossa história\n\nEm 2020, diante do crescimento da disputa por pautas de gênero no Congresso Nacional, o Instituto AzMina identificou a necessidade de tornar o monitoramento legislativo mais acessível. Desde então, a iniciativa analisa projetos apresentados a partir de 2019.\n\n::::: timeline\n\n:::: milestones\n\n::: milestone\n\n*Março de*\n\n### 2020\n\nLançamento da [robô @elasnocongresso no Twitter (X)](https://azmina.com.br/reportagens/uma-robo-para-monitorar-direitos-das-mulheres-azmina-lanca-o-elas-no-congresso/), projeto selecionado pelo Google News Initiative entre mais de 300 concorrentes na América Latina. A automação acompanhou as tramitações diárias até junho de 2023, quando foi descontinuada com o fechamento do acesso gratuito à API da plataforma.\n\n**Nasce o projeto**\n\n:::\n\n::: milestone\n\n*Junho de*\n\n### 2020\n\nPrimeiro levantamento e análise de atividade legislativa, primeiro ranking parlamentar e estreia da newsletter, com curadoria de projetos e análise política semanal.\n\n**1ª newsletter**\n\n:::\n\n::: milestone\n\n*De 2020 a*\n\n### 2024\n\nEdições periódicas do Ranking dos Parlamentares, metodologicamente inspirado no [Ruralômetro](https://ruralometro.reporterbrasil.org.br/) (Repórter Brasil).\n\n**Ranking**\n\n:::\n\n::: milestone\n\n*Ano de*\n\n### 2024\n\nNa revisão metodológica que antecedeu a criação da inteligência artificial, optamos por descontinuar o ranking e concentrar esforços na análise qualitativa das proposições — tirando o foco da ação individual dos parlamentares em favor de uma abordagem mais contextual. No fim do ano, lançamos a QuitérIA.\n\n**Fim do ranking**\n\n:::\n\n::: milestone\n\n*Ano de*\n\n### 2026\n\nRetreinamento da QuitérIA, criação da API, relançamento do site com evolução do painel público e sistema automatizado de alertas diários e semanais.\n\n**QuitérIA 2.0**\n\n:::\n\n::::\n\n> [Em 2025, a AzMina encerrou definitivamente suas atividades no X](https://www.instagram.com/p/DFVVODpRP9A/).\n\n:::::\n\n---\n\n## Como avaliamos o legislativo\n\nCada proposição percorre quatro etapas: coleta, triagem pela IA, análise especializada e curadoria editorial.\n\n### 1. Coleta automatizada\n\nO raspador do Elas no Congresso está conectado às APIs da Câmara dos Deputados e do Senado Federal. A cada 24 horas, o código busca palavras-chave temáticas e armazena título, autoria, ementa e status na nossa API aberta. Se a ementa ou o texto integral contiver os termos mapeados, a matéria entra no fluxo de análise.\n\n![Palavras-chave como stalking, meninas, útero, misoginia, transexual e feminicídio alimentam a API de coleta.](/images/about/keyword-notes.svg)\n\n> Para ver todas as palavras, acesse a [lista completa de palavras-chave](https://docs.google.com/document/d/1I22AbP2MhRmCV-z2x9NUe9Zsp20PmwEjyQe1mYr7sTQ/edit?usp=sharing).\n\n### 2. Triagem pela QuitérIA\n\nA QuitérIA faz a classificação inicial e a avaliação imediata das matérias coletadas, indicando tema e grau de desfavorabilidade. É o que permite dar conta do volume: o que antes levava semanas passa a estar disponível em horas. Nenhuma classificação da IA é publicada sem passar pela etapa seguinte.\n\n> Para entender a arquitetura, o treinamento e a governança da ferramenta, acesse a página [QuitérIA](/ia-feminista).\n\n### 3. Análise especializada\n\nNossa base reúne atualmente mais de 3.100 proposições anotadas, apresentadas no Congresso Nacional entre janeiro de 2019 e abril de 2026. Consideramos proposições da Câmara e do Senado (PECs, PLs, PLPs, PLVs, PDCs, PRCs, PLSs, PLNs, PRSs e PDSs) de autoria de parlamentares, comissões ou do Poder Executivo. Para evitar duplicidade, cada projeto é avaliado apenas na Casa em que se originou.\n\nEspecialistas de organizações parceiras analisam os projetos e atribuem uma classificação de impacto:\n\n:::: ratings\n\n::: rating favorable\n\n#### Favorável\n\namplia direitos, proteção ou acesso;\n\n:::\n\n::: rating favorable-caveat\n\n#### Favorável com ressalvas\n\npositiva em sua essência, mas com pontos de atenção;\n\n:::\n\n::: rating unfavorable-caveat\n\n#### Desfavorável com ressalvas\n\nprejudicial no geral, mas com pontos positivos aproveitáveis;\n\n:::\n\n::: rating unfavorable\n\n#### Desfavorável\n\nrestringe direitos ou gera discriminação.\n\n:::\n\n::::\n\nEm cada proposição é possível ver qual organização fez a avaliação. Desde o segundo retreinamento da QuitérIA, as observações técnicas passaram a ser obrigatórias sempre que há algum nível de desfavorabilidade.\n\n### 4. Curadoria editorial e distribuição\n\nSemanalmente, a equipe da AzMina valida as classificações da IA e faz a mediação jornalística que traduz o “legislativês” em informação acessível. O resultado chega até você por três caminhos:\n\n:::: cards 3\n\n::: card\n#### Radar Diário\n\nAlerta customizável por tema, casa legislativa, comissão ou proposição, entregue por e-mail.  \n[Cadastre-se aqui](/alertas)\n:::\n\n::: card\n#### Newsletter com Radar Semanal\n\nPrincipal canal de acompanhamento contínuo do projeto. Reúne, contextualiza e analisa os impactos políticos das tramitações, funcionando como instrumento de transparência e mobilização para a sociedade civil. A newsletter é a mesma para todas as pessoas assinantes; o Radar Semanal que a acompanha é customizável por tema.\n:::\n\n::: card\n#### Painel de Atividade Legislativa\n\nNa página [Atividade Legislativa](/atividade-legislativa) você navega pelas propostas, compara a avaliação da **QuitérIA** com a avaliação humana e filtra por partido, tema e outros critérios.\n:::\n\n::::\n\n---\n\n## Rede de organizações parceiras\n\nEm vez de centralizar as avaliações em uma única equipe, o projeto adota um modelo colaborativo de produção de conhecimento. Cada organização contribui a partir de sua experiência temática, acumulada em anos de atuação em campos como direitos humanos, justiça de gênero, diversidade sexual e de gênero, enfrentamento à violência, saúde, comunicação, tecnologia, políticas urbanas, direitos reprodutivos e participação política.\n\nEssa diversidade de perspectivas fortalece a qualidade das avaliações, reduz vieses individuais e amplia a capacidade do projeto de compreender os diferentes efeitos que uma proposição pode produzir sobre grupos sociais distintos. As justificativas técnicas registradas pelas organizações também alimentam a base de conhecimento do projeto: são elas a principal fonte de aprendizado da QuitérIA.\n\n**Fazem parte da rede:**\n\n::: logo grid :::\n\n---\n\n## Transparência e dados abertos\n\nO Elas no Congresso adota uma política rigorosa de dados abertos e Ciência Aberta:\n\n::: list arrows\n\n- **API pública e gratuita**: permite integrar nossos dados estruturados a outras aplicações, pesquisas acadêmicas e ferramentas de controle social.\n\n- **Código do raspador e bases reutilizáveis**: publicamos periodicamente as bases brutas e a documentação metodológica para auditoria e livre reuso por pessoas desenvolvedoras e jornalistas.\n\n- **Repositório de treinamento da QuitérIA**: todo o código usado no treinamento do modelo está aberto, e contribuições são bem-vindas.\n\n:::\n\n---\n\n## Desafios e limitações\n\nO desenvolvimento e a manutenção do *Elas no Congresso* enfrentam desafios técnicos, metodológicos e políticos contínuos.\n\n**Volume e complexidade —** a produção parlamentar é altíssima, o que nos obriga a filtrar matérias por palavras-chave, um processo que pode deixar passar projetos com linguagem indireta, técnica ou incomum. Traduzir o “legislativês” também exige trabalho editorial constante.\n\n**Dependência de fontes externas —** a coleta depende das APIs oficiais da Câmara e do Senado, sujeitas a instabilidades que afetam o ritmo de atualização da base. Além disso, emendas e substitutivos alteram os textos originais ao longo da tramitação, exigindo reavaliação permanente.\n\n**Subjetividade da análise —** classificar pautas de gênero com consistência envolve gerenciar a subjetividade inerente à análise política e jurídica. Para isso, criamos critérios analíticos rigorosos aplicados pela rede colaborativa e duas instâncias de supervisão, o Comitê de Governança e o Comitê de Validação, além de enfrentar a resistência e a desconfiança legítimas sobre o uso de IA em direitos humanos. Erros, vieses e ambiguidades do modelo são mitigados por governança compartilhada e supervisão humana permanente.\n\n**Dados e infraestrutura —** treinar um modelo de linguagem exige volume robusto de dados anotados. Podemos construir modelos cada vez mais acurados conforme avaliamos novos projetos ao longo do tempo, o que, por outro lado, demanda investimento em infraestrutura de hardware para comportar modelos maiores.\n\n**Contexto político e sustentabilidade —** a iniciativa opera em um ambiente de forte disputa e de ataques diretos às pautas de gênero e aos direitos reprodutivos, somado ao desafio constante de captar financiamento para garantir a sustentabilidade, a escalabilidade e a autonomia da plataforma.\n\n---\n\n## Próximos passos\n\nO *Elas no Congresso* é uma iniciativa em constante aperfeiçoamento, acompanhando as transformações do processo legislativo, das categorias analíticas, das tecnologias de inteligência artificial e das necessidades da sociedade civil. Os próximos ciclos de desenvolvimento buscam consolidar o projeto como uma infraestrutura pública de monitoramento legislativo sensível a gênero, ampliando a cobertura, transparência e capacidade analítica.\n\nEntre as prioridades estão o fortalecimento da QuitérIA, com novos ciclos de treinamento sobre uma base continuamente ampliada e a adoção do Protocolo de Avaliação de Proposições Legislativas, que padroniza critérios e qualifica as anotações humanas, e a realização periódica de avaliações de desempenho do modelo, com monitoramento de vieses, testes comparativos, publicação de indicadores de qualidade e estudos com técnicas de explicabilidade.\n\nQueremos também seguir compartilhando metodologias, ferramentas e aprendizados com outras organizações da sociedade civil, estimulando novas iniciativas de monitoramento legislativo e de tecnologias cívicas comprometidas com os direitos humanos, a igualdade de gênero e o fortalecimento da democracia.\n\nOs planos de evolução da plataforma, da metodologia e da inteligência artificial são atualizados continuamente e podem ser consultados no [repositório público do projeto](https://github.com/institutoazmina/ia-feminista-elas-no-congresso), onde estão registradas as funcionalidades implementadas, em desenvolvimento e planejadas.\n\nSistemas de monitoramento legislativo e inteligência cívica exigem adaptação permanente às transformações políticas, tecnológicas e sociais, o que depende de financiamento contínuo para manutenção e hospedagem técnica, atualização metodológica, governança de dados e fortalecimento institucional. [Veja como contribuir financeiramente com esta iniciativa](https://docs.google.com/document/d/19fUYvKdA2UI0ddlUVWnAVzgmIiH-rey3R-pdSemzZw4/edit).\n\n---\n\n## Reconhecimento e eventos\n\nEm 2020, o *Elas no Congresso* venceu o [Prêmio Cláudio Weber Abramo de Jornalismo de Dados](https://premio.jornalismodedados.org.br/) na categoria Inovação. Os jurados destacaram a transparência metodológica e a replicabilidade do projeto.\n\n**Em 2026, a QuitérIA venceu o prêmio [WSA Brasil — World Summit Awards](https://www.premiowsa.com.br/), na categoria Engajamento do Governo e do Cidadão, que celebra soluções digitais capazes de ampliar o acesso à informação, fortalecer a transparência, estimular a participação e contribuir para processos democráticos mais inclusivos. A premiação é conduzida pela [ICNM](https://icnm.net/), organização austríaca sem fins lucrativos com sede em Salzburgo e Viena, na Áustria.**\n\nA iniciativa já foi apresentada em eventos como os Congressos da Abraji, o Simpósio Internacional LAVITS, a Cryptorave, o CODA, o Parlaméricas e uma audiência pública do Ministério das Mulheres.\n\n---\n\n## Expediente\n\n::: team :::\n\n---\n\n## Apoio\n\nEste projeto conta com o apoio da Rede Feminista de IA da América Latina e do Caribe, do Codesinfo (Fundo de Inovação para o Jornalismo, coordenado pelo Projor com apoio da Google News Initiative), do Fundo ELAS+ Doar Para Transformar e da Agence Française de Développement (AFD). As ideias e opiniões expressas neste projeto são de responsabilidade das autoras e não refletem, necessariamente, o ponto de vista destes apoiadores.\n",
+      "hero_image_width": 1080,
+      "hero_image_height": 1350,
+      "hero_image": "cms/sobre/hero.webp",
+      "timeline_note_link_text": "Em 2025, a AzMina encerrou definitivamente suas atividades no X",
+      "timeline_note_link_url": "https://www.instagram.com/p/DFVVODpRP9A/",
+      "timeline_note_after_link": "."
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "key": "s00_001",
+      "section": "Apresentação",
+      "label": "SPAN: Sobre",
+      "value": "Sobre",
+      "position": 1
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "key": "s00_002",
+      "section": "Apresentação",
+      "label": "SPAN: o",
+      "value": "o",
+      "position": 2
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "key": "s00_003",
+      "section": "Apresentação",
+      "label": "SPAN: Congresso",
+      "value": "Congresso",
+      "position": 3
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "key": "s00_004",
+      "section": "Apresentação",
+      "label": "STRONG: Elas no Congresso",
+      "value": "**Elas no Congresso**",
+      "position": 4
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "key": "s00_005",
+      "section": "Apresentação",
+      "label": "STRONG: Instituto AzMina.",
+      "value": "**Instituto AzMina.**",
+      "position": 5
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "key": "s00_006",
+      "section": "Apresentação",
+      "label": "P: Monitoramos diariamente o que a Câmara dos Deputados e o Senado Federal produzem sobr",
+      "value": "Monitoramos diariamente o que a Câmara dos Deputados e o Senado Federal produzem sobre os direitos de mulheres, meninas e pessoas LGBTQIAPN+, e traduzimos isso em informação acessível para jornalistas, pesquisadores, movimentos sociais e qualquer pessoa interessada em acompanhar o Congresso. Desde 2025, o projeto conta com QuitérIA, a IA Feminista que facilita e agiliza esse trabalho.",
+      "position": 6
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "key": "s01_007",
+      "section": "Nossa história",
+      "label": "H2: A nossa história",
+      "value": "A nossa história",
+      "position": 7
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "key": "s01_008",
+      "section": "Nossa história",
+      "label": "P: Em 2020, diante do crescimento da disputa por pautas de gênero no Congresso Nacional,",
+      "value": "Em 2020, diante do crescimento da disputa por pautas de gênero no Congresso Nacional, o Instituto AzMina identificou a necessidade de tornar o monitoramento legislativo mais acessível. Desde então, a iniciativa analisa projetos apresentados a partir de 2019.",
+      "position": 8
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "key": "s02_009",
+      "section": "Como avaliamos",
+      "label": "H2: Como avaliamos o legislativo",
+      "value": "Como avaliamos o legislativo",
+      "position": 9
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "key": "s02_010",
+      "section": "Como avaliamos",
+      "label": "P: Cada proposição percorre quatro etapas: coleta, triagem pela IA, análise especializad",
+      "value": "Cada proposição percorre quatro etapas: coleta, triagem pela IA, análise especializada e curadoria editorial.",
+      "position": 10
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 11,
+    "fields": {
+      "page": 1,
+      "key": "s02_011",
+      "section": "Como avaliamos",
+      "label": "H3: 1. Coleta automatizada",
+      "value": "1. Coleta automatizada",
+      "position": 11
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 12,
+    "fields": {
+      "page": 1,
+      "key": "s02_012",
+      "section": "Como avaliamos",
+      "label": "P: O raspador do Elas no Congresso está conectado às APIs da Câmara dos Deputados e do S",
+      "value": "O raspador do Elas no Congresso está conectado às APIs da Câmara dos Deputados e do Senado Federal. A cada 24 horas, o código busca palavras-chave temáticas e armazena título, autoria, ementa e status na nossa API aberta. Se a ementa ou o texto integral contiver os termos mapeados, a matéria entra no fluxo de análise.",
+      "position": 12
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 13,
+    "fields": {
+      "page": 1,
+      "key": "s02_013",
+      "section": "Como avaliamos",
+      "label": "Link URL: https://docs.google.com/document/d/1I22AbP2MhRmCV-z2x9NUe9Zsp20PmwEjyQe1mYr7sTQ/edit?",
+      "value": "https://docs.google.com/document/d/1I22AbP2MhRmCV-z2x9NUe9Zsp20PmwEjyQe1mYr7sTQ/edit?usp=sharing",
+      "position": 13
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 14,
+    "fields": {
+      "page": 1,
+      "key": "s02_014",
+      "section": "Como avaliamos",
+      "label": "A: lista completa de palavras-chave",
+      "value": "lista completa de palavras-chave",
+      "position": 14
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 15,
+    "fields": {
+      "page": 1,
+      "key": "s02_015",
+      "section": "Como avaliamos",
+      "label": "SPAN: API",
+      "value": "API",
+      "position": 15
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 16,
+    "fields": {
+      "page": 1,
+      "key": "s02_016",
+      "section": "Como avaliamos",
+      "label": "SPAN: transexual",
+      "value": "transexual",
+      "position": 16
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 17,
+    "fields": {
+      "page": 1,
+      "key": "s02_017",
+      "section": "Como avaliamos",
+      "label": "SPAN: meninas",
+      "value": "meninas",
+      "position": 17
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 18,
+    "fields": {
+      "page": 1,
+      "key": "s02_018",
+      "section": "Como avaliamos",
+      "label": "SPAN: feminicídio",
+      "value": "feminicídio",
+      "position": 18
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 19,
+    "fields": {
+      "page": 1,
+      "key": "s02_019",
+      "section": "Como avaliamos",
+      "label": "SPAN: útero",
+      "value": "útero",
+      "position": 19
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 20,
+    "fields": {
+      "page": 1,
+      "key": "s02_020",
+      "section": "Como avaliamos",
+      "label": "SPAN: misoginia",
+      "value": "misoginia",
+      "position": 20
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 21,
+    "fields": {
+      "page": 1,
+      "key": "s02_021",
+      "section": "Como avaliamos",
+      "label": "SPAN: stalking",
+      "value": "stalking",
+      "position": 21
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 22,
+    "fields": {
+      "page": 1,
+      "key": "s02_022",
+      "section": "Como avaliamos",
+      "label": "H3: 2. Triagem pela QuitérIA",
+      "value": "2. Triagem pela QuitérIA",
+      "position": 22
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 23,
+    "fields": {
+      "page": 1,
+      "key": "s02_023",
+      "section": "Como avaliamos",
+      "label": "P: A QuitérIA faz a classificação inicial e a avaliação imediata das matérias coletadas,",
+      "value": "A QuitérIA faz a classificação inicial e a avaliação imediata das matérias coletadas, indicando tema e grau de desfavorabilidade. É o que permite dar conta do volume: o que antes levava semanas passa a estar disponível em horas. Nenhuma classificação da IA é publicada sem passar pela etapa seguinte.",
+      "position": 23
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 24,
+    "fields": {
+      "page": 1,
+      "key": "s02_024",
+      "section": "Como avaliamos",
+      "label": "Link URL: /ia-feminista",
+      "value": "/ia-feminista",
+      "position": 24
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 25,
+    "fields": {
+      "page": 1,
+      "key": "s02_025",
+      "section": "Como avaliamos",
+      "label": "A: QuitérIA",
+      "value": "QuitérIA",
+      "position": 25
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 26,
+    "fields": {
+      "page": 1,
+      "key": "s02_026",
+      "section": "Como avaliamos",
+      "label": "H3: 3. Análise especializada",
+      "value": "3. Análise especializada",
+      "position": 26
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 27,
+    "fields": {
+      "page": 1,
+      "key": "s02_027",
+      "section": "Como avaliamos",
+      "label": "P: Nossa base reúne atualmente mais de 3.100 proposições anotadas, apresentadas no Congr",
+      "value": "Nossa base reúne atualmente mais de 3.100 proposições anotadas, apresentadas no Congresso Nacional entre janeiro de 2019 e abril de 2026. Consideramos proposições da Câmara e do Senado (PECs, PLs, PLPs, PLVs, PDCs, PRCs, PLSs, PLNs, PRSs e PDSs) de autoria de parlamentares, comissões ou do Poder Executivo. Para evitar duplicidade, cada projeto é avaliado apenas na Casa em que se originou.",
+      "position": 27
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 28,
+    "fields": {
+      "page": 1,
+      "key": "s02_028",
+      "section": "Como avaliamos",
+      "label": "P: Especialistas de organizações parceiras analisam os projetos e atribuem uma classific",
+      "value": "Especialistas de organizações parceiras analisam os projetos e atribuem uma classificação de impacto:",
+      "position": 28
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 29,
+    "fields": {
+      "page": 1,
+      "key": "s02_029",
+      "section": "Como avaliamos",
+      "label": "B: Favorável",
+      "value": "Favorável",
+      "position": 29
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 30,
+    "fields": {
+      "page": 1,
+      "key": "s02_030",
+      "section": "Como avaliamos",
+      "label": "SPAN: amplia direitos, proteção ou acesso;",
+      "value": "amplia direitos, proteção ou acesso;",
+      "position": 30
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 31,
+    "fields": {
+      "page": 1,
+      "key": "s02_031",
+      "section": "Como avaliamos",
+      "label": "B: Favorável com ressalvas",
+      "value": "Favorável com ressalvas",
+      "position": 31
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 32,
+    "fields": {
+      "page": 1,
+      "key": "s02_032",
+      "section": "Como avaliamos",
+      "label": "SPAN: positiva em sua essência, mas com pontos de atenção;",
+      "value": "positiva em sua essência, mas com pontos de atenção;",
+      "position": 32
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 33,
+    "fields": {
+      "page": 1,
+      "key": "s02_033",
+      "section": "Como avaliamos",
+      "label": "B: Desfavorável com ressalvas",
+      "value": "Desfavorável com ressalvas",
+      "position": 33
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 34,
+    "fields": {
+      "page": 1,
+      "key": "s02_034",
+      "section": "Como avaliamos",
+      "label": "SPAN: prejudicial no geral, mas com pontos positivos aproveitáveis;",
+      "value": "prejudicial no geral, mas com pontos positivos aproveitáveis;",
+      "position": 34
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 35,
+    "fields": {
+      "page": 1,
+      "key": "s02_035",
+      "section": "Como avaliamos",
+      "label": "B: Desfavorável",
+      "value": "Desfavorável",
+      "position": 35
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 36,
+    "fields": {
+      "page": 1,
+      "key": "s02_036",
+      "section": "Como avaliamos",
+      "label": "SPAN: restringe direitos ou gera discriminação.",
+      "value": "restringe direitos ou gera discriminação.",
+      "position": 36
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 37,
+    "fields": {
+      "page": 1,
+      "key": "s02_037",
+      "section": "Como avaliamos",
+      "label": "P: Em cada proposição é possível ver qual organização fez a avaliação. Desde o segundo r",
+      "value": "Em cada proposição é possível ver qual organização fez a avaliação. Desde o segundo retreinamento da QuitérIA, as observações técnicas passaram a ser obrigatórias sempre que há algum nível de desfavorabilidade.",
+      "position": 37
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 38,
+    "fields": {
+      "page": 1,
+      "key": "s02_038",
+      "section": "Como avaliamos",
+      "label": "H3: 4. Curadoria editorial e distribuição",
+      "value": "4. Curadoria editorial e distribuição",
+      "position": 38
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 39,
+    "fields": {
+      "page": 1,
+      "key": "s02_039",
+      "section": "Como avaliamos",
+      "label": "P: Semanalmente, a equipe da AzMina valida as classificações da IA e faz a mediação jorn",
+      "value": "Semanalmente, a equipe da AzMina valida as classificações da IA e faz a mediação jornalística que traduz o “legislativês” em informação acessível. O resultado chega até você por três caminhos:",
+      "position": 39
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 40,
+    "fields": {
+      "page": 1,
+      "key": "s02_040",
+      "section": "Como avaliamos",
+      "label": "H3: Radar Diário",
+      "value": "Radar Diário",
+      "position": 40
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 41,
+    "fields": {
+      "page": 1,
+      "key": "s02_041",
+      "section": "Como avaliamos",
+      "label": "P: Alerta customizável por tema, casa legislativa, comissão ou proposição, entregue por ",
+      "value": "Alerta customizável por tema, casa legislativa, comissão ou proposição, entregue por e-mail.",
+      "position": 41
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 42,
+    "fields": {
+      "page": 1,
+      "key": "s02_042",
+      "section": "Como avaliamos",
+      "label": "Link URL: /alertas",
+      "value": "/alertas",
+      "position": 42
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 43,
+    "fields": {
+      "page": 1,
+      "key": "s02_043",
+      "section": "Como avaliamos",
+      "label": "A: Cadastre-se aqui",
+      "value": "Cadastre-se aqui",
+      "position": 43
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 44,
+    "fields": {
+      "page": 1,
+      "key": "s02_044",
+      "section": "Como avaliamos",
+      "label": "H3: Newsletter com Radar Semanal",
+      "value": "Newsletter com Radar Semanal",
+      "position": 44
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 45,
+    "fields": {
+      "page": 1,
+      "key": "s02_045",
+      "section": "Como avaliamos",
+      "label": "P: Principal canal de acompanhamento contínuo do projeto. Reúne, contextualiza e analisa",
+      "value": "Principal canal de acompanhamento contínuo do projeto. Reúne, contextualiza e analisa os impactos políticos das tramitações, funcionando como instrumento de transparência e mobilização para a sociedade civil. A newsletter é a mesma para todas as pessoas assinantes; o Radar Semanal que a acompanha é customizável por tema.",
+      "position": 45
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 46,
+    "fields": {
+      "page": 1,
+      "key": "s02_046",
+      "section": "Como avaliamos",
+      "label": "H3: Painel de Atividade Legislativa",
+      "value": "Painel de Atividade Legislativa",
+      "position": 46
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 47,
+    "fields": {
+      "page": 1,
+      "key": "s02_047",
+      "section": "Como avaliamos",
+      "label": "P: Na página",
+      "value": "Na página",
+      "position": 47
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 48,
+    "fields": {
+      "page": 1,
+      "key": "s02_048",
+      "section": "Como avaliamos",
+      "label": "Link URL: /atividade-legislativa",
+      "value": "/atividade-legislativa",
+      "position": 48
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 49,
+    "fields": {
+      "page": 1,
+      "key": "s02_049",
+      "section": "Como avaliamos",
+      "label": "A: Atividade Legislativa",
+      "value": "Atividade Legislativa",
+      "position": 49
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 50,
+    "fields": {
+      "page": 1,
+      "key": "s02_050",
+      "section": "Como avaliamos",
+      "label": "P: você navega pelas propostas, compara a avaliação da",
+      "value": "você navega pelas propostas, compara a avaliação da",
+      "position": 50
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 51,
+    "fields": {
+      "page": 1,
+      "key": "s02_051",
+      "section": "Como avaliamos",
+      "label": "STRONG: QuitérIA",
+      "value": "QuitérIA",
+      "position": 51
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 52,
+    "fields": {
+      "page": 1,
+      "key": "s02_052",
+      "section": "Como avaliamos",
+      "label": "P: com a avaliação humana e filtra por partido, tema e outros critérios.",
+      "value": "com a avaliação humana e filtra por partido, tema e outros critérios.",
+      "position": 52
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 53,
+    "fields": {
+      "page": 1,
+      "key": "s03_053",
+      "section": "Organizações parceiras",
+      "label": "H2: Rede de organizações parceiras",
+      "value": "Rede de organizações parceiras",
+      "position": 53
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 54,
+    "fields": {
+      "page": 1,
+      "key": "s03_054",
+      "section": "Organizações parceiras",
+      "label": "P: Em vez de centralizar as avaliações em uma única equipe, o projeto adota um modelo co",
+      "value": "Em vez de centralizar as avaliações em uma única equipe, o projeto adota um modelo colaborativo de produção de conhecimento. Cada organização contribui a partir de sua experiência temática, acumulada em anos de atuação em campos como direitos humanos, justiça de gênero, diversidade sexual e de gênero, enfrentamento à violência, saúde, comunicação, tecnologia, políticas urbanas, direitos reprodutivos e participação política.",
+      "position": 54
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 55,
+    "fields": {
+      "page": 1,
+      "key": "s03_055",
+      "section": "Organizações parceiras",
+      "label": "P: Essa diversidade de perspectivas fortalece a qualidade das avaliações, reduz vieses i",
+      "value": "Essa diversidade de perspectivas fortalece a qualidade das avaliações, reduz vieses individuais e amplia a capacidade do projeto de compreender os diferentes efeitos que uma proposição pode produzir sobre grupos sociais distintos. As justificativas técnicas registradas pelas organizações também alimentam a base de conhecimento do projeto: são elas a principal fonte de aprendizado da QuitérIA.",
+      "position": 55
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 56,
+    "fields": {
+      "page": 1,
+      "key": "s03_056",
+      "section": "Organizações parceiras",
+      "label": "STRONG: Fazem parte da rede:",
+      "value": "Fazem parte da rede:",
+      "position": 56
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 57,
+    "fields": {
+      "page": 1,
+      "key": "s03_057",
+      "section": "Organizações parceiras",
+      "label": "P: Anis Bioética, Artigo 19, Cepia - Cidadania, Estudo, Pesquisa, Informação e Ação, CFE",
+      "value": "Anis Bioética, Artigo 19, Cepia - Cidadania, Estudo, Pesquisa, Informação e Ação, CFEMEA - Centro Feminista de Estudos e Assessoria, Coletivo Feminista Sexualidade e Saúde, Coletivo Mana a Mana, deFEMde - Rede Feminista de Juristas, Ecos, Empodera, Gepô, Instituto + Diversidade, Instituto Maria da Penha, Instituto Marielle Franco, Instituto Patrícia Galvão, Instituto Update, Juristas Negras, LabCidade, Mulheres Negras Decidem, Observatório da Violência Obstétrica no Brasil, Plan International, Rede Liberdade, SOF - Sempreviva Organização Feminista, SPW - Sexuality Policy Watch, Themis e TretAqui.",
+      "position": 57
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 58,
+    "fields": {
+      "page": 1,
+      "key": "s04_058",
+      "section": "Dados abertos",
+      "label": "H2: Transparência e dados abertos",
+      "value": "Transparência e dados abertos",
+      "position": 58
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 59,
+    "fields": {
+      "page": 1,
+      "key": "s04_059",
+      "section": "Dados abertos",
+      "label": "P: O Elas no Congresso adota uma política rigorosa de dados abertos e Ciência Aberta:",
+      "value": "O Elas no Congresso adota uma política rigorosa de dados abertos e Ciência Aberta:",
+      "position": 59
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 60,
+    "fields": {
+      "page": 1,
+      "key": "s04_060",
+      "section": "Dados abertos",
+      "label": "B: API pública e gratuita",
+      "value": "API pública e gratuita",
+      "position": 60
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 61,
+    "fields": {
+      "page": 1,
+      "key": "s04_061",
+      "section": "Dados abertos",
+      "label": "LI: : permite integrar nossos dados estruturados a outras aplicações, pesquisas acadêmica",
+      "value": ": permite integrar nossos dados estruturados a outras aplicações, pesquisas acadêmicas e ferramentas de controle social.",
+      "position": 61
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 62,
+    "fields": {
+      "page": 1,
+      "key": "s04_062",
+      "section": "Dados abertos",
+      "label": "B: Código do raspador e bases reutilizáveis",
+      "value": "Código do raspador e bases reutilizáveis",
+      "position": 62
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 63,
+    "fields": {
+      "page": 1,
+      "key": "s04_063",
+      "section": "Dados abertos",
+      "label": "LI: : publicamos periodicamente as bases brutas e a documentação metodológica para audito",
+      "value": ": publicamos periodicamente as bases brutas e a documentação metodológica para auditoria e livre reuso por pessoas desenvolvedoras e jornalistas.",
+      "position": 63
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 64,
+    "fields": {
+      "page": 1,
+      "key": "s04_064",
+      "section": "Dados abertos",
+      "label": "B: Repositório de treinamento da QuitérIA",
+      "value": "Repositório de treinamento da QuitérIA",
+      "position": 64
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 65,
+    "fields": {
+      "page": 1,
+      "key": "s04_065",
+      "section": "Dados abertos",
+      "label": "LI: : todo o código usado no treinamento do modelo está aberto, e contribuições são bem-v",
+      "value": ": todo o código usado no treinamento do modelo está aberto, e contribuições são bem-vindas.",
+      "position": 65
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 66,
+    "fields": {
+      "page": 1,
+      "key": "s05_066",
+      "section": "Desafios",
+      "label": "H2: Desafios e limitações",
+      "value": "Desafios e limitações",
+      "position": 66
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 67,
+    "fields": {
+      "page": 1,
+      "key": "s05_067",
+      "section": "Desafios",
+      "label": "EM: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 67
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 68,
+    "fields": {
+      "page": 1,
+      "key": "s05_068",
+      "section": "Desafios",
+      "label": "P: enfrentam desafios técnicos, metodológicos e políticos contínuos.",
+      "value": "enfrentam desafios técnicos, metodológicos e políticos contínuos.",
+      "position": 68
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 69,
+    "fields": {
+      "page": 1,
+      "key": "s06_069",
+      "section": "Próximos passos",
+      "label": "H2: Próximos passos",
+      "value": "Próximos passos",
+      "position": 69
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 70,
+    "fields": {
+      "page": 1,
+      "key": "s06_070",
+      "section": "Próximos passos",
+      "label": "P: O",
+      "value": "O",
+      "position": 70
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 71,
+    "fields": {
+      "page": 1,
+      "key": "s06_071",
+      "section": "Próximos passos",
+      "label": "EM: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 71
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 72,
+    "fields": {
+      "page": 1,
+      "key": "s06_072",
+      "section": "Próximos passos",
+      "label": "P: é uma iniciativa em constante aperfeiçoamento, acompanhando as transformações do proc",
+      "value": "é uma iniciativa em constante aperfeiçoamento, acompanhando as transformações do processo legislativo, das categorias analíticas, das tecnologias de inteligência artificial e das necessidades da sociedade civil. Os próximos ciclos de desenvolvimento buscam consolidar o projeto como uma infraestrutura pública de monitoramento legislativo sensível a gênero, ampliando a cobertura, transparência e capacidade analítica.",
+      "position": 72
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 73,
+    "fields": {
+      "page": 1,
+      "key": "s06_073",
+      "section": "Próximos passos",
+      "label": "P: Entre as prioridades estão o fortalecimento da QuitérIA, com novos ciclos de treiname",
+      "value": "Entre as prioridades estão o fortalecimento da QuitérIA, com novos ciclos de treinamento sobre uma base continuamente ampliada e a adoção do Protocolo de Avaliação de Proposições Legislativas, que padroniza critérios e qualifica as anotações humanas, e a realização periódica de avaliações de desempenho do modelo, com monitoramento de vieses, testes comparativos, publicação de indicadores de qualidade e estudos com técnicas de explicabilidade.",
+      "position": 73
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 74,
+    "fields": {
+      "page": 1,
+      "key": "s06_074",
+      "section": "Próximos passos",
+      "label": "P: Queremos também seguir compartilhando metodologias, ferramentas e aprendizados com ou",
+      "value": "Queremos também seguir compartilhando metodologias, ferramentas e aprendizados com outras organizações da sociedade civil, estimulando novas iniciativas de monitoramento legislativo e de tecnologias cívicas comprometidas com os direitos humanos, a igualdade de gênero e o fortalecimento da democracia.",
+      "position": 74
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 75,
+    "fields": {
+      "page": 1,
+      "key": "s06_075",
+      "section": "Próximos passos",
+      "label": "Link URL: https://github.com/institutoazmina/ia-feminista-elas-no-congresso",
+      "value": "https://github.com/institutoazmina/ia-feminista-elas-no-congresso",
+      "position": 75
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 76,
+    "fields": {
+      "page": 1,
+      "key": "s06_076",
+      "section": "Próximos passos",
+      "label": "A: repositório público do projeto",
+      "value": "repositório público do projeto",
+      "position": 76
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 77,
+    "fields": {
+      "page": 1,
+      "key": "s06_077",
+      "section": "Próximos passos",
+      "label": "P: , onde estão registradas as funcionalidades implementadas, em desenvolvimento e plane",
+      "value": ", onde estão registradas as funcionalidades implementadas, em desenvolvimento e planejadas.",
+      "position": 77
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 78,
+    "fields": {
+      "page": 1,
+      "key": "s06_078",
+      "section": "Próximos passos",
+      "label": "Link URL: https://docs.google.com/document/d/19fUYvKdA2UI0ddlUVWnAVzgmIiH-rey3R-pdSemzZw4/edit",
+      "value": "https://docs.google.com/document/d/19fUYvKdA2UI0ddlUVWnAVzgmIiH-rey3R-pdSemzZw4/edit",
+      "position": 78
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 79,
+    "fields": {
+      "page": 1,
+      "key": "s06_079",
+      "section": "Próximos passos",
+      "label": "A: Veja como contribuir financeiramente com esta iniciativa",
+      "value": "Veja como contribuir financeiramente com esta iniciativa",
+      "position": 79
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 80,
+    "fields": {
+      "page": 1,
+      "key": "s07_080",
+      "section": "Reconhecimento",
+      "label": "H2: Reconhecimento e eventos",
+      "value": "Reconhecimento e eventos",
+      "position": 80
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 81,
+    "fields": {
+      "page": 1,
+      "key": "s07_081",
+      "section": "Reconhecimento",
+      "label": "P: Em 2020, o",
+      "value": "Em 2020, o",
+      "position": 81
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 82,
+    "fields": {
+      "page": 1,
+      "key": "s07_082",
+      "section": "Reconhecimento",
+      "label": "EM: Elas no Congresso",
+      "value": "Elas no Congresso",
+      "position": 82
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 83,
+    "fields": {
+      "page": 1,
+      "key": "s07_083",
+      "section": "Reconhecimento",
+      "label": "Link URL: https://premio.jornalismodedados.org.br/",
+      "value": "https://premio.jornalismodedados.org.br/",
+      "position": 83
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 84,
+    "fields": {
+      "page": 1,
+      "key": "s07_084",
+      "section": "Reconhecimento",
+      "label": "A: Prêmio Cláudio Weber Abramo de Jornalismo de Dados",
+      "value": "Prêmio Cláudio Weber Abramo de Jornalismo de Dados",
+      "position": 84
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 85,
+    "fields": {
+      "page": 1,
+      "key": "s07_085",
+      "section": "Reconhecimento",
+      "label": "Link URL: https://www.premiowsa.com.br/",
+      "value": "https://www.premiowsa.com.br/",
+      "position": 85
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 86,
+    "fields": {
+      "page": 1,
+      "key": "s07_086",
+      "section": "Reconhecimento",
+      "label": "A: WSA Brasil — World Summit Awards",
+      "value": "WSA Brasil — World Summit Awards",
+      "position": 86
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 87,
+    "fields": {
+      "page": 1,
+      "key": "s07_087",
+      "section": "Reconhecimento",
+      "label": "Link URL: https://icnm.net/",
+      "value": "https://icnm.net/",
+      "position": 87
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 88,
+    "fields": {
+      "page": 1,
+      "key": "s07_088",
+      "section": "Reconhecimento",
+      "label": "A: ICNM",
+      "value": "ICNM",
+      "position": 88
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 89,
+    "fields": {
+      "page": 1,
+      "key": "s07_089",
+      "section": "Reconhecimento",
+      "label": "STRONG: , organização austríaca sem fins lucrativos com sede em Salzburgo e Viena, na Áustria",
+      "value": ", organização austríaca sem fins lucrativos com sede em Salzburgo e Viena, na Áustria.",
+      "position": 89
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 90,
+    "fields": {
+      "page": 1,
+      "key": "s07_090",
+      "section": "Reconhecimento",
+      "label": "P: A iniciativa já foi apresentada em eventos como os Congressos da Abraji, o Simpósio I",
+      "value": "A iniciativa já foi apresentada em eventos como os Congressos da Abraji, o Simpósio Internacional LAVITS, a Cryptorave, o CODA, o Parlaméricas e uma audiência pública do Ministério das Mulheres.",
+      "position": 90
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 91,
+    "fields": {
+      "page": 1,
+      "key": "s08_091",
+      "section": "Expediente",
+      "label": "H2: Expediente",
+      "value": "Expediente",
+      "position": 91
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 92,
+    "fields": {
+      "page": 1,
+      "key": "s08_092",
+      "section": "Expediente",
+      "label": "H3: Equipe AzMina",
+      "value": "Equipe AzMina",
+      "position": 92
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 93,
+    "fields": {
+      "page": 1,
+      "key": "s08_093",
+      "section": "Expediente",
+      "label": "STRONG: Diego Rabatone Oliveira",
+      "value": "Diego Rabatone Oliveira",
+      "position": 93
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 94,
+    "fields": {
+      "page": 1,
+      "key": "s08_094",
+      "section": "Expediente",
+      "label": "SPAN: — Consultor de Desenvolvimento / ASK-AR",
+      "value": "— Consultor de Desenvolvimento / ASK-AR",
+      "position": 94
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 95,
+    "fields": {
+      "page": 1,
+      "key": "s08_095",
+      "section": "Expediente",
+      "label": "STRONG: Giulia Santos",
+      "value": "Giulia Santos",
+      "position": 95
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 96,
+    "fields": {
+      "page": 1,
+      "key": "s08_096",
+      "section": "Expediente",
+      "label": "SPAN: — Gerente de Arte",
+      "value": "— Gerente de Arte",
+      "position": 96
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 97,
+    "fields": {
+      "page": 1,
+      "key": "s08_097",
+      "section": "Expediente",
+      "label": "STRONG: Helena Bertho",
+      "value": "Helena Bertho",
+      "position": 97
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 98,
+    "fields": {
+      "page": 1,
+      "key": "s08_098",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria estratégica",
+      "value": "— Diretoria estratégica",
+      "position": 98
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 99,
+    "fields": {
+      "page": 1,
+      "key": "s08_099",
+      "section": "Expediente",
+      "label": "STRONG: Ingrid Fernandes",
+      "value": "Ingrid Fernandes",
+      "position": 99
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 100,
+    "fields": {
+      "page": 1,
+      "key": "s08_100",
+      "section": "Expediente",
+      "label": "SPAN: — Gerente de Tecnologia",
+      "value": "— Gerente de Tecnologia",
+      "position": 100
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 101,
+    "fields": {
+      "page": 1,
+      "key": "s08_101",
+      "section": "Expediente",
+      "label": "STRONG: Maria Ísis Santos",
+      "value": "Maria Ísis Santos",
+      "position": 101
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 102,
+    "fields": {
+      "page": 1,
+      "key": "s08_102",
+      "section": "Expediente",
+      "label": "SPAN: — Coordenadora de Projetos de Dados",
+      "value": "— Coordenadora de Projetos de Dados",
+      "position": 102
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 103,
+    "fields": {
+      "page": 1,
+      "key": "s08_103",
+      "section": "Expediente",
+      "label": "STRONG: Marília Moreira",
+      "value": "Marília Moreira",
+      "position": 103
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 104,
+    "fields": {
+      "page": 1,
+      "key": "s08_104",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria institucional",
+      "value": "— Diretoria institucional",
+      "position": 104
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 105,
+    "fields": {
+      "page": 1,
+      "key": "s08_105",
+      "section": "Expediente",
+      "label": "H3: Fornecedores",
+      "value": "Fornecedores",
+      "position": 105
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 106,
+    "fields": {
+      "page": 1,
+      "key": "s08_106",
+      "section": "Expediente",
+      "label": "STRONG: Letícia Oliveira",
+      "value": "Letícia Oliveira",
+      "position": 106
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 107,
+    "fields": {
+      "page": 1,
+      "key": "s08_107",
+      "section": "Expediente",
+      "label": "SPAN: — UX / NOMA Studio",
+      "value": "— UX / NOMA Studio",
+      "position": 107
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 108,
+    "fields": {
+      "page": 1,
+      "key": "s08_108",
+      "section": "Expediente",
+      "label": "STRONG: Mariana Nascimento",
+      "value": "Mariana Nascimento",
+      "position": 108
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 109,
+    "fields": {
+      "page": 1,
+      "key": "s08_109",
+      "section": "Expediente",
+      "label": "SPAN: — UX / NOMA Studio",
+      "value": "— UX / NOMA Studio",
+      "position": 109
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 110,
+    "fields": {
+      "page": 1,
+      "key": "s08_110",
+      "section": "Expediente",
+      "label": "STRONG: Rafael Chuluc",
+      "value": "Rafael Chuluc",
+      "position": 110
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 111,
+    "fields": {
+      "page": 1,
+      "key": "s08_111",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor backend / Wura",
+      "value": "— Desenvolvedor backend / Wura",
+      "position": 111
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 112,
+    "fields": {
+      "page": 1,
+      "key": "s08_112",
+      "section": "Expediente",
+      "label": "STRONG: Talita Santos",
+      "value": "Talita Santos",
+      "position": 112
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 113,
+    "fields": {
+      "page": 1,
+      "key": "s08_113",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedora frontend / Wura",
+      "value": "— Desenvolvedora frontend / Wura",
+      "position": 113
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 114,
+    "fields": {
+      "page": 1,
+      "key": "s08_114",
+      "section": "Expediente",
+      "label": "STRONG: Téo Calvo",
+      "value": "Téo Calvo",
+      "position": 114
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 115,
+    "fields": {
+      "page": 1,
+      "key": "s08_115",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor IA / Wura",
+      "value": "— Desenvolvedor IA / Wura",
+      "position": 115
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 116,
+    "fields": {
+      "page": 1,
+      "key": "s08_116",
+      "section": "Expediente",
+      "label": "STRONG: Vinicius Sueiro",
+      "value": "Vinicius Sueiro",
+      "position": 116
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 117,
+    "fields": {
+      "page": 1,
+      "key": "s08_117",
+      "section": "Expediente",
+      "label": "SPAN: — Visualização de Dados",
+      "value": "— Visualização de Dados",
+      "position": 117
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 118,
+    "fields": {
+      "page": 1,
+      "key": "s08_118",
+      "section": "Expediente",
+      "label": "H3: Comitê de Governança / QuitérIA",
+      "value": "Comitê de Governança / QuitérIA",
+      "position": 118
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 119,
+    "fields": {
+      "page": 1,
+      "key": "s08_119",
+      "section": "Expediente",
+      "label": "SPAN: Fernanda Martins",
+      "value": "Fernanda Martins",
+      "position": 119
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 120,
+    "fields": {
+      "page": 1,
+      "key": "s08_120",
+      "section": "Expediente",
+      "label": "SPAN: Haydée Svab",
+      "value": "Haydée Svab",
+      "position": 120
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 121,
+    "fields": {
+      "page": 1,
+      "key": "s08_121",
+      "section": "Expediente",
+      "label": "SPAN: Vitória Régia da Silva",
+      "value": "Vitória Régia da Silva",
+      "position": 121
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 122,
+    "fields": {
+      "page": 1,
+      "key": "s08_122",
+      "section": "Expediente",
+      "label": "H3: Comitê de Validação / QuitérIA",
+      "value": "Comitê de Validação / QuitérIA",
+      "position": 122
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 123,
+    "fields": {
+      "page": 1,
+      "key": "s08_123",
+      "section": "Expediente",
+      "label": "SPAN: Ana Carolina Araújo",
+      "value": "Ana Carolina Araújo",
+      "position": 123
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 124,
+    "fields": {
+      "page": 1,
+      "key": "s08_124",
+      "section": "Expediente",
+      "label": "SPAN: Rachel de Andrade",
+      "value": "Rachel de Andrade",
+      "position": 124
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 125,
+    "fields": {
+      "page": 1,
+      "key": "s08_125",
+      "section": "Expediente",
+      "label": "SPAN: Regina Célia Barbosa",
+      "value": "Regina Célia Barbosa",
+      "position": 125
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 126,
+    "fields": {
+      "page": 1,
+      "key": "s08_126",
+      "section": "Expediente",
+      "label": "SPAN: Roberta Viola",
+      "value": "Roberta Viola",
+      "position": 126
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 127,
+    "fields": {
+      "page": 1,
+      "key": "s08_127",
+      "section": "Expediente",
+      "label": "H3: Edições anteriores",
+      "value": "Edições anteriores",
+      "position": 127
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 128,
+    "fields": {
+      "page": 1,
+      "key": "s08_128",
+      "section": "Expediente",
+      "label": "STRONG: Adriano Belisário",
+      "value": "Adriano Belisário",
+      "position": 128
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 129,
+    "fields": {
+      "page": 1,
+      "key": "s08_129",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvimento de IA e modelagem de dados",
+      "value": "— Desenvolvimento de IA e modelagem de dados",
+      "position": 129
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 130,
+    "fields": {
+      "page": 1,
+      "key": "s08_130",
+      "section": "Expediente",
+      "label": "STRONG: Ana Carolina Araújo",
+      "value": "Ana Carolina Araújo",
+      "position": 130
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 131,
+    "fields": {
+      "page": 1,
+      "key": "s08_131",
+      "section": "Expediente",
+      "label": "SPAN: — Gestora de Programas e Projetos",
+      "value": "— Gestora de Programas e Projetos",
+      "position": 131
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 132,
+    "fields": {
+      "page": 1,
+      "key": "s08_132",
+      "section": "Expediente",
+      "label": "STRONG: Bárbara Libório",
+      "value": "Bárbara Libório",
+      "position": 132
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 133,
+    "fields": {
+      "page": 1,
+      "key": "s08_133",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria",
+      "value": "— Diretoria",
+      "position": 133
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 134,
+    "fields": {
+      "page": 1,
+      "key": "s08_134",
+      "section": "Expediente",
+      "label": "STRONG: Carolina Oms",
+      "value": "Carolina Oms",
+      "position": 134
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 135,
+    "fields": {
+      "page": 1,
+      "key": "s08_135",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria",
+      "value": "— Diretoria",
+      "position": 135
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 136,
+    "fields": {
+      "page": 1,
+      "key": "s08_136",
+      "section": "Expediente",
+      "label": "STRONG: Diego Rabatone Oliveira",
+      "value": "Diego Rabatone Oliveira",
+      "position": 136
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 137,
+    "fields": {
+      "page": 1,
+      "key": "s08_137",
+      "section": "Expediente",
+      "label": "STRONG: Haydée Svab",
+      "value": "Haydée Svab",
+      "position": 137
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 138,
+    "fields": {
+      "page": 1,
+      "key": "s08_138",
+      "section": "Expediente",
+      "label": "SPAN: — Consultora de Desenvolvimento / ASK-AR",
+      "value": "— Consultora de Desenvolvimento / ASK-AR",
+      "position": 138
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 139,
+    "fields": {
+      "page": 1,
+      "key": "s08_139",
+      "section": "Expediente",
+      "label": "STRONG: Helena Bertho",
+      "value": "Helena Bertho",
+      "position": 139
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 140,
+    "fields": {
+      "page": 1,
+      "key": "s08_140",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria Estratégica",
+      "value": "— Diretoria Estratégica",
+      "position": 140
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 141,
+    "fields": {
+      "page": 1,
+      "key": "s08_141",
+      "section": "Expediente",
+      "label": "STRONG: Ingrid Fernandes",
+      "value": "Ingrid Fernandes",
+      "position": 141
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 142,
+    "fields": {
+      "page": 1,
+      "key": "s08_142",
+      "section": "Expediente",
+      "label": "SPAN: — Gerente de Tecnologia",
+      "value": "— Gerente de Tecnologia",
+      "position": 142
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 143,
+    "fields": {
+      "page": 1,
+      "key": "s08_143",
+      "section": "Expediente",
+      "label": "STRONG: Lucas Ansei",
+      "value": "Lucas Ansei",
+      "position": 143
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 144,
+    "fields": {
+      "page": 1,
+      "key": "s08_144",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor e modelagem de dados / App Cívico",
+      "value": "— Desenvolvedor e modelagem de dados / App Cívico",
+      "position": 144
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 145,
+    "fields": {
+      "page": 1,
+      "key": "s08_145",
+      "section": "Expediente",
+      "label": "STRONG: Natali Carvalho",
+      "value": "Natali Carvalho",
+      "position": 145
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 146,
+    "fields": {
+      "page": 1,
+      "key": "s08_146",
+      "section": "Expediente",
+      "label": "SPAN: — Newsletter",
+      "value": "— Newsletter",
+      "position": 146
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 147,
+    "fields": {
+      "page": 1,
+      "key": "s08_147",
+      "section": "Expediente",
+      "label": "STRONG: Renata Hirota",
+      "value": "Renata Hirota",
+      "position": 147
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 148,
+    "fields": {
+      "page": 1,
+      "key": "s08_148",
+      "section": "Expediente",
+      "label": "SPAN: — Estatística",
+      "value": "— Estatística",
+      "position": 148
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 149,
+    "fields": {
+      "page": 1,
+      "key": "s08_149",
+      "section": "Expediente",
+      "label": "STRONG: Roberta Viola",
+      "value": "Roberta Viola",
+      "position": 149
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 150,
+    "fields": {
+      "page": 1,
+      "key": "s08_150",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvimento de IA e modelagem de dados",
+      "value": "— Desenvolvimento de IA e modelagem de dados",
+      "position": 150
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 151,
+    "fields": {
+      "page": 1,
+      "key": "s08_151",
+      "section": "Expediente",
+      "label": "STRONG: Robson Sobral",
+      "value": "Robson Sobral",
+      "position": 151
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 152,
+    "fields": {
+      "page": 1,
+      "key": "s08_152",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor de frontend / App Cívico",
+      "value": "— Desenvolvedor de frontend / App Cívico",
+      "position": 152
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 153,
+    "fields": {
+      "page": 1,
+      "key": "s08_153",
+      "section": "Expediente",
+      "label": "STRONG: Thais Fôlego",
+      "value": "Thais Fôlego",
+      "position": 153
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 154,
+    "fields": {
+      "page": 1,
+      "key": "s08_154",
+      "section": "Expediente",
+      "label": "SPAN: — Diretoria",
+      "value": "— Diretoria",
+      "position": 154
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 155,
+    "fields": {
+      "page": 1,
+      "key": "s08_155",
+      "section": "Expediente",
+      "label": "STRONG: Vinícius Pereira",
+      "value": "Vinícius Pereira",
+      "position": 155
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 156,
+    "fields": {
+      "page": 1,
+      "key": "s08_156",
+      "section": "Expediente",
+      "label": "SPAN: — Desenvolvedor de dataviz",
+      "value": "— Desenvolvedor de dataviz",
+      "position": 156
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 157,
+    "fields": {
+      "page": 1,
+      "key": "s09_157",
+      "section": "Apoio",
+      "label": "H2: Apoio",
+      "value": "Apoio",
+      "position": 157
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 158,
+    "fields": {
+      "page": 1,
+      "key": "s09_158",
+      "section": "Apoio",
+      "label": "P: Este projeto conta com o apoio da Rede Feminista de IA da América Latina e do Caribe,",
+      "value": "Este projeto conta com o apoio da Rede Feminista de IA da América Latina e do Caribe, do Codesinfo (Fundo de Inovação para o Jornalismo, coordenado pelo Projor com apoio da Google News Initiative), do Fundo ELAS+ Doar Para Transformar e da Agence Française de Développement (AFD). As ideias e opiniões expressas neste projeto são de responsabilidade das autoras e não refletem, necessariamente, o ponto de vista destes apoiadores.",
+      "position": 158
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 159,
+    "fields": {
+      "page": 1,
+      "key": "s00_x001",
+      "section": "Apresentação",
+      "label": "SPAN: Elas",
+      "value": "Elas",
+      "position": 159
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 160,
+    "fields": {
+      "page": 1,
+      "key": "s00_x002",
+      "section": "Apresentação",
+      "label": "SPAN: no",
+      "value": "no",
+      "position": 160
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 161,
+    "fields": {
+      "page": 1,
+      "key": "s00_x003",
+      "section": "Apresentação",
+      "label": "P: é uma iniciativa de tecnologia cívica e comunicação feminista do",
+      "value": "é uma iniciativa de tecnologia cívica e comunicação feminista do",
+      "position": 161
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 162,
+    "fields": {
+      "page": 1,
+      "key": "s02_x004",
+      "section": "Como avaliamos",
+      "label": "ASIDE: Para ver todas as palavras, acesse a",
+      "value": "Para ver todas as palavras, acesse a",
+      "position": 162
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 163,
+    "fields": {
+      "page": 1,
+      "key": "s02_x005",
+      "section": "Como avaliamos",
+      "label": "ASIDE: Para entender a arquitetura, o treinamento e a governança da ferramenta, acesse a pág",
+      "value": "Para entender a arquitetura, o treinamento e a governança da ferramenta, acesse a página",
+      "position": 163
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 164,
+    "fields": {
+      "page": 1,
+      "key": "s05_x006",
+      "section": "Desafios",
+      "label": "P: O desenvolvimento e a manutenção do",
+      "value": "O desenvolvimento e a manutenção do",
+      "position": 164
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 165,
+    "fields": {
+      "page": 1,
+      "key": "s06_x007",
+      "section": "Próximos passos",
+      "label": "P: Os planos de evolução da plataforma, da metodologia e da inteligência artificial são ",
+      "value": "Os planos de evolução da plataforma, da metodologia e da inteligência artificial são atualizados continuamente e podem ser consultados no",
+      "position": 165
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 166,
+    "fields": {
+      "page": 1,
+      "key": "s06_x008",
+      "section": "Próximos passos",
+      "label": "P: Sistemas de monitoramento legislativo e inteligência cívica exigem adaptação permanen",
+      "value": "Sistemas de monitoramento legislativo e inteligência cívica exigem adaptação permanente às transformações políticas, tecnológicas e sociais, o que depende de financiamento contínuo para manutenção e hospedagem técnica, atualização metodológica, governança de dados e fortalecimento institucional.",
+      "position": 166
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 167,
+    "fields": {
+      "page": 1,
+      "key": "s07_x009",
+      "section": "Reconhecimento",
+      "label": "P: venceu o",
+      "value": "venceu o",
+      "position": 167
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 168,
+    "fields": {
+      "page": 1,
+      "key": "s07_x010",
+      "section": "Reconhecimento",
+      "label": "P: na categoria Inovação. Os jurados destacaram a transparência metodológica e a replica",
+      "value": "na categoria Inovação. Os jurados destacaram a transparência metodológica e a replicabilidade do projeto.",
+      "position": 168
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 169,
+    "fields": {
+      "page": 1,
+      "key": "s07_x011",
+      "section": "Reconhecimento",
+      "label": "STRONG: Em 2026, a QuitérIA venceu o prêmio",
+      "value": "Em 2026, a QuitérIA venceu o prêmio",
+      "position": 169
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 170,
+    "fields": {
+      "page": 1,
+      "key": "s07_x012",
+      "section": "Reconhecimento",
+      "label": "STRONG: , na categoria Engajamento do Governo e do Cidadão, que celebra soluções digitais cap",
+      "value": ", na categoria Engajamento do Governo e do Cidadão, que celebra soluções digitais capazes de ampliar o acesso à informação, fortalecer a transparência, estimular a participação e contribuir para processos democráticos mais inclusivos. A premiação é conduzida pela",
+      "position": 170
+    }
+  },
+  {
+    "model": "cms.aboutcopy",
+    "pk": 171,
+    "fields": {
+      "page": 1,
+      "key": "s08_x013",
+      "section": "Expediente",
+      "label": "SPAN: — Consultor de Desenvolvimento / ASK-AR",
+      "value": "— Consultor de Desenvolvimento / ASK-AR",
+      "position": 171
+    }
+  },
+  {
+    "model": "cms.abouttimelineevent",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "date_prefix": "Março de",
+      "year": "2020",
+      "description_before_link": "Lançamento da ",
+      "link_text": "robô @elasnocongresso no Twitter (X)",
+      "link_url": "https://azmina.com.br/reportagens/uma-robo-para-monitorar-direitos-das-mulheres-azmina-lanca-o-elas-no-congresso/",
+      "description_after_link": ", projeto selecionado pelo Google News Initiative entre mais de 300 concorrentes na América Latina. A automação acompanhou as tramitações diárias até junho de 2023, quando foi descontinuada com o fechamento do acesso gratuito à API da plataforma.",
+      "tag": "Nasce o projeto"
+    }
+  },
+  {
+    "model": "cms.abouttimelineevent",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "date_prefix": "Junho de",
+      "year": "2020",
+      "description_before_link": "Primeiro levantamento e análise de atividade legislativa, primeiro ranking parlamentar e estreia da newsletter, com curadoria de projetos e análise política semanal.",
+      "link_text": "",
+      "link_url": "",
+      "description_after_link": "",
+      "tag": "1ª newsletter"
+    }
+  },
+  {
+    "model": "cms.abouttimelineevent",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "date_prefix": "De 2020 a",
+      "year": "2024",
+      "description_before_link": "Edições periódicas do Ranking dos Parlamentares, metodologicamente inspirado no ",
+      "link_text": "Ruralômetro",
+      "link_url": "https://ruralometro.reporterbrasil.org.br/",
+      "description_after_link": " (Repórter Brasil).",
+      "tag": "Ranking"
+    }
+  },
+  {
+    "model": "cms.abouttimelineevent",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "date_prefix": "Ano de",
+      "year": "2024",
+      "description_before_link": "Na revisão metodológica que antecedeu a criação da inteligência artificial, optamos por descontinuar o ranking e concentrar esforços na análise qualitativa das proposições — tirando o foco da ação individual dos parlamentares em favor de uma abordagem mais contextual. No fim do ano, lançamos a QuitérIA.",
+      "link_text": "",
+      "link_url": "",
+      "description_after_link": "",
+      "tag": "Fim do ranking"
+    }
+  },
+  {
+    "model": "cms.abouttimelineevent",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "date_prefix": "Ano de",
+      "year": "2026",
+      "description_before_link": "Retreinamento da QuitérIA, criação da API, relançamento do site com evolução do painel público e sistema automatizado de alertas diários e semanais.",
+      "link_text": "",
+      "link_url": "",
+      "description_after_link": "",
+      "tag": "QuitérIA 2.0"
+    }
+  },
+  {
+    "model": "cms.aboutchallenge",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "title": "Volume e complexidade",
+      "text": "a produção parlamentar é altíssima, o que nos obriga a filtrar matérias por palavras-chave, um processo que pode deixar passar projetos com linguagem indireta, técnica ou incomum. Traduzir o “legislativês” também exige trabalho editorial constante."
+    }
+  },
+  {
+    "model": "cms.aboutchallenge",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "title": "Dependência de fontes externas",
+      "text": "a coleta depende das APIs oficiais da Câmara e do Senado, sujeitas a instabilidades que afetam o ritmo de atualização da base. Além disso, emendas e substitutivos alteram os textos originais ao longo da tramitação, exigindo reavaliação permanente."
+    }
+  },
+  {
+    "model": "cms.aboutchallenge",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "title": "Subjetividade da análise",
+      "text": "classificar pautas de gênero com consistência envolve gerenciar a subjetividade inerente à análise política e jurídica. Para isso, criamos critérios analíticos rigorosos aplicados pela rede colaborativa e duas instâncias de supervisão, o Comitê de Governança e o Comitê de Validação, além de enfrentar a resistência e a desconfiança legítimas sobre o uso de IA em direitos humanos. Erros, vieses e ambiguidades do modelo são mitigados por governança compartilhada e supervisão humana permanente."
+    }
+  },
+  {
+    "model": "cms.aboutchallenge",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "title": "Dados e infraestrutura",
+      "text": "treinar um modelo de linguagem exige volume robusto de dados anotados. Podemos construir modelos cada vez mais acurados conforme avaliamos novos projetos ao longo do tempo, o que, por outro lado, demanda investimento em infraestrutura de hardware para comportar modelos maiores."
+    }
+  },
+  {
+    "model": "cms.aboutchallenge",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "title": "Contexto político e sustentabilidade",
+      "text": "a iniciativa opera em um ambiente de forte disputa e de ataques diretos às pautas de gênero e aos direitos reprodutivos, somado ao desafio constante de captar financiamento para garantir a sustentabilidade, a escalabilidade e a autonomia da plataforma."
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "position": 1,
+      "name": "Anis Bioética",
+      "logo_image": "cms/sobre/partners/anis.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "position": 2,
+      "name": "Artigo 19",
+      "logo_image": "cms/sobre/partners/artigo19.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "position": 3,
+      "name": "Cepia - Cidadania, Estudo, Pesquisa, Informação e Ação",
+      "logo_image": "cms/sobre/partners/cepia.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "position": 4,
+      "name": "CFEMEA - Centro Feminista de Estudos e Assessoria",
+      "logo_image": "cms/sobre/partners/cfemea.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "position": 5,
+      "name": "Coletivo Feminista Sexualidade e Saúde",
+      "logo_image": "cms/sobre/partners/coletivoFeminista.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "position": 6,
+      "name": "Coletivo Mana a Mana",
+      "logo_image": "cms/sobre/partners/manaAMana.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "position": 7,
+      "name": "deFEMde - Rede Feminista de Juristas",
+      "logo_image": "cms/sobre/partners/deFEMde.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "position": 8,
+      "name": "Ecos",
+      "logo_image": "cms/sobre/partners/ecos.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "position": 9,
+      "name": "Empodera",
+      "logo_image": "cms/sobre/partners/empodera.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "position": 10,
+      "name": "Gepô",
+      "logo_image": "cms/sobre/partners/gepo.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 11,
+    "fields": {
+      "page": 1,
+      "position": 11,
+      "name": "Instituto + Diversidade",
+      "logo_image": "cms/sobre/partners/maisDiversidade.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 12,
+    "fields": {
+      "page": 1,
+      "position": 12,
+      "name": "Instituto Maria da Penha",
+      "logo_image": "cms/sobre/partners/mariaDaPenha.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 13,
+    "fields": {
+      "page": 1,
+      "position": 13,
+      "name": "Instituto Marielle Franco",
+      "logo_image": "cms/sobre/partners/marielleFranco.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 14,
+    "fields": {
+      "page": 1,
+      "position": 14,
+      "name": "Instituto Patrícia Galvão",
+      "logo_image": "cms/sobre/partners/patriciaGalvao.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 15,
+    "fields": {
+      "page": 1,
+      "position": 15,
+      "name": "Instituto Update",
+      "logo_image": "cms/sobre/partners/update.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 16,
+    "fields": {
+      "page": 1,
+      "position": 16,
+      "name": "Juristas Negras",
+      "logo_image": "cms/sobre/partners/juristasNegras.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 17,
+    "fields": {
+      "page": 1,
+      "position": 17,
+      "name": "LabCidade",
+      "logo_image": "cms/sobre/partners/labCidade.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 18,
+    "fields": {
+      "page": 1,
+      "position": 18,
+      "name": "Mulheres Negras Decidem",
+      "logo_image": "cms/sobre/partners/mulheresNegrasDecidem.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 19,
+    "fields": {
+      "page": 1,
+      "position": 19,
+      "name": "Observatório da Violência Obstétrica no Brasil",
+      "logo_image": "cms/sobre/partners/ovoBr.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 20,
+    "fields": {
+      "page": 1,
+      "position": 20,
+      "name": "Plan International",
+      "logo_image": "cms/sobre/partners/planInternational.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 21,
+    "fields": {
+      "page": 1,
+      "position": 21,
+      "name": "Rede Liberdade",
+      "logo_image": "cms/sobre/partners/redeLiberdade.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 22,
+    "fields": {
+      "page": 1,
+      "position": 22,
+      "name": "SOF - Sempreviva Organização Feminista",
+      "logo_image": "cms/sobre/partners/sof.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 23,
+    "fields": {
+      "page": 1,
+      "position": 23,
+      "name": "SPW - Sexuality Policy Watch",
+      "logo_image": "cms/sobre/partners/spw.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 24,
+    "fields": {
+      "page": 1,
+      "position": 24,
+      "name": "Themis",
+      "logo_image": "cms/sobre/partners/themis.webp"
+    }
+  },
+  {
+    "model": "cms.aboutpartner",
+    "pk": 25,
+    "fields": {
+      "page": 1,
+      "position": 25,
+      "name": "TretAqui",
+      "logo_image": "cms/sobre/partners/tretaqui.webp"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "group": "azmina",
+      "position": 1,
+      "name": "Diego Rabatone Oliveira",
+      "role": "— Consultor de Desenvolvimento / ASK-AR"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "group": "azmina",
+      "position": 2,
+      "name": "Giulia Santos",
+      "role": "— Gerente de Arte"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "group": "azmina",
+      "position": 3,
+      "name": "Helena Bertho",
+      "role": "— Diretoria estratégica"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "group": "azmina",
+      "position": 4,
+      "name": "Ingrid Fernandes",
+      "role": "— Gerente de Tecnologia"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "group": "azmina",
+      "position": 5,
+      "name": "Maria Ísis Santos",
+      "role": "— Coordenadora de Projetos de Dados"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "group": "azmina",
+      "position": 6,
+      "name": "Marília Moreira",
+      "role": "— Diretoria institucional"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "group": "suppliers",
+      "position": 1,
+      "name": "Letícia Oliveira",
+      "role": "— UX / NOMA Studio"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "group": "suppliers",
+      "position": 2,
+      "name": "Mariana Nascimento",
+      "role": "— UX / NOMA Studio"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "group": "suppliers",
+      "position": 3,
+      "name": "Rafael Chuluc",
+      "role": "— Desenvolvedor backend / Wura"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "group": "suppliers",
+      "position": 4,
+      "name": "Talita Santos",
+      "role": "— Desenvolvedora frontend / Wura"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 11,
+    "fields": {
+      "page": 1,
+      "group": "suppliers",
+      "position": 5,
+      "name": "Téo Calvo",
+      "role": "— Desenvolvedor IA / Wura"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 12,
+    "fields": {
+      "page": 1,
+      "group": "suppliers",
+      "position": 6,
+      "name": "Vinicius Sueiro",
+      "role": "— Visualização de Dados"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 13,
+    "fields": {
+      "page": 1,
+      "group": "governance",
+      "position": 1,
+      "name": "Fernanda Martins",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 14,
+    "fields": {
+      "page": 1,
+      "group": "governance",
+      "position": 2,
+      "name": "Haydée Svab",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 15,
+    "fields": {
+      "page": 1,
+      "group": "governance",
+      "position": 3,
+      "name": "Vitória Régia da Silva",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 16,
+    "fields": {
+      "page": 1,
+      "group": "validation",
+      "position": 1,
+      "name": "Ana Carolina Araújo",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 17,
+    "fields": {
+      "page": 1,
+      "group": "validation",
+      "position": 2,
+      "name": "Rachel de Andrade",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 18,
+    "fields": {
+      "page": 1,
+      "group": "validation",
+      "position": 3,
+      "name": "Regina Célia Barbosa",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 19,
+    "fields": {
+      "page": 1,
+      "group": "validation",
+      "position": 4,
+      "name": "Roberta Viola",
+      "role": ""
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 20,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 1,
+      "name": "Adriano Belisário",
+      "role": "— Desenvolvimento de IA e modelagem de dados"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 21,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 2,
+      "name": "Ana Carolina Araújo",
+      "role": "— Gestora de Programas e Projetos"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 22,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 3,
+      "name": "Bárbara Libório",
+      "role": "— Diretoria"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 23,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 4,
+      "name": "Carolina Oms",
+      "role": "— Diretoria"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 24,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 5,
+      "name": "Diego Rabatone Oliveira",
+      "role": "— Consultor de Desenvolvimento / ASK-AR"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 25,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 6,
+      "name": "Haydée Svab",
+      "role": "— Consultora de Desenvolvimento / ASK-AR"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 26,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 7,
+      "name": "Helena Bertho",
+      "role": "— Diretoria Estratégica"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 27,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 8,
+      "name": "Ingrid Fernandes",
+      "role": "— Gerente de Tecnologia"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 28,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 9,
+      "name": "Lucas Ansei",
+      "role": "— Desenvolvedor e modelagem de dados / App Cívico"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 29,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 10,
+      "name": "Natali Carvalho",
+      "role": "— Newsletter"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 30,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 11,
+      "name": "Renata Hirota",
+      "role": "— Estatística"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 31,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 12,
+      "name": "Roberta Viola",
+      "role": "— Desenvolvimento de IA e modelagem de dados"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 32,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 13,
+      "name": "Robson Sobral",
+      "role": "— Desenvolvedor de frontend / App Cívico"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 33,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 14,
+      "name": "Thais Fôlego",
+      "role": "— Diretoria"
+    }
+  },
+  {
+    "model": "cms.aboutteammember",
+    "pk": 34,
+    "fields": {
+      "page": 1,
+      "group": "previous",
+      "position": 15,
+      "name": "Vinícius Pereira",
+      "role": "— Desenvolvedor de dataviz"
+    }
+  },
+  {
+    "model": "cms.homepage",
+    "pk": 1,
+    "fields": {
+      "seo_title": "Elas no Congresso: monitoramento de pautas de gênero",
+      "seo_description": "Acompanhe a atuação parlamentar sobre direitos das mulheres e pessoas LGBTQIAPN+ com uma inteligência artificial feminista.",
+      "hero_title": "**De olho** nas **pautas de gênero**\nno **Congresso Nacional**",
+      "hero_description": "Nos últimos 8 anos, mais de 700 proposições apresentadas na Câmara dos Deputados e no Senado Federal são ~~desfavoráveis~~ aos direitos de mulheres, meninas e pessoas LGBTQIAPN+",
+      "hero_cta_text": "O que descobrimos?",
+      "content": "## Os direitos das mulheres e pessoas LGBTQIA+ nunca foram tão atacados\n\nLegislar sobre nossos direitos não é sinônimo de fortalecê-los. Muito do trabalho legislativo faz o contrário: retrocesso e restrição de direitos já conquistados. E o atual Congresso tem sido campeão nos ataques:\n\n::: chart rights-under-attack :::\n\n::: note\n\n[Em 2023 começou o mandato da bancada mais conservadora desde 1964](https://azmina.com.br/reportagens/ataques-direitos-lgbtqia-aborto-congresso/)\n\n[Ler mais →](https://hoy.bio/8b8bfhoigr)\n\n:::\n\n::: caption\n\nCada folha representa 1 proposição\n\n*Foram avaliadas proposições até março de 2026\n\n:::\n\n---\n\n## Estes são Os temas com mais retrocesso no legislativo\n\nViolência contra a mulher, direito ao aborto e de pessoas LGBTQIAPN+ são os mais atacados no Congresso\n\n::: chart legislative-setbacks :::\n\n::: caption\n\n[Acesse a aba Atividade de Legislativa para ver em detalhes](/atividade-legislativa)\n\n:::\n\n---\n\n## Reportagens\n\nO que os dados do Elas no Congresso revelam sobre o que está em disputa no Congresso e na vida das mulheres\n\n::: reports :::\n\n---\n\n## Mulheres na defesa\n\nO número de projetos protocolados por mulheres deu um salto na última legislatura, refletindo o aumento histórico de mulheres eleitas em 2022 e o seu engajamento em blindar direitos já conquistados.\n\n::: chart women-in-defense :::\n\n::: note\n\nA cada 100 proposições sobre gênero assinadas por mulheres, **{percentual}** são favoráveis\n\n:::\n\n::: caption\n\nNo Congresso Nacional não há dados sobre pessoas não-binárias\n\n:::\n\n::: followup\n\nA extrema direita saiu fortalecida das urnas em 2026 e terá ainda mais poder para definir os rumos do próximo Congresso. Veja como partidos como o PL, que elegeu 121 deputados federais e 19 senadores, costuma atuar em projetos sensíveis a gênero.\n\n:::\n\n---\n\n## Estes são os partidos que mais têm {posição} Nossos direitos\n\nExtrema-direita, centro e esquerda têm atuação diferente em relação ao gênero\n\n::: chart party-rights :::\n\n::: caption\n\n[Acesse a aba Atividade de Legislativa para ver em detalhes](/atividade-legislativa)\n\n:::\n\n---\n\n## Estas são as UFs dos parlamentares que apresentam mais projetos\n\nBoa parte das bancadas dos estados do Centro-Oeste, além das de Tocantins, Espírito Santo e Santa Catarina, lidera a apresentação de propostas que restringem direitos de mulheres, meninas e da população LGBTQIAPN+\n\n::: chart state-projects :::\n\n::: caption\n\nA atuação das bancadas regionais revela estados com atuação mais conservadora\n\n:::\n\n::: cta\n\n[Veja como está o seu estado](/atividade-legislativa)\n\n:::\n\n---\n\n## A gente te avisa\n\nPra evitar retrocessos, é essencial saber o que está acontecendo no Congresso e agir!\n\nPor isso, temos uma IA que faz esse **monitoramento** pra você\n\n::: alerts :::\n\n::: cta\n\n[Receba alertas](/alertas)\n\n:::\n\n---\n\n## Veja o que restringe nossos direitos e tá tramitando rapidinho\n\nProjetos desfavoráveis que estão avançando nas comissões e no Plenário\n\n::: proposals fast :::\n\n---\n\n## E o que é bom pra gente, mas tá indo beeeem devagar:\n\nProjetos favoráveis que ainda aguardam relatoria, parecer ou votação\n\n::: proposals slow :::\n\n---\n\n## Projetos que viraram lei\n\nProjetos favoráveis e desfavoráveis que viraram lei\n\n::: proposals enacted :::\n\n---\n\n## Explore\n\nQuer saber mais sobre o que tá tramitando sobre pautas de gênero, raça e LGBTQIAPN+?\n\n::: explore :::\n\n![Prévia da ferramenta de atividade legislativa](/media/cms/markdown/74f5b946d93741f6a9c735e6df082cf5.webp)\n\n::: cta\n\n[Explore a produção do Congresso](/atividade-legislativa)\n\n:::\n\n---\n\n## Parlamentares que jogam contra\n\nEsses são os políticos que mais apresentam projetos desfavoráveis aos direitos de meninas, mulheres e pessoas LGBTQIAPN+. Consideramos parlamentares com cinco ou mais proposições, das quais 40% ou mais são desfavoráveis.\n\n::: parliamentarians :::\n\n---\n\nNossos levantamentos são feitos com base em análises da **QuitérIA**, que segue os princípios da **IA feminista** e monitora pautas de gênero no Congresso Nacional diariamente, e com validação humana.\n\n::: quiteria :::\n\n![QuitérIA, inteligência artificial feminista](/media/cms/markdown/b766dd167511410aa590f8814672c8e7.webp)\n\n::: cta\n\n[Veja como ela funciona](/ia-feminista)\n\n:::\n",
+      "hero_image_width": 513,
+      "hero_image_height": 389,
+      "hero_image": "cms/home/hero.webp"
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 1,
+    "fields": {
+      "page": 1,
+      "key": "seo_title",
+      "section": "Busca",
+      "label": "Título para buscas",
+      "value": "Elas no Congresso: monitoramento de pautas de gênero",
+      "position": 1
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 2,
+    "fields": {
+      "page": 1,
+      "key": "seo_description",
+      "section": "Busca",
+      "label": "Descrição para buscas",
+      "value": "Acompanhe a atuação parlamentar sobre direitos das mulheres e pessoas LGBTQIAPN+ com uma inteligência artificial feminista.",
+      "position": 2
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 3,
+    "fields": {
+      "page": 1,
+      "key": "hero_title_before_nas",
+      "section": "Abertura",
+      "label": "Título: antes de “nas”",
+      "value": "De olho ",
+      "position": 3
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 4,
+    "fields": {
+      "page": 1,
+      "key": "hero_title_nas",
+      "section": "Abertura",
+      "label": "Título: palavra estreita",
+      "value": "nas",
+      "position": 4
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 5,
+    "fields": {
+      "page": 1,
+      "key": "hero_title_after_nas",
+      "section": "Abertura",
+      "label": "Título: depois de “nas”",
+      "value": " pautas de gênero",
+      "position": 5
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 6,
+    "fields": {
+      "page": 1,
+      "key": "hero_title_no",
+      "section": "Abertura",
+      "label": "Título: palavra da segunda linha",
+      "value": "no",
+      "position": 6
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 7,
+    "fields": {
+      "page": 1,
+      "key": "hero_title_after_no",
+      "section": "Abertura",
+      "label": "Título: fim da segunda linha",
+      "value": " Congresso Nacional",
+      "position": 7
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 8,
+    "fields": {
+      "page": 1,
+      "key": "hero_subtitle_before",
+      "section": "Abertura",
+      "label": "Subtítulo: antes do destaque",
+      "value": "Nos últimos 8 anos, mais de 700 proposições apresentadas na Câmara dos Deputados e no Senado Federal são ",
+      "position": 8
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 9,
+    "fields": {
+      "page": 1,
+      "key": "hero_subtitle_highlight",
+      "section": "Abertura",
+      "label": "Subtítulo: texto destacado",
+      "value": "desfavoráveis",
+      "position": 9
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 10,
+    "fields": {
+      "page": 1,
+      "key": "hero_subtitle_after",
+      "section": "Abertura",
+      "label": "Subtítulo: depois do destaque",
+      "value": " aos direitos de mulheres, meninas e pessoas LGBTQIAPN+",
+      "position": 10
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 11,
+    "fields": {
+      "page": 1,
+      "key": "hero_scroll_text",
+      "section": "Abertura",
+      "label": "Botão de rolagem: texto",
+      "value": "O que descobrimos?",
+      "position": 11
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 12,
+    "fields": {
+      "page": 1,
+      "key": "hero_scroll_url",
+      "section": "Abertura",
+      "label": "Endereço do botão de rolagem",
+      "value": "#o-que-descobrimos",
+      "position": 12
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 13,
+    "fields": {
+      "page": 1,
+      "key": "rights_title",
+      "section": "Direitos atacados",
+      "label": "Título",
+      "value": "Os direitos das mulheres e pessoas LGBTQIA+ nunca foram tão atacados",
+      "position": 13
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 14,
+    "fields": {
+      "page": 1,
+      "key": "rights_text",
+      "section": "Direitos atacados",
+      "label": "Texto",
+      "value": "Legislar sobre nossos direitos não é sinônimo de fortalecê-los. Muito do trabalho legislativo faz o contrário: retrocesso e restrição de direitos já conquistados. E o atual Congresso tem sido campeão nos ataques:",
+      "position": 14
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 15,
+    "fields": {
+      "page": 1,
+      "key": "rights_postit_text",
+      "section": "Direitos atacados",
+      "label": "Post-it: texto",
+      "value": "Em 2023 começou o mandato da bancada mais conservadora desde 1964",
+      "position": 15
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 16,
+    "fields": {
+      "page": 1,
+      "key": "rights_postit_cta",
+      "section": "Direitos atacados",
+      "label": "Post-it: chamada do link",
+      "value": "Ler mais →",
+      "position": 16
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 17,
+    "fields": {
+      "page": 1,
+      "key": "rights_postit_mobile_url",
+      "section": "Direitos atacados",
+      "label": "Endereço do post-it no celular",
+      "value": "https://hoy.bio/8b8bfhoigr",
+      "position": 17
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 18,
+    "fields": {
+      "page": 1,
+      "key": "rights_postit_desktop_url",
+      "section": "Direitos atacados",
+      "label": "Endereço do post-it no computador",
+      "value": "https://azmina.com.br/reportagens/ataques-direitos-lgbtqia-aborto-congresso/",
+      "position": 18
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 19,
+    "fields": {
+      "page": 1,
+      "key": "rights_caption",
+      "section": "Direitos atacados",
+      "label": "Legenda abaixo do gráfico",
+      "value": "Cada folha representa 1 proposição",
+      "position": 19
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 20,
+    "fields": {
+      "page": 1,
+      "key": "rights_footnote",
+      "section": "Direitos atacados",
+      "label": "Nota abaixo do gráfico",
+      "value": "*Foram avaliadas proposições até março de 2026",
+      "position": 20
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 21,
+    "fields": {
+      "page": 1,
+      "key": "setbacks_title",
+      "section": "Temas em retrocesso",
+      "label": "Título",
+      "value": "Estes são Os temas com mais retrocesso no legislativo",
+      "position": 21
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 22,
+    "fields": {
+      "page": 1,
+      "key": "setbacks_text",
+      "section": "Temas em retrocesso",
+      "label": "Texto",
+      "value": "Violência contra a mulher, direito ao aborto e de pessoas LGBTQIAPN+ são os mais atacados no Congresso",
+      "position": 22
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 23,
+    "fields": {
+      "page": 1,
+      "key": "setbacks_caption",
+      "section": "Temas em retrocesso",
+      "label": "Legenda com link",
+      "value": "Acesse a aba Atividade de Legislativa para ver em detalhes",
+      "position": 23
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 24,
+    "fields": {
+      "page": 1,
+      "key": "setbacks_caption_url",
+      "section": "Temas em retrocesso",
+      "label": "Endereço da legenda",
+      "value": "/atividade-legislativa",
+      "position": 24
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 25,
+    "fields": {
+      "page": 1,
+      "key": "reports_title",
+      "section": "Reportagens",
+      "label": "Título",
+      "value": "Reportagens",
+      "position": 25
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 26,
+    "fields": {
+      "page": 1,
+      "key": "reports_subtitle",
+      "section": "Reportagens",
+      "label": "Subtítulo",
+      "value": "O que os dados do Elas no Congresso revelam sobre o que está em disputa no Congresso e na vida das mulheres",
+      "position": 26
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 27,
+    "fields": {
+      "page": 1,
+      "key": "women_title",
+      "section": "Mulheres na defesa",
+      "label": "Título",
+      "value": "Mulheres na defesa",
+      "position": 27
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 28,
+    "fields": {
+      "page": 1,
+      "key": "women_text",
+      "section": "Mulheres na defesa",
+      "label": "Texto",
+      "value": "O número de projetos protocolados por mulheres deu um salto na última legislatura, refletindo o aumento histórico de mulheres eleitas em 2022 e o seu engajamento em blindar direitos já conquistados.",
+      "position": 28
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 29,
+    "fields": {
+      "page": 1,
+      "key": "women_postit_before",
+      "section": "Mulheres na defesa",
+      "label": "Post-it: antes do percentual",
+      "value": "A cada 100 proposições sobre gênero assinadas por mulheres, ",
+      "position": 29
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 30,
+    "fields": {
+      "page": 1,
+      "key": "women_postit_after",
+      "section": "Mulheres na defesa",
+      "label": "Post-it: depois do percentual",
+      "value": " são favoráveis",
+      "position": 30
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 31,
+    "fields": {
+      "page": 1,
+      "key": "women_caption",
+      "section": "Mulheres na defesa",
+      "label": "Legenda",
+      "value": "No Congresso Nacional não há dados sobre pessoas não-binárias",
+      "position": 31
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 32,
+    "fields": {
+      "page": 1,
+      "key": "women_followup",
+      "section": "Mulheres na defesa",
+      "label": "Texto após o gráfico",
+      "value": "A extrema direita saiu fortalecida das urnas em 2026 e terá ainda mais poder para definir os rumos do próximo Congresso. Veja como partidos como o PL, que elegeu 121 deputados federais e 19 senadores, costuma atuar em projetos sensíveis a gênero.",
+      "position": 32
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 33,
+    "fields": {
+      "page": 1,
+      "key": "party_title_before",
+      "section": "Partidos",
+      "label": "Título: antes do seletor",
+      "value": "Estes são os partidos que mais têm",
+      "position": 33
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 34,
+    "fields": {
+      "page": 1,
+      "key": "party_title_after",
+      "section": "Partidos",
+      "label": "Título: depois do seletor",
+      "value": "Nossos direitos",
+      "position": 34
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 35,
+    "fields": {
+      "page": 1,
+      "key": "party_subtitle",
+      "section": "Partidos",
+      "label": "Subtítulo",
+      "value": "Extrema-direita, centro e esquerda têm atuação diferente em relação ao gênero",
+      "position": 35
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 36,
+    "fields": {
+      "page": 1,
+      "key": "party_caption",
+      "section": "Partidos",
+      "label": "Legenda com link",
+      "value": "Acesse a aba Atividade de Legislativa para ver em detalhes",
+      "position": 36
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 37,
+    "fields": {
+      "page": 1,
+      "key": "party_caption_url",
+      "section": "Partidos",
+      "label": "Endereço da legenda",
+      "value": "/atividade-legislativa",
+      "position": 37
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 38,
+    "fields": {
+      "page": 1,
+      "key": "uf_title",
+      "section": "Estados",
+      "label": "Título",
+      "value": "Estas são as UFs dos parlamentares que apresentam mais projetos",
+      "position": 38
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 39,
+    "fields": {
+      "page": 1,
+      "key": "uf_subtitle",
+      "section": "Estados",
+      "label": "Subtítulo",
+      "value": "Boa parte das bancadas dos estados do Centro-Oeste, além das de Tocantins, Espírito Santo e Santa Catarina, lidera a apresentação de propostas que restringem direitos de mulheres, meninas e da população LGBTQIAPN+",
+      "position": 39
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 40,
+    "fields": {
+      "page": 1,
+      "key": "uf_caption",
+      "section": "Estados",
+      "label": "Legenda",
+      "value": "A atuação das bancadas regionais revela estados com atuação mais conservadora",
+      "position": 40
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 41,
+    "fields": {
+      "page": 1,
+      "key": "uf_cta_text",
+      "section": "Estados",
+      "label": "Botão: texto",
+      "value": "Veja como está o seu estado",
+      "position": 41
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 42,
+    "fields": {
+      "page": 1,
+      "key": "uf_cta_url",
+      "section": "Estados",
+      "label": "Endereço do botão",
+      "value": "/atividade-legislativa",
+      "position": 42
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 43,
+    "fields": {
+      "page": 1,
+      "key": "alerts_title",
+      "section": "Alertas",
+      "label": "Título",
+      "value": "A gente te avisa",
+      "position": 43
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 44,
+    "fields": {
+      "page": 1,
+      "key": "alerts_intro",
+      "section": "Alertas",
+      "label": "Texto principal",
+      "value": "Pra evitar retrocessos, é essencial saber o que está acontecendo no Congresso e agir!",
+      "position": 44
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 45,
+    "fields": {
+      "page": 1,
+      "key": "alerts_detail_before",
+      "section": "Alertas",
+      "label": "Texto: antes do destaque",
+      "value": "Por isso, temos uma IA que faz esse ",
+      "position": 45
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 46,
+    "fields": {
+      "page": 1,
+      "key": "alerts_detail_highlight",
+      "section": "Alertas",
+      "label": "Texto: destaque",
+      "value": "monitoramento",
+      "position": 46
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 47,
+    "fields": {
+      "page": 1,
+      "key": "alerts_detail_after",
+      "section": "Alertas",
+      "label": "Texto: depois do destaque",
+      "value": " pra você",
+      "position": 47
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 48,
+    "fields": {
+      "page": 1,
+      "key": "alerts_cta_text",
+      "section": "Alertas",
+      "label": "Botão: texto",
+      "value": "Receba alertas",
+      "position": 48
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 49,
+    "fields": {
+      "page": 1,
+      "key": "alerts_cta_url",
+      "section": "Alertas",
+      "label": "Endereço do botão",
+      "value": "/alertas",
+      "position": 49
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 50,
+    "fields": {
+      "page": 1,
+      "key": "fast_title",
+      "section": "Carrossel rápido",
+      "label": "Título",
+      "value": "Veja o que restringe nossos direitos e tá tramitando rapidinho",
+      "position": 50
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 51,
+    "fields": {
+      "page": 1,
+      "key": "fast_subtitle",
+      "section": "Carrossel rápido",
+      "label": "Subtítulo",
+      "value": "Projetos desfavoráveis que estão avançando nas comissões e no Plenário",
+      "position": 51
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 52,
+    "fields": {
+      "page": 1,
+      "key": "slow_title",
+      "section": "Carrossel lento",
+      "label": "Título",
+      "value": "E o que é bom pra gente, mas tá indo beeeem devagar:",
+      "position": 52
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 53,
+    "fields": {
+      "page": 1,
+      "key": "slow_subtitle",
+      "section": "Carrossel lento",
+      "label": "Subtítulo",
+      "value": "Projetos favoráveis que ainda aguardam relatoria, parecer ou votação",
+      "position": 53
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 54,
+    "fields": {
+      "page": 1,
+      "key": "enacted_title",
+      "section": "Projetos que viraram lei",
+      "label": "Título",
+      "value": "Projetos que viraram lei",
+      "position": 54
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 55,
+    "fields": {
+      "page": 1,
+      "key": "enacted_subtitle",
+      "section": "Projetos que viraram lei",
+      "label": "Subtítulo",
+      "value": "Projetos favoráveis e desfavoráveis que viraram lei",
+      "position": 55
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 56,
+    "fields": {
+      "page": 1,
+      "key": "explore_title",
+      "section": "Explore",
+      "label": "Título",
+      "value": "Explore",
+      "position": 56
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 57,
+    "fields": {
+      "page": 1,
+      "key": "explore_subtitle",
+      "section": "Explore",
+      "label": "Subtítulo",
+      "value": "Quer saber mais sobre o que tá tramitando sobre pautas de gênero, raça e LGBTQIAPN+?",
+      "position": 57
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 58,
+    "fields": {
+      "page": 1,
+      "key": "explore_image_alt",
+      "section": "Explore",
+      "label": "Descrição da imagem",
+      "value": "Prévia da ferramenta de atividade legislativa",
+      "position": 58
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 59,
+    "fields": {
+      "page": 1,
+      "key": "explore_cta_text",
+      "section": "Explore",
+      "label": "Botão: texto",
+      "value": "Explore a produção do Congresso",
+      "position": 59
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 60,
+    "fields": {
+      "page": 1,
+      "key": "explore_cta_url",
+      "section": "Explore",
+      "label": "Endereço do botão",
+      "value": "/atividade-legislativa",
+      "position": 60
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 61,
+    "fields": {
+      "page": 1,
+      "key": "parliamentarians_title",
+      "section": "Parlamentares",
+      "label": "Título",
+      "value": "Parlamentares que jogam contra",
+      "position": 61
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 62,
+    "fields": {
+      "page": 1,
+      "key": "parliamentarians_subtitle",
+      "section": "Parlamentares",
+      "label": "Subtítulo",
+      "value": "Esses são os políticos que mais apresentam projetos desfavoráveis aos direitos de meninas, mulheres e pessoas LGBTQIAPN+. Consideramos parlamentares com cinco ou mais proposições, das quais 40% ou mais são desfavoráveis.",
+      "position": 62
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 63,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_before_name",
+      "section": "QuitérIA",
+      "label": "Texto: antes do nome",
+      "value": "Nossos levantamentos são feitos com base em análises da ",
+      "position": 63
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 64,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_name",
+      "section": "QuitérIA",
+      "label": "Texto: nome destacado",
+      "value": "QuitérIA",
+      "position": 64
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 65,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_between",
+      "section": "QuitérIA",
+      "label": "Texto: entre os destaques",
+      "value": ", que segue os princípios da ",
+      "position": 65
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 66,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_ai",
+      "section": "QuitérIA",
+      "label": "Texto: conceito destacado",
+      "value": "IA feminista",
+      "position": 66
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 67,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_after",
+      "section": "QuitérIA",
+      "label": "Texto: depois do destaque",
+      "value": " e monitora pautas de gênero no Congresso Nacional diariamente, e com validação humana.",
+      "position": 67
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 68,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_image_alt",
+      "section": "QuitérIA",
+      "label": "Descrição da imagem",
+      "value": "QuitérIA, inteligência artificial feminista",
+      "position": 68
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 69,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_cta_text",
+      "section": "QuitérIA",
+      "label": "Botão: texto",
+      "value": "Veja como ela funciona",
+      "position": 69
+    }
+  },
+  {
+    "model": "cms.homecopy",
+    "pk": 70,
+    "fields": {
+      "page": 1,
+      "key": "quiteria_cta_url",
+      "section": "QuitérIA",
+      "label": "Endereço do botão",
+      "value": "/ia-feminista",
+      "position": 70
+    }
+  },
+  {
+    "model": "cms.footeralertspage",
+    "pk": 1,
+    "fields": {
+      "title": "Receba nossos alertas",
+      "text": "Quer saber quando uma nova proposta sobre gênero é apresentada, ou quando algo de muita importância avança? A gente te avisa!",
+      "cta_text": "Saiba mais",
+      "cta_url": "/alertas"
+    }
+  },
+  {
+    "model": "cms.markdownimage",
+    "pk": "74f5b946-d937-41f6-a9c7-35e6df082cf5",
+    "fields": {
+      "title": "Home — Explore o Congresso",
+      "alt_text": "Prévia da ferramenta de atividade legislativa",
+      "width": 1440,
+      "height": 1080,
+      "image": "cms/markdown/74f5b946d93741f6a9c735e6df082cf5.webp",
+      "uploaded_by": null
+    }
+  },
+  {
+    "model": "cms.markdownimage",
+    "pk": "b766dd16-7511-410a-a590-f8814672c8e7",
+    "fields": {
+      "title": "Home — QuitérIA",
+      "alt_text": "QuitérIA, inteligência artificial feminista",
+      "width": 1920,
+      "height": 1080,
+      "image": "cms/markdown/b766dd167511410aa590f8814672c8e7.webp",
+      "uploaded_by": null
+    }
+  }
+]

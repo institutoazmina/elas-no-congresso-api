@@ -93,7 +93,7 @@ Ambiente:
 - [ ] Alterar títulos, textos, legendas, post-its e chamadas no Markdown.
 - [ ] Mover os marcadores `::: chart ... :::` e confirmar que os gráficos acompanham a nova ordem.
 - [ ] Conferir se links internos e externos continuam corretos.
-- [ ] Substituir as imagens de Explore e QuitérIA.
+- [ ] Substituir as imagens de Explore e QuitérIA pela galeria do editor Markdown.
 - [ ] Conferir as versões desktop e celular.
 - [ ] Confirmar que gráficos, mapas, notícias, tabelas e carrosséis continuam funcionando.
 - [ ] Confirmar que dados legislativos não foram substituídos por conteúdo editorial.

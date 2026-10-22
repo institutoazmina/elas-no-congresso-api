@@ -643,11 +643,9 @@ class AboutTeamMember(models.Model):
 
 
 class HomePage(CmsPage):
-    """Hero, corpo editorial e imagens da Home, sem dados dos gráficos."""
+    """Hero e corpo editorial da Home, sem dados dos gráficos."""
 
     HERO_IMAGE = ImageSpec(513, 389)
-    EXPLORE_IMAGE = ImageSpec(1440, 1080)
-    QUITERIA_IMAGE = ImageSpec(1920, 1080)
 
     seo_title = models.CharField("Título para buscas", max_length=160)
     seo_description = models.CharField("Descrição para buscas", max_length=300)
@@ -687,28 +685,6 @@ class HomePage(CmsPage):
             "O site ajusta a imagem automaticamente."
         ),
     )
-    explore_image_width = models.PositiveIntegerField(default=1440, editable=False)
-    explore_image_height = models.PositiveIntegerField(default=1080, editable=False)
-    explore_image = models.ImageField(
-        "Imagem da seção Explore",
-        upload_to="cms/home/",
-        storage=CmsStorage(),
-        width_field="explore_image_width",
-        height_field="explore_image_height",
-        default="cms/home/explore.webp",
-        help_text="PNG, JPEG ou WebP, proporção 4:3, até 5 MB.",
-    )
-    quiteria_image_width = models.PositiveIntegerField(default=1920, editable=False)
-    quiteria_image_height = models.PositiveIntegerField(default=1080, editable=False)
-    quiteria_image = models.ImageField(
-        "Imagem da seção QuitérIA",
-        upload_to="cms/home/",
-        storage=CmsStorage(),
-        width_field="quiteria_image_width",
-        height_field="quiteria_image_height",
-        default="cms/home/quiteria.webp",
-        help_text="PNG, JPEG ou WebP, proporção 16:9, até 5 MB.",
-    )
 
     class Meta:
         verbose_name = "Home"
@@ -720,11 +696,7 @@ class HomePage(CmsPage):
 
     @classmethod
     def default_images(cls):
-        return [
-            ("hero_image", "home-hero.webp", cls.HERO_IMAGE),
-            ("explore_image", "home-explore.png", cls.EXPLORE_IMAGE),
-            ("quiteria_image", "home-quiteria.png", cls.QUITERIA_IMAGE),
-        ]
+        return [("hero_image", "home-hero.webp", cls.HERO_IMAGE)]
 
 
 class HomeCopy(models.Model):
@@ -796,6 +768,19 @@ def markdown_image_path(instance, filename):
 
 
 class MarkdownImage(models.Model):
+    HOME_DEFAULTS = (
+        (
+            uuid.UUID("74f5b946-d937-41f6-a9c7-35e6df082cf5"),
+            "home-explore.png",
+            ImageSpec(1440, 1080),
+        ),
+        (
+            uuid.UUID("b766dd16-7511-410a-a590-f8814672c8e7"),
+            "home-quiteria.png",
+            ImageSpec(1920, 1080),
+        ),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField("Título interno", max_length=160)
     alt_text = models.CharField(

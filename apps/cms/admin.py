@@ -402,8 +402,6 @@ class HomePageForm(CmsPageForm):
             "hero_cta_text",
             "hero_image",
             "content",
-            "explore_image",
-            "quiteria_image",
         ]
         widgets = {
             "hero_title": UnfoldAdminTextareaWidget(attrs={"rows": 2}),
@@ -411,11 +409,7 @@ class HomePageForm(CmsPageForm):
         }
 
     def image_specs(self):
-        return {
-            "hero_image": (None, "hero"),
-            "explore_image": (HomePage.EXPLORE_IMAGE, "explore"),
-            "quiteria_image": (HomePage.QUITERIA_IMAGE, "quiteria"),
-        }
+        return {"hero_image": (None, "hero")}
 
 
 @admin.register(HomePage)
@@ -435,7 +429,6 @@ class HomePageAdmin(CmsPageAdmin):
             },
         ),
         ("Corpo da página em Markdown", {"fields": ["content"]}),
-        ("Imagens das seções", {"fields": ["explore_image", "quiteria_image"]}),
         ("Publicação", {"fields": ["updated_at"]}),
     ]
 

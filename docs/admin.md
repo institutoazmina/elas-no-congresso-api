@@ -32,6 +32,10 @@ até 5 MB são aceitos e armazenados como WebP. Uma imagem presente no Markdown
 de qualquer uma das três páginas não pode ser excluída; remova primeiro sua
 referência da página e salve a alteração.
 
+Na **Home**, as imagens das seções Explore e QuitérIA ficam no próprio Markdown
+e podem ser trocadas com esse seletor. A ilustração da abertura continua no
+campo dedicado do topo da página.
+
 Na **IA Feminista**, os campos estão agrupados pelas seções da página. Títulos,
 parágrafos, links, cartões, descrições de imagens e legendas das tabelas são
 editáveis no formulário. As linhas de categorias, limitações, métricas,

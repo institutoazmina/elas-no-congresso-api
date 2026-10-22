@@ -37,8 +37,9 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   há remoção, só substituição: o bucket guarda um arquivo por campo. A
   primeira versão é a ilustração original (`apps/cms/defaults/`), publicada
   pelo comando `cms_publish_defaults` a cada deploy, que só envia o que ainda
-  não existe no bucket. Migrações só mexem no banco; o registro único nasce dos
-  valores padrão do model na primeira visita ao admin.
+  não existe no bucket. Imagens inseridas no Markdown ficam na galeria em
+  `cms/markdown/<uuid>.webp`, podem ser reutilizadas e não podem ser excluídas
+  enquanto forem referenciadas por uma página.
   A API devolve a URL com `?v=<atualização>` para o navegador não reaproveitar
   a versão anterior do cache (`max-age=3600`).
 - **Cada salvamento dispara o deploy do site**: `post_save` → `on_commit` →
@@ -69,12 +70,13 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   logos originais das organizações atuais continuam nos assets do site até
   serem substituídos. `defaults/about-content.json` é o snapshot da migração
   de dados inicial, não um arquivo de edição editorial.
-- **Home**: `HomePage` guarda três imagens e `HomeCopy` expõe os 70 trechos
-  editoriais por seção, com rótulos legíveis e edição em lista. A equipe pode
-  trocar títulos, textos, post-its, legendas e CTAs sem editar HTML. Frases
-  intercaladas com destaques visuais têm campos separados; o percentual do
-  post-it de autoria feminina continua calculado pelos dados da API. Gráficos,
-  cards de notícias, tabelas e mapas continuam nas fontes atuais. O bloco
+- **Home**: `HomePage` guarda o cabeçalho estruturado e o corpo em Markdown. As
+  imagens de Explore e QuitérIA fazem parte desse Markdown e são escolhidas na
+  galeria; somente a ilustração do topo permanece em campo próprio. A equipe
+  pode trocar títulos, textos, imagens, post-its, legendas e CTAs sem editar
+  HTML. O percentual do post-it de autoria feminina continua calculado pelos
+  dados da API. Gráficos, cards de notícias, tabelas e mapas continuam nas
+  fontes atuais. O bloco
   **Receba nossos alertas** é um singleton separado (`FooterAlertsPage`) porque
   aparece em todo o site. O build consulta esse bloco uma vez e inclui seu
   conteúdo na chave de cache das páginas de autoria para que edições no footer

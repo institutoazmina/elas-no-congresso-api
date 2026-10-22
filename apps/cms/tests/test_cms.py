@@ -76,6 +76,17 @@ def invalidated_paths(cloudfront):
     ]
 
 
+def test_storage_abre_imagem_do_bucket(bucket):
+    bucket.get_object.return_value = {"Body": io.BytesIO(b"imagem")}
+
+    with storage.CmsStorage().open("cms/home/explore.webp") as image:
+        assert image.read() == b"imagem"
+
+    bucket.get_object.assert_called_once_with(
+        Bucket="elas-no-congresso-site", Key="cms/home/explore.webp"
+    )
+
+
 @pytest.fixture
 def admin_client():
     user = get_user_model().objects.create_superuser("editora", "editora@example.com", "senha")
@@ -477,12 +488,13 @@ class TestPublishDefaults:
         ]:
             image = Image.open(tmp_path / "cms" / "ia-feminista" / f"{name}.webp")
             assert (image.format, image.size) == ("WEBP", size)
-        for name, size in [
-            ("hero", (513, 389)),
-            ("explore", (1440, 1080)),
-            ("quiteria", (1920, 1080)),
+        image = Image.open(tmp_path / "cms" / "home" / "hero.webp")
+        assert (image.format, image.size) == ("WEBP", (513, 389))
+        for image_id, size in [
+            ("74f5b946d93741f6a9c735e6df082cf5", (1440, 1080)),
+            ("b766dd167511410aa590f8814672c8e7", (1920, 1080)),
         ]:
-            image = Image.open(tmp_path / "cms" / "home" / f"{name}.webp")
+            image = Image.open(tmp_path / "cms" / "markdown" / f"{image_id}.webp")
             assert (image.format, image.size) == ("WEBP", size)
 
         published.write_bytes(b"substituida no admin")
@@ -506,8 +518,8 @@ class TestPublishDefaults:
             "cms/ia-feminista/flow-mobile.webp",
             "cms/sobre/hero.webp",
             "cms/home/hero.webp",
-            "cms/home/explore.webp",
-            "cms/home/quiteria.webp",
+            "cms/markdown/74f5b946d93741f6a9c735e6df082cf5.webp",
+            "cms/markdown/b766dd167511410aa590f8814672c8e7.webp",
             *AboutPartner.objects.values_list("logo_image", flat=True),
         ]
         assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
@@ -824,7 +836,7 @@ class TestHomePage:
         }
         return data | updates
 
-    def test_admin_reune_header_markdown_e_imagens(self, admin_client):
+    def test_admin_reune_header_e_markdown(self, admin_client):
         response = admin_client.get(reverse("admin:cms_homepage_change", args=[1]))
         html = response.content.decode()
 
@@ -836,8 +848,8 @@ class TestHomePage:
         assert 'name="hero_cta_url"' not in html
         assert 'name="content"' in html
         assert 'name="hero_image"' in html
-        assert 'name="explore_image"' in html
-        assert 'name="quiteria_image"' in html
+        assert 'name="explore_image"' not in html
+        assert 'name="quiteria_image"' not in html
         assert HomeCopy not in admin.site._registry
 
     def test_titulo_usa_widget_contornado_do_admin(self):
@@ -876,8 +888,14 @@ class TestHomePage:
         assert "{percentual}" in data["content"]
         assert "HomeCopy" not in data
         assert data["hero_image"]["width"] == 513
-        assert data["images"]["explore"]["width"] == 1440
-        assert data["images"]["quiteria"]["height"] == 1080
+        assert "images" not in data
+        explore = MarkdownImage.objects.get(pk="74f5b946-d937-41f6-a9c7-35e6df082cf5")
+        quiteria = MarkdownImage.objects.get(pk="b766dd16-7511-410a-a590-f8814672c8e7")
+        assert (explore.width, explore.height) == (1440, 1080)
+        assert (quiteria.width, quiteria.height) == (1920, 1080)
+        assert f"![{explore.alt_text}]({explore.image.url})" in data["content"]
+        assert f"![{quiteria.alt_text}]({quiteria.image.url})" in data["content"]
+        assert "::: image alt" not in data["content"]
         assert "charts" not in data and "news" not in data and "maps" not in data
 
     def test_markdown_editado_aparece_na_api_e_dispara_deploy(

@@ -1,8 +1,7 @@
 """Imagens do CMS no bucket do site, servidas pelo domínio do site.
 
-Cada campo de imagem tem um arquivo fixo (``cms/<página>/<campo>.webp``): enviar
-outra imagem sobrescreve o arquivo e invalida o caminho no CloudFront. O admin
-não permite remover a imagem, só substituí-la.
+Campos dedicados usam um arquivo fixo (``cms/<página>/<campo>.webp``); imagens
+da galeria usam um caminho UUID. Cada salvamento invalida o caminho no CloudFront.
 Sem bucket, como em desenvolvimento e testes, delega ao storage padrão
 (``MEDIA_ROOT``).
 """
@@ -13,6 +12,7 @@ import uuid
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.files.storage import Storage, default_storage
 from django.utils.deconstruct import deconstructible
 
@@ -69,7 +69,10 @@ class CmsStorage(Storage):
         return name
 
     def _open(self, name, mode="rb"):
-        return default_storage.open(name, mode)
+        if not settings.CMS_S3_BUCKET:
+            return default_storage.open(name, mode)
+        response = _client().get_object(Bucket=settings.CMS_S3_BUCKET, Key=name)
+        return ContentFile(response["Body"].read(), name=name)
 
     def delete(self, name):
         if not settings.CMS_S3_BUCKET:

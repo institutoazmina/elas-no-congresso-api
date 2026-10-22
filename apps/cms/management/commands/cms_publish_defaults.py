@@ -12,7 +12,14 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 
 from apps.cms.images import normalize
-from apps.cms.models import AboutPage, AboutPartner, FeministAIPage, HeroPage, HomePage
+from apps.cms.models import (
+    AboutPage,
+    AboutPartner,
+    FeministAIPage,
+    HeroPage,
+    HomePage,
+    MarkdownImage,
+)
 
 DEFAULTS_DIR = Path(__file__).resolve().parents[2] / "defaults"
 
@@ -43,6 +50,24 @@ class Command(BaseCommand):
                 )
                 field.storage.save(name, image)
                 self.stdout.write(self.style.SUCCESS(f"{name}: publicado"))
+
+        field = MarkdownImage._meta.get_field("image")
+        for image_id, filename, spec in MarkdownImage.HOME_DEFAULTS:
+            image_record = MarkdownImage.objects.filter(pk=image_id).first()
+            if not image_record:
+                continue
+            name = image_record.image.name
+            if not force and field.storage.exists(name):
+                self.stdout.write(f"{name}: já publicado")
+                continue
+            source = DEFAULTS_DIR / filename
+            image = normalize(
+                SimpleUploadedFile(filename, source.read_bytes()),
+                spec,
+                stem=Path(name).stem,
+            )
+            field.storage.save(name, image)
+            self.stdout.write(self.style.SUCCESS(f"{name}: publicado"))
 
         field = AboutPartner._meta.get_field("logo_image")
         for partner in AboutPartner.objects.exclude(logo_image=""):

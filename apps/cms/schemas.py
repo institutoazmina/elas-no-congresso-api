@@ -102,7 +102,6 @@ class HomePageSchema(Schema):
     cta_url: str
     hero_image: CmsImageSchema
     content: str
-    images: dict[str, CmsImageSchema]
 
 
 class FooterAlertsPageSchema(Schema):
