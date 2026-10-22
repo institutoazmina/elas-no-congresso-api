@@ -55,15 +55,12 @@ class FeministAIOpenLinkSchema(Schema):
 
 
 class FeministAIPageSchema(Schema):
-    content: dict[str, str]
-    images: dict[str, CmsImageSchema]
-    categories: list[FeministAICategorySchema]
-    limitations: list[FeministAILimitationSchema]
-    evaluation_metrics: list[FeministAIEvaluationMetricSchema]
-    evaluation_partitions: list[FeministAIEvaluationPartitionSchema]
-    thematic_metrics: list[FeministAIThematicMetricSchema]
-    thematic_partitions: list[FeministAIThematicPartitionSchema]
-    open_links: list[FeministAIOpenLinkSchema]
+    seo_title: str
+    seo_description: str
+    title: str
+    subtitle: str
+    hero_image: CmsImageSchema
+    content: str
 
 
 class AboutTimelineEventSchema(Schema):

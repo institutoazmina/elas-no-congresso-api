@@ -63,6 +63,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_celery_beat",
     "django_celery_results",
+    "unfold_markdown",
 ]
 
 LOCAL_APPS = [

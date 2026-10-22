@@ -12,9 +12,16 @@ from django.core.management import call_command
 from django.test import Client
 from django.urls import reverse
 from PIL import Image
+from unfold_markdown.widgets import MarkdownWidget
 
 from apps.cms import deploy, storage, tasks
-from apps.cms.admin import AboutCopyForm, AboutPartnerForm, HomeCopyForm
+from apps.cms.admin import (
+    AboutCopyForm,
+    AboutPartnerForm,
+    FeministAIMarkdownWidget,
+    FeministAIPageForm,
+    HomeCopyForm,
+)
 from apps.cms.images import ImageSpec, normalize
 from apps.cms.models import (
     AboutCopy,
@@ -337,78 +344,79 @@ class TestFeministAIPage:
 
         assert page.hero_title == "Quem foi **Maria Quitéria?**"
         assert page.architecture_card_1_highlight == "87% de acurácia"
+        assert page.content.startswith("## Diferencial tecnológico")
+        assert "Quem foi **Maria Quitéria?**" not in page.content
+        assert "| Categoria | Conceito |" in page.content
+        assert "### Arquitetura dos modelos" in page.content
+        assert page.content.count(":::: cards 2") == 2
+        assert page.content.splitlines().count("::: card") == 4
+        assert "### Duas instâncias de supervisão" in page.content
+        assert "### O que a QuitérIA ~~não faz~~" in page.content
+        assert page.content.count("- ~~x~~ ") == 6
+        assert "## desempenho do modelo" in page.content
+        assert page.content.count("::: table transparent") == 4
+        assert page.content.count(":::up:::") == 5
+        assert page.content.count(":::down:::") == 2
+        assert "#### Modelo de Desfavorabilidade" in page.content
         assert FeministAICategory.objects.filter(page=page).count() == 10
         assert FeministAIEvaluationMetric.objects.filter(page=page).count() == 8
 
-    def test_api_devolve_todo_o_conteudo_em_ordem(self):
+    def test_api_devolve_documento_markdown_com_imagens_versionadas(self):
         response = Client().get("/api/v1/cms/feminist-ai")
 
         assert response.status_code == 200
         assert response["Cache-Control"] == "no-store"
         data = response.json()
-        assert data["content"]["feminism_paragraph_3_highlight"] == (
-            "Atualmente estamos no segundo ciclo."
-        )
-        assert data["images"]["hero"]["width"] == 743
-        assert data["images"]["flow_desktop"]["height"] == 574
-        assert data["images"]["flow_mobile"]["url"].startswith(
-            "/media/cms/ia-feminista/flow-mobile.webp?v="
-        )
-        assert data["categories"][0]["name"] == "Violências de Gênero"
-        assert len(data["categories"]) == 10
-        assert len(data["limitations"]) == 6
-        assert len(data["evaluation_metrics"]) == 8
-        assert len(data["evaluation_partitions"]) == 3
-        assert len(data["thematic_metrics"]) == 14
-        assert len(data["thematic_partitions"]) == 11
-        assert len(data["open_links"]) == 3
+        assert data["seo_title"].startswith("QuitérIA")
+        assert data["title"] == "Quem foi **Maria Quitéria?**"
+        assert data["subtitle"].startswith("O nome da ferramenta homenageia")
+        assert data["hero_image"]["url"].startswith("/media/cms/ia-feminista/hero.webp?v=")
+        assert data["content"].startswith("## Diferencial tecnológico")
+        assert "/media/cms/ia-feminista/flow-desktop.webp?v=" in data["content"]
+        assert "| Violências de Gênero |" in data["content"]
 
-    def test_admin_permite_editar_texto_e_linhas_sem_html_ou_json(self, admin_client):
+    def test_admin_separa_topo_do_editor_do_corpo(self, admin_client):
         url = reverse("admin:cms_feministaipage_change", args=[1])
         response = admin_client.get(url)
+        html = response.content.decode()
+
         assert response.status_code == 200
-        assert "Feminismo de dados" in response.content.decode()
-        assert "Categorias temáticas" in response.content.decode()
+        assert "Corpo da página em Markdown" in html
+        assert 'name="content"' in html
+        assert "unfold_markdown/js/easymde.min.js" in html
+        assert "cms/js/markdown-components.js" in html
+        assert "cms/css/markdown-components.css" in html
+        assert 'name="hero_title"' in html
+        assert 'name="hero_description"' in html
+        assert 'name="hero_image"' in html
+        assert 'name="feministaicategory_set-TOTAL_FORMS"' not in html
 
+    def test_admin_salva_topo_e_markdown(self, admin_client):
+        url = reverse("admin:cms_feministaipage_change", args=[1])
         page = FeministAIPage.objects.get(pk=1)
-        data = {
-            field.name: getattr(page, field.name)
-            for field in page._meta.fields
-            if field.editable
-            and field.name
-            not in {"id", "updated_at", "hero_image", "flow_desktop_image", "flow_mobile_image"}
-        }
-        data["hero_title"] = "Quem criou a **QuitérIA?**"
-        for relation in [
-            "feministaicategory_set",
-            "feministailimitation_set",
-            "feministaievaluationmetric_set",
-            "feministaievaluationpartition_set",
-            "feministaithematicmetric_set",
-            "feministaithematicpartition_set",
-            "feministaiopenlink_set",
-        ]:
-            objects = list(getattr(page, relation).all())
-            data[f"{relation}-TOTAL_FORMS"] = len(objects)
-            data[f"{relation}-INITIAL_FORMS"] = len(objects)
-            data[f"{relation}-MIN_NUM_FORMS"] = 0
-            data[f"{relation}-MAX_NUM_FORMS"] = 1000
-            for index, obj in enumerate(objects):
-                data[f"{relation}-{index}-id"] = obj.pk
-                data[f"{relation}-{index}-page"] = page.pk
-                for field in obj._meta.fields:
-                    if field.name not in {"id", "page"}:
-                        data[f"{relation}-{index}-{field.name}"] = getattr(obj, field.name)
-        data["feministaicategory_set-0-concept"] = "Novo conceito editorial."
-        data["feministaievaluationmetric_set-0-current"] = "0,90"
+        content = page.content.replace("## Diferencial tecnológico", "## Tecnologia feminista")
 
-        response = admin_client.post(url, data)
+        response = admin_client.post(
+            url,
+            {
+                "hero_title": "Conheça a **QuitérIA**",
+                "hero_description": page.hero_description,
+                "content": content,
+            },
+        )
 
         assert response.status_code == 302, response.content.decode()[:1000]
         body = Client().get("/api/v1/cms/feminist-ai").json()
-        assert body["content"]["hero_title"] == "Quem criou a **QuitérIA?**"
-        assert body["categories"][0]["concept"] == "Novo conceito editorial."
-        assert body["evaluation_metrics"][0]["current"] == "0,90"
+        assert body["title"] == "Conheça a **QuitérIA**"
+        assert body["content"].startswith("## Tecnologia feminista")
+
+    def test_formulario_usa_widget_markdown(self):
+        form = FeministAIPageForm(instance=FeministAIPage.objects.get(pk=1))
+
+        assert list(form.fields) == ["hero_title", "hero_description", "hero_image", "content"]
+        assert isinstance(form.fields["content"].widget, MarkdownWidget)
+        assert isinstance(form.fields["content"].widget, FeministAIMarkdownWidget)
+        assert form.fields["content"].widget.media._js[-1] == ("cms/js/markdown-components.js")
 
 
 class TestAboutPage:
@@ -635,6 +643,4 @@ class TestHomePage:
             },
         )
         assert response.status_code == 302
-        assert Client().get("/api/v1/cms/footer-alerts").json()["title"] == (
-            "Acompanhe os alertas"
-        )
+        assert Client().get("/api/v1/cms/footer-alerts").json()["title"] == ("Acompanhe os alertas")

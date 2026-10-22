@@ -33,6 +33,7 @@ dependencies = [
     "python-substack==0.9.1",
     "markdown-it-py>=3,<5",
     "fonttools>=4.67.0",
+    "django-unfold-markdown==0.1.2",
 ]
 
 [dependency-groups]

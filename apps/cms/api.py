@@ -1,4 +1,3 @@
-from django.db import models
 from django.http import HttpResponse
 from ninja import Router
 
@@ -73,48 +72,23 @@ def _items(page, relation: str, *fields: str) -> list[dict]:
 def feminist_ai_page(request, response: HttpResponse):
     """Conteúdo editável da página QuitérIA, lido pelo build do site."""
     response["Cache-Control"] = "no-store"
-    page = FeministAIPage.objects.prefetch_related(
-        "feministaicategory_set",
-        "feministailimitation_set",
-        "feministaievaluationmetric_set",
-        "feministaievaluationpartition_set",
-        "feministaithematicmetric_set",
-        "feministaithematicpartition_set",
-        "feministaiopenlink_set",
-    ).get(pk=FeministAIPage.SINGLETON_PK)
+    page = FeministAIPage.objects.get(pk=FeministAIPage.SINGLETON_PK)
     version = int(page.updated_at.timestamp())
-    excluded = {"id", "updated_at"}
-    content = {
-        field.name: getattr(page, field.name)
-        for field in page._meta.fields
-        if field.name not in excluded and isinstance(field, (models.CharField, models.TextField))
-    }
+    content = page.content
+    for image in [page.flow_desktop_image, page.flow_mobile_image]:
+        content = content.replace(
+            f"/media/{image.name}",
+            f"{image.url}?v={version}",
+        )
     return {
+        "seo_title": page.seo_title,
+        "seo_description": page.seo_description,
+        "title": page.hero_title,
+        "subtitle": page.hero_description,
+        "hero_image": _cms_image(
+            page.hero_image, page.hero_image_width, page.hero_image_height, version
+        ),
         "content": content,
-        "images": {
-            "hero": _cms_image(
-                page.hero_image, page.hero_image_width, page.hero_image_height, version
-            ),
-            "flow_desktop": _cms_image(
-                page.flow_desktop_image, page.flow_desktop_width, page.flow_desktop_height, version
-            ),
-            "flow_mobile": _cms_image(
-                page.flow_mobile_image, page.flow_mobile_width, page.flow_mobile_height, version
-            ),
-        },
-        "categories": _items(page, "feministaicategory_set", "name", "concept"),
-        "limitations": _items(page, "feministailimitation_set", "text"),
-        "evaluation_metrics": _items(
-            page, "feministaievaluationmetric_set", "label", "url", "previous", "current", "trend"
-        ),
-        "evaluation_partitions": _items(
-            page, "feministaievaluationpartition_set", "label", "accuracy", "percentage", "count"
-        ),
-        "thematic_metrics": _items(page, "feministaithematicmetric_set", "label", "value"),
-        "thematic_partitions": _items(
-            page, "feministaithematicpartition_set", "label", "training", "validation", "test"
-        ),
-        "open_links": _items(page, "feministaiopenlink_set", "label", "url"),
     }
 
 

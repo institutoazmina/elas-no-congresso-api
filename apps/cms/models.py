@@ -166,6 +166,13 @@ class FeministAIPage(CmsPage):
 
     seo_title = models.CharField("Título para busca", max_length=120)
     seo_description = models.CharField("Descrição para busca", max_length=200)
+    content = models.TextField(
+        "Conteúdo",
+        help_text=(
+            "O corpo da página em Markdown: títulos, parágrafos, imagens, divisores, "
+            "tabelas, listas, links e grupos de cards. HTML não é interpretado."
+        ),
+    )
 
     hero_title = models.CharField(
         "Título (ex.: Quem foi **Maria Quitéria?**)",

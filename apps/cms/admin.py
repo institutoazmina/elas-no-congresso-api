@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.widgets import UnfoldAdminTextareaWidget
+from unfold_markdown.widgets import MarkdownWidget
 
 from .images import ImageSpec, normalize, normalize_logo, normalize_unconstrained
 from .models import (
@@ -32,6 +33,23 @@ from .models import (
     HomePage,
     ReportsPage,
 )
+
+
+class FeministAIMarkdownWidget(MarkdownWidget):
+    class Media:
+        extend = False
+        css = {
+            "all": (
+                "unfold_markdown/css/easymde.min.css",
+                "unfold_markdown/css/markdown.css",
+                "cms/css/markdown-components.css",
+            )
+        }
+        js = (
+            "unfold_markdown/js/easymde.min.js",
+            "unfold_markdown/js/markdown.config.js",
+            "cms/js/markdown-components.js",
+        )
 
 
 class CmsPageForm(forms.ModelForm):
@@ -127,14 +145,11 @@ class ActivityPageAdmin(HeroPageAdmin):
 class FeministAIPageForm(CmsPageForm):
     class Meta:
         model = FeministAIPage
-        fields = "__all__"
+        fields = ["hero_title", "hero_description", "hero_image", "content"]
+        widgets = {"content": FeministAIMarkdownWidget()}
 
     def image_specs(self):
-        return {
-            "hero_image": (None, "hero"),
-            "flow_desktop_image": (FeministAIPage.FLOW_DESKTOP_IMAGE, "flow-desktop"),
-            "flow_mobile_image": (FeministAIPage.FLOW_MOBILE_IMAGE, "flow-mobile"),
-        }
+        return {"hero_image": (None, "hero")}
 
 
 class FeministAICategoryInline(TabularInline):
@@ -183,116 +198,9 @@ class FeministAIOpenLinkInline(TabularInline):
 class FeministAIPageAdmin(CmsPageAdmin):
     form = FeministAIPageForm
     fieldsets = [
-        ("Busca e compartilhamento", {"fields": ["seo_title", "seo_description"]}),
-        (
-            "Quem foi Maria Quitéria?",
-            {
-                "fields": [
-                    "hero_title",
-                    "hero_description",
-                    "hero_image",
-                    "hero_image_alt",
-                ]
-            },
-        ),
-        (
-            "Diferencial tecnológico",
-            {
-                "fields": [
-                    "differential_heading",
-                    "differential_paragraph_1",
-                    "differential_paragraph_2",
-                    "differential_paragraph_3",
-                    "flow_heading",
-                    "flow_desktop_image",
-                    "flow_mobile_image",
-                    "flow_image_alt",
-                    "architecture_heading",
-                    "architecture_card_1_title",
-                    "architecture_card_1_text",
-                    "architecture_card_1_highlight",
-                    "architecture_card_1_note",
-                    "architecture_card_2_title",
-                    "architecture_card_2_text",
-                ]
-            },
-        ),
-        (
-            "Feminismo de dados",
-            {
-                "fields": [
-                    "feminism_heading",
-                    "feminism_paragraph_1_before_link",
-                    "feminism_paragraph_1_link_text",
-                    "feminism_paragraph_1_link_url",
-                    "feminism_paragraph_1_after_link",
-                    "feminism_paragraph_2",
-                    "feminism_paragraph_3_before_highlight",
-                    "feminism_paragraph_3_highlight",
-                    "feminism_paragraph_3_after_highlight",
-                    "categories_heading",
-                    "categories_name_column",
-                    "categories_concept_column",
-                ]
-            },
-        ),
-        (
-            "Governança e transparência",
-            {
-                "fields": [
-                    "governance_heading",
-                    "governance_paragraph_1_before_link",
-                    "governance_paragraph_1_link_text",
-                    "governance_paragraph_1_link_url",
-                    "governance_paragraph_1_after_link",
-                    "governance_paragraph_2",
-                    "supervision_heading",
-                    "supervision_card_1_title",
-                    "supervision_card_1_text",
-                    "supervision_card_1_note",
-                    "supervision_card_2_title",
-                    "supervision_card_2_text",
-                    "supervision_card_2_note",
-                    "limitations_heading",
-                    "limitations_intro",
-                ]
-            },
-        ),
-        (
-            "Desempenho do modelo",
-            {
-                "fields": [
-                    "performance_heading",
-                    "evaluation_caption",
-                    "evaluation_metric_help_url",
-                    "evaluation_metric_column",
-                    "evaluation_previous_column",
-                    "evaluation_current_column",
-                    "evaluation_partition_caption",
-                    "evaluation_partition_name_column",
-                    "evaluation_partition_accuracy_column",
-                    "evaluation_partition_percent_column",
-                    "evaluation_partition_count_column",
-                    "thematic_caption",
-                    "thematic_partition_caption",
-                    "thematic_partition_name_column",
-                    "thematic_partition_training_column",
-                    "thematic_partition_validation_column",
-                    "thematic_partition_test_column",
-                ]
-            },
-        ),
-        ("Código e dados abertos", {"fields": ["open_data_heading", "open_data_intro"]}),
+        ("Topo da página", {"fields": ["hero_title", "hero_description", "hero_image"]}),
+        ("Corpo da página em Markdown", {"fields": ["content"]}),
         ("Publicação", {"fields": ["updated_at"]}),
-    ]
-    inlines = [
-        FeministAICategoryInline,
-        FeministAILimitationInline,
-        FeministAIEvaluationMetricInline,
-        FeministAIEvaluationPartitionInline,
-        FeministAIThematicMetricInline,
-        FeministAIThematicPartitionInline,
-        FeministAIOpenLinkInline,
     ]
 
 
