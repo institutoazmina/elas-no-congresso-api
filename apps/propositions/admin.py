@@ -1,8 +1,13 @@
 from django.contrib import admin, messages
+from django.contrib.admin.utils import NestedObjects, quote
 from django.core.exceptions import PermissionDenied
+from django.db import router
+from django.db.models import QuerySet
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from django.urls import path
+from django.urls import NoReverseMatch, path, reverse
+from django.utils.html import format_html
+from django.utils.text import capfirst
 from unfold.admin import ModelAdmin, TabularInline
 
 from apps.ingestion.sync import enqueue_manual_links
@@ -11,13 +16,44 @@ from .admin_cache import ActivityCacheAdminMixin
 from .admin_forms import PropositionLinksForm
 from .models import (
     AssessmentOrganization,
+    ClassificationRequest,
     Proposition,
     PropositionAnalysis,
     PropositionAnnotation,
     PropositionAuthor,
+    PropositionContentVersion,
+    PropositionEmbedding,
     PropositionEvent,
     PropositionRapporteur,
 )
+
+
+class _PropositionDeletionCollector(NestedObjects):
+    deferred_fields = {
+        Proposition: ("ementa", "keywords", "full_text", "raw_payload"),
+        PropositionEvent: ("description", "dispatch", "raw_payload"),
+        PropositionAnalysis: (
+            "theme_scores",
+            "favorability_scores",
+            "expert_opinion",
+            "ai_summary",
+            "analysis_error",
+        ),
+        PropositionContentVersion: ("text",),
+        ClassificationRequest: ("input_text", "result"),
+        PropositionAnnotation: ("comments",),
+        PropositionEmbedding: ("embedding",),
+    }
+
+    def related_objects(self, related_model, related_fields, objs):
+        queryset = super().related_objects(related_model, related_fields, objs)
+        deferred = list(self.deferred_fields.get(related_model, ()))
+        for related_field in related_fields:
+            deferred.extend(
+                f"{related_field.name}__{field}"
+                for field in self.deferred_fields.get(related_field.remote_field.model, ())
+            )
+        return queryset.defer(*deferred)
 
 
 class AuthorInline(TabularInline):
@@ -130,6 +166,53 @@ class PropositionAdmin(ModelAdmin):
         }
         request.current_app = self.admin_site.name
         return TemplateResponse(request, "admin/propositions/proposition/add_links.html", context)
+
+    def get_deleted_objects(self, objs, request):
+        if isinstance(objs, QuerySet):
+            objs = objs.defer(*_PropositionDeletionCollector.deferred_fields[Proposition])
+
+        try:
+            obj = objs[0]
+        except IndexError:
+            return [], {}, set(), []
+
+        collector = _PropositionDeletionCollector(
+            using=router.db_for_write(obj._meta.model), origin=objs
+        )
+        collector.collect(objs)
+        perms_needed = set()
+
+        def format_callback(related_obj):
+            model = related_obj.__class__
+            opts = related_obj._meta
+            label = f"{capfirst(opts.verbose_name)}: {related_obj}"
+            if not self.admin_site.is_registered(model):
+                return label
+            if not self.admin_site.get_model_admin(model).has_delete_permission(
+                request, related_obj
+            ):
+                perms_needed.add(opts.verbose_name)
+            try:
+                admin_url = reverse(
+                    f"{self.admin_site.name}:{opts.app_label}_{opts.model_name}_change",
+                    args=(quote(related_obj.pk),),
+                )
+            except NoReverseMatch:
+                return label
+            return format_html(
+                '{}: <a href="{}">{}</a>',
+                capfirst(opts.verbose_name),
+                admin_url,
+                related_obj,
+            )
+
+        to_delete = collector.nested(format_callback)
+        protected = [format_callback(related_obj) for related_obj in collector.protected]
+        model_count = {
+            model._meta.verbose_name_plural: len(model_objs)
+            for model, model_objs in collector.model_objs.items()
+        }
+        return to_delete, model_count, perms_needed, protected
 
 
 @admin.register(PropositionEvent)
