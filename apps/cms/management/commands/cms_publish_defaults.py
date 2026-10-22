@@ -7,11 +7,12 @@ a partir dos originais, desfazendo substituições.
 
 from pathlib import Path
 
+from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 
 from apps.cms.images import normalize
-from apps.cms.models import AboutPage, FeministAIPage, HeroPage, HomePage
+from apps.cms.models import AboutPage, AboutPartner, FeministAIPage, HeroPage, HomePage
 
 DEFAULTS_DIR = Path(__file__).resolve().parents[2] / "defaults"
 
@@ -42,3 +43,16 @@ class Command(BaseCommand):
                 )
                 field.storage.save(name, image)
                 self.stdout.write(self.style.SUCCESS(f"{name}: publicado"))
+
+        field = AboutPartner._meta.get_field("logo_image")
+        for partner in AboutPartner.objects.exclude(logo_image=""):
+            name = partner.logo_image.name
+            source = DEFAULTS_DIR / "about-partners" / Path(name).name
+            if not source.exists():
+                continue
+            if not force and field.storage.exists(name):
+                self.stdout.write(f"{name}: já publicado")
+                continue
+            with source.open("rb") as logo:
+                field.storage.save(name, File(logo, name=Path(name).name))
+            self.stdout.write(self.style.SUCCESS(f"{name}: publicado"))

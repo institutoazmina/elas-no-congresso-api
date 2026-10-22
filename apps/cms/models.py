@@ -421,11 +421,29 @@ class FeministAIOpenLink(FeministAIOrderedItem):
 
 
 class AboutPage(CmsPage):
-    """Conteúdo fixo da página Sobre e raiz da linha do tempo editável."""
+    """Hero, corpo editorial e organizações parceiras da página Sobre."""
 
     HERO_IMAGE = ImageSpec(1080, 1350)
     seo_title = models.CharField("Título para buscas", max_length=160)
     seo_description = models.CharField("Descrição para buscas", max_length=300)
+    hero_title = models.CharField(
+        "Título (use **texto** para negrito)",
+        max_length=160,
+        help_text="O topo é renderizado separadamente do conteúdo em Markdown.",
+    )
+    hero_description = models.TextField(
+        "Descrição",
+        max_length=1200,
+        help_text="Use **texto** para negrito.",
+    )
+    content = models.TextField(
+        "Conteúdo",
+        help_text=(
+            "Corpo da página em Markdown. Use ::: logo grid ::: e ::: team ::: somente para "
+            "posicionar os componentes; seus dados são mantidos nos campos abaixo. "
+            "HTML não é interpretado."
+        ),
+    )
     hero_image_width = models.PositiveIntegerField(default=1080, editable=False)
     hero_image_height = models.PositiveIntegerField(default=1350, editable=False)
     hero_image = hero_image_field("sobre")
@@ -438,8 +456,8 @@ class AboutPage(CmsPage):
     )
 
     class Meta:
-        verbose_name = "Sobre: página e linha do tempo"
-        verbose_name_plural = "Sobre: página e linha do tempo"
+        verbose_name = "Sobre"
+        verbose_name_plural = "Sobre"
         db_table = "cms_about_page"
 
     def __str__(self):
@@ -535,10 +553,8 @@ class AboutPartner(models.Model):
     page = models.ForeignKey(AboutPage, on_delete=models.CASCADE, related_name="partners")
     position = models.PositiveSmallIntegerField("Ordem")
     name = models.CharField("Organização", max_length=160)
-    asset_key = models.CharField("Logo original", max_length=60, blank=True, editable=False)
     logo_image = models.ImageField(
-        "Novo logo",
-        blank=True,
+        "Logo",
         upload_to=partner_logo_path,
         storage=CmsStorage(),
         help_text="PNG, JPEG ou WebP com até 5 MB. O logo se ajusta ao espaço disponível.",
@@ -550,12 +566,32 @@ class AboutPartner(models.Model):
         verbose_name_plural = "Organizações parceiras"
         db_table = "cms_about_partner"
 
-    def clean(self):
-        if not self.asset_key and not self.logo_image:
-            raise ValidationError({"logo_image": "Envie o logo da nova organização."})
-
     def __str__(self):
         return self.name
+
+
+class AboutTeamMember(models.Model):
+    class Group(models.TextChoices):
+        AZMINA = "azmina", "Equipe AzMina"
+        SUPPLIERS = "suppliers", "Fornecedores"
+        GOVERNANCE = "governance", "Comitê de Governança / QuitérIA"
+        VALIDATION = "validation", "Comitê de Validação / QuitérIA"
+        PREVIOUS = "previous", "Edições anteriores"
+
+    page = models.ForeignKey(AboutPage, on_delete=models.CASCADE, related_name="team_members")
+    group = models.CharField("Grupo", max_length=20, choices=Group.choices)
+    position = models.PositiveSmallIntegerField("Ordem no grupo")
+    name = models.CharField("Nome", max_length=160)
+    role = models.CharField("Função", max_length=240, blank=True)
+
+    class Meta:
+        ordering = ["group", "position", "pk"]
+        verbose_name = "Integrante do expediente"
+        verbose_name_plural = "Integrantes do expediente"
+        db_table = "cms_about_team_member"
+
+    def __str__(self):
+        return f"{self.name} ({self.get_group_display()})"
 
 
 class HomePage(CmsPage):

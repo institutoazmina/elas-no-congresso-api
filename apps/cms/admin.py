@@ -12,11 +12,9 @@ from unfold_markdown.widgets import MarkdownWidget
 
 from .images import ImageSpec, normalize, normalize_logo, normalize_unconstrained
 from .models import (
-    AboutChallenge,
-    AboutCopy,
     AboutPage,
     AboutPartner,
-    AboutTimelineEvent,
+    AboutTeamMember,
     ActivityPage,
     AlertsPage,
     FeministAICategory,
@@ -35,7 +33,7 @@ from .models import (
 )
 
 
-class FeministAIMarkdownWidget(MarkdownWidget):
+class CmsMarkdownWidget(MarkdownWidget):
     class Media:
         extend = False
         css = {
@@ -50,6 +48,9 @@ class FeministAIMarkdownWidget(MarkdownWidget):
             "unfold_markdown/js/markdown.config.js",
             "cms/js/markdown-components.js",
         )
+
+
+FeministAIMarkdownWidget = CmsMarkdownWidget
 
 
 class CmsPageForm(forms.ModelForm):
@@ -207,31 +208,18 @@ class FeministAIPageAdmin(CmsPageAdmin):
 class AboutPageForm(CmsPageForm):
     class Meta:
         model = AboutPage
-        fields = "__all__"
+        fields = [
+            "seo_title",
+            "seo_description",
+            "hero_title",
+            "hero_description",
+            "hero_image",
+            "content",
+        ]
+        widgets = {"content": CmsMarkdownWidget()}
 
     def image_specs(self):
         return {"hero_image": (None, "hero")}
-
-
-class AboutTimelineInline(TabularInline):
-    model = AboutTimelineEvent
-    fields = [
-        "position",
-        "date_prefix",
-        "year",
-        "description_before_link",
-        "link_text",
-        "link_url",
-        "description_after_link",
-        "tag",
-    ]
-    extra = 0
-
-
-class AboutChallengeInline(TabularInline):
-    model = AboutChallenge
-    fields = ["position", "title", "text"]
-    extra = 0
 
 
 class AboutPartnerForm(forms.ModelForm):
@@ -253,57 +241,22 @@ class AboutPartnerInline(TabularInline):
     extra = 0
 
 
+class AboutTeamMemberInline(TabularInline):
+    model = AboutTeamMember
+    fields = ["group", "position", "name", "role"]
+    extra = 0
+
+
 @admin.register(AboutPage)
 class AboutPageAdmin(CmsPageAdmin):
     form = AboutPageForm
     fieldsets = [
         ("Busca e compartilhamento", {"fields": ["seo_title", "seo_description"]}),
-        ("Ilustração da abertura", {"fields": ["hero_image"]}),
-        (
-            "Nota da linha do tempo",
-            {
-                "fields": [
-                    "timeline_note_link_text",
-                    "timeline_note_link_url",
-                    "timeline_note_after_link",
-                ]
-            },
-        ),
+        ("Topo da página", {"fields": ["hero_title", "hero_description", "hero_image"]}),
+        ("Corpo da página em Markdown", {"fields": ["content"]}),
         ("Publicação", {"fields": ["updated_at"]}),
     ]
-    inlines = [AboutTimelineInline, AboutChallengeInline, AboutPartnerInline]
-
-
-class AboutCopyForm(forms.ModelForm):
-    class Meta:
-        model = AboutCopy
-        fields = ["value"]
-        widgets = {"value": forms.Textarea(attrs={"rows": 2, "cols": 70})}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.key.startswith("s00_"):
-            self.fields["value"].label = "Conteúdo (ex.: texto com **destaque**)"
-
-
-@admin.register(AboutCopy)
-class AboutCopyAdmin(ModelAdmin):
-    """Trechos separados por seção, com rótulos legíveis e sem edição de HTML."""
-
-    list_display = ["section", "label", "value"]
-    form = AboutCopyForm
-    list_editable = ["value"]
-    list_filter = ["section"]
-    search_fields = ["label", "value", "section"]
-    readonly_fields = ["section", "label"]
-    fields = ["section", "label", "value"]
-    list_per_page = 30
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
+    inlines = [AboutPartnerInline, AboutTeamMemberInline]
 
 
 class HomePageForm(CmsPageForm):

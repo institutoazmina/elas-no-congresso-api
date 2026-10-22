@@ -16,8 +16,9 @@ from unfold_markdown.widgets import MarkdownWidget
 
 from apps.cms import deploy, storage, tasks
 from apps.cms.admin import (
-    AboutCopyForm,
+    AboutPageForm,
     AboutPartnerForm,
+    CmsMarkdownWidget,
     FeministAIMarkdownWidget,
     FeministAIPageForm,
     HomeCopyForm,
@@ -27,7 +28,7 @@ from apps.cms.models import (
     AboutCopy,
     AboutPage,
     AboutPartner,
-    AboutTimelineEvent,
+    AboutTeamMember,
     ActivityPage,
     AlertsPage,
     FeministAICategory,
@@ -323,6 +324,7 @@ class TestPublishDefaults:
             "cms/home/hero.webp",
             "cms/home/explore.webp",
             "cms/home/quiteria.webp",
+            *AboutPartner.objects.values_list("logo_image", flat=True),
         ]
         assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
 
@@ -335,7 +337,7 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_count == 10
+        assert bucket.put_object.call_count == 10 + AboutPartner.objects.count()
 
 
 class TestFeministAIPage:
@@ -420,59 +422,101 @@ class TestFeministAIPage:
 
 
 class TestAboutPage:
-    def test_conteudo_publicado_e_timeline_migrados(self):
+    def test_migracao_cria_hero_e_markdown_preservando_modelos_legados(self):
         page = AboutPage.objects.get(pk=1)
+
         assert page.seo_title == "Sobre o Elas no Congresso | AzMina"
+        assert page.hero_title == "**Sobre** o **Elas** no **Congresso**"
+        assert page.content.startswith("## A nossa história")
+        assert page.content.count("::::: timeline") == 1
+        assert page.content.splitlines().count("::: milestone") == 5
+        assert page.content.count("::: rating ") == 4
+        assert page.content.count("::: logo grid :::") == 1
+        assert page.content.count("::: team :::") == 1
+        assert ":::: expediente" not in page.content
+        assert "Diego Rabatone Oliveira" not in page.content
+        assert "Anis Bioética" not in page.content
         assert page.copy.count() == 171
         assert page.timeline.count() == 5
         assert page.challenges.count() == 5
         assert page.partners.count() == 25
+        assert page.team_members.count() == 34
+        assert set(page.team_members.values_list("group", flat=True)) == set(
+            AboutTeamMember.Group.values
+        )
 
+    def test_api_separa_hero_markdown_e_parceiros(self):
+        page = AboutPage.objects.get(pk=1)
         response = Client().get("/api/v1/cms/about")
+
         assert response.status_code == 200
         assert response["Cache-Control"] == "no-store"
         data = response.json()
-        assert data["content"]["seo_title"] == page.seo_title
+        assert data["seo_title"] == page.seo_title
+        assert data["title"] == page.hero_title
+        assert data["subtitle"] == page.hero_description
         assert data["hero_image"]["url"].startswith("/media/cms/sobre/hero.webp?v=")
-        assert data["timeline"][0]["tag"] == "Nasce o projeto"
-        assert data["timeline"][2]["link_text"] == "Ruralômetro"
+        assert data["content"].startswith("## A nossa história")
+        assert "timeline" not in data
+        assert "challenges" not in data
+        assert "Anis Bioética" not in data["content"]
         assert data["partners"][0]["name"] == "Anis Bioética"
+        assert data["partners"][0]["logo_url"].startswith("/media/cms/sobre/partners/anis.webp?v=")
+        assert "asset_key" not in data["partners"][0]
+        assert [group["key"] for group in data["team"]] == [
+            "azmina",
+            "suppliers",
+            "governance",
+            "validation",
+            "previous",
+        ]
+        assert sum(len(group["members"]) for group in data["team"]) == 34
+        assert data["team"][0]["members"][0] == {
+            "name": "Diego Rabatone Oliveira",
+            "role": "— Consultor de Desenvolvimento / ASK-AR",
+        }
+        assert data["team"][-1]["wide"] is True
 
-    def test_texto_do_header_mostra_exemplo_de_negrito(self):
-        copy = AboutCopy.objects.get(key="s00_006")
-
-        assert "**destaque**" in AboutCopyForm(instance=copy).fields["value"].label
-
-    def test_marcos_livres_e_textos_editados_chegam_ao_site(self, admin_client):
+    def test_grid_de_logos_usa_modelo_de_parceiros_sem_duplicar_no_markdown(self):
         page = AboutPage.objects.get(pk=1)
-        assert admin_client.get(reverse("admin:cms_aboutpage_change", args=[1])).status_code == 200
-        copy = AboutCopy.objects.get(key="s01_007")
-        assert (
-            admin_client.get(reverse("admin:cms_aboutcopy_change", args=[copy.pk])).status_code
-            == 200
-        )
-        copy.value = "Nossa trajetória"
-        copy.save()
-        page.timeline.all().delete()
-        AboutTimelineEvent.objects.create(
-            page=page,
-            position=2,
-            date_prefix="Ano de",
-            year="2027",
-            description_before_link="Novo marco.",
-            tag="Novo passo",
-        )
-        AboutTimelineEvent.objects.create(
-            page=page,
-            position=1,
-            date_prefix="Ano de",
-            year="2026",
-            description_before_link="Marco anterior.",
-            tag="Antes",
-        )
+        partner = page.partners.first()
+        partner.name = "Rede atualizada"
+        partner.save(update_fields=["name"])
+
         data = Client().get("/api/v1/cms/about").json()
-        assert data["content"]["s01_007"] == "Nossa trajetória"
-        assert [item["tag"] for item in data["timeline"]] == ["Antes", "Novo passo"]
+
+        assert data["content"].count("::: logo grid :::") == 1
+        assert "Rede atualizada" not in data["content"]
+        assert data["partners"][0]["name"] == "Rede atualizada"
+
+    def test_admin_separa_topo_markdown_e_modelo_de_parceiros(self, admin_client):
+        response = admin_client.get(reverse("admin:cms_aboutpage_change", args=[1]))
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Corpo da página em Markdown" in html
+        assert 'name="hero_title"' in html
+        assert 'name="hero_description"' in html
+        assert 'name="content"' in html
+        assert 'name="partners-TOTAL_FORMS"' in html
+        assert 'name="team_members-TOTAL_FORMS"' in html
+        assert 'name="timeline-TOTAL_FORMS"' not in html
+        assert 'name="challenges-TOTAL_FORMS"' not in html
+        assert AboutCopy not in admin.site._registry
+
+    def test_formulario_usa_widget_markdown(self):
+        form = AboutPageForm(instance=AboutPage.objects.get(pk=1))
+
+        assert list(form.fields) == [
+            "seo_title",
+            "seo_description",
+            "hero_title",
+            "hero_description",
+            "hero_image",
+            "content",
+        ]
+        assert isinstance(form.fields["content"].widget, MarkdownWidget)
+        assert isinstance(form.fields["content"].widget, CmsMarkdownWidget)
 
     def test_logo_novo_precisa_de_arquivo(self):
         partner = AboutPartner(page=AboutPage.objects.get(pk=1), position=26, name="Nova rede")

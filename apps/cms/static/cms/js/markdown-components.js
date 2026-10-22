@@ -26,5 +26,58 @@ document.addEventListener("DOMContentLoaded", () => {
         addButton("2 cards", () => group(2));
         addButton("3 cards", () => group(3));
         addButton("Adicionar card", (selected) => card(selected || undefined));
+        addButton("Timeline", () => `::::: timeline
+
+:::: milestones
+
+::: milestone
+*Mês de*
+
+### 2026
+
+Descrição do marco.
+
+**Etiqueta**
+:::
+
+::::
+
+> Nota da linha do tempo.
+
+:::::`);
+        addButton("Avaliações", () => `:::: ratings
+
+::: rating favorable
+#### Favorável
+
+Descrição da avaliação.
+:::
+
+::: rating favorable-caveat
+#### Favorável com ressalvas
+
+Descrição da avaliação.
+:::
+
+::: rating unfavorable-caveat
+#### Desfavorável com ressalvas
+
+Descrição da avaliação.
+:::
+
+::: rating unfavorable
+#### Desfavorável
+
+Descrição da avaliação.
+:::
+
+::::`);
+        addButton("Lista →", () => `::: list arrows
+
+- **Título**: descrição.
+
+:::`);
+        addButton("Grid de logos", () => "::: logo grid :::");
+        addButton("Expediente", () => "::: team :::");
     });
 });

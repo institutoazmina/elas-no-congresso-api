@@ -3,6 +3,7 @@ from ninja import Router
 
 from .models import (
     AboutPage,
+    AboutTeamMember,
     ActivityPage,
     AlertsPage,
     FeministAIPage,
@@ -94,43 +95,42 @@ def feminist_ai_page(request, response: HttpResponse):
 
 @router.get("/about", response=AboutPageSchema)
 def about_page(request, response: HttpResponse):
-    """Textos e marcos da página Sobre, lidos pelo build do site."""
+    """Hero, Markdown e organizações parceiras da página Sobre."""
     response["Cache-Control"] = "no-store"
-    page = AboutPage.objects.prefetch_related("copy", "timeline", "challenges", "partners").get(
+    page = AboutPage.objects.prefetch_related("partners", "team_members").get(
         pk=AboutPage.SINGLETON_PK
     )
     version = int(page.updated_at.timestamp())
+    team_members = list(page.team_members.all())
     return {
-        "content": {
-            "seo_title": page.seo_title,
-            "seo_description": page.seo_description,
-            "timeline_note_link_text": page.timeline_note_link_text,
-            "timeline_note_link_url": page.timeline_note_link_url,
-            "timeline_note_after_link": page.timeline_note_after_link,
-            **{item.key: item.value for item in page.copy.all()},
-        },
+        "seo_title": page.seo_title,
+        "seo_description": page.seo_description,
+        "title": page.hero_title,
+        "subtitle": page.hero_description,
         "hero_image": _cms_image(
             page.hero_image, page.hero_image_width, page.hero_image_height, version
         ),
-        "timeline": _items(
-            page,
-            "timeline",
-            "date_prefix",
-            "year",
-            "description_before_link",
-            "link_text",
-            "link_url",
-            "description_after_link",
-            "tag",
-        ),
-        "challenges": _items(page, "challenges", "title", "text"),
+        "content": page.content,
         "partners": [
             {
                 "name": partner.name,
-                "asset_key": partner.asset_key,
-                "logo_url": f"{partner.logo_image.url}?v={version}" if partner.logo_image else "",
+                "logo_url": f"{partner.logo_image.url}?v={version}",
             }
             for partner in page.partners.all()
+        ],
+        "team": [
+            {
+                "key": key,
+                "title": title,
+                "wide": key == AboutTeamMember.Group.PREVIOUS,
+                "members": [
+                    {"name": member.name, "role": member.role}
+                    for member in team_members
+                    if member.group == key
+                ],
+            }
+            for key, title in AboutTeamMember.Group.choices
+            if any(member.group == key for member in team_members)
         ],
     }
 
