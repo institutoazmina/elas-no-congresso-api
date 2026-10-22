@@ -92,7 +92,14 @@ class AboutPageSchema(Schema):
 
 
 class HomePageSchema(Schema):
-    content: dict[str, str]
+    seo_title: str
+    seo_description: str
+    title: str
+    subtitle: str
+    cta_text: str
+    cta_url: str
+    hero_image: CmsImageSchema
+    content: str
     images: dict[str, CmsImageSchema]
 
 

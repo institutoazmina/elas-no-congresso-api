@@ -595,11 +595,33 @@ class AboutTeamMember(models.Model):
 
 
 class HomePage(CmsPage):
-    """Imagens da home e raiz dos trechos editoriais, sem dados dos gráficos."""
+    """Hero, corpo editorial e imagens da Home, sem dados dos gráficos."""
 
     HERO_IMAGE = ImageSpec(513, 389)
     EXPLORE_IMAGE = ImageSpec(1440, 1080)
     QUITERIA_IMAGE = ImageSpec(1920, 1080)
+
+    seo_title = models.CharField("Título para buscas", max_length=160)
+    seo_description = models.CharField("Descrição para buscas", max_length=300)
+    hero_title = models.TextField(
+        "Título (use **texto** para negrito)",
+        max_length=160,
+        help_text="Use uma nova linha para forçar a quebra no título.",
+    )
+    hero_description = models.TextField(
+        "Descrição",
+        max_length=1200,
+        help_text="Use **texto** para negrito e ~~texto~~ para destacar desfavorabilidade.",
+    )
+    hero_cta_text = models.CharField("CTA de rolagem: texto", max_length=80)
+    hero_cta_url = models.CharField("CTA de rolagem: destino", max_length=500)
+    content = models.TextField(
+        "Conteúdo",
+        help_text=(
+            "Corpo da página em Markdown. Os marcadores ::: posicionam gráficos e outros "
+            "componentes dinâmicos. HTML não é interpretado."
+        ),
+    )
 
     hero_image_width = models.PositiveIntegerField(default=513, editable=False)
     hero_image_height = models.PositiveIntegerField(default=389, editable=False)
@@ -639,12 +661,22 @@ class HomePage(CmsPage):
     )
 
     class Meta:
-        verbose_name = "Home: imagens e textos"
-        verbose_name_plural = "Home: imagens e textos"
+        verbose_name = "Home"
+        verbose_name_plural = "Home"
         db_table = "cms_home_page"
 
     def __str__(self):
         return "Home"
+
+    def clean(self):
+        parsed = urlparse(self.hero_cta_url)
+        relative = self.hero_cta_url.startswith("/") and not self.hero_cta_url.startswith("//")
+        anchor = self.hero_cta_url.startswith("#") and len(self.hero_cta_url) > 1
+        absolute = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+        if not (relative or anchor or absolute):
+            raise ValidationError(
+                {"hero_cta_url": "Use https://, um caminho (/...) ou uma âncora (#...)."}
+            )
 
     @classmethod
     def default_images(cls):

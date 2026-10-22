@@ -79,5 +79,12 @@ Descrição da avaliação.
 :::`);
         addButton("Grid de logos", () => "::: logo grid :::");
         addButton("Expediente", () => "::: team :::");
+        if (window.location.pathname.includes("/cms/homepage/")) {
+            addButton("Gráfico: direitos atacados", () => "::: chart rights-under-attack :::");
+            addButton("Gráfico: temas em retrocesso", () => "::: chart legislative-setbacks :::");
+            addButton("Gráfico: autoria", () => "::: chart women-in-defense :::");
+            addButton("Gráfico: partidos", () => "::: chart party-rights :::");
+            addButton("Gráfico: UFs", () => "::: chart state-projects :::");
+        }
     });
 });

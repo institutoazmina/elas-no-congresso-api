@@ -21,7 +21,6 @@ from apps.cms.admin import (
     CmsMarkdownWidget,
     FeministAIMarkdownWidget,
     FeministAIPageForm,
-    HomeCopyForm,
 )
 from apps.cms.images import ImageSpec, normalize
 from apps.cms.models import (
@@ -616,15 +615,39 @@ class TestDeploy:
 
 
 class TestHomePage:
-    def test_texto_do_header_mostra_exemplo_de_negrito(self):
-        copy = HomeCopy.objects.get(key="hero_title_before_nas")
+    @staticmethod
+    def form_data(page, **updates):
+        data = {
+            "seo_title": page.seo_title,
+            "seo_description": page.seo_description,
+            "hero_title": page.hero_title,
+            "hero_description": page.hero_description,
+            "hero_cta_text": page.hero_cta_text,
+            "hero_cta_url": page.hero_cta_url,
+            "content": page.content,
+        }
+        return data | updates
 
-        assert "**destaque**" in HomeCopyForm(instance=copy).fields["value"].label
+    def test_admin_reune_header_markdown_e_imagens(self, admin_client):
+        response = admin_client.get(reverse("admin:cms_homepage_change", args=[1]))
+        html = response.content.decode()
+
+        assert response.status_code == 200
+        assert "Corpo da página em Markdown" in html
+        assert 'name="hero_title"' in html
+        assert 'name="hero_description"' in html
+        assert 'name="hero_cta_text"' in html
+        assert 'name="content"' in html
+        assert 'name="hero_image"' in html
+        assert 'name="explore_image"' in html
+        assert 'name="quiteria_image"' in html
+        assert HomeCopy not in admin.site._registry
 
     def test_admin_substitui_uma_imagem_sem_exigir_as_outras(self, admin_client, bucket):
+        page = HomePage.objects.get()
         response = admin_client.post(
             reverse("admin:cms_homepage_change", args=[1]),
-            {"hero_image": image_file(320, 180)},
+            self.form_data(page, hero_image=image_file(320, 180)),
         )
 
         assert response.status_code == 302
@@ -633,7 +656,7 @@ class TestHomePage:
         assert (page.hero_image_width, page.hero_image_height) == (320, 180)
         assert bucket.put_object.call_args.kwargs["Key"] == "cms/home/hero.webp"
 
-    def test_migracao_e_api_preservam_conteudo_editorial_sem_dados_dos_graficos(self):
+    def test_migracao_e_api_preservam_header_markdown_e_componentes(self):
         assert HomePage.objects.filter(pk=1).exists()
         assert HomeCopy.objects.count() == 70
 
@@ -642,27 +665,32 @@ class TestHomePage:
         assert response.status_code == 200
         assert response["Cache-Control"] == "no-store"
         data = response.json()
-        assert data["content"]["hero_title_before_nas"] == "De olho "
-        assert data["content"]["women_postit_before"].startswith("A cada 100")
-        assert data["content"]["rights_postit_desktop_url"].startswith("https://azmina.com.br/")
+        assert data["title"] == ("**De olho** nas **pautas de gênero**\nno **Congresso Nacional**")
+        assert "~~desfavoráveis~~" in data["subtitle"]
+        assert data["cta_url"] == "#o-que-descobrimos"
+        assert data["content"].count("::: chart ") == 5
+        assert data["content"].count("::: proposals ") == 3
+        assert "## Reportagens" in data["content"]
+        assert "{percentual}" in data["content"]
+        assert "HomeCopy" not in data
+        assert data["hero_image"]["width"] == 513
         assert data["images"]["explore"]["width"] == 1440
         assert data["images"]["quiteria"]["height"] == 1080
         assert "charts" not in data and "news" not in data and "maps" not in data
 
-    def test_trecho_editado_aparece_na_api_e_dispara_deploy(
+    def test_markdown_editado_aparece_na_api_e_dispara_deploy(
         self, admin_client, deploy_task, django_capture_on_commit_callbacks
     ):
-        copy = HomeCopy.objects.get(key="reports_title")
+        page = HomePage.objects.get()
+        content = page.content.replace("## Reportagens", "## Nossas reportagens")
         with django_capture_on_commit_callbacks(execute=True):
             response = admin_client.post(
-                reverse("admin:cms_homecopy_change", args=[copy.pk]),
-                {"value": "Nossas reportagens", "_save": "Salvar"},
+                reverse("admin:cms_homepage_change", args=[page.pk]),
+                self.form_data(page, content=content, _save="Salvar"),
             )
 
         assert response.status_code == 302
-        assert Client().get("/api/v1/cms/home").json()["content"]["reports_title"] == (
-            "Nossas reportagens"
-        )
+        assert "## Nossas reportagens" in Client().get("/api/v1/cms/home").json()["content"]
         deploy_task.assert_called_once_with(countdown=30)
 
     def test_footer_global_e_editavel(self, admin_client):

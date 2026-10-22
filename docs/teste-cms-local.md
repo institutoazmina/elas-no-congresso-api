@@ -85,9 +85,10 @@ Ambiente:
 ## Home
 
 - [ ] Alterar título SEO e descrição SEO.
-- [ ] Alterar textos e destaques da abertura.
+- [ ] Alterar o título com `**negrito**`, a descrição com `~~desfavorável~~` e o CTA de rolagem.
 - [ ] Substituir a imagem da abertura.
-- [ ] Alterar títulos, textos, legendas, post-its e chamadas das seções.
+- [ ] Alterar títulos, textos, legendas, post-its e chamadas no Markdown.
+- [ ] Mover os marcadores `::: chart ... :::` e confirmar que os gráficos acompanham a nova ordem.
 - [ ] Conferir se links internos e externos continuam corretos.
 - [ ] Substituir as imagens de Explore e QuitérIA.
 - [ ] Conferir as versões desktop e celular.

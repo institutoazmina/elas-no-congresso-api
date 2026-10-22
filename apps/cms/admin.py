@@ -27,7 +27,6 @@ from .models import (
     FeministAIThematicPartition,
     FooterAlertsPage,
     HeroPage,
-    HomeCopy,
     HomePage,
     ReportsPage,
 )
@@ -262,7 +261,22 @@ class AboutPageAdmin(CmsPageAdmin):
 class HomePageForm(CmsPageForm):
     class Meta:
         model = HomePage
-        fields = "__all__"
+        fields = [
+            "seo_title",
+            "seo_description",
+            "hero_title",
+            "hero_description",
+            "hero_cta_text",
+            "hero_cta_url",
+            "hero_image",
+            "content",
+            "explore_image",
+            "quiteria_image",
+        ]
+        widgets = {
+            "hero_title": forms.Textarea(attrs={"rows": 2}),
+            "content": CmsMarkdownWidget(),
+        }
 
     def image_specs(self):
         return {
@@ -276,43 +290,23 @@ class HomePageForm(CmsPageForm):
 class HomePageAdmin(CmsPageAdmin):
     form = HomePageForm
     fieldsets = [
-        ("Abertura", {"fields": ["hero_image"]}),
-        ("Explore", {"fields": ["explore_image"]}),
-        ("QuitérIA", {"fields": ["quiteria_image"]}),
+        ("Busca e compartilhamento", {"fields": ["seo_title", "seo_description"]}),
+        (
+            "Topo da página",
+            {
+                "fields": [
+                    "hero_title",
+                    "hero_description",
+                    "hero_cta_text",
+                    "hero_cta_url",
+                    "hero_image",
+                ]
+            },
+        ),
+        ("Corpo da página em Markdown", {"fields": ["content"]}),
+        ("Imagens das seções", {"fields": ["explore_image", "quiteria_image"]}),
         ("Publicação", {"fields": ["updated_at"]}),
     ]
-
-
-class HomeCopyForm(forms.ModelForm):
-    class Meta:
-        model = HomeCopy
-        fields = ["value"]
-        widgets = {"value": forms.Textarea(attrs={"rows": 2, "cols": 70})}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.key.startswith(("hero_title_", "hero_subtitle_")):
-            self.fields["value"].label = "Conteúdo (ex.: texto com **destaque**)"
-
-
-@admin.register(HomeCopy)
-class HomeCopyAdmin(ModelAdmin):
-    """Trechos agrupados por seção, sem exigir HTML da equipe editorial."""
-
-    list_display = ["section", "label", "value"]
-    form = HomeCopyForm
-    list_editable = ["value"]
-    list_filter = ["section"]
-    search_fields = ["section", "label", "value"]
-    readonly_fields = ["section", "label"]
-    fields = ["section", "label", "value"]
-    list_per_page = 50
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 @admin.register(FooterAlertsPage)

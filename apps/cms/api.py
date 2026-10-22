@@ -137,16 +137,22 @@ def about_page(request, response: HttpResponse):
 
 @router.get("/home", response=HomePageSchema)
 def home_page(request, response: HttpResponse):
-    """Conteúdo editorial da home; gráficos, cards e mapas usam as APIs próprias."""
+    """Hero, Markdown e imagens da Home; gráficos usam as APIs próprias."""
     response["Cache-Control"] = "no-store"
-    page = HomePage.objects.prefetch_related("copy").get(pk=HomePage.SINGLETON_PK)
+    page = HomePage.objects.get(pk=HomePage.SINGLETON_PK)
     version = int(page.updated_at.timestamp())
     return {
-        "content": {item.key: item.value for item in page.copy.all()},
+        "seo_title": page.seo_title,
+        "seo_description": page.seo_description,
+        "title": page.hero_title,
+        "subtitle": page.hero_description,
+        "cta_text": page.hero_cta_text,
+        "cta_url": page.hero_cta_url,
+        "hero_image": _cms_image(
+            page.hero_image, page.hero_image_width, page.hero_image_height, version
+        ),
+        "content": page.content,
         "images": {
-            "hero": _cms_image(
-                page.hero_image, page.hero_image_width, page.hero_image_height, version
-            ),
             "explore": _cms_image(
                 page.explore_image, page.explore_image_width, page.explore_image_height, version
             ),
