@@ -235,13 +235,21 @@ def _discovery_relevance(fields, *ementas):
     from urllib.parse import urlparse
 
     from .clients.base import throttle_source
-    from .fulltext import DocumentSecurityChallengeError, extract_pdf_text
+    from .fulltext import (
+        DocumentSecurityChallengeError,
+        UnsupportedDocumentError,
+        extract_pdf_text,
+    )
 
     throttle_source(urlparse(url).netloc)
     try:
-        text = extract_pdf_text(url, raise_on_challenge=True)
-    except DocumentSecurityChallengeError:
-        logger.info("Relevance checked using ementa only: document security challenge (%s)", url)
+        text = extract_pdf_text(
+            url,
+            raise_on_challenge=True,
+            raise_on_unsupported=True,
+        )
+    except (DocumentSecurityChallengeError, UnsupportedDocumentError) as exc:
+        logger.info("Relevance checked using ementa only: %s (%s)", exc, url)
         return relevance
     if not text:
         raise ValueError("Full text extraction failed for relevance check")

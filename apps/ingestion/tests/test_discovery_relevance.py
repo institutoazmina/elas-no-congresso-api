@@ -12,9 +12,7 @@ from apps.propositions.models import Proposition
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture(params=["camara", "senado"])
-def discovery(request, monkeypatch):
-    house = request.param
+def _discovery(house, monkeypatch):
     summary_text = "Altera a legislação vigente."
     url = "https://legislativo.test/original.pdf"
     if house == "camara":
@@ -52,6 +50,21 @@ def discovery(request, monkeypatch):
     extraction = Mock(return_value="O projeto dispõe sobre ADENOMIOSE.")
     monkeypatch.setattr("apps.ingestion.fulltext.extract_pdf_text", extraction)
     return task, client, extraction, house
+
+
+@pytest.fixture(params=["camara", "senado"])
+def discovery(request, monkeypatch):
+    return _discovery(request.param, monkeypatch)
+
+
+@pytest.fixture
+def camara_discovery(monkeypatch):
+    return _discovery("camara", monkeypatch)
+
+
+@pytest.fixture
+def senado_discovery(monkeypatch):
+    return _discovery("senado", monkeypatch)
 
 
 def test_full_text_only_match_is_persisted(discovery):
@@ -130,3 +143,32 @@ def test_security_challenge_uses_ementa_without_failing_run(discovery):
     assert run.skipped_count == 1 and run.error_count == 0
     assert run.items.get().attempts == 1
     assert not Proposition.objects.filter(house=house).exists()
+
+
+def test_empty_camara_document_uses_ementa_without_failing_run(camara_discovery):
+    task, client, extraction, house = camara_discovery
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, content=b""))
+    with httpx.Client(transport=transport) as http_client:
+        extraction.side_effect = lambda url, **kwargs: extract_pdf_text(
+            url, client=http_client, **kwargs
+        )
+        run = IngestionRun.objects.get(pk=task())
+    assert run.status == "success"
+    assert run.skipped_count == 1 and run.error_count == 0
+    assert run.items.get().attempts == 1
+    assert not Proposition.objects.filter(house=house).exists()
+
+
+def test_rtf_senado_document_is_classified_from_full_text(senado_discovery):
+    task, client, extraction, house = senado_discovery
+    content = rb"{\rtf1\ansi\ansicpg1252 Altera a lei sobre \b ADENOMIOSE\b0.}"
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, content=content))
+    with httpx.Client(transport=transport) as http_client:
+        extraction.side_effect = lambda url, **kwargs: extract_pdf_text(
+            url, client=http_client, **kwargs
+        )
+        run = IngestionRun.objects.get(pk=task())
+    assert run.status == "success"
+    proposition = Proposition.objects.get(house=house, external_id=701)
+    assert "ADENOMIOSE" in proposition.full_text
+    assert proposition.proposition_themes.filter(theme__name__iexact="adenomiose").exists()

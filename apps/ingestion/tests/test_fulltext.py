@@ -67,6 +67,39 @@ class TestExtractPdfText:
         monkeypatch.setattr(fulltext, "PdfReader", boom)
         assert fulltext.extract_pdf_text("https://x/doc.pdf", client=_client(_ok_pdf)) is None
 
+    def test_extracts_rtf_text(self):
+        content = rb"{\rtf1\ansi\ansicpg1252 Prote\'e7\'e3o \b para mulheres\b0.}"
+        with _client(lambda request: httpx.Response(200, content=content)) as client:
+            text = fulltext.extract_pdf_text(
+                "https://x/documento",
+                client=client,
+                raise_on_unsupported=True,
+            )
+        assert text == "Proteção para mulheres."
+
+    def test_rtf_parse_error_remains_retryable(self, monkeypatch):
+        monkeypatch.setattr(fulltext, "rtf_to_text", Mock(side_effect=ValueError("corrupt rtf")))
+        with _client(lambda request: httpx.Response(200, content=rb"{\rtf1 corrupt")) as client:
+            assert (
+                fulltext.extract_pdf_text(
+                    "https://x/documento",
+                    client=client,
+                    raise_on_unsupported=True,
+                )
+                is None
+            )
+
+    def test_unknown_document_format_is_unsupported(self):
+        with (
+            _client(lambda request: httpx.Response(200, content=b"not a document")) as client,
+            pytest.raises(fulltext.UnsupportedDocumentError),
+        ):
+            fulltext.extract_pdf_text(
+                "https://x/documento",
+                client=client,
+                raise_on_unsupported=True,
+            )
+
     def test_owns_client_path(self, monkeypatch):
         # Sem client injetado: cria e fecha o próprio httpx.Client.
         monkeypatch.setattr(fulltext, "PdfReader", lambda buf: _FakeReader([_FakePage("ok")]))
