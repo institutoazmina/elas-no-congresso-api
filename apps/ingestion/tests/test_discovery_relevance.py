@@ -7,7 +7,7 @@ from apps.ingestion import tasks
 from apps.ingestion.fulltext import extract_pdf_text
 from apps.ingestion.models import IngestionRun
 from apps.ingestion.tests.test_tasks import _FakeCamara, _FakeSenado
-from apps.propositions.models import Proposition
+from apps.propositions.models import IgnoredProposition, Proposition
 
 pytestmark = pytest.mark.django_db
 
@@ -85,6 +85,31 @@ def test_negative_full_text_is_skipped(discovery):
     assert run.skipped_count == 1
     assert not Proposition.objects.filter(house=house).exists()
     extraction.assert_called_once()
+
+
+def test_deleted_proposition_is_ignored_by_future_ingestion(discovery):
+    task, client, extraction, house = discovery
+    proposition = Proposition.objects.create(
+        house=house,
+        external_id=701,
+        type_code="PL",
+        number_label="PL 701/2026",
+        number=701,
+        year=2026,
+        presented_at="2026-10-01",
+        ementa="Proteção às mulheres.",
+    )
+
+    proposition.delete()
+    run = IngestionRun.objects.get(pk=task())
+
+    ignored = IgnoredProposition.objects.get(house=house, external_id=701)
+    assert ignored.number_label == "PL 701/2026"
+    assert run.status == "success"
+    assert run.skipped_count == 1 and run.error_count == 0
+    assert run.items.get().status == "skipped"
+    assert not Proposition.objects.filter(house=house, external_id=701).exists()
+    extraction.assert_not_called()
 
 
 def test_failed_extraction_can_be_resumed(discovery):
