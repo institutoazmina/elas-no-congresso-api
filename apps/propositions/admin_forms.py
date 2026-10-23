@@ -2,6 +2,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from django import forms
 from django.core.exceptions import ValidationError
+from unfold.widgets import UnfoldAdminTextareaWidget
 
 
 def parse_proposition_link(url):
@@ -48,7 +49,12 @@ class PropositionLinksForm(forms.Form):
     links = forms.CharField(
         label="Links das proposições",
         help_text="Cole um link oficial por linha (Câmara ou Senado). Até 100 links por envio.",
-        widget=forms.Textarea(attrs={"rows": 10, "class": "w-full"}),
+        widget=UnfoldAdminTextareaWidget(
+            attrs={
+                "rows": 10,
+                "placeholder": "https://www.camara.leg.br/...\nhttps://www25.senado.leg.br/...",
+            }
+        ),
     )
 
     def clean_links(self):
