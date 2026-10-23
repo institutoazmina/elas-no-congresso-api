@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse
 from ninja import Router
 
@@ -71,6 +72,14 @@ def _items(page, relation: str, *fields: str) -> list[dict]:
     ]
 
 
+def _public_cms_media(content: str) -> str:
+    if not settings.CMS_S3_BUCKET:
+        return content
+    local_prefix = f"{settings.MEDIA_URL.rstrip('/')}/cms/"
+    public_prefix = f"{settings.CMS_PUBLIC_BASE_URL.rstrip('/')}/cms/"
+    return content.replace(local_prefix, public_prefix)
+
+
 @router.get("/feminist-ai", response=FeministAIPageSchema)
 def feminist_ai_page(request, response: HttpResponse):
     """Conteúdo editável da página QuitérIA, lido pelo build do site."""
@@ -91,7 +100,7 @@ def feminist_ai_page(request, response: HttpResponse):
         "hero_image": _cms_image(
             page.hero_image, page.hero_image_width, page.hero_image_height, version
         ),
-        "content": content,
+        "content": _public_cms_media(content),
     }
 
 
@@ -112,7 +121,7 @@ def about_page(request, response: HttpResponse):
         "hero_image": _cms_image(
             page.hero_image, page.hero_image_width, page.hero_image_height, version
         ),
-        "content": page.content,
+        "content": _public_cms_media(page.content),
         "partners": [
             {
                 "name": partner.name,
@@ -153,7 +162,7 @@ def home_page(request, response: HttpResponse):
         "hero_image": _cms_image(
             page.hero_image, page.hero_image_width, page.hero_image_height, version
         ),
-        "content": page.content,
+        "content": _public_cms_media(page.content),
     }
 
 
