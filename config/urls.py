@@ -1,4 +1,6 @@
 from decouple import config
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
@@ -15,4 +17,4 @@ urlpatterns = [
     path("api/v1/", api.urls),
     path("health/", liveness),
     path("health/ready/", readiness),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

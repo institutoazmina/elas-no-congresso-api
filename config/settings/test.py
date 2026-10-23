@@ -1,4 +1,6 @@
 import os
+import tempfile
+from pathlib import Path
 from urllib.parse import urlparse
 
 from .base import *  # noqa: F403, F401
@@ -87,3 +89,7 @@ STORAGES = {
     **STORAGES,  # noqa: F405
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
+
+# Uploads do CMS sem bucket (e a ilustração publicada pela migração) vão para o
+# MEDIA_ROOT; nos testes, fora do repositório.
+MEDIA_ROOT = Path(tempfile.gettempdir()) / "elas-no-congresso-test-media"

@@ -16,7 +16,7 @@ migrações aplicadas, configuração ou execução bem-sucedida em produção.
 | [Ingestão e QuitérIA](ingestao.md) | Pipeline, comandos `ingestion_sync` e `classification_backfill`, enriquecimento de parlamentares |
 | [Alertas por e-mail](alertas.md) | Inscrição, critérios (AST), correspondência, resumo diário |
 | [Radar semanal no Substack](newsletter.md) | Agenda, status, comando `weekly_newsletter`, recuperação |
-| [Admin](admin.md) | Curadoria e ações administrativas |
+| [Admin](admin.md) | Curadoria, CMS do site e ações administrativas |
 | [Deploy e operação](operacao.md) | Imagem Docker, Kamal, workflows, agenda do Beat, checklist de incidentes |
 
 Templates de e-mail: [`apps/subscriptions/emails/README.md`](../apps/subscriptions/emails/README.md).
@@ -29,6 +29,7 @@ ADRs consolidadas em 08/10/2026 a partir do código e das migrações versionada
 | --- | --- | --- |
 | [004](decisions/004-estrutura-do-banco.md) | Estrutura do banco | Implementada |
 | [005](decisions/005-sistema-de-alertas.md) | Sistema de alertas | Implementada |
+| [006](decisions/006-cms-do-site.md) | CMS do site no admin | Implementada para alertas, reportagens, atividade legislativa e IA Feminista |
 | [001](decisions/001-weekly-substack-drafts.md) | Geração do rascunho do Substack | Implementada; agenda desativada por padrão |
 | [002](decisions/002-daily-ingestion-content-versions.md) | Ingestão dos raspadores e análise local de IA | Implementada |
 

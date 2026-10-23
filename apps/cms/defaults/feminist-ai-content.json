@@ -1,0 +1,406 @@
+{
+  "page": {
+    "seo_title": "QuitérIA: inteligência artificial feminista no Congresso",
+    "seo_description": "Conheça a QuitérIA, inteligência artificial feminista que monitora, classifica e avalia projetos de lei sobre gênero e direitos no Congresso Nacional.",
+    "hero_title_prefix": "Quem foi",
+    "hero_title_emphasis": "Maria Quitéria?",
+    "hero_description": "O nome da ferramenta homenageia a heroína baiana Maria Quitéria de Jesus (1792–1853), primeira mulher a integrar o Exército Brasileiro. Em 1822, ela se apresentou como homem, sob o pseudônimo \"Soldado Medeiros\", para lutar na Guerra de Independência do Brasil na Bahia. A QuitérIA carrega esse legado de coragem e resistência para o combate à opacidade legislativa.",
+    "hero_image_alt": "Ilustração de Maria Quitéria",
+    "differential_heading": "Diferencial tecnológico",
+    "flow_heading": "Veja como funciona",
+    "flow_image_alt": "Fluxo de processamento da QuitérIA em cinco etapas",
+    "architecture_heading": "Arquitetura dos modelos",
+    "feminism_heading": "feminismo de dados e treinamento ético",
+    "categories_heading": "As dez categorias temáticas",
+    "governance_heading": "Governança humana e transparência",
+    "supervision_heading": "Duas instâncias de supervisão",
+    "limitations_heading": "O que a QuitérIA não faz",
+    "performance_heading": "desempenho do modelo",
+    "evaluation_caption": "Métricas do modelo de avaliação de desfavorabilidade",
+    "evaluation_metric_help_url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/",
+    "evaluation_previous_column": "QuitérIA 1.0 (2025)",
+    "evaluation_current_column": "QuitérIA 2.0 (2026)",
+    "evaluation_partition_caption": "Partição dos dados",
+    "thematic_caption": "Métricas do modelo de categorização temática",
+    "thematic_partition_caption": "Partição dos dados",
+    "open_data_heading": "código e dados abertos",
+    "open_data_intro": "A QuitérIA é um ecossistema aberto, transparente e replicável para outros campos da defesa dos direitos humanos. Visite os dados, códigos e documentação:",
+    "differential_paragraph_1": "Diferente das IAs genéricas, treinadas com dados indeterminados da internet, a QuitérIA parte de um modelo de linguagem pré-treinado em português brasileiro (BERTimbau Base), com ajuste fino sobre um dataset construído ao longo de anos de avaliação humana de projetos de lei sensíveis a gênero na Câmara e no Senado.",
+    "differential_paragraph_2": "O foco estratégico está no Processamento de Linguagem Natural (PLN) aplicado tanto às ementas quanto ao inteiro teor das matérias, priorizando eixos como violência de gênero, direitos sexuais e reprodutivos e igualdade no trabalho.",
+    "differential_paragraph_3": "A escolha por modelos compactos e especializados, em vez de Large Language Models (LLMs), alia eficiência e soberania tecnológica: consomem significativamente menos energia e poder computacional, garantem maior autonomia operacional e facilitam futuros retreinamentos.",
+    "architecture_card_1_title": "Modelo de Desfavorabilidade",
+    "architecture_card_1_text": "Principal modelo da ferramenta. Baseado no BERTimbau Base, adaptado ao português brasileiro, com uma camada adicional de classificação para ajuste fino.",
+    "architecture_card_1_highlight": "87% de acurácia",
+    "architecture_card_1_note": "na avaliação de matérias de gênero",
+    "architecture_card_2_title": "Modelo de Temas",
+    "architecture_card_2_text": "Mesma estratégia do modelo anterior, com o desafio adicional de classificação multi-label, cobrindo dez temas diferentes de projetos de lei.",
+    "feminism_paragraph_1_before_link": "A QuitérIA aplica na prática os princípios do Feminismo de Dados e, como integrante da Rede Feminista de Inteligência Artificial da América Latina e do Caribe,",
+    "feminism_paragraph_1_link_text": "reconhece e adota sua declaração de princípios",
+    "feminism_paragraph_1_link_url": "https://iafeminista.lat/declaracion-de-principios/",
+    "feminism_paragraph_1_after_link": ".",
+    "feminism_paragraph_2": "Na prática, a IA faz a triagem, classifica as proposições por categoria e calcula uma pontuação de desfavorabilidade de 0 a 1. Mas nunca opera de forma 100% autônoma: projetos ambíguos ou divergentes são encaminhados para validação por analistas humanos, e as correções feitas pelas especialistas retroalimentam o sistema em ciclos contínuos de readequação e retreinamento.",
+    "feminism_paragraph_3_before_highlight": "Esse processo prevê retreinamentos periódicos.",
+    "feminism_paragraph_3_highlight": "Atualmente estamos no segundo ciclo.",
+    "feminism_paragraph_3_after_highlight": "A cada ciclo, novas proposições são avaliadas e o modelo é atualizado com os ajustes feitos pela equipe humana.",
+    "governance_paragraph_1_before_link": "Infraestruturas de dados e sistemas de inteligência artificial são, majoritariamente, orientados por lógicas institucionais, corporativas ou opacas. A QuitérIA propõe uma reapropriação crítica dessas tecnologias a partir de uma perspectiva feminista e voltada ao interesse público, concretizando, no campo do monitoramento legislativo, os princípios da",
+    "governance_paragraph_1_link_text": "política de uso de inteligência artificial do Instituto AzMina",
+    "governance_paragraph_1_link_url": "https://azmina.com.br/revista-azmina/#uso-de-inteligencia-artificial",
+    "governance_paragraph_1_after_link": ", que estabelece a revisão humana como condição inegociável, o compromisso com a transparência e a abertura de código sempre que possível.",
+    "governance_paragraph_2": "Por isso tornamos públicos não apenas os resultados do monitoramento, mas também os processos, critérios e metodologias usados na coleta, seleção e análise das proposições. Cada proposição monitorada vem acompanhada de informações sobre tramitação, autoria, situação legislativa, classificação de impacto e, quando aplicável, a organização responsável pela avaliação e sua justificativa técnica. A metodologia de coleta, os critérios de inclusão, o protocolo de avaliação e a documentação da IA também são públicos, permitindo escrutínio e aperfeiçoamento contínuo.",
+    "limitations_intro": "O papel do sistema é apoiar a análise, a organização e o monitoramento, e não automatizar decisões políticas complexas. A QuitérIA:",
+    "supervision_card_1_title": "Comitê de Governança",
+    "supervision_card_1_text": "Responsável pelas diretrizes estratégicas, aprovação de protocolos metodológicos, gestão de riscos tecnológicos e salvaguarda dos princípios éticos.",
+    "supervision_card_1_note": "Atuação vigente de junho a setembro de 2026.",
+    "supervision_card_2_title": "Comitê de Validação",
+    "supervision_card_2_text": "Instância técnica encarregada de auditar as classificações da IA, monitorar possíveis vieses tecnológicos, avaliar indicadores de desempenho e propor ajustes nos dados de treino.",
+    "supervision_card_2_note": "Atuação vigente de agosto a setembro de 2026.",
+    "categories_name_column": "Categoria",
+    "categories_concept_column": "Conceito",
+    "evaluation_metric_column": "Métricas",
+    "evaluation_partition_name_column": "Partição",
+    "evaluation_partition_accuracy_column": "Acurácia",
+    "evaluation_partition_percent_column": "Percentual da base",
+    "evaluation_partition_count_column": "Quantidade absoluta",
+    "thematic_partition_name_column": "Base",
+    "thematic_partition_training_column": "Treino",
+    "thematic_partition_validation_column": "Validação",
+    "thematic_partition_test_column": "Teste"
+  },
+  "items": {
+    "categories": [
+      {
+        "position": 1,
+        "name": "Violências de Gênero",
+        "concept": "Propostas relacionadas à prevenção, enfrentamento, responsabilização e reparação das diversas formas de violência baseadas em gênero, assédio, violência doméstica, sexual, política, institucional, obstétrica, digital e feminicídio, além de proposições sobre acesso a armas ou que alterem a Lei Maria da Penha."
+      },
+      {
+        "position": 2,
+        "name": "Direitos Sexuais e Reprodutivos",
+        "concept": "Autonomia corporal, direitos reprodutivos e sexuais, acesso à contracepção, aborto, planejamento familiar, reprodução assistida e garantia de direitos ligados à sexualidade."
+      },
+      {
+        "position": 3,
+        "name": "Saúde",
+        "concept": "Promoção, prevenção e acesso à saúde, com atenção às necessidades específicas de mulheres, pessoas gestantes, pessoas LGBTQIAPN+ e outros grupos em situação de vulnerabilidade. Abrange saúde materna, menstruação e dignidade menstrual, menopausa, climatério, cânceres do aparelho reprodutor, saúde mental, acesso a medicamentos, prevenção de doenças e organização dos serviços de saúde."
+      },
+      {
+        "position": 4,
+        "name": "Igualdade e Antidiscriminação",
+        "concept": "Iniciativas voltadas a promover igualdade de direitos e oportunidades e a combater discriminações baseadas em gênero, sexo, orientação sexual, identidade de gênero, raça, território e outras formas de desigualdade."
+      },
+      {
+        "position": 5,
+        "name": "LGBTQIAPN+",
+        "concept": "Direitos, cidadania, proteção e reconhecimento das pessoas LGBTQIAPN+, incluindo identidade de gênero, orientação sexual, acesso a direitos e combate à violência e à discriminação."
+      },
+      {
+        "position": 6,
+        "name": "Família, Parentalidade e Relações Civis",
+        "concept": "Organização familiar, casamento, união estável, divórcio, filiação, guarda, adoção, poder familiar, registro civil e demais direitos e deveres nas relações familiares."
+      },
+      {
+        "position": 7,
+        "name": "Educação e Cultura",
+        "concept": "Educação formal e não formal, produção cultural, liberdade de ensino, conteúdos curriculares, memória e preservação histórica, homenagens e reconhecimento de personalidades ou marcos relevantes para a igualdade de gênero, a diversidade e os direitos humanos."
+      },
+      {
+        "position": 8,
+        "name": "Infância e Adolescência",
+        "concept": "Reúne proposições relacionadas à promoção, proteção e garantia dos direitos de crianças e adolescentes, com atenção especial aos impactos sobre meninas e adolescentes em perspectiva de gênero. Inclui temas como proteção integral, convivência familiar e comunitária, desenvolvimento infantil, primeira infância, violência contra crianças e adolescentes, trabalho infantil, acolhimento institucional, medidas socioeducativas, ambiente digital, proteção de dados, uso de tecnologias, participação social, acesso a direitos e políticas públicas voltadas à infância e à adolescência."
+      },
+      {
+        "position": 9,
+        "name": "Trabalho, Economia, Cuidado e Proteção Social",
+        "concept": "Mercado de trabalho, economia, geração de renda, empreendedorismo, previdência, seguridade e assistência social, políticas de proteção econômica e social, maternidade, licença-maternidade e outros direitos trabalhistas, acesso a creches e políticas de cuidado, valorização do trabalho doméstico e de cuidados, regulamentação ou direitos relacionados à prostituição, além de iniciativas sobre os impactos das mudanças climáticas e das políticas ambientais nas condições de vida, trabalho, cuidado e proteção social."
+      },
+      {
+        "position": 10,
+        "name": "Participação Política e Institucionalidade",
+        "concept": "Participação de mulheres e da população LGBTQIAPN+ nos espaços de poder, representação política, cargos e funcionamento das instituições públicas, mecanismos de participação social e políticas públicas de promoção da igualdade de gênero."
+      }
+    ],
+    "limitations": [
+      {
+        "position": 1,
+        "text": "não substitui decisões humanas em temas políticos, jurídicos ou de direitos humanos;"
+      },
+      {
+        "position": 2,
+        "text": "não define sozinha, de forma definitiva, se uma proposta é favorável ou desfavorável;"
+      },
+      {
+        "position": 3,
+        "text": "não toma decisões de moderação sem supervisão nem atua como autoridade jurídica;"
+      },
+      {
+        "position": 4,
+        "text": "não invisibiliza divergências políticas legítimas;"
+      },
+      {
+        "position": 5,
+        "text": "não substitui a análise contextual especializada, e opera com transparência sobre suas limitações e margens de erro;"
+      },
+      {
+        "position": 6,
+        "text": "não reproduz vieses presentes nos dados legislativos ou nas anotações humanas sem mecanismos de auditoria e revisão crítica."
+      }
+    ],
+    "evaluation_metrics": [
+      {
+        "position": 1,
+        "label": "Acurácia",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/acuracia/",
+        "previous": "0,82",
+        "current": "0,87",
+        "trend": "up"
+      },
+      {
+        "position": 2,
+        "label": "AUC",
+        "url": "https://pt.wikipedia.org/wiki/Caracter%C3%ADstica_de_Opera%C3%A7%C3%A3o_do_Receptor",
+        "previous": "–",
+        "current": "0,85",
+        "trend": "neutral"
+      },
+      {
+        "position": 3,
+        "label": "F1 Score Índice 0",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/",
+        "previous": "0,88",
+        "current": "0,92",
+        "trend": "up"
+      },
+      {
+        "position": 4,
+        "label": "F1 Score Índice 1",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/",
+        "previous": "0,64",
+        "current": "0,67",
+        "trend": "up"
+      },
+      {
+        "position": 5,
+        "label": "Precisão Índice 0",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+        "previous": "0,91",
+        "current": "0,89",
+        "trend": "down"
+      },
+      {
+        "position": 6,
+        "label": "Precisão Índice 1",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+        "previous": "0,59",
+        "current": "0,75",
+        "trend": "up"
+      },
+      {
+        "position": 7,
+        "label": "Revocação Índice 0",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+        "previous": "0,86",
+        "current": "0,94",
+        "trend": "up"
+      },
+      {
+        "position": 8,
+        "label": "Revocação Índice 1",
+        "url": "https://ia.wiki.br/machine-learning/avaliacao/metricas/precisao-e-revocacao/",
+        "previous": "0,70",
+        "current": "0,61",
+        "trend": "down"
+      }
+    ],
+    "evaluation_partitions": [
+      {
+        "position": 1,
+        "label": "Treino",
+        "accuracy": "0,92",
+        "percentage": "80,93%",
+        "count": "2.518"
+      },
+      {
+        "position": 2,
+        "label": "Validação",
+        "accuracy": "0,84",
+        "percentage": "9,03%",
+        "count": "281"
+      },
+      {
+        "position": 3,
+        "label": "Teste",
+        "accuracy": "0,87",
+        "percentage": "10,06%",
+        "count": "313"
+      }
+    ],
+    "thematic_metrics": [
+      {
+        "position": 1,
+        "label": "Acurácia",
+        "value": "0,82"
+      },
+      {
+        "position": 2,
+        "label": "F1 Macro",
+        "value": "0,71"
+      },
+      {
+        "position": 3,
+        "label": "Precisão Macro",
+        "value": "0,73"
+      },
+      {
+        "position": 4,
+        "label": "Recall Macro",
+        "value": "0,72"
+      },
+      {
+        "position": 5,
+        "label": "F1 Direitos Sexuais e Reprodutivos",
+        "value": "0,72"
+      },
+      {
+        "position": 6,
+        "label": "F1 Educação e Cultura",
+        "value": "0,73"
+      },
+      {
+        "position": 7,
+        "label": "F1 Família Parentalidade e Relações Civis",
+        "value": "0,73"
+      },
+      {
+        "position": 8,
+        "label": "F1 Igualdade e Antidiscriminação",
+        "value": "0,67"
+      },
+      {
+        "position": 9,
+        "label": "F1 Infância e Adolescência",
+        "value": "0,67"
+      },
+      {
+        "position": 10,
+        "label": "F1 LGBTQIAPN+",
+        "value": "0,67"
+      },
+      {
+        "position": 11,
+        "label": "F1 Participação Política e Instituicionalidade",
+        "value": "0,59"
+      },
+      {
+        "position": 12,
+        "label": "F1 Saúde",
+        "value": "0,84"
+      },
+      {
+        "position": 13,
+        "label": "F1 Trabalho Economia Cuidado e Proteção Social",
+        "value": "0,81"
+      },
+      {
+        "position": 14,
+        "label": "F1 Violências de Gênero",
+        "value": "0,91"
+      }
+    ],
+    "thematic_partitions": [
+      {
+        "position": 1,
+        "label": "Quantidade de Projetos",
+        "training": "2527",
+        "validation": "282",
+        "test": "313"
+      },
+      {
+        "position": 2,
+        "label": "Direitos Sexuais e Reprodutivos",
+        "training": "294 (11,63%)",
+        "validation": "31 (10,99%)",
+        "test": "25 (7,99%)"
+      },
+      {
+        "position": 3,
+        "label": "Educação e Cultura",
+        "training": "127 (5,03%)",
+        "validation": "14 (4,96%)",
+        "test": "13 (4,15%)"
+      },
+      {
+        "position": 4,
+        "label": "Família, Parentalidade e Relações Civis",
+        "training": "126 (4,99%)",
+        "validation": "8 (2,84%)",
+        "test": "11 (3,51%)"
+      },
+      {
+        "position": 5,
+        "label": "Igualdade e Antidiscriminação",
+        "training": "48 (1,90%)",
+        "validation": "3 (1,06%)",
+        "test": "5 (1,60%)"
+      },
+      {
+        "position": 6,
+        "label": "Infância e Adolescência",
+        "training": "76 (3,01%)",
+        "validation": "8 (2,84%)",
+        "test": "15 (4,79%)"
+      },
+      {
+        "position": 7,
+        "label": "LGBTQIAPN+",
+        "training": "123 (4,87%)",
+        "validation": "20 (7,09%)",
+        "test": "12 (3,83%)"
+      },
+      {
+        "position": 8,
+        "label": "Participação Política e Institucionalidade",
+        "training": "94 (3,72%)",
+        "validation": "9 (3,19%)",
+        "test": "11 (3,51%)"
+      },
+      {
+        "position": 9,
+        "label": "Saúde",
+        "training": "140 (5,54%)",
+        "validation": "17 (6,03%)",
+        "test": "19 (6,07%)"
+      },
+      {
+        "position": 10,
+        "label": "Trabalho, Economia, Cuidado e Proteção Social",
+        "training": "343 (13,57%)",
+        "validation": "43 (15,25%)",
+        "test": "43 (13,74%)"
+      },
+      {
+        "position": 11,
+        "label": "Violências de Gênero",
+        "training": "1156 (45,75%)",
+        "validation": "129 (45,74%)",
+        "test": "159 (50,80%)"
+      }
+    ],
+    "open_links": [
+      {
+        "position": 1,
+        "label": "Código e repositório da QuitérIA",
+        "url": "https://github.com/institutoazmina/ia-feminista-elas-no-congresso"
+      },
+      {
+        "position": 2,
+        "label": "Modelo da QuitérIA 2.0 no Hugging Face",
+        "url": "https://huggingface.co/azmina/quiteria-2.0"
+      },
+      {
+        "position": 3,
+        "label": "API pública e documentação",
+        "url": "https://api.elasnocongresso.com.br/api/v1/docs"
+      }
+    ]
+  }
+}

@@ -63,6 +63,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_celery_beat",
     "django_celery_results",
+    "unfold_markdown",
 ]
 
 LOCAL_APPS = [
@@ -77,6 +78,7 @@ LOCAL_APPS = [
     "apps.ingestion",
     "apps.newsletters",
     "apps.og",
+    "apps.cms",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -356,6 +358,22 @@ OG_S3_BUCKET = config("OG_S3_BUCKET", default="")
 # Endpoint alternativo (MiniStack) para o S3 em desenvolvimento.
 OG_AWS_ENDPOINT_URL = config("OG_AWS_ENDPOINT_URL", default=None)
 OG_RENDER_DELAY_SECONDS = config("OG_RENDER_DELAY_SECONDS", default=300, cast=int)
+
+# CMS: imagens enviadas pelo admin vão para o mesmo bucket do site, num arquivo
+# fixo por campo em cms/, servido pelo domínio do site. Sem bucket, ficam no
+# MEDIA_ROOT local.
+CMS_S3_BUCKET = config("CMS_S3_BUCKET", default=OG_S3_BUCKET)
+CMS_PUBLIC_BASE_URL = config("CMS_PUBLIC_BASE_URL", default=PUBLIC_SITE_URL)
+# Distribuição do site: cada imagem substituída tem o caminho invalidado.
+CMS_CLOUDFRONT_DISTRIBUTION_ID = config("CMS_CLOUDFRONT_DISTRIBUTION_ID", default="")
+# Cada alteração no CMS dispara o deploy do site (repository_dispatch). Sem
+# token, como em desenvolvimento e testes, nada é disparado.
+SITE_DEPLOY_GITHUB_TOKEN = config("SITE_DEPLOY_GITHUB_TOKEN", default="")
+SITE_DEPLOY_GITHUB_REPOSITORY = config(
+    "SITE_DEPLOY_GITHUB_REPOSITORY", default="institutoazmina/elas-no-congresso"
+)
+# Agrupa uma rajada de salvamentos num único deploy.
+SITE_DEPLOY_DELAY_SECONDS = config("SITE_DEPLOY_DELAY_SECONDS", default=30, cast=int)
 
 # Subscription confirmation token TTL (hours)
 SUBSCRIPTION_CONFIRM_TTL_HOURS = 48
