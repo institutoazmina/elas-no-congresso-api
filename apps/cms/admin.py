@@ -239,7 +239,14 @@ def hero_page_form(model: type[HeroPage]) -> type[forms.ModelForm]:
     return modelform_factory(
         model,
         form=HeroPageForm,
-        fields=["seo_title", "seo_description", "title", "subtitle", "hero_image"],
+        fields=[
+            "seo_title",
+            "seo_description",
+            "title",
+            "subtitle",
+            "hero_image",
+            "hero_image_alt",
+        ],
         widgets={"subtitle": UnfoldAdminTextareaWidget(attrs={"rows": 3})},
     )
 
@@ -247,7 +254,10 @@ def hero_page_form(model: type[HeroPage]) -> type[forms.ModelForm]:
 class HeroPageAdmin(CmsPageAdmin):
     fieldsets = [
         ("SEO", {"fields": ["seo_title", "seo_description"]}),
-        ("Topo da página", {"fields": ["title", "subtitle", "hero_image"]}),
+        (
+            "Topo da página",
+            {"fields": ["title", "subtitle", "hero_image", "hero_image_alt"]},
+        ),
         ("Publicação", {"fields": ["updated_at"]}),
     ]
 
@@ -276,6 +286,7 @@ class FeministAIPageForm(CmsPageForm):
             "hero_title",
             "hero_description",
             "hero_image",
+            "hero_image_alt",
             "content",
         ]
         widgets = {"content": FeministAIMarkdownWidget()}
@@ -331,7 +342,10 @@ class FeministAIPageAdmin(CmsPageAdmin):
     form = FeministAIPageForm
     fieldsets = [
         ("SEO", {"fields": ["seo_title", "seo_description"]}),
-        ("Topo da página", {"fields": ["hero_title", "hero_description", "hero_image"]}),
+        (
+            "Topo da página",
+            {"fields": ["hero_title", "hero_description", "hero_image", "hero_image_alt"]},
+        ),
         ("Corpo da página em Markdown", {"fields": ["content"]}),
         ("Publicação", {"fields": ["updated_at"]}),
     ]
@@ -346,6 +360,7 @@ class AboutPageForm(CmsPageForm):
             "hero_title",
             "hero_description",
             "hero_image",
+            "hero_image_alt",
             "content",
         ]
         widgets = {"content": CmsMarkdownWidget()}
@@ -384,7 +399,10 @@ class AboutPageAdmin(CmsPageAdmin):
     form = AboutPageForm
     fieldsets = [
         ("SEO", {"fields": ["seo_title", "seo_description"]}),
-        ("Topo da página", {"fields": ["hero_title", "hero_description", "hero_image"]}),
+        (
+            "Topo da página",
+            {"fields": ["hero_title", "hero_description", "hero_image", "hero_image_alt"]},
+        ),
         ("Corpo da página em Markdown", {"fields": ["content"]}),
         ("Publicação", {"fields": ["updated_at"]}),
     ]
@@ -401,6 +419,7 @@ class HomePageForm(CmsPageForm):
             "hero_description",
             "hero_cta_text",
             "hero_image",
+            "hero_image_alt",
             "content",
         ]
         widgets = {
@@ -425,6 +444,7 @@ class HomePageAdmin(CmsPageAdmin):
                     "hero_description",
                     "hero_cta_text",
                     "hero_image",
+                    "hero_image_alt",
                 ]
             },
         ),

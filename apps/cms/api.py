@@ -40,6 +40,7 @@ def _hero(model: type[HeroPage], response: HttpResponse) -> dict:
             "url": f"{page.hero_image.url}?v={version}",
             "width": page.hero_image_width,
             "height": page.hero_image_height,
+            "alt": page.hero_image_alt,
         },
     }
 
@@ -62,8 +63,8 @@ def activity_page(request, response: HttpResponse):
     return _hero(ActivityPage, response)
 
 
-def _cms_image(field, width: int, height: int, version: int) -> dict:
-    return {"url": f"{field.url}?v={version}", "width": width, "height": height}
+def _cms_image(field, width: int, height: int, alt: str, version: int) -> dict:
+    return {"url": f"{field.url}?v={version}", "width": width, "height": height, "alt": alt}
 
 
 def _items(page, relation: str, *fields: str) -> list[dict]:
@@ -98,7 +99,11 @@ def feminist_ai_page(request, response: HttpResponse):
         "title": page.hero_title,
         "subtitle": page.hero_description,
         "hero_image": _cms_image(
-            page.hero_image, page.hero_image_width, page.hero_image_height, version
+            page.hero_image,
+            page.hero_image_width,
+            page.hero_image_height,
+            page.hero_image_alt,
+            version,
         ),
         "content": _public_cms_media(content),
     }
@@ -119,7 +124,11 @@ def about_page(request, response: HttpResponse):
         "title": page.hero_title,
         "subtitle": page.hero_description,
         "hero_image": _cms_image(
-            page.hero_image, page.hero_image_width, page.hero_image_height, version
+            page.hero_image,
+            page.hero_image_width,
+            page.hero_image_height,
+            page.hero_image_alt,
+            version,
         ),
         "content": _public_cms_media(page.content),
         "partners": [
@@ -160,7 +169,11 @@ def home_page(request, response: HttpResponse):
         "cta_text": page.hero_cta_text,
         "cta_url": "#o-que-descobrimos",
         "hero_image": _cms_image(
-            page.hero_image, page.hero_image_width, page.hero_image_height, version
+            page.hero_image,
+            page.hero_image_width,
+            page.hero_image_height,
+            page.hero_image_alt,
+            version,
         ),
         "content": _public_cms_media(page.content),
     }
