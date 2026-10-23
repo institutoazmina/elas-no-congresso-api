@@ -71,8 +71,13 @@ def test_admin_requires_add_permission_and_shows_link_form():
     client.force_login(user)
     response = client.get(reverse(URL))
     assert response.status_code == 200
-    assert "Adicionar proposições por link" in response.content.decode()
-    assert 'name="csrfmiddlewaretoken"' in response.content.decode()
+    content = response.content.decode()
+    assert "Adicionar proposições por link" in content
+    assert 'name="csrfmiddlewaretoken"' in content
+    assert content.count("<textarea") == 1
+    assert 'class="vLargeTextField' in content
+    assert '<button type="submit"' in content
+    assert 'form="<div' not in content
 
 
 def test_admin_posts_validated_ids_once_and_redirects():
