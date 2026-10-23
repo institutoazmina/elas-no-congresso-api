@@ -376,6 +376,28 @@ class TestAdmin:
 
 
 class TestMarkdownImageGallery:
+    @pytest.mark.parametrize(
+        ("endpoint", "page_model"),
+        [
+            ("/api/v1/cms/home", HomePage),
+            ("/api/v1/cms/about", AboutPage),
+            ("/api/v1/cms/feminist-ai", FeministAIPage),
+        ],
+    )
+    def test_api_publica_urls_do_bucket_no_markdown(self, settings, endpoint, page_model):
+        settings.CMS_S3_BUCKET = "elas-no-congresso-site"
+        settings.CMS_PUBLIC_BASE_URL = "https://www.elasnocongresso.com.br"
+        image_path = "cms/markdown/00000000000000000000000000000001.webp"
+        page = page_model.objects.get(pk=1)
+        page_model.objects.filter(pk=page.pk).update(
+            content=f"{page.content}\n\n![Plenário](/media/{image_path})"
+        )
+
+        content = Client().get(endpoint).json()["content"]
+
+        assert f"![Plenário](https://www.elasnocongresso.com.br/{image_path})" in content
+        assert f"/media/{image_path}" not in content
+
     def test_upload_normaliza_e_guarda_metadados(self, settings, tmp_path, admin_client):
         settings.MEDIA_ROOT = tmp_path
         user = get_user_model().objects.get(username="editora")
