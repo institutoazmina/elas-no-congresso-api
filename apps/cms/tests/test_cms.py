@@ -166,6 +166,7 @@ class TestEndpoint:
                 "url": f"/media/cms/{folder}/hero.webp?v=0",
                 "width": 1080,
                 "height": 1350,
+                "alt": model().hero_image_alt,
             },
         }
         assert not model.objects.exists()
@@ -183,6 +184,7 @@ class TestEndpoint:
             f"?v={int(page.updated_at.timestamp())}",
             "width": 1080,
             "height": 1350,
+            "alt": "",
         }
 
 
@@ -228,6 +230,7 @@ class TestAdmin:
             "seo_description": page.seo_description,
             "title": page.title,
             "subtitle": page.subtitle,
+            "hero_image_alt": page.hero_image_alt,
         }
         return data | updates
 
@@ -273,6 +276,7 @@ class TestAdmin:
         assert title.label == "Título"
         assert description.label == "Descrição"
         assert fields["hero_image"].label == "Ilustração"
+        assert fields["hero_image_alt"].label == "Descrição da ilustração"
         for field in [title, description]:
             assert "**texto**" in field.help_text
             assert "quebra de linha" in field.help_text
@@ -578,6 +582,12 @@ class TestFeministAIPage:
         assert page.content.count(":::up:::") == 5
         assert page.content.count(":::down:::") == 2
         assert "#### Modelo de Desfavorabilidade" in page.content
+        assert "| Tendência |" not in page.content
+        assert "| Métricas | Valor |" not in page.content
+        assert (
+            "[F1 Score](https://ia.wiki.br/machine-learning/avaliacao/metricas/pontuacao-f1/) Índice 0"
+            in page.content
+        )
         assert FeministAICategory.objects.filter(page=page).count() == 10
         assert FeministAIEvaluationMetric.objects.filter(page=page).count() == 8
 
@@ -591,6 +601,7 @@ class TestFeministAIPage:
         assert data["title"] == "Quem foi **Maria Quitéria?**"
         assert data["subtitle"].startswith("O nome da ferramenta homenageia")
         assert data["hero_image"]["url"].startswith("/media/cms/ia-feminista/hero.webp?v=")
+        assert data["hero_image"]["alt"] == "Ilustração de Maria Quitéria"
         assert data["content"].startswith("## Diferencial tecnológico")
         assert "/media/cms/ia-feminista/flow-desktop.webp?v=" in data["content"]
         assert "| Violências de Gênero |" in data["content"]
@@ -611,6 +622,7 @@ class TestFeministAIPage:
         assert 'name="hero_title"' in html
         assert 'name="hero_description"' in html
         assert 'name="hero_image"' in html
+        assert 'name="hero_image_alt"' in html
         assert 'name="feministaicategory_set-TOTAL_FORMS"' not in html
 
     def test_admin_salva_topo_e_markdown(self, admin_client):
@@ -625,6 +637,7 @@ class TestFeministAIPage:
                 "seo_description": page.seo_description,
                 "hero_title": "Conheça a **QuitérIA**",
                 "hero_description": page.hero_description,
+                "hero_image_alt": page.hero_image_alt,
                 "content": content,
             },
         )
@@ -643,6 +656,7 @@ class TestFeministAIPage:
             "hero_title",
             "hero_description",
             "hero_image",
+            "hero_image_alt",
             "content",
         ]
         assert isinstance(form.fields["content"].widget, MarkdownWidget)
@@ -686,6 +700,7 @@ class TestAboutPage:
         assert data["title"] == page.hero_title
         assert data["subtitle"] == page.hero_description
         assert data["hero_image"]["url"].startswith("/media/cms/sobre/hero.webp?v=")
+        assert data["hero_image"]["alt"] == ""
         assert data["content"].startswith("## A nossa história")
         assert "timeline" not in data
         assert "challenges" not in data
@@ -727,6 +742,7 @@ class TestAboutPage:
         assert "Corpo da página em Markdown" in html
         assert 'name="hero_title"' in html
         assert 'name="hero_description"' in html
+        assert 'name="hero_image_alt"' in html
         assert 'name="content"' in html
         assert 'name="partners-TOTAL_FORMS"' in html
         assert 'name="team_members-TOTAL_FORMS"' in html
@@ -743,6 +759,7 @@ class TestAboutPage:
             "hero_title",
             "hero_description",
             "hero_image",
+            "hero_image_alt",
             "content",
         ]
         assert isinstance(form.fields["content"].widget, MarkdownWidget)
@@ -854,6 +871,7 @@ class TestHomePage:
             "hero_title": page.hero_title,
             "hero_description": page.hero_description,
             "hero_cta_text": page.hero_cta_text,
+            "hero_image_alt": page.hero_image_alt,
             "content": page.content,
         }
         return data | updates
@@ -870,6 +888,7 @@ class TestHomePage:
         assert 'name="hero_cta_url"' not in html
         assert 'name="content"' in html
         assert 'name="hero_image"' in html
+        assert 'name="hero_image_alt"' in html
         assert 'name="explore_image"' not in html
         assert 'name="quiteria_image"' not in html
         assert HomeCopy not in admin.site._registry
@@ -910,6 +929,7 @@ class TestHomePage:
         assert "{percentual}" in data["content"]
         assert "HomeCopy" not in data
         assert data["hero_image"]["width"] == 513
+        assert data["hero_image"]["alt"] == ""
         assert "images" not in data
         explore = MarkdownImage.objects.get(pk="74f5b946-d937-41f6-a9c7-35e6df082cf5")
         quiteria = MarkdownImage.objects.get(pk="b766dd16-7511-410a-a590-f8814672c8e7")

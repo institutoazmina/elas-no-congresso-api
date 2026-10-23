@@ -5,6 +5,7 @@ class CmsImageSchema(Schema):
     url: str
     width: int
     height: int
+    alt: str
 
 
 class HeroPageSchema(Schema):

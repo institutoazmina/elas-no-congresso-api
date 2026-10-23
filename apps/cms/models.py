@@ -133,6 +133,9 @@ class AlertsPage(HeroPage):
     title = title_field("Alertas")
     subtitle = subtitle_field("Acompanhe as movimentações do Legislativo no Radar do Congresso")
     hero_image = hero_image_field("alertas")
+    hero_image_alt = models.CharField(
+        "Descrição da ilustração", max_length=160, blank=True, default=""
+    )
 
     class Meta:
         verbose_name = "Alertas"
@@ -162,6 +165,9 @@ class ReportsPage(HeroPage):
     title = title_field("Reportagens")
     subtitle = subtitle_field("Veja as histórias que os dados do Congresso nos contam.")
     hero_image = hero_image_field("reportagens")
+    hero_image_alt = models.CharField(
+        "Descrição da ilustração", max_length=160, blank=True, default=""
+    )
 
     class Meta:
         verbose_name = "Reportagens"
@@ -194,6 +200,11 @@ class ActivityPage(HeroPage):
         "atualizadas diariamente pela nossa robô que monitora o Congresso."
     )
     hero_image = hero_image_field("atividade-legislativa")
+    hero_image_alt = models.CharField(
+        "Descrição da ilustração",
+        max_length=160,
+        default="Ilustração de um robô feito de papel",
+    )
 
     class Meta:
         verbose_name = "Atividade legislativa"
@@ -495,6 +506,9 @@ class AboutPage(CmsPage):
     hero_image_width = models.PositiveIntegerField(default=1080, editable=False)
     hero_image_height = models.PositiveIntegerField(default=1350, editable=False)
     hero_image = hero_image_field("sobre")
+    hero_image_alt = models.CharField(
+        "Descrição da ilustração", max_length=160, blank=True, default=""
+    )
     timeline_note_link_text = models.CharField(
         "Nota da linha do tempo: texto do link", max_length=200
     )
@@ -684,6 +698,9 @@ class HomePage(CmsPage):
             "PNG, JPEG ou WebP em qualquer dimensão, até 5 MB. "
             "O site ajusta a imagem automaticamente."
         ),
+    )
+    hero_image_alt = models.CharField(
+        "Descrição da ilustração", max_length=160, blank=True, default=""
     )
 
     class Meta:
