@@ -17,6 +17,7 @@ from .admin_forms import PropositionLinksForm
 from .models import (
     AssessmentOrganization,
     ClassificationRequest,
+    IgnoredProposition,
     Proposition,
     PropositionAnalysis,
     PropositionAnnotation,
@@ -54,6 +55,15 @@ class _PropositionDeletionCollector(NestedObjects):
                 for field in self.deferred_fields.get(related_field.remote_field.model, ())
             )
         return queryset.defer(*deferred)
+
+
+@admin.register(IgnoredProposition)
+class IgnoredPropositionAdmin(ModelAdmin):
+    list_display = ["number_label", "house", "external_id", "ignored_at"]
+    list_filter = ["house"]
+    search_fields = ["number_label", "external_id"]
+    readonly_fields = ["ignored_at"]
+    ordering = ["-ignored_at"]
 
 
 class AuthorInline(TabularInline):

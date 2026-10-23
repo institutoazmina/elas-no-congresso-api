@@ -81,6 +81,26 @@ class Proposition(models.Model):
         return f"{self.number_label} ({self.year})"
 
 
+class IgnoredProposition(models.Model):
+    house = models.CharField(verbose_name="Casa legislativa", max_length=10, choices=House.choices)
+    external_id = models.BigIntegerField(verbose_name="Identificador externo")
+    number_label = models.TextField(verbose_name="Identificação da proposição", blank=True)
+    ignored_at = models.DateTimeField(verbose_name="Ignorada em", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Proposição ignorada"
+        verbose_name_plural = "Proposições ignoradas"
+        db_table = "ignored_propositions"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["house", "external_id"], name="ignored_propositions_house_external_id"
+            )
+        ]
+
+    def __str__(self):
+        return self.number_label or f"{self.house}:{self.external_id}"
+
+
 class PropositionEvent(models.Model):
     proposition = models.ForeignKey(
         Proposition, verbose_name="Proposição", on_delete=models.CASCADE, related_name="events"

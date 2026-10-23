@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.utils import timezone
 
 from apps.propositions.activity import invalidate_activity_cache
-from apps.propositions.models import Proposition
+from apps.propositions.models import IgnoredProposition, Proposition
 
 from .content import register_document
 from .mappers import (
@@ -259,6 +259,11 @@ def _discovery_relevance(fields, *ementas):
 
 def sync_item(item, client, *, reconcile=False):
     from .tasks import _enactment_fields, _persist
+
+    if IgnoredProposition.objects.filter(
+        house=item.run.house, external_id=item.external_id
+    ).exists():
+        return None
 
     existing = Proposition.objects.filter(
         house=item.run.house, external_id=item.external_id

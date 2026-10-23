@@ -37,6 +37,17 @@ def enqueue_match_on_proposition(sender, instance, created, **kwargs):
     invalidate_activity_cache([instance])
 
 
+@receiver(post_delete, sender="propositions.Proposition")
+def remember_ignored_proposition(sender, instance, **kwargs):
+    from .models import IgnoredProposition
+
+    IgnoredProposition.objects.get_or_create(
+        house=instance.house,
+        external_id=instance.external_id,
+        defaults={"number_label": instance.number_label},
+    )
+
+
 @receiver(post_save, sender="propositions.PropositionAnnotation")
 def enqueue_match_on_annotation(sender, instance, **kwargs):
     """A categoria ("Categorias 2026") é a anotação humana, e chega dias depois
@@ -70,7 +81,9 @@ def invalidate_activity_after_author_profile(sender, instance, **kwargs):
     from .activity import invalidate_activity_cache
     from .models import Proposition
 
-    invalidate_activity_cache(Proposition.objects.filter(authors__parliamentarian=instance).distinct())
+    invalidate_activity_cache(
+        Proposition.objects.filter(authors__parliamentarian=instance).distinct()
+    )
 
 
 @receiver(post_save, sender="propositions.PropositionAuthor")
