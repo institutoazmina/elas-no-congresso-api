@@ -764,6 +764,7 @@ dependencies = [
     { name = "pytesseract" },
     { name = "python-decouple" },
     { name = "python-substack" },
+    { name = "striprtf" },
     { name = "tenacity" },
     { name = "torch", version = "2.12.0", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine != 'x86_64' or sys_platform != 'linux'" },
     { name = "torch", version = "2.12.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
@@ -814,6 +815,7 @@ requires-dist = [
     { name = "pytesseract", specifier = ">=0.3.13" },
     { name = "python-decouple", specifier = ">=3.8" },
     { name = "python-substack", specifier = "==0.9.1" },
+    { name = "striprtf", specifier = ">=0.0.34" },
     { name = "tenacity", specifier = ">=9.1.4" },
     { name = "torch", marker = "platform_machine != 'x86_64' or sys_platform != 'linux'", specifier = "==2.12.0" },
     { name = "torch", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'", specifier = "==2.12.0", index = "https://download.pytorch.org/whl/cpu" },
@@ -1256,11 +1258,11 @@ wheels = [
 
 [[package]]
 name = "idna"
-version = "3.12"
+version = "3.20"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/22/12/2948fbe5513d062169bd91f7d7b1cd97bc8894f32946b71fa39f6e63ca0c/idna-3.12.tar.gz", hash = "sha256:724e9952cc9e2bd7550ea784adb098d837ab5267ef67a1ab9cf7846bdbdd8254", size = 194350 }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/08/8eea9d4b8302028f3abb2c0813953f7aec26d33b7a8960ed760e65ff29fa/idna-3.20.tar.gz", hash = "sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44", size = 216463 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/53/b2/acc33950394b3becb2b664741a0c0889c7ef9f9ffbfa8d47eddb53a50abd/idna-3.12-py3-none-any.whl", hash = "sha256:60ffaa1858fac94c9c124728c24fcde8160f3fb4a7f79aa8cdd33a9d1af60a67", size = 68634 },
+    { url = "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl", hash = "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c", size = 69583 },
 ]
 
 [[package]]
@@ -2733,6 +2735,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/90/76/437d71068094df0726366574cf3432a4ed754217b436eb7429415cf2d480/sqlparse-0.5.5.tar.gz", hash = "sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e", size = 120815 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/49/4b/359f28a903c13438ef59ebeee215fb25da53066db67b305c125f1c6d2a25/sqlparse-0.5.5-py3-none-any.whl", hash = "sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba", size = 46138 },
+]
+
+[[package]]
+name = "striprtf"
+version = "0.0.34"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "idna" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d9/94/0454ad1381ac857559ffa92eb535a763b7468a92f5804990e9116f78115f/striprtf-0.0.34.tar.gz", hash = "sha256:0c46348df545f0a43e357d1387ab6a3eb9e23b22ade1e77191550b129c05b2a7", size = 8023 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f1/b8/2992ae67a298f2da346116df25b6e84efddb239ebb3fb5b6943286fe4e52/striprtf-0.0.34-py3-none-any.whl", hash = "sha256:32113e70a99d00e7f0f64d4850c3ad11126501e200aeb29c5270526a6eba52e2", size = 8457 },
 ]
 
 [[package]]

@@ -1,4 +1,4 @@
-"""Extração de texto do inteiro teor (PDF), com OCR de fallback por página.
+"""Extração de texto do inteiro teor (PDF ou RTF), com OCR para PDF por página.
 
 O pypdf extrai a camada de texto. Quando uma página vem "fina" (o conteúdo é
 imagem — comum nos PDFs da Câmara/InfoLeg, onde o texto da proposição é uma
@@ -19,6 +19,7 @@ from html import unescape
 
 import httpx
 from pypdf import PdfReader
+from striprtf.striprtf import rtf_to_text
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +49,10 @@ class DocumentSecurityChallengeError(Exception):
     """The document endpoint requires interactive security verification."""
 
 
+class UnsupportedDocumentError(Exception):
+    """The endpoint returned an empty payload or an unsupported format."""
+
+
 def _is_security_challenge(response: httpx.Response) -> bool:
     prefix = response.content[:65536]
     if prefix.lstrip().startswith(b"%PDF-"):
@@ -72,12 +77,16 @@ def _is_security_challenge(response: httpx.Response) -> bool:
 
 
 def extract_pdf_text(
-    url: str | None, client: httpx.Client | None = None, *, raise_on_challenge: bool = False
+    url: str | None,
+    client: httpx.Client | None = None,
+    *,
+    raise_on_challenge: bool = False,
+    raise_on_unsupported: bool = False,
 ) -> str | None:
-    """Baixa o PDF em ``url`` e extrai o texto (pypdf + OCR nas páginas-imagem).
+    """Baixa o documento e extrai texto de PDF (pypdf/OCR) ou RTF.
 
-    Retorna ``None`` em falhas de download/leitura. Com ``raise_on_challenge``,
-    sinaliza verificação interativa separadamente para a descoberta usar a ementa.
+    Retorna ``None`` em falhas de download/leitura. As opções ``raise_on_*``
+    sinalizam respostas permanentes que permitem à descoberta usar só a ementa.
     """
     if not url:
         return None
@@ -93,6 +102,12 @@ def extract_pdf_text(
             return None
         resp.raise_for_status()
         content = resp.content
+        prefix = content[:1024].lstrip()
+        is_pdf = prefix.startswith(b"%PDF-")
+        is_rtf = prefix.startswith(rb"{\rtf")
+        if raise_on_unsupported and not (is_pdf or is_rtf):
+            reason = "empty document" if not content else "unsupported document format"
+            raise UnsupportedDocumentError(reason)
     except httpx.HTTPError as exc:
         logger.warning("Falha ao baixar PDF %s: %s", url, exc)
         return None
@@ -100,7 +115,18 @@ def extract_pdf_text(
         if own:
             client.close()
 
+    if is_rtf:
+        return _extract_rtf(content, url)
     return _extract(content, url)
+
+
+def _extract_rtf(content: bytes, url: str = "") -> str | None:
+    try:
+        rtf = content.decode("cp1252")
+        return rtf_to_text(rtf).replace("\x00", "").strip() or None
+    except (UnicodeError, ValueError) as exc:
+        logger.warning("Falha ao ler RTF %s: %s", url, exc)
+        return None
 
 
 def _extract(content: bytes, url: str = "") -> str | None:
