@@ -5,7 +5,7 @@ from django.test import override_settings
 from django.utils import timezone
 
 from apps.ingestion import sync
-from apps.ingestion.models import IngestionItem, IngestionRun
+from apps.ingestion.models import IngestionCheckpoint, IngestionItem, IngestionRun
 from apps.propositions.models import ClassificationRequest, Proposition, PropositionDocument
 
 pytestmark = pytest.mark.django_db
@@ -41,6 +41,44 @@ def manual_item(house, external_id):
         discovery_complete=True,
     )
     return IngestionItem.objects.create(run=run, external_id=external_id)
+
+
+@pytest.mark.parametrize(
+    ("kind", "statuses", "expected_deploys"),
+    [
+        ("manual", [IngestionItem.Status.SUCCEEDED], 1),
+        ("daily", [IngestionItem.Status.SUCCEEDED], 1),
+        ("manual", [IngestionItem.Status.SUCCEEDED, IngestionItem.Status.FAILED], 1),
+        ("manual", [IngestionItem.Status.FAILED], 0),
+        ("reconcile", [IngestionItem.Status.SUCCEEDED], 0),
+    ],
+)
+def test_finished_public_ingestion_enqueues_site_deploy(
+    monkeypatch, kind, statuses, expected_deploys
+):
+    now = timezone.now()
+    run = IngestionRun.objects.create(
+        house="camara",
+        kind=kind,
+        window_start=now.date(),
+        window_end=now.date(),
+        discovery_complete=True,
+        checkpoint_until=now,
+    )
+    if kind == "daily":
+        IngestionCheckpoint.objects.create(house=run.house)
+    for external_id, status in enumerate(statuses, start=1):
+        IngestionItem.objects.create(
+            run=run,
+            external_id=external_id,
+            status=status,
+        )
+    deploy = Mock()
+    monkeypatch.setattr("apps.cms.tasks.enqueue_site_deploy", deploy)
+
+    sync.finish_run(run)
+
+    assert deploy.call_count == expected_deploys
 
 
 def test_manual_camara_item_skips_relevance_and_approves_new_proposition(monkeypatch):
