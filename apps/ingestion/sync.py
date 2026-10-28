@@ -464,6 +464,10 @@ def finish_run(run):
     ):
         IngestionCheckpoint.objects.filter(house=run.house).update(baseline_complete=True)
     run.save()
+    if run.kind in {"daily", "manual"} and run.processed_count:
+        from apps.cms.tasks import enqueue_site_deploy
+
+        enqueue_site_deploy()
     logger.info(
         "Daily ingestion %s/%s: processed=%s skipped=%s failed=%s status=%s",
         run.house,
