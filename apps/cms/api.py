@@ -184,9 +184,18 @@ def footer_alerts_page(request, response: HttpResponse):
     """Chamada compartilhada no rodapé de todas as páginas."""
     response["Cache-Control"] = "no-store"
     page = FooterAlertsPage.current()
+    version = int(page.updated_at.timestamp()) if page.updated_at else 0
     return {
         "title": page.title,
         "text": page.text,
         "cta_text": page.cta_text,
         "cta_url": page.cta_url,
+        "social_links": _items(page, "social_links", "icon", "label", "url"),
+        "funders": [
+            {
+                "name": funder.name,
+                "logo_url": f"{funder.logo_image.url}?v={version}",
+            }
+            for funder in page.funders.all()
+        ],
     }

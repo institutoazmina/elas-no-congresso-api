@@ -23,6 +23,7 @@ from apps.cms.admin import (
     CmsMarkdownWidget,
     FeministAIMarkdownWidget,
     FeministAIPageForm,
+    FooterFunderForm,
     HomePageForm,
     MarkdownImageForm,
 )
@@ -38,6 +39,8 @@ from apps.cms.models import (
     FeministAIEvaluationMetric,
     FeministAIPage,
     FooterAlertsPage,
+    FooterFunder,
+    FooterSocialLink,
     HomeCopy,
     HomePage,
     MarkdownImage,
@@ -522,6 +525,8 @@ class TestPublishDefaults:
         ]:
             image = Image.open(tmp_path / "cms" / "markdown" / f"{image_id}.webp")
             assert (image.format, image.size) == ("WEBP", size)
+        for funder in FooterFunder.objects.all():
+            assert (tmp_path / funder.logo_image.name).exists()
 
         published.write_bytes(b"substituida no admin")
         out = io.StringIO()
@@ -547,6 +552,7 @@ class TestPublishDefaults:
             "cms/markdown/74f5b946d93741f6a9c735e6df082cf5.webp",
             "cms/markdown/b766dd167511410aa590f8814672c8e7.webp",
             *AboutPartner.objects.values_list("logo_image", flat=True),
+            *FooterFunder.objects.values_list("logo_image", flat=True),
         ]
         assert invalidated_paths(bucket.cloudfront) == [[f"/{key}*"] for key in keys]
 
@@ -559,7 +565,9 @@ class TestPublishDefaults:
         call_command("cms_publish_defaults", "--force", stdout=io.StringIO())
 
         bucket.head_object.assert_not_called()
-        assert bucket.put_object.call_count == 10 + AboutPartner.objects.count()
+        assert bucket.put_object.call_count == (
+            10 + AboutPartner.objects.count() + FooterFunder.objects.count()
+        )
 
 
 class TestFeministAIPage:
@@ -963,18 +971,80 @@ class TestHomePage:
             "ou quando algo de muita importância avança? A gente te avisa!",
             "cta_text": "Saiba mais",
             "cta_url": "/alertas",
+            "social_links": [
+                {"icon": link.icon, "label": link.label, "url": link.url}
+                for link in FooterSocialLink.objects.all()
+            ],
+            "funders": [
+                {
+                    "name": funder.name,
+                    "logo_url": f"{funder.logo_image.url}"
+                    f"?v={int(FooterAlertsPage.objects.get().updated_at.timestamp())}",
+                }
+                for funder in FooterFunder.objects.all()
+            ],
         }
         assert response["Cache-Control"] == "no-store"
         assert FooterAlertsPage.objects.count() == 1
 
+        social_links = list(FooterSocialLink.objects.all())
+        funders = list(FooterFunder.objects.all())
+        form_data = {
+            "title": "Acompanhe os alertas",
+            "text": "Novidades do Congresso.",
+            "cta_text": "Acessar",
+            "cta_url": "/alertas",
+            "social_links-TOTAL_FORMS": len(social_links),
+            "social_links-INITIAL_FORMS": len(social_links),
+            "social_links-MIN_NUM_FORMS": 0,
+            "social_links-MAX_NUM_FORMS": 1000,
+            "funders-TOTAL_FORMS": len(funders),
+            "funders-INITIAL_FORMS": len(funders),
+            "funders-MIN_NUM_FORMS": 0,
+            "funders-MAX_NUM_FORMS": 1000,
+        }
+        for index, link in enumerate(social_links):
+            form_data.update(
+                {
+                    f"social_links-{index}-id": link.pk,
+                    f"social_links-{index}-position": link.position,
+                    f"social_links-{index}-icon": link.icon,
+                    f"social_links-{index}-label": link.label,
+                    f"social_links-{index}-url": (
+                        "https://instagram.com/elasnocongresso" if index == 0 else link.url
+                    ),
+                }
+            )
+        for index, funder in enumerate(funders):
+            form_data.update(
+                {
+                    f"funders-{index}-id": funder.pk,
+                    f"funders-{index}-position": funder.position,
+                    f"funders-{index}-name": funder.name,
+                }
+            )
         response = admin_client.post(
             reverse("admin:cms_footeralertspage_change", args=[1]),
-            {
-                "title": "Acompanhe os alertas",
-                "text": "Novidades do Congresso.",
-                "cta_text": "Acessar",
-                "cta_url": "/alertas",
-            },
+            form_data,
         )
         assert response.status_code == 302
-        assert Client().get("/api/v1/cms/footer-alerts").json()["title"] == ("Acompanhe os alertas")
+        updated = Client().get("/api/v1/cms/footer-alerts").json()
+        assert updated["title"] == "Acompanhe os alertas"
+        assert updated["social_links"][0]["url"] == ("https://instagram.com/elasnocongresso")
+
+    def test_logo_de_financiador_e_substituido_em_url_estavel(self, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        funder = FooterFunder.objects.first()
+        original_path = funder.logo_image.name
+        form = FooterFunderForm(
+            data={"page": funder.page_id, "position": funder.position, "name": funder.name},
+            files={"logo_image": image_file(300, 100, name="financiador.png")},
+            instance=funder,
+        )
+
+        assert form.is_valid(), form.errors
+        form.save()
+
+        assert funder.logo_image.name == original_path
+        with Image.open(tmp_path / original_path) as logo:
+            assert (logo.format, logo.size) == ("WEBP", (300, 100))

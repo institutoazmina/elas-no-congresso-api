@@ -80,8 +80,11 @@ Usar o Django admin como CMS, no app `apps.cms` (grupo **CMS** no menu).
   **Receba nossos alertas** é um singleton separado (`FooterAlertsPage`) porque
   aparece em todo o site. O build consulta esse bloco uma vez e inclui seu
   conteúdo na chave de cache das páginas de autoria para que edições no footer
-  atualizem também essas páginas. `defaults/home-content.json` registra apenas
-  o conteúdo inicial da migração.
+  atualizem também essas páginas. Redes sociais (`FooterSocialLink`) e
+  organizações financiadoras (`FooterFunder`) são linhas ordenadas próprias no
+  mesmo formulário; os ícones usam o conjunto suportado pelo site e os logos
+  podem ser substituídos por upload. `defaults/home-content.json` registra
+  apenas o conteúdo inicial da migração.
 
 ## Consequências
 

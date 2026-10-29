@@ -70,7 +70,10 @@ de Explore (4:3) e QuitérIA (16:9). Gráficos, cards de notícias, tabelas e ma
 não são editados pelo CMS.
 
 Em **Rodapé: receba nossos alertas**, edite título, texto, chamada e endereço
-do botão. Esse bloco é compartilhado e a alteração aparece em todo o site.
+do botão. Ao fim do formulário, as listas de **redes sociais** e
+**organizações financiadoras** permitem adicionar, remover e ordenar links,
+selecionar seus ícones e substituir logos. Esse bloco é compartilhado e a
+alteração aparece em todo o site.
 
 - Os limites de texto e as exigências da imagem aparecem no formulário. Em
   todas as ilustrações de abertura aceitam qualquer dimensão e são ajustadas

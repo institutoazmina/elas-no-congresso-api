@@ -31,6 +31,8 @@ from .models import (
     FeministAIThematicMetric,
     FeministAIThematicPartition,
     FooterAlertsPage,
+    FooterFunder,
+    FooterSocialLink,
     HeroPage,
     HomePage,
     MarkdownImage,
@@ -453,6 +455,31 @@ class HomePageAdmin(CmsPageAdmin):
     ]
 
 
+class FooterSocialLinkInline(TabularInline):
+    model = FooterSocialLink
+    fields = ["position", "icon", "label", "url"]
+    extra = 0
+
+
+class FooterFunderForm(forms.ModelForm):
+    class Meta:
+        model = FooterFunder
+        fields = "__all__"
+
+    def clean_logo_image(self):
+        value = self.cleaned_data.get("logo_image")
+        if isinstance(value, UploadedFile):
+            return normalize_logo(value)
+        return value
+
+
+class FooterFunderInline(TabularInline):
+    model = FooterFunder
+    form = FooterFunderForm
+    fields = ["position", "name", "logo_image"]
+    extra = 0
+
+
 @admin.register(FooterAlertsPage)
 class FooterAlertsPageAdmin(CmsPageAdmin):
     fieldsets = [
@@ -461,3 +488,4 @@ class FooterAlertsPageAdmin(CmsPageAdmin):
             {"fields": ["title", "text", "cta_text", "cta_url", "updated_at"]},
         ),
     ]
+    inlines = [FooterSocialLinkInline, FooterFunderInline]

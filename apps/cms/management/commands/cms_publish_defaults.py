@@ -16,6 +16,7 @@ from apps.cms.models import (
     AboutPage,
     AboutPartner,
     FeministAIPage,
+    FooterFunder,
     HeroPage,
     HomePage,
     MarkdownImage,
@@ -73,6 +74,19 @@ class Command(BaseCommand):
         for partner in AboutPartner.objects.exclude(logo_image=""):
             name = partner.logo_image.name
             source = DEFAULTS_DIR / "about-partners" / Path(name).name
+            if not source.exists():
+                continue
+            if not force and field.storage.exists(name):
+                self.stdout.write(f"{name}: já publicado")
+                continue
+            with source.open("rb") as logo:
+                field.storage.save(name, File(logo, name=Path(name).name))
+            self.stdout.write(self.style.SUCCESS(f"{name}: publicado"))
+
+        field = FooterFunder._meta.get_field("logo_image")
+        for funder in FooterFunder.objects.all():
+            name = funder.logo_image.name
+            source = DEFAULTS_DIR / "footer-funders" / Path(name).name
             if not source.exists():
                 continue
             if not force and field.storage.exists(name):

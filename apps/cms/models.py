@@ -780,6 +780,74 @@ class FooterAlertsPage(CmsPage):
         return "Receba nossos alertas"
 
 
+class FooterSocialLink(models.Model):
+    class Icon(models.TextChoices):
+        INSTAGRAM = "instagram", "Instagram"
+        TIKTOK = "tiktok", "TikTok"
+        SUBSTACK = "substack", "Substack"
+        YOUTUBE = "youtube", "YouTube"
+        GITHUB = "github", "GitHub"
+        BLUESKY = "bluesky", "Bluesky"
+        LINKEDIN = "linkedin", "LinkedIn"
+        WHATSAPP = "whatsapp", "WhatsApp"
+
+    page = models.ForeignKey(
+        FooterAlertsPage, on_delete=models.CASCADE, related_name="social_links"
+    )
+    position = models.PositiveSmallIntegerField("Ordem")
+    icon = models.CharField("Ícone", max_length=20, choices=Icon.choices)
+    label = models.CharField(
+        "Descrição acessível",
+        max_length=160,
+        help_text="Identifica o link para leitores de tela, por exemplo: Instagram da AzMina.",
+    )
+    url = models.URLField("Endereço")
+
+    class Meta:
+        ordering = ["position", "pk"]
+        verbose_name = "Rede social do rodapé"
+        verbose_name_plural = "Redes sociais do rodapé"
+        db_table = "cms_footer_social_link"
+
+    def __str__(self):
+        return self.label
+
+
+def footer_funder_logo_path(instance, filename):
+    """Mantém a URL do logo estável quando ele é substituído."""
+    if instance.pk:
+        previous = (
+            type(instance)
+            .objects.filter(pk=instance.pk)
+            .values_list("logo_image", flat=True)
+            .first()
+        )
+        if previous:
+            return previous
+    return f"cms/footer/funders/{uuid.uuid4().hex}.webp"
+
+
+class FooterFunder(models.Model):
+    page = models.ForeignKey(FooterAlertsPage, on_delete=models.CASCADE, related_name="funders")
+    position = models.PositiveSmallIntegerField("Ordem")
+    name = models.CharField("Organização", max_length=160)
+    logo_image = models.ImageField(
+        "Logo",
+        upload_to=footer_funder_logo_path,
+        storage=CmsStorage(),
+        help_text="PNG, JPEG ou WebP com até 5 MB. O logo se ajusta ao espaço disponível.",
+    )
+
+    class Meta:
+        ordering = ["position", "pk"]
+        verbose_name = "Organização financiadora"
+        verbose_name_plural = "Organizações financiadoras"
+        db_table = "cms_footer_funder"
+
+    def __str__(self):
+        return self.name
+
+
 def markdown_image_path(instance, filename):
     return f"cms/markdown/{instance.pk.hex}.webp"
 

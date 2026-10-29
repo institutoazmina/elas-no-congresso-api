@@ -124,7 +124,7 @@ O CSV usa `;`, BOM UTF-8, todos os campos entre aspas e 11 colunas em português
 | `GET /cms/feminist-ai` | — | Conteúdo de `/ia-feminista`: `content` (campos de texto e links), `images` (`hero`, `flow_desktop`, `flow_mobile`), `categories`, `limitations`, `evaluation_metrics`, `evaluation_partitions`, `thematic_metrics`, `thematic_partitions` e `open_links`; `Cache-Control: no-store` |
 | `GET /cms/about` | — | Conteúdo de `/sobre`: `content` (SEO, textos e links), `hero_image`, `timeline`, `challenges` e `partners`; `Cache-Control: no-store` |
 | `GET /cms/home` | — | Conteúdo editorial da home: `hero_image` e `content` (títulos, textos, imagens, post-its, legendas e CTAs); `Cache-Control: no-store` |
-| `GET /cms/footer-alerts` | — | Bloco global de alertas no rodapé: `{title, text, cta_text, cta_url}`; `Cache-Control: no-store` |
+| `GET /cms/footer-alerts` | — | Rodapé global: `{title, text, cta_text, cta_url, social_links: [{icon, label, url}], funders: [{name, logo_url}]}`; `Cache-Control: no-store` |
 
 Lido pelo build do site ([ADR-006](decisions/006-cms-do-site.md)).
 As listas de `/cms/feminist-ai` já vêm na ordem editorial. `trend` nas métricas

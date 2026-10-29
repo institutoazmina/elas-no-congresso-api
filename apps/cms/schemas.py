@@ -105,8 +105,21 @@ class HomePageSchema(Schema):
     content: str
 
 
+class FooterSocialLinkSchema(Schema):
+    icon: str
+    label: str
+    url: str
+
+
+class FooterFunderSchema(Schema):
+    name: str
+    logo_url: str
+
+
 class FooterAlertsPageSchema(Schema):
     title: str
     text: str
     cta_text: str
     cta_url: str
+    social_links: list[FooterSocialLinkSchema]
+    funders: list[FooterFunderSchema]
