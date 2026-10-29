@@ -123,6 +123,8 @@ class PropositionAdmin(ModelAdmin):
         "year",
         "house",
         "type_code",
+        "relevance_terms",
+        "ementa",
         "is_approved",
         "is_active",
         "presented_at",
@@ -141,6 +143,16 @@ class PropositionAdmin(ModelAdmin):
     readonly_fields = ["created_at", "updated_at"]
     inlines = [AuthorInline, RapporteurInline, AnalysisInline, AnnotationInline]
     ordering = ["-presented_at"]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("proposition_themes__theme")
+
+    @admin.display(description="Termos de relevância")
+    def relevance_terms(self, obj):
+        relations = sorted(
+            obj.proposition_themes.all(), key=lambda relation: (relation.rank, relation.pk)
+        )
+        return ", ".join(relation.theme.name for relation in relations)
 
     def get_urls(self):
         return [

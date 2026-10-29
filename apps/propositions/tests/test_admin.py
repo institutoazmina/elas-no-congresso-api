@@ -15,6 +15,33 @@ from apps.propositions.models import (
     PropositionEmbedding,
     PropositionEvent,
 )
+from apps.taxonomy.models import PropositionTheme, Theme
+
+
+@pytest.mark.django_db
+def test_proposition_list_displays_ementa_and_relevance_terms():
+    proposition = Proposition.objects.create(
+        house="camara",
+        external_id=2,
+        type_code="PL",
+        number_label="PL 2/2026",
+        number=2,
+        year=2026,
+        presented_at="2026-01-02",
+        ementa="Protege mulheres vítimas de violência.",
+    )
+    second = Theme.objects.create(slug="mulher", name="Mulher")
+    first = Theme.objects.create(slug="violencia", name="Violência")
+    PropositionTheme.objects.create(proposition=proposition, theme=second, rank=2)
+    PropositionTheme.objects.create(proposition=proposition, theme=first, rank=1)
+    request = RequestFactory().get("/admin/propositions/proposition/")
+    request.user = get_user_model()(is_active=True, is_staff=True, is_superuser=True)
+    model_admin = PropositionAdmin(Proposition, admin.site)
+
+    row = model_admin.get_queryset(request).get(pk=proposition.pk)
+
+    assert "ementa" in model_admin.list_display
+    assert model_admin.relevance_terms(row) == "Violência, Mulher"
 
 
 @pytest.mark.django_db
@@ -41,9 +68,9 @@ def test_delete_confirmation_does_not_load_large_payloads():
     request.user = get_user_model()(is_active=True, is_staff=True, is_superuser=True)
 
     with CaptureQueriesContext(connection) as queries:
-        _, model_count, _, _ = PropositionAdmin(
-            Proposition, admin.site
-        ).get_deleted_objects(Proposition.objects.filter(pk=proposition.pk), request)
+        _, model_count, _, _ = PropositionAdmin(Proposition, admin.site).get_deleted_objects(
+            Proposition.objects.filter(pk=proposition.pk), request
+        )
 
     sql = "\n".join(query["sql"] for query in queries.captured_queries)
     large_fields = {
