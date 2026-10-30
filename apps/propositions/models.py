@@ -58,6 +58,14 @@ class Proposition(models.Model):
     originating_house = models.CharField(
         verbose_name="Casa de origem", max_length=10, choices=House.choices, null=True, blank=True
     )
+    canonical_proposition = models.ForeignKey(
+        "self",
+        verbose_name="Proposição de origem",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="transfers",
+    )
     raw_payload = models.JSONField(verbose_name="Dados originais", null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="Criado em", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="Atualizado em", auto_now=True)
@@ -69,7 +77,11 @@ class Proposition(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["house", "external_id"], name="propositions_house_external_id"
-            )
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(canonical_proposition=models.F("pk")),
+                name="propositions_no_self_transfer",
+            ),
         ]
         indexes = [
             models.Index(fields=["house", "-year"], name="idx_prop_house_year"),

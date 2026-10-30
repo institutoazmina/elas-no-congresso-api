@@ -136,6 +136,7 @@ def test_activity_only_exposes_approved_supported_types_and_automatic_quiteria_a
         {
             "id": visible.pk,
             "house": "camara",
+            "current_house": "camara",
             "number_label": "PL 7799/2026",
             "ementa": "Proteção contra violência de gênero",
             "presented_at": timezone.localdate().isoformat(),
@@ -448,6 +449,7 @@ def test_enacted_projects_returns_a_shared_complete_contract_for_both_houses():
         {
             "id": propositions[0].pk,
             "house": "camara",
+            "current_house": "camara",
             "number_label": "PL 1001/2026",
             "ementa": "Proteção das mulheres",
             "presented_at": timezone.localdate().isoformat(),

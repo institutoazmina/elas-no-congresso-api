@@ -6,12 +6,12 @@ from hashlib import sha256
 
 from django.core.cache import cache
 from django.db.models import Q
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
 from ninja import Query, Router, Schema
 
 from apps.core.throttling import export_throttle
 
-from .celerity import calculate_celerity
 from .explorer import (
     SOURCE_CACHE_KEY,
     DashboardRowSchema,
@@ -61,6 +61,10 @@ def invalidate_activity_cache(propositions: Iterable[Proposition] = ()) -> None:
     for proposition in propositions:
         cache.delete(f"activity:proposition:{proposition.pk}")
         cache.delete(_public_identifier_cache_key(proposition.house, proposition.number_label))
+        if proposition.canonical_proposition_id:
+            cache.delete(f"activity:proposition:{proposition.canonical_proposition_id}")
+            original = proposition.canonical_proposition
+            cache.delete(_public_identifier_cache_key(original.house, original.number_label))
 
 
 class ActivityAuthorSchema(Schema):
@@ -82,6 +86,7 @@ class ActivityEventSchema(Schema):
     situation: str | None = None
     committee_acronym: str | None = None
     committee_name: str | None = None
+    source_house: str | None = None
 
 
 class CeleritySchema(Schema):
@@ -94,6 +99,7 @@ class CeleritySchema(Schema):
 class ActivityPropositionSchema(Schema):
     id: int
     house: str
+    current_house: str | None = None
     number_label: str
     ementa: str
     presented_at: date
@@ -138,9 +144,11 @@ class EnactedProjectSchema(ActivityPropositionSchema):
 
 def _selected_annotation(proposition):
     annotations = list(proposition.annotations.all())
-    return next((annotation for annotation in annotations if annotation.is_favorable is False), None) or next(
-        (annotation for annotation in annotations if annotation.is_favorable is True), None
-    ) or (annotations[0] if annotations else None)
+    return (
+        next((annotation for annotation in annotations if annotation.is_favorable is False), None)
+        or next((annotation for annotation in annotations if annotation.is_favorable is True), None)
+        or (annotations[0] if annotations else None)
+    )
 
 
 def _has_quiteria_assessment(annotation, analysis) -> bool:
@@ -162,7 +170,11 @@ def public_is_favorable(proposition) -> bool | None:
 
 
 def _serialize(proposition, *, event_limit: int | None) -> dict:
-    events = sorted(proposition.events.all(), key=lambda event: event.event_at, reverse=True)
+    from .house_transfer import public_celerity, public_events, public_sources
+
+    sources = public_sources(proposition)
+    events = public_events(proposition)
+    current = sources[-1]
     annotation = _selected_annotation(proposition)
     analysis = getattr(proposition, "analysis", None)
     authors = []
@@ -181,7 +193,7 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
                 "role": None,
             }
         )
-    celerity = calculate_celerity(proposition, events)
+    celerity = public_celerity(proposition, events)
     shown_events = events[:event_limit] if event_limit is not None else events
     category = annotation.category if annotation else getattr(analysis, "theme_category", None)
     # A anotação humana sempre prevalece. Na sua ausência, uma classificação
@@ -198,17 +210,15 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
         # Internal explorer metadata distinguishes PL coauthorship semantics.
         "type_code": proposition.type_code,
         "house": proposition.house,
+        "current_house": current.house,
         "number_label": proposition.number_label,
         "ementa": proposition.ementa,
         "presented_at": proposition.presented_at,
-        "current_status": proposition.current_status,
-        "tramitation_url": proposition.tramitation_url,
+        "current_status": current.current_status,
+        "tramitation_url": current.tramitation_url,
         "category": category,
         "category_label": category_label,
-        "themes": [
-            relation.theme.name
-            for relation in proposition.proposition_themes.all()
-        ],
+        "themes": [relation.theme.name for relation in proposition.proposition_themes.all()],
         "is_favorable": public_is_favorable(proposition),
         "assessment_organization": (
             annotation.organization.name
@@ -229,12 +239,13 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
                 "event_at": event.event_at,
                 "title": event.title or event.description,
                 "description": event.dispatch or event.description,
-                "url": event.raw_payload.get("url") if event.raw_payload else None,
+                "url": (event.raw_payload or {}).get("url") or source.tramitation_url,
+                "source_house": source.house,
                 "situation": event.situation,
                 "committee_acronym": event.committee_acronym,
                 "committee_name": event.committee_name,
             }
-            for event in shown_events
+            for event, source in shown_events
         ],
     }
 
@@ -246,30 +257,41 @@ def _law_label(proposition: Proposition) -> str:
 
 def _serialize_enacted(proposition: Proposition) -> dict:
     activity = _serialize(proposition, event_limit=0)
+    current = next(
+        (source for source in proposition.transfers.all() if source.enacted_at), proposition
+    )
     activity["assessment_label"] = "favorável" if activity["is_favorable"] else "desfavorável"
     activity["enactment"] = {
-        "status_code": proposition.current_status_code,
-        "status": proposition.current_status,
-        "law_label": _law_label(proposition),
-        "law_type": proposition.enacted_law_type,
-        "law_number": proposition.enacted_law_number,
-        "law_year": proposition.enacted_law_year,
-        "enacted_at": proposition.enacted_at,
+        "status_code": current.current_status_code,
+        "status": current.current_status,
+        "law_label": _law_label(current),
+        "law_type": current.enacted_law_type,
+        "law_number": current.enacted_law_number,
+        "law_year": current.enacted_law_year,
+        "enacted_at": current.enacted_at,
     }
     return activity
 
 
 def _queryset():
-    return Proposition.objects.filter(
-        is_approved=True,
-        type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES,
-    ).select_related("analysis").prefetch_related(
-        "events",
-        "annotations__organization",
-        "authors__parliamentarian",
-        "authors__institutional_author",
-        "authors__party",
-        "proposition_themes__theme",
+    from .house_transfer import PUBLIC_ORIGIN_Q
+
+    return (
+        Proposition.objects.filter(
+            PUBLIC_ORIGIN_Q,
+            is_approved=True,
+            type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES,
+        )
+        .select_related("analysis")
+        .prefetch_related(
+            "events",
+            "transfers__events",
+            "annotations__organization",
+            "authors__parliamentarian",
+            "authors__institutional_author",
+            "authors__party",
+            "proposition_themes__theme",
+        )
     )
 
 
@@ -315,7 +337,10 @@ def list_activity(request, limit: int = 5000, include_events: bool = True):
         return cached
 
     event_limit = 5 if include_events else 0
-    activity = [_serialize(proposition, event_limit=event_limit) for proposition in _queryset().order_by("-presented_at")[:limit]]
+    activity = [
+        _serialize(proposition, event_limit=event_limit)
+        for proposition in _queryset().order_by("-presented_at")[:limit]
+    ]
     cache.set(cache_key, activity, ACTIVITY_CACHE_TIMEOUT)
     return activity
 
@@ -373,20 +398,29 @@ def list_enacted_projects(request, limit: int = 50):
     if cached is not None:
         return cached
 
-    enacted_statuses = Q(house="camara", current_status_code=1140) | Q(
-        house="senado", current_status_code__in=(64, 92)
+    original_law = Q(
+        enacted_law_type__isnull=False,
+        enacted_law_number__isnull=False,
+        enacted_law_year__isnull=False,
+        enacted_at__isnull=False,
+    ) & (
+        Q(house="camara", current_status_code=1140)
+        | Q(house="senado", current_status_code__in=(64, 92))
+    )
+    receiving_law = Q(
+        transfers__house="senado",
+        transfers__current_status_code__in=(64, 92),
+        transfers__enacted_law_type__isnull=False,
+        transfers__enacted_law_number__isnull=False,
+        transfers__enacted_law_year__isnull=False,
+        transfers__enacted_at__isnull=False,
     )
     propositions = (
         _queryset()
-        .filter(enacted_statuses, annotations__is_favorable__isnull=False)
-        .filter(
-            enacted_law_type__isnull=False,
-            enacted_law_number__isnull=False,
-            enacted_law_year__isnull=False,
-            enacted_at__isnull=False,
-        )
+        .filter(original_law | receiving_law, annotations__is_favorable__isnull=False)
+        .annotate(public_enacted_at=Coalesce("transfers__enacted_at", "enacted_at"))
         .distinct()
-        .order_by("-enacted_at", "-pk")[:limit]
+        .order_by("-public_enacted_at", "-pk")[:limit]
     )
     return _cache_activity_collection(
         cache_key,

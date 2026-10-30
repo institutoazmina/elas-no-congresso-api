@@ -208,7 +208,7 @@ def _matches(item, query):
     movements = item["celerity"]["movements_last_90_days"]
     return (
         search_matches
-        and (not house or item["house"] == house)
+        and (not house or item.get("current_house", item["house"]) == house)
         and (query.year is None or _year(item) == query.year)
         and (query.year_start is None or _year(item) >= query.year_start)
         and (query.year_end is None or _year(item) <= query.year_end)
@@ -400,11 +400,12 @@ def _dashboard(items, query):
     }
     author_counts = Counter()
     for item in items:
-        if item["house"] in ("camara", "senado"):
+        current_house = item.get("current_house", item["house"])
+        if current_house in ("camara", "senado"):
             _increment(
                 groups["house"],
-                item["house"],
-                {"camara": "Câmara", "senado": "Senado"}[item["house"]],
+                current_house,
+                {"camara": "Câmara", "senado": "Senado"}[current_house],
                 item,
             )
         if item["category"]:
@@ -601,7 +602,7 @@ def export_activity(query):
         writer.writerow(
             [
                 item["number_label"],
-                item["house"],
+                item.get("current_house", item["house"]),
                 _year(item),
                 "; ".join(author["name"] for author in item["authors"]),
                 "; ".join(

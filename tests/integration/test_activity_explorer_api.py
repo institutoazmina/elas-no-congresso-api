@@ -552,7 +552,7 @@ def test_flat_source_matches_legacy_without_hydrating_models(
     # from_db catches all accidental model materialization, not only N+1 SQL.
     with (
         patch("django.db.models.Model.from_db", side_effect=AssertionError("ORM hydration")),
-        django_assert_num_queries(5),
+        django_assert_num_queries(6),  # source records, transfers, events, annotations, authors, themes
     ):
         actual = load_explorer_source()
     assert actual == expected

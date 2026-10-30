@@ -14,6 +14,12 @@ from apps.propositions.activity import invalidate_activity_cache
 from apps.propositions.models import IgnoredProposition, Proposition
 
 from .content import register_document
+from .house_transfers import (
+    find_camara_origin,
+    link_pending_senate_transfers,
+    link_senate_transfer,
+    senate_origin,
+)
 from .mappers import (
     _parse_date,
     _parse_datetime,
@@ -346,6 +352,7 @@ def sync_item(item, client, *, reconcile=False):
         process = client.fetch_process(int(process_id))
         if not process:
             raise ValueError("Empty Senate process")
+        transfer_origin = senate_origin(process)
         source_document = process.get("documento", {}) or {}
         mapped_events = map_senado_process_events(process)
         if existing:
@@ -355,8 +362,11 @@ def sync_item(item, client, *, reconcile=False):
                 "raw_payload": {
                     **(existing.raw_payload or {}),
                     "_senado_process_id": int(process_id),
+                    **({"_house_transfer": transfer_origin} if transfer_origin else {}),
                 },
             }
+            if transfer_origin:
+                fields["originating_house"] = "camara"
             ementa = (process.get("conteudo", {}) or {}).get("ementa") or process.get("ementa")
             if ementa:
                 fields["ementa"] = ementa
@@ -392,6 +402,9 @@ def sync_item(item, client, *, reconcile=False):
                 fields = map_senado_proposition(
                     summary, detail, pick_senado_full_text_url(client.fetch_texts(item.external_id))
                 )
+            if transfer_origin:
+                fields["originating_house"] = "camara"
+                fields["raw_payload"]["_house_transfer"] = transfer_origin
             process_ementa = (process.get("conteudo", {}) or {}).get("ementa") or process.get(
                 "ementa"
             )
@@ -399,7 +412,9 @@ def sync_item(item, client, *, reconcile=False):
                 fields["ementa"] = process_ementa
             if not manual:
                 relevance = _discovery_relevance(fields, summary.get("Ementa"))
-                if not relevance["row_relevant"]:
+                if not relevance["row_relevant"] and not (
+                    transfer_origin and find_camara_origin(transfer_origin)
+                ):
                     return None
             authors = (
                 parse_senado_authors_from_autoria(client.fetch_authors(item.external_id))
@@ -419,9 +434,13 @@ def sync_item(item, client, *, reconcile=False):
         mapped_events,
         authors,
         relevance["temas"] if not existing else [],
-        approve=manual,
+        approve=manual and not (item.run.house == "senado" and transfer_origin),
     )
     prop = Proposition.objects.get(pk=pk)
+    if item.run.house == "senado":
+        link_senate_transfer(prop)
+    else:
+        link_pending_senate_transfers(prop)
     recent_events = [
         e for e in mapped_events if timezone.localdate(e["event_at"]) >= item.run.window_start
     ]

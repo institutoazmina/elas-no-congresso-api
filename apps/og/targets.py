@@ -74,8 +74,12 @@ def _display_name(social_name, full_name) -> str:
 
 
 def _window_ids() -> list[int]:
+    from apps.propositions.house_transfer import PUBLIC_ORIGIN_Q
+
     return list(
-        Proposition.objects.filter(is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES)
+        Proposition.objects.filter(
+            PUBLIC_ORIGIN_Q, is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
+        )
         .order_by("-presented_at")
         .values_list("pk", flat=True)[:SITE_ACTIVITY_LIMIT]
     )

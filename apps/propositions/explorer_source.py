@@ -10,6 +10,7 @@ from apps.core.enums import PropositionCategory
 from apps.taxonomy.models import PropositionTheme
 
 from .celerity import celerity_from_summary
+from .house_transfer import PUBLIC_ORIGIN_Q
 from .models import (
     Proposition,
     PropositionAnalysis,
@@ -26,7 +27,7 @@ def load_explorer_source():
 
     today = timezone.localdate()
     public = Proposition.objects.filter(
-        is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
+        PUBLIC_ORIGIN_Q, is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
     )
     with stage("source_propositions"):
         rows = list(
@@ -47,6 +48,13 @@ def load_explorer_source():
     ids = [row["id"] for row in rows]
     if not ids:
         return []
+    transfers = list(
+        Proposition.objects.filter(canonical_proposition_id__in=ids)
+        .order_by("presented_at", "pk")
+        .values("id", "canonical_proposition_id", "house", "current_status", "tramitation_url")
+    )
+    current_by_origin = {source["canonical_proposition_id"]: source for source in transfers}
+    origin_by_source = {source["id"]: source["canonical_proposition_id"] for source in transfers}
 
     # Django's PostgreSQL connection returns UTC datetimes. Match the existing
     # event_at.date() rule (not a cast in the application's Sao Paulo timezone).
@@ -56,7 +64,9 @@ def load_explorer_source():
         events = {
             row["proposition_id"]: row
             for row in (
-                PropositionEvent.objects.filter(proposition_id__in=ids, is_countable=True)
+                PropositionEvent.objects.filter(
+                    proposition_id__in=[*ids, *origin_by_source], is_countable=True
+                )
                 .order_by()
                 .values("proposition_id")
                 .annotate(
@@ -65,6 +75,17 @@ def load_explorer_source():
                 )
             )
         }
+    for source_id, original_id in origin_by_source.items():
+        source_event = events.get(source_id)
+        if not source_event:
+            continue
+        original_event = events.setdefault(original_id, {"movements_last_90_days": 0})
+        original_event["movements_last_90_days"] += source_event["movements_last_90_days"]
+        if source_event["last_event_at"] and (
+            not original_event.get("last_event_at")
+            or source_event["last_event_at"] > original_event["last_event_at"]
+        ):
+            original_event["last_event_at"] = source_event["last_event_at"]
     with stage("source_assessments"):
         annotations = {}
         # Stabilize ties with PK, matching the insertion order used by the old
@@ -138,6 +159,7 @@ def load_explorer_source():
     with stage("source_serialize"):
         for row in rows:
             pk = row["id"]
+            current = current_by_origin.get(pk, row)
             annotation = annotations.get(pk)
             category = annotation["category"] if annotation else row["analysis__theme_category"]
             classified = row[
@@ -165,6 +187,9 @@ def load_explorer_source():
                             "tramitation_url",
                         )
                     },
+                    "current_house": current["house"],
+                    "current_status": current["current_status"],
+                    "tramitation_url": current["tramitation_url"],
                     "category": category,
                     "category_label": labels.get(category, category) if category else None,
                     "is_favorable": annotation["is_favorable"]
