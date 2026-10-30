@@ -34,6 +34,7 @@ def test_proposition_list_displays_ementa_and_relevance_terms():
     first = Theme.objects.create(slug="violencia", name="Violência")
     PropositionTheme.objects.create(proposition=proposition, theme=second, rank=2)
     PropositionTheme.objects.create(proposition=proposition, theme=first, rank=1)
+    PropositionAnalysis.objects.create(proposition=proposition, theme_category="saude")
     request = RequestFactory().get("/admin/propositions/proposition/")
     request.user = get_user_model()(is_active=True, is_staff=True, is_superuser=True)
     model_admin = PropositionAdmin(Proposition, admin.site)
@@ -41,7 +42,9 @@ def test_proposition_list_displays_ementa_and_relevance_terms():
     row = model_admin.get_queryset(request).get(pk=proposition.pk)
 
     assert "ementa" in model_admin.list_display
+    assert "ai_theme_category" in model_admin.list_display
     assert model_admin.relevance_terms(row) == "Violência, Mulher"
+    assert model_admin.ai_theme_category(row) == "Saúde"
 
 
 @pytest.mark.django_db

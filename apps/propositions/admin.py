@@ -124,6 +124,7 @@ class PropositionAdmin(ModelAdmin):
         "house",
         "type_code",
         "relevance_terms",
+        "ai_theme_category",
         "ementa",
         "is_approved",
         "is_active",
@@ -145,7 +146,12 @@ class PropositionAdmin(ModelAdmin):
     ordering = ["-presented_at"]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("proposition_themes__theme")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("analysis")
+            .prefetch_related("proposition_themes__theme")
+        )
 
     @admin.display(description="Termos de relevância")
     def relevance_terms(self, obj):
@@ -153,6 +159,13 @@ class PropositionAdmin(ModelAdmin):
             obj.proposition_themes.all(), key=lambda relation: (relation.rank, relation.pk)
         )
         return ", ".join(relation.theme.name for relation in relations)
+
+    @admin.display(
+        description="Categoria temática", ordering="analysis__theme_category", empty_value="—"
+    )
+    def ai_theme_category(self, obj):
+        analysis = getattr(obj, "analysis", None)
+        return analysis.get_theme_category_display() if analysis else None
 
     def get_urls(self):
         return [
