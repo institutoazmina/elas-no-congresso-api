@@ -53,6 +53,9 @@ def enqueue_match_on_annotation(sender, instance, **kwargs):
     """A categoria ("Categorias 2026") é a anotação humana, e chega dias depois
     da coleta. Sem este gatilho, alerta por categoria nunca dispararia."""
     _enqueue(instance.proposition_id)
+    from apps.cms.tasks import enqueue_site_deploy
+
+    transaction.on_commit(enqueue_site_deploy)
     from .activity import invalidate_activity_cache
 
     invalidate_activity_cache([instance.proposition])
