@@ -6,6 +6,7 @@ from celery import shared_task
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 
 from .email_templates import (
@@ -33,6 +34,7 @@ def _send(subject: str, body_text: str, body_html: str, to: str) -> str | None:
 @shared_task
 def send_alert_email(subscription_id: int, proposition_id: int):
     """Compatibility for already queued tasks: collect the match, never send immediately."""
+    from apps.propositions.house_transfer import PUBLIC_ORIGIN_Q
     from apps.propositions.models import Proposition
     from apps.subscriptions.models import AlertDelivery, Frequency, PendingAlert, Subscription
 
@@ -40,14 +42,20 @@ def send_alert_email(subscription_id: int, proposition_id: int):
         not Subscription.objects.filter(
             pk=subscription_id, is_active=True, frequency=Frequency.DAILY
         ).exists()
-        or not Proposition.objects.filter(pk=proposition_id, is_approved=True).exists()
+        or not Proposition.objects.filter(
+            PUBLIC_ORIGIN_Q, pk=proposition_id, is_approved=True
+        ).exists()
     ):
         return
     # Histórico por endereço, igual ao resumo: várias inscrições recebem uma vez.
-    if AlertDelivery.objects.filter(
-        subscription__email=Subscription.objects.filter(pk=subscription_id).values("email")[:1],
-        proposition_id=proposition_id,
-    ).exists():
+    related_ids = Proposition.objects.filter(canonical_proposition_id=proposition_id).values("pk")
+    if (
+        AlertDelivery.objects.filter(
+            subscription__email=Subscription.objects.filter(pk=subscription_id).values("email")[:1],
+        )
+        .filter(Q(proposition_id=proposition_id) | Q(proposition_id__in=related_ids))
+        .exists()
+    ):
         return
     PendingAlert.objects.get_or_create(
         subscription_id=subscription_id, proposition_id=proposition_id
@@ -78,6 +86,10 @@ def send_daily_digest():
             proposition__is_approved=True,
             created_at__lte=cutoff,
         )
+        .filter(
+            Q(proposition__canonical_proposition__isnull=True)
+            & ~Q(proposition__house="senado", proposition__originating_house="camara")
+        )
         .order_by("subscription__email")
         .values_list("subscription__email", flat=True)
         .distinct()
@@ -88,6 +100,7 @@ def send_daily_digest():
 
 @shared_task(bind=True, autoretry_for=(AnymailError,), retry_backoff=True, max_retries=5)
 def send_daily_digest_email(self, email: str, delivery_date: str):
+    from apps.propositions.house_transfer import PUBLIC_ORIGIN_Q
     from apps.propositions.models import Proposition
 
     from .models import AlertDelivery, DailyDigestDelivery, Frequency, PendingAlert, Subscription
@@ -122,7 +135,7 @@ def send_daily_digest_email(self, email: str, delivery_date: str):
         )
         props = list(
             Proposition.objects.filter(
-                pk__in={item.proposition_id for item in pending}, is_approved=True
+                PUBLIC_ORIGIN_Q, pk__in={item.proposition_id for item in pending}, is_approved=True
             )
             .select_related("analysis")
             .prefetch_related(
@@ -143,11 +156,12 @@ def send_daily_digest_email(self, email: str, delivery_date: str):
             for item in pending
             if item.subscription_id in matches.get(item.proposition_id, set())
         ]
-        delivered_ids = set(
-            AlertDelivery.objects.filter(subscription__email=email).values_list(
-                "proposition_id", flat=True
-            )
-        )
+        delivered_ids = {
+            canonical_id or proposition_id
+            for proposition_id, canonical_id in AlertDelivery.objects.filter(
+                subscription__email=email
+            ).values_list("proposition_id", "proposition__canonical_proposition_id")
+        }
         proposition_ids = {item.proposition_id for item in eligible} - delivered_ids
         props = [prop for prop in props if prop.pk in proposition_ids]
         if not props:
@@ -234,12 +248,15 @@ def send_confirmation_email(self, subscription_id: int):
 @shared_task
 def match_and_notify(proposition_id: int):
     """Persist daily matches; delivery waits for the scheduled digest."""
+    from apps.propositions.house_transfer import PUBLIC_ORIGIN_Q
     from apps.propositions.models import Proposition
 
     from .models import Frequency
     from .service import match_proposition
 
-    if not Proposition.objects.filter(pk=proposition_id, is_approved=True).exists():
+    if not Proposition.objects.filter(
+        PUBLIC_ORIGIN_Q, pk=proposition_id, is_approved=True
+    ).exists():
         logger.info("Proposition %d is not approved; daily alert skipped", proposition_id)
         return
 

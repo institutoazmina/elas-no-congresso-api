@@ -10,6 +10,7 @@ from django.db.models import Exists, OuterRef, Prefetch, Q
 from markdown_it import MarkdownIt
 
 from apps.activity.models import Vote
+from apps.propositions.house_transfer import PUBLIC_ORIGIN_Q
 from apps.propositions.models import Proposition, PropositionAuthor, PropositionEvent
 
 REPORT_TZ = ZoneInfo("America/Sao_Paulo")
@@ -60,17 +61,20 @@ def folded(text):
     )
 
 
-def classify(proposition, events, start, end):
+def classify(proposition, events, start, end, event_sources=None):
     """Use dated historical evidence, never today's undated status for an old week."""
-    if proposition.enacted_at and proposition.enacted_at < end:
-        return "law", {"enacted_at": proposition.enacted_at.isoformat()}
+    sources = event_sources or {}
+    enacted = [
+        source.enacted_at
+        for source in [proposition, *sources.values()]
+        if source.enacted_at and source.enacted_at < end
+    ]
+    if enacted:
+        return "law", {"enacted_at": max(enacted).isoformat()}
     for event in reversed(events):
+        house = sources.get(getattr(event, "proposition_id", None), proposition).house
         raw = event.raw_payload or {}
-        code = (
-            raw.get("codSituacao")
-            if proposition.house == "camara"
-            else raw.get("idSituacaoIniciada")
-        )
+        code = raw.get("codSituacao") if house == "camara" else raw.get("idSituacaoIniciada")
         try:
             code = int(code) if code is not None else None
         except (TypeError, ValueError):
@@ -84,14 +88,14 @@ def classify(proposition, events, start, end):
             "situation": event.situation,
             "movement": movement,
         }
-        if (proposition.house == "camara" and code in CAMARA_REVIEW_CODES) or any(
+        if (house == "camara" and code in CAMARA_REVIEW_CODES) or any(
             word in situation
             for word in ("arquivad", "rejeitad", "retirad", "prejudicad", "vetad", "suspensa")
         ):
             return "review", evidence
         if (
-            (proposition.house == "camara" and code in CAMARA_LAW_CODES)
-            or (proposition.house == "senado" and code in {64, 92})
+            (house == "camara" and code in CAMARA_LAW_CODES)
+            or (house == "senado" and code in {64, 92})
             or re.search(
                 r"transformad[ao] em (norma|lei)|(?:aguardando|enviad[ao]|remetid[ao]|encaminhad[ao]).*(sancao|promulgacao)",
                 situation + " " + movement,
@@ -99,7 +103,7 @@ def classify(proposition, events, start, end):
         ):
             return "law", evidence
         if (
-            (proposition.house == "camara" and code in CAMARA_VOTE_CODES)
+            (house == "camara" and code in CAMARA_VOTE_CODES)
             or re.search(
                 r"pronta? para (?:a )?pauta|aguardando deliberacao|incluid[ao] (?:na|em) (?:ordem do dia|pauta)",
                 situation,
@@ -111,7 +115,7 @@ def classify(proposition, events, start, end):
         ):
             return "vote", evidence
         if (
-            (proposition.house == "camara" and code in CAMARA_PROCESSING_CODES)
+            (house == "camara" and code in CAMARA_PROCESSING_CODES)
             or (
                 event.committee_acronym
                 and folded(event.committee_acronym) not in {"pleno", "plen", "mesa"}
@@ -129,7 +133,7 @@ def classify(proposition, events, start, end):
             r"(?:apresentacao|apresentad[ao]) (?:do |da |de |o |a )?(?:pl\b|pdl\b|pec\b|plp\b|pls\b|projeto|proposicao|proposta)",
             movement,
         ) or (
-            proposition.house == "camara"
+            house == "camara"
             and code in {905, 906, 912, 1010, 1080, 1290, 1302, 1383}
             and start <= proposition.presented_at < end
         ):
@@ -161,43 +165,73 @@ def official_url(proposition):
 
 def build_snapshot(start, end):
     lower, upper = boundaries(start, end)
-    propositions = Proposition.objects.filter(
-        Q(presented_at__gte=start, presented_at__lt=end)
-        | Q(enacted_at__gte=start, enacted_at__lt=end)
-        | Q(
-            Exists(
-                PropositionEvent.objects.filter(
-                    proposition_id=OuterRef("pk"), event_at__gte=lower, event_at__lt=upper
+    propositions = (
+        Proposition.objects.filter(PUBLIC_ORIGIN_Q)
+        .filter(
+            Q(presented_at__gte=start, presented_at__lt=end)
+            | Q(enacted_at__gte=start, enacted_at__lt=end)
+            | Q(transfers__enacted_at__gte=start, transfers__enacted_at__lt=end)
+            | Q(
+                Exists(
+                    PropositionEvent.objects.filter(
+                        proposition_id=OuterRef("pk"), event_at__gte=lower, event_at__lt=upper
+                    )
+                )
+            )
+            | Q(
+                Exists(
+                    PropositionEvent.objects.filter(
+                        proposition__canonical_proposition_id=OuterRef("pk"),
+                        event_at__gte=lower,
+                        event_at__lt=upper,
+                    )
+                )
+            )
+            | Q(
+                Exists(
+                    Vote.objects.filter(
+                        proposition_id=OuterRef("pk"), held_at__gte=lower, held_at__lt=upper
+                    )
                 )
             )
         )
-        | Q(
-            Exists(
-                Vote.objects.filter(
-                    proposition_id=OuterRef("pk"), held_at__gte=lower, held_at__lt=upper
-                )
-            )
-        )
-    ).prefetch_related(
-        Prefetch(
-            "authors",
-            queryset=PropositionAuthor.objects.select_related(
-                "parliamentarian", "institutional_author", "party"
-            ).order_by("order_index", "pk"),
-        ),
-        Prefetch(
-            "events",
-            queryset=PropositionEvent.objects.filter(event_at__lt=upper).order_by(
-                "event_at", "sequence", "pk"
+        .distinct()
+        .prefetch_related(
+            Prefetch(
+                "authors",
+                queryset=PropositionAuthor.objects.select_related(
+                    "parliamentarian", "institutional_author", "party"
+                ).order_by("order_index", "pk"),
             ),
-        ),
-        "annotations",
-        Prefetch("votes", queryset=Vote.objects.filter(held_at__gte=lower, held_at__lt=upper)),
+            Prefetch(
+                "events",
+                queryset=PropositionEvent.objects.filter(event_at__lt=upper).order_by(
+                    "event_at", "sequence", "pk"
+                ),
+            ),
+            Prefetch(
+                "transfers__events",
+                queryset=PropositionEvent.objects.filter(event_at__lt=upper).order_by(
+                    "event_at", "sequence", "pk"
+                ),
+            ),
+            "annotations",
+            Prefetch("votes", queryset=Vote.objects.filter(held_at__gte=lower, held_at__lt=upper)),
+        )
     )
     entries = []
     for proposition in propositions:
-        events = list(proposition.events.all())
-        stage, evidence = classify(proposition, events, start, end)
+        transfers = list(proposition.transfers.all())
+        sources = {source.pk: source for source in transfers}
+        events = sorted(
+            [
+                *proposition.events.all(),
+                *(event for source in transfers for event in source.events.all()),
+            ],
+            key=lambda event: (event.event_at, event.sequence, event.pk),
+        )
+        stage, evidence = classify(proposition, events, start, end, sources)
+        current = transfers[-1] if transfers else proposition
         entries.append(
             {
                 "id": proposition.pk,
@@ -216,7 +250,7 @@ def build_snapshot(start, end):
                     }
                     for author in proposition.authors.all()
                 ],
-                "url": official_url(proposition),
+                "url": official_url(current),
                 "stage": stage,
                 "evidence": evidence,
                 "is_approved": proposition.is_approved,

@@ -20,6 +20,7 @@ from ninja import Field, Router, Schema
 from apps.core.enums import Gender, PropositionCategory
 from apps.legislatures.models import Legislature
 
+from .house_transfer import PUBLIC_ORIGIN_Q
 from .models import Proposition, PropositionAnnotation, PropositionAuthor
 
 router = Router()
@@ -34,6 +35,7 @@ Stance = Literal["unfavorable", "favorable"]
 
 
 # ── schemas ───────────────────────────────────────────────────────────────────
+
 
 class LegislatureCountSchema(Schema):
     number: int
@@ -89,6 +91,7 @@ class StateStatsSchema(Schema):
 
 # ── endpoints ─────────────────────────────────────────────────────────────────
 
+
 @router.get("/legislatures", response=LegislatureStatsSchema, by_alias=True)
 def unfavorable_by_legislature(request, last: int = 2):
     """Proposições desfavoráveis por legislatura, da mais antiga para a mais nova.
@@ -102,11 +105,13 @@ def unfavorable_by_legislature(request, last: int = 2):
     iniciadas — nunca as futuras, que seriam sempre zero. ``last=0`` traz todas.
     """
     query = Legislature.objects.filter(start_date__lte=timezone.localdate())
-    legislatures = sorted(query.order_by("-number")[:last] if last else query, key=lambda leg: leg.number)
+    legislatures = sorted(
+        query.order_by("-number")[:last] if last else query, key=lambda leg: leg.number
+    )
     if not legislatures:
         return {"legislatures": []}
 
-    counts = Proposition.objects.aggregate(
+    counts = Proposition.objects.filter(PUBLIC_ORIGIN_Q).aggregate(
         **{
             f"leg_{leg.number}": Count(
                 "id",
@@ -135,7 +140,10 @@ def unfavorable_by_category(request):
     """Proposições desfavoráveis por categoria (taxonomia Categorias 2026)."""
     labels = dict(PropositionCategory.choices)
     rows = (
-        PropositionAnnotation.objects.filter(is_favorable=False)
+        PropositionAnnotation.objects.filter(
+            is_favorable=False, proposition__canonical_proposition__isnull=True
+        )
+        .exclude(proposition__house="senado", proposition__originating_house="camara")
         .values("category")
         .annotate(unfavorable=Count("proposition", distinct=True))
         .order_by("-unfavorable")
@@ -161,7 +169,7 @@ def stance_by_gender(request):
     """
     rows = (
         Proposition.objects.filter(
-            authors__parliamentarian__gender__in=[Gender.F, Gender.M]
+            PUBLIC_ORIGIN_Q, authors__parliamentarian__gender__in=[Gender.F, Gender.M]
         )
         .values(gender=F("authors__parliamentarian__gender"))
         .annotate(
@@ -186,7 +194,9 @@ def stance_by_gender(request):
 
 def _author_group_counts(field: str):
     return (
-        PropositionAuthor.objects.exclude(**{f"{field}__isnull": True})
+        PropositionAuthor.objects.filter(proposition__canonical_proposition__isnull=True)
+        .exclude(proposition__house="senado", proposition__originating_house="camara")
+        .exclude(**{f"{field}__isnull": True})
         .exclude(**{field: ""})
         .values(label=F(field))
         .annotate(

@@ -1,11 +1,10 @@
-
-
 import unicodedata
 from typing import Annotated, Literal
 
 from ninja import Query, Router
 from ninja.pagination import LimitOffsetPagination, paginate
 
+from .house_transfer import PUBLIC_ORIGIN_Q
 from .models import Proposition
 from .schemas import PropositionDetailSchema, PropositionSchema
 
@@ -28,7 +27,7 @@ def list_propositions(
                 "Busca parcial por ementa, número da proposição ou nome completo ou social "
                 "de autores e coautores. A busca por autor ignora maiúsculas, minúsculas "
                 "e acentos."
-            )
+            ),
         ),
     ] = None,
     sort: Annotated[
@@ -45,7 +44,9 @@ def list_propositions(
     # do escopo editorial. O gerenciador continua vendo ambos para revisão.
     from .activity import PUBLIC_LEGISLATIVE_TYPE_CODES
 
-    qs = Proposition.objects.filter(is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES)
+    qs = Proposition.objects.filter(
+        PUBLIC_ORIGIN_Q, is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
+    )
     if house:
         qs = qs.filter(house=house)
     if year:
@@ -81,12 +82,14 @@ def get_proposition(request, proposition_id: int):
 
     return get_object_or_404(
         Proposition.objects.filter(
-            is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
-        ).prefetch_related(
+            PUBLIC_ORIGIN_Q, is_approved=True, type_code__in=PUBLIC_LEGISLATIVE_TYPE_CODES
+        )
+        .prefetch_related(
             "authors__parliamentarian",
             "authors__institutional_author",
             "rapporteurs__parliamentarian",
             "proposition_themes__theme",
-        ).select_related("analysis"),
+        )
+        .select_related("analysis"),
         pk=proposition_id,
     )
