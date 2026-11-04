@@ -198,6 +198,8 @@ def check_document(document_id):
         doc.status, doc.attempted_at = doc.Status.FETCHING, timezone.now()
         doc.attempts += 1
         doc.save(update_fields=["status", "attempted_at", "attempts"])
+    from .fulltext import DocumentTooLargeError, read_response_limited
+
     try:
         headers = {"User-Agent": "Mozilla/5.0 (compatible; ElasNoCongresso/1.0)"}
         if doc.etag:
@@ -209,24 +211,28 @@ def check_document(document_id):
         from .clients.base import throttle_source
 
         throttle_source(urlparse(doc.url).netloc)
-        with httpx.Client(timeout=60, follow_redirects=True) as client:
-            response = client.get(doc.url, headers=headers)
+        with (
+            httpx.Client(timeout=60, follow_redirects=True) as client,
+            client.stream("GET", doc.url, headers=headers) as response,
+        ):
+            if response.status_code == 304:
+                response_content = b""
+            else:
+                response.raise_for_status()
+                response_content = read_response_limited(response)
         previous = doc.versions.order_by("-created_at", "-pk").first()
         if response.status_code == 304:
             if previous is None:
                 raise ValueError("304 without stored text")
             text, bytes_hash = previous.text, doc.bytes_hash
         else:
-            response.raise_for_status()
-            if len(response.content) > 20 * 1024 * 1024:
-                raise ValueError("Document exceeds extraction limit")
-            bytes_hash = hashlib.sha256(response.content).hexdigest()
+            bytes_hash = hashlib.sha256(response_content).hexdigest()
             if previous and bytes_hash == doc.bytes_hash:
                 text = previous.text
             else:
                 from .fulltext import _extract
 
-                text = _extract(response.content, doc.url)
+                text = _extract(response_content, doc.url)
                 if not text:
                     raise ValueError("Empty document extraction")
         with transaction.atomic():
@@ -255,10 +261,15 @@ def check_document(document_id):
                 prop.save(update_fields=["full_text"])
             select_content(prop, version, analyze=latest.analyze_on_first or previous is not None)
     except Exception as exc:
-        PropositionDocument.objects.filter(pk=doc.pk, source_revision=revision).update(
-            status=doc.Status.FAILED,
-            error=f"Document verification failed ({type(exc).__name__})",
-        )
+        updates = {
+            "status": doc.Status.FAILED,
+            "error": f"Document verification failed ({type(exc).__name__})",
+        }
+        if isinstance(exc, DocumentTooLargeError):
+            # The same immutable revision cannot become smaller on retry. A changed
+            # URL/revision resets attempts in register_document.
+            updates["attempts"] = 3
+        PropositionDocument.objects.filter(pk=doc.pk, source_revision=revision).update(**updates)
         return False
     return True
 

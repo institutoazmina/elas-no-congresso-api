@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 _TESSERACT_CMD = os.environ.get("TESSERACT_CMD")
 
 _TIMEOUT = httpx.Timeout(60.0, connect=10.0)
+MAX_DOCUMENT_BYTES = 20 * 1024 * 1024
 _HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -53,8 +54,36 @@ class UnsupportedDocumentError(Exception):
     """The endpoint returned an empty payload or an unsupported format."""
 
 
-def _is_security_challenge(response: httpx.Response) -> bool:
-    prefix = response.content[:65536]
+class DocumentTooLargeError(UnsupportedDocumentError):
+    """The document exceeds the bounded extraction download size."""
+
+
+def read_response_limited(
+    response: httpx.Response, *, max_bytes: int = MAX_DOCUMENT_BYTES
+) -> bytes:
+    """Read a response incrementally, rejecting it before memory can grow unbounded."""
+    content_length = response.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > max_bytes:
+                raise DocumentTooLargeError(
+                    f"Document exceeds extraction limit ({content_length} > {max_bytes} bytes)"
+                )
+        except ValueError:
+            pass
+
+    content = bytearray()
+    for chunk in response.iter_bytes():
+        if len(content) + len(chunk) > max_bytes:
+            raise DocumentTooLargeError(
+                f"Document exceeds extraction limit ({max_bytes} bytes)"
+            )
+        content.extend(chunk)
+    return bytes(content)
+
+
+def _is_security_challenge(content: bytes) -> bool:
+    prefix = content[:65536]
     if prefix.lstrip().startswith(b"%PDF-"):
         return False
     html = prefix.decode("utf-8", errors="replace").lower()
@@ -82,6 +111,7 @@ def extract_pdf_text(
     *,
     raise_on_challenge: bool = False,
     raise_on_unsupported: bool = False,
+    max_bytes: int = MAX_DOCUMENT_BYTES,
 ) -> str | None:
     """Baixa o documento e extrai texto de PDF (pypdf/OCR) ou RTF.
 
@@ -94,20 +124,25 @@ def extract_pdf_text(
     own = client is None
     client = client or httpx.Client(timeout=_TIMEOUT, headers=_HEADERS, follow_redirects=True)
     try:
-        resp = client.get(url)
-        # Challenges can arrive as HTTP 200 as well as 403/429/503 responses.
-        if _is_security_challenge(resp):
-            if raise_on_challenge:
-                raise DocumentSecurityChallengeError("Document requires security verification")
-            return None
-        resp.raise_for_status()
-        content = resp.content
+        with client.stream("GET", url) as resp:
+            content = read_response_limited(resp, max_bytes=max_bytes)
+            # Challenges can arrive as HTTP 200 as well as 403/429/503 responses.
+            if _is_security_challenge(content):
+                if raise_on_challenge:
+                    raise DocumentSecurityChallengeError("Document requires security verification")
+                return None
+            resp.raise_for_status()
         prefix = content[:1024].lstrip()
         is_pdf = prefix.startswith(b"%PDF-")
         is_rtf = prefix.startswith(rb"{\rtf")
         if raise_on_unsupported and not (is_pdf or is_rtf):
             reason = "empty document" if not content else "unsupported document format"
             raise UnsupportedDocumentError(reason)
+    except DocumentTooLargeError:
+        if raise_on_unsupported:
+            raise
+        logger.warning("Documento excede o limite de extração: %s", url)
+        return None
     except httpx.HTTPError as exc:
         logger.warning("Falha ao baixar PDF %s: %s", url, exc)
         return None

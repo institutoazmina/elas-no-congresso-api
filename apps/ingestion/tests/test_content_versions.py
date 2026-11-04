@@ -121,6 +121,35 @@ def test_pdf_hashes_skip_ocr_and_semantically_identical_text_skips_ai(ai, monkey
     }
 
 
+def test_document_verification_streams_and_rejects_oversized_body(ai, monkeypatch):
+    prop = Proposition.objects.create(**fields())
+    doc = content.register_document(prop.pk, "original", "original", "https://docs.test/huge.pdf")
+    original = httpx.Client
+
+    class FailIfRead(httpx.SyncByteStream):
+        def __iter__(self):
+            raise AssertionError("oversized response body must not be read")
+
+    def handler(request):
+        return httpx.Response(
+            200,
+            headers={"Content-Length": str(20 * 1024 * 1024 + 1)},
+            stream=FailIfRead(),
+        )
+
+    monkeypatch.setattr(
+        content.httpx,
+        "Client",
+        lambda **kwargs: original(transport=httpx.MockTransport(handler), **kwargs),
+    )
+
+    assert content.check_document(doc.pk) is False
+    doc.refresh_from_db()
+    assert doc.status == "failed"
+    assert doc.error == "Document verification failed (DocumentTooLargeError)"
+    assert doc.attempts == 3
+
+
 def test_replacements_exclude_reports_and_partial_amendments(ai):
     prop = Proposition.objects.create(**{**fields(), "house": "senado"})
     client = Mock()
