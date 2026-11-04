@@ -4,7 +4,7 @@ import httpx
 import pytest
 
 from apps.ingestion import tasks
-from apps.ingestion.fulltext import extract_pdf_text
+from apps.ingestion.fulltext import MAX_DOCUMENT_BYTES, extract_pdf_text
 from apps.ingestion.models import IngestionRun
 from apps.ingestion.tests.test_tasks import _FakeCamara, _FakeSenado
 from apps.propositions.models import IgnoredProposition, Proposition
@@ -173,6 +173,26 @@ def test_security_challenge_uses_ementa_without_failing_run(discovery):
 def test_empty_camara_document_uses_ementa_without_failing_run(camara_discovery):
     task, client, extraction, house = camara_discovery
     transport = httpx.MockTransport(lambda request: httpx.Response(200, content=b""))
+    with httpx.Client(transport=transport) as http_client:
+        extraction.side_effect = lambda url, **kwargs: extract_pdf_text(
+            url, client=http_client, **kwargs
+        )
+        run = IngestionRun.objects.get(pk=task())
+    assert run.status == "success"
+    assert run.skipped_count == 1 and run.error_count == 0
+    assert run.items.get().attempts == 1
+    assert not Proposition.objects.filter(house=house).exists()
+
+
+def test_oversized_document_uses_ementa_without_failing_run(discovery):
+    task, client, extraction, house = discovery
+    transport = httpx.MockTransport(
+        lambda request: httpx.Response(
+            200,
+            headers={"Content-Length": str(MAX_DOCUMENT_BYTES + 1)},
+            stream=httpx.ByteStream(b"body must not be downloaded"),
+        )
+    )
     with httpx.Client(transport=transport) as http_client:
         extraction.side_effect = lambda url, **kwargs: extract_pdf_text(
             url, client=http_client, **kwargs

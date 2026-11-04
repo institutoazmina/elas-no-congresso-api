@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from unittest.mock import Mock
 
 import httpx
@@ -25,6 +26,22 @@ def _client(handler):
 
 def _ok_pdf(request):
     return httpx.Response(200, content=b"%PDF-fake-bytes")
+
+
+class _FailIfRead(httpx.SyncByteStream):
+    def __iter__(self):
+        raise AssertionError("oversized response body must not be read")
+
+
+class _ChunkedBody(httpx.SyncByteStream):
+    def __init__(self, *chunks):
+        self.chunks = chunks
+        self.read_chunks = 0
+
+    def __iter__(self):
+        for chunk in self.chunks:
+            self.read_chunks += 1
+            yield chunk
 
 
 class TestExtractPdfText:
@@ -100,6 +117,40 @@ class TestExtractPdfText:
                 raise_on_unsupported=True,
             )
 
+    def test_advertised_oversized_document_is_rejected_without_reading_body(self):
+        def handler(request):
+            return httpx.Response(
+                200,
+                headers={"Content-Length": str(fulltext.MAX_DOCUMENT_BYTES + 1)},
+                stream=_FailIfRead(),
+            )
+
+        with (
+            _client(handler) as client,
+            pytest.raises(fulltext.DocumentTooLargeError, match="exceeds extraction limit"),
+        ):
+            fulltext.extract_pdf_text(
+                "https://x/documento",
+                client=client,
+                raise_on_unsupported=True,
+            )
+
+    def test_chunked_oversized_document_stops_at_stream_limit(self):
+        body = _ChunkedBody(b"%PDF-", b"1234", b"5678", b"not-read")
+
+        with (
+            _client(lambda request: httpx.Response(200, stream=body)) as client,
+            pytest.raises(fulltext.DocumentTooLargeError, match="exceeds extraction limit"),
+        ):
+            fulltext.extract_pdf_text(
+                "https://x/documento",
+                client=client,
+                raise_on_unsupported=True,
+                max_bytes=12,
+            )
+
+        assert body.read_chunks == 3
+
     def test_owns_client_path(self, monkeypatch):
         # Sem client injetado: cria e fecha o próprio httpx.Client.
         monkeypatch.setattr(fulltext, "PdfReader", lambda buf: _FakeReader([_FakePage("ok")]))
@@ -108,8 +159,13 @@ class TestExtractPdfText:
             def __init__(self, *a, **k):
                 pass
 
-            def get(self, url):
-                return httpx.Response(200, content=b"%PDF", request=httpx.Request("GET", url))
+            @contextmanager
+            def stream(self, method, url):
+                yield httpx.Response(
+                    200,
+                    content=b"%PDF",
+                    request=httpx.Request(method, url),
+                )
 
             def close(self):
                 self.closed = True
