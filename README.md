@@ -65,6 +65,20 @@ open http://localhost:8000/api/v1/docs
 
 Documentação completa em `/api/v1/docs`.
 
+### Avaliações na página da proposição
+
+As respostas de `/api/v1/activity` (listagem, detalhe, busca por número e explorer)
+incluem `assessments`: lista de `{organization, is_favorable, comments}` com todas
+as anotações humanas em ordem de cadastro e, ao final, a análise concluída da
+QuitérIA. O comentário automático vem de `ai_summary`; quando não há texto, é
+retornado `null`. Anotações sem posicionamento também são incluídas.
+
+Os campos singulares `assessment_organization`, `assessment_comments` e
+`is_favorable` mantêm a precedência editorial usada nos filtros e indicadores.
+O site usa a lista para o carrossel, sem limitar o número de organizações.
+Na publicação desta alteração, invalide o cache de atividade antes de reconstruir
+o site estático: `python manage.py shell -c "from apps.propositions.activity import invalidate_activity_cache; invalidate_activity_cache()"`.
+
 ## Alertas diários
 
 Os matches de inscrições diárias ficam em uma fila persistida até o resumo.

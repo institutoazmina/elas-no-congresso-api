@@ -96,6 +96,12 @@ class CeleritySchema(Schema):
     last_event_at: datetime | None = None
 
 
+class ActivityAssessmentSchema(Schema):
+    organization: str
+    is_favorable: bool | None = None
+    comments: str | None = None
+
+
 class ActivityPropositionSchema(Schema):
     id: int
     house: str
@@ -111,6 +117,7 @@ class ActivityPropositionSchema(Schema):
     is_favorable: bool | None = None
     assessment_organization: str | None = None
     assessment_comments: str | None = None
+    assessments: list[ActivityAssessmentSchema] = []
     relevance: str | None = None
     authors: list[ActivityAuthorSchema]
     celerity: CeleritySchema
@@ -199,6 +206,20 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
     # A anotação humana sempre prevalece. Na sua ausência, uma classificação
     # concluída pela QuitérIA é a avaliação automática exibida no painel.
     has_quiteria_assessment = _has_quiteria_assessment(annotation, analysis)
+    assessments = [
+        {
+            "organization": item.organization.name,
+            "is_favorable": item.is_favorable,
+            "comments": item.comments,
+        }
+        for item in sorted(proposition.annotations.all(), key=lambda item: item.pk)
+    ]
+    if _has_quiteria_assessment(None, analysis):
+        assessments.append({
+            "organization": QUITERIA_ORGANIZATION_NAME,
+            "is_favorable": analysis.classification == 0,
+            "comments": analysis.ai_summary,
+        })
     # O rótulo editorial vem da enumeração de categorias, sem transformar o
     # slug em texto aproximado no cliente.
     from apps.core.enums import PropositionCategory
@@ -226,6 +247,7 @@ def _serialize(proposition, *, event_limit: int | None) -> dict:
             else (QUITERIA_ORGANIZATION_NAME if has_quiteria_assessment else None)
         ),
         "assessment_comments": annotation.comments if annotation else None,
+        "assessments": assessments,
         "relevance": annotation.relevance if annotation else None,
         "authors": authors,
         "celerity": {

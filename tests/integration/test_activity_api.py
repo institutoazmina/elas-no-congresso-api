@@ -148,6 +148,7 @@ def test_activity_only_exposes_approved_supported_types_and_automatic_quiteria_a
             "is_favorable": False,
             "assessment_organization": "QuitérIA",
             "assessment_comments": None,
+            "assessments": [{"organization": "QuitérIA", "is_favorable": False, "comments": None}],
             "relevance": None,
             "authors": [],
             "celerity": {
@@ -461,6 +462,7 @@ def test_enacted_projects_returns_a_shared_complete_contract_for_both_houses():
             "is_favorable": True,
             "assessment_organization": "AzMina",
             "assessment_comments": None,
+            "assessments": [{"organization": "AzMina", "is_favorable": True, "comments": None}],
             "relevance": "relevante",
             "authors": [],
             "celerity": {
@@ -506,6 +508,48 @@ def _public_proposition(external_id=901):
 
 
 @pytest.mark.django_db
+def test_activity_exposes_every_assessment_including_quiteria_and_unrated_comments():
+    proposition = _public_proposition()
+    PropositionAnalysis.objects.create(
+        proposition=proposition,
+        analysis_status=PropositionAnalysis.Status.SUCCEEDED,
+        classification=0,
+        ai_summary="Análise automática da QuitérIA.",
+    )
+    expected = []
+    for name, favorable, comment in (
+        ("AzMina", False, "Há riscos para os direitos das mulheres."),
+        ("Organização parceira", True, "Amplia a proteção."),
+        ("Terceira organização", None, "Aguardamos ajustes no texto."),
+    ):
+        organization = AssessmentOrganization.objects.create(name=name)
+        PropositionAnnotation.objects.create(
+            proposition=proposition, organization=organization,
+            category="saude", is_favorable=favorable, comments=comment,
+        )
+        expected.append({"organization": name, "is_favorable": favorable, "comments": comment})
+    expected.append({
+        "organization": "QuitérIA", "is_favorable": True,
+        "comments": "Análise automática da QuitérIA.",
+    })
+    client = Client()
+    for url, params in (
+        (f"/api/v1/activity/{proposition.pk}", {}),
+        ("/api/v1/activity/by-number", {"house": "camara", "number_label": proposition.number_label}),
+        ("/api/v1/activity/", {"include_events": "false"}),
+        ("/api/v1/activity/explorer", {}),
+    ):
+        response = client.get(url, params)
+        assert response.status_code == 200
+        payload = response.json()
+        item = payload[0] if isinstance(payload, list) else payload.get("items", [payload])[0]
+        assert item["assessments"] == expected
+        assert item["is_favorable"] is False
+        assert item["assessment_organization"] == "AzMina"
+        assert client.get(url, params).json() == payload
+
+
+@pytest.mark.django_db
 def test_excluir_anotacao_invalida_o_cache_da_proposicao():
     proposition = _public_proposition()
     organization = AssessmentOrganization.objects.create(name="AzMina")
@@ -518,6 +562,19 @@ def test_excluir_anotacao_invalida_o_cache_da_proposicao():
     annotation.delete()
 
     assert client.get(f"/api/v1/activity/{proposition.pk}").json()["is_favorable"] is None
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("status,classification", [("pending", 0), ("failed", 1), ("succeeded", None), ("succeeded", 2)])
+def test_incomplete_or_invalid_quiteria_does_not_become_a_public_assessment(status, classification):
+    proposition = _public_proposition()
+    PropositionAnalysis.objects.create(
+        proposition=proposition, analysis_status=status, classification=classification,
+        ai_summary="Não publicar análise incompleta",
+    )
+    response = Client().get(f"/api/v1/activity/{proposition.pk}")
+    assert response.status_code == 200
+    assert response.json()["assessments"] == []
 
 
 @pytest.mark.django_db

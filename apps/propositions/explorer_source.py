@@ -43,6 +43,7 @@ def load_explorer_source():
                 "analysis__theme_category",
                 "analysis__analysis_status",
                 "analysis__classification",
+                "analysis__ai_summary",
             )
         )
     ids = [row["id"] for row in rows]
@@ -88,6 +89,7 @@ def load_explorer_source():
             original_event["last_event_at"] = source_event["last_event_at"]
     with stage("source_assessments"):
         annotations = {}
+        assessments = defaultdict(list)
         # Stabilize ties with PK, matching the insertion order used by the old
         # prefetch. Human unfavorable > favorable > unrated, before any AI.
         priority = {False: 0, True: 1, None: 2}
@@ -103,6 +105,11 @@ def load_explorer_source():
                 "organization__name",
             )
         ):
+            assessments[row["proposition_id"]].append({
+                "organization": row["organization__name"],
+                "is_favorable": row["is_favorable"],
+                "comments": row["comments"],
+            })
             previous = annotations.get(row["proposition_id"])
             if (
                 previous is None
@@ -165,6 +172,12 @@ def load_explorer_source():
             classified = row[
                 "analysis__analysis_status"
             ] == PropositionAnalysis.Status.SUCCEEDED and row["analysis__classification"] in (0, 1)
+            if classified:
+                assessments[pk].append({
+                    "organization": QUITERIA_ORGANIZATION_NAME,
+                    "is_favorable": row["analysis__classification"] == 0,
+                    "comments": row["analysis__ai_summary"],
+                })
             event = events.get(pk, {})
             celerity = celerity_from_summary(
                 row["presented_at"],
@@ -203,6 +216,7 @@ def load_explorer_source():
                     if classified
                     else None,
                     "assessment_comments": annotation["comments"] if annotation else None,
+                    "assessments": assessments[pk],
                     "relevance": annotation["relevance"] if annotation else None,
                     "authors": authors[pk],
                     "themes": themes[pk],
