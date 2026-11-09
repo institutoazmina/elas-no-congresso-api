@@ -12,6 +12,26 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
   `apps/core/admin.py`. Continuam funcionando; ajustes de agenda exigem shell ou
   alteração das configurações.
 
+## Usuários e papéis
+
+Em **Autenticação e Autorização → Usuários**, use **Adicionar usuário e
+configurar acesso**. No mesmo formulário, preencha os dados, defina a senha,
+marque **Acesso ao painel** e selecione **Papéis (grupos de permissões)**.
+O nome de usuário é usado no login; pode ser o e-mail da pessoa.
+
+Os papéis são os grupos do Django: em **Grupos**, dê um nome ao papel e
+selecione suas permissões. Depois, atribua esse grupo no cadastro da pessoa.
+Habilitar acesso ao painel não concede permissões por si só. O status de
+superusuário concede acesso total e continua disponível na edição do cadastro.
+
+Para excluir, selecione as pessoas, escolha **Remover usuários selecionados**,
+clique em **Executar** e confirme na tela seguinte. Para suspender um acesso
+sem excluir o cadastro, desmarque **Ativo** e salve. Os botões respeitam as
+permissões de quem está usando o painel.
+
+Usuários e Grupos usam os formulários e ações do Unfold. As opções de selects
+nativos têm cores explícitas nos temas claro e escuro.
+
 ## CMS do site
 
 O grupo **CMS** reúne o conteúdo editável do site, uma entrada por página
