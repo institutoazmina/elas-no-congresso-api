@@ -8,6 +8,9 @@ Exige login de usuário com `is_staff`; permissões seguem o padrão do Django.
 - Título "Admin · Elas no Congresso", ícone `gavel`.
 - Paleta em `config/admin_theme.py`, derivada do `tailwind.css` do site, e CSS
   extra em `apps/core/static/core/css/admin-theme.css`.
+- Na sidebar, os grupos usam caixa alta, tamanho menor e fundo neutro;
+  os links têm recuo e preservam o destaque do item ativo. Rótulos longos
+  quebram linha, nos temas claro e escuro.
 - Os models do Celery (resultados e agendamentos) são removidos do menu em
   `apps/core/admin.py`. Continuam funcionando; ajustes de agenda exigem shell ou
   alteração das configurações.
