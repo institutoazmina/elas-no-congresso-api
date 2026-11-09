@@ -1,0 +1,7 @@
+<section aria-label="Gerenciamento de acessos" class="mb-4">
+    <h2 class="font-semibold mb-2">Acessos ao painel</h2>
+    <p class="mb-3">Cadastre a pessoa, defina uma senha, habilite o acesso ao painel e selecione seus papéis no mesmo formulário. Os grupos reúnem as permissões de cada papel.</p>
+    {% if has_add_permission %}
+        <a href="{% url 'admin:auth_user_add' %}" class="bg-primary-600 inline-flex font-medium px-3 py-2 rounded-default text-white">Adicionar usuário e configurar acesso</a>
+    {% endif %}
+</section>

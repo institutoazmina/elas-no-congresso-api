@@ -9,6 +9,39 @@
     --admin-control-border: var(--color-base-400);
 }
 
+/* Menus nativos precisam de fundo e texto explícitos, inclusive nas ações. */
+select {
+    color-scheme: light;
+}
+
+.dark select {
+    color-scheme: dark;
+}
+
+select option,
+select optgroup {
+    background-color: var(--color-base-50);
+    color: var(--color-font-default-light);
+}
+
+.dark select option,
+.dark select optgroup {
+    background-color: var(--color-base-900);
+    color: var(--color-font-default-dark);
+}
+
+/* O fundo lilás do tema escuro exige texto escuro na barra de ações. */
+.dark #changelist-actions,
+.dark #changelist-actions .question a,
+.dark #changelist-actions .clear a {
+    color: var(--color-brand-ink);
+}
+
+#changelist-actions select {
+    background-color: transparent;
+    color: inherit;
+}
+
 /* Hierarquia da navegação automática por app, sem afetar o índice do admin. */
 #nav-sidebar-apps .module {
     margin-bottom: 1rem;

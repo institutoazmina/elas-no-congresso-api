@@ -1,0 +1,7 @@
+{% extends "admin/actions.html" %}
+
+{% block actions-submit %}
+    <button type="submit" x-show="action" class="bg-primary-900 cursor-pointer flex font-medium items-center justify-center px-3 py-1 rounded-default text-sm text-white whitespace-nowrap" title="Executar a ação selecionada" name="index" value="{{ action_index|default:0 }}">
+        Executar
+    </button>
+{% endblock %}
