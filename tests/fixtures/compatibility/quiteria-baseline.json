@@ -1,0 +1,310 @@
+{
+  "model_id": "azmina/quiteria-2.0",
+  "model_revision": "6f258ee80c0ac410ce60317a4e31460590d7e594",
+  "versions": {
+    "torch": "2.12.0+cpu",
+    "transformers": "5.7.0"
+  },
+  "max_length": 512,
+  "favorability_threshold": 0.2254,
+  "artifact_sha256": {
+    "tema/config.json": "a8766a23896bf436234b72c02d7f877dd59f63ee200141cb8892c20c26f2e272",
+    "tema/model.safetensors": "4b88dac07c0aeabe1247edaf33a2697263037dec6c5d9a88d7a3b12bdbcb461b",
+    "tema/tokenizer.json": "45ccb3e514665f3b11b5e2a8e1a3e29765d94330bc7232aa46c4cdc485bc8881",
+    "tema/tokenizer_config.json": "7e9dc176029715dd4b3932350d8595dbed8ad1b887c583984c2f8dfb8fe81983",
+    "favorabilidade/config.json": "b8d45bd4049dd6bc6f81f9d1c0d0336fb256a56cf4a23085e411becfc4670fcb",
+    "favorabilidade/model.safetensors": "a8e5cd1ab663318c60e7217212068223e44efd2f19450fb593ef4b0d38aa2ec9",
+    "favorabilidade/tokenizer.json": "bcc8fe4209dffce14189a4319759f834e84c7df0a0bee8bfc6b576d4e2c6d387",
+    "favorabilidade/tokenizer_config.json": "bbd6e57010640a8e4096eac38574e866f3c1558bf97ab29a763f659d22bc75f7"
+  },
+  "cases": [
+    {
+      "id": "health",
+      "prediction": {
+        "input_text": "Partido: PT; Genero: F; UF: SP; Conteúdo: Assegura atendimento integral à saúde das mulheres, com acesso gratuito a exames e prevenção do câncer de mama.",
+        "theme_category": "saude",
+        "theme_confidence": 1.0,
+        "theme_scores": {
+          "LABEL_0": 1.0311981490929156e-08,
+          "LABEL_1": 5.0403747842153734e-09,
+          "LABEL_2": 5.960052007480954e-09,
+          "LABEL_3": 8.216193059240595e-09,
+          "LABEL_4": 7.951902247782527e-09,
+          "LABEL_5": 8.770314252615208e-09,
+          "LABEL_6": 1.4070418608014279e-08,
+          "LABEL_7": 1.0,
+          "LABEL_8": 7.249630673555885e-09,
+          "LABEL_9": 6.549033315650377e-09
+        },
+        "favorability_probability": 0.01064042653888464,
+        "favorability_scores": {
+          "LABEL_0": 0.9893596172332764,
+          "LABEL_1": 0.01064042653888464
+        },
+        "favorability_label": 0
+      },
+      "tokenization": {
+        "theme": {
+          "length": 42,
+          "sha256": "64bfdc07b78021ba1fd4fb81d59be5f2ec5d165ab8c18df28fa9dea6f14803ac"
+        },
+        "favorability": {
+          "length": 42,
+          "sha256": "64bfdc07b78021ba1fd4fb81d59be5f2ec5d165ab8c18df28fa9dea6f14803ac"
+        }
+      }
+    },
+    {
+      "id": "violence",
+      "prediction": {
+        "input_text": "Partido: PSB; Genero: F; UF: PE; Conteúdo: Amplia medidas protetivas e o atendimento às mulheres em situação de violência doméstica e familiar.",
+        "theme_category": "violencias_de_genero",
+        "theme_confidence": 1.0,
+        "theme_scores": {
+          "LABEL_0": 4.183155155601526e-09,
+          "LABEL_1": 2.8645663618931394e-09,
+          "LABEL_2": 3.24960280906339e-09,
+          "LABEL_3": 3.565241657454976e-09,
+          "LABEL_4": 3.777349544265007e-09,
+          "LABEL_5": 3.1027271862882344e-09,
+          "LABEL_6": 3.4864413578361564e-09,
+          "LABEL_7": 2.5369697453925255e-09,
+          "LABEL_8": 8.363123527033167e-09,
+          "LABEL_9": 1.0
+        },
+        "favorability_probability": 0.014485053718090057,
+        "favorability_scores": {
+          "LABEL_0": 0.9855149984359741,
+          "LABEL_1": 0.014485053718090057
+        },
+        "favorability_label": 0
+      },
+      "tokenization": {
+        "theme": {
+          "length": 40,
+          "sha256": "435b1355d7254a0d97513b0aeded14aa544522dda9ecd2778b2061edc57fa53c"
+        },
+        "favorability": {
+          "length": 40,
+          "sha256": "435b1355d7254a0d97513b0aeded14aa544522dda9ecd2778b2061edc57fa53c"
+        }
+      }
+    },
+    {
+      "id": "work",
+      "prediction": {
+        "input_text": "Partido: PSOL; Genero: F; UF: RJ; Conteúdo: Garante igualdade salarial entre mulheres e homens e amplia a licença parental para trabalhadores com filhos.",
+        "theme_category": "trabalho_economia_cuidado",
+        "theme_confidence": 1.0,
+        "theme_scores": {
+          "LABEL_0": 6.456335910343114e-09,
+          "LABEL_1": 4.38049019280129e-09,
+          "LABEL_2": 4.7714849849000984e-09,
+          "LABEL_3": 1.0305473807648013e-08,
+          "LABEL_4": 6.302590449536183e-09,
+          "LABEL_5": 4.724340030293206e-09,
+          "LABEL_6": 4.675243747698232e-09,
+          "LABEL_7": 8.869905698816183e-09,
+          "LABEL_8": 1.0,
+          "LABEL_9": 7.49319539750104e-09
+        },
+        "favorability_probability": 0.013053338043391705,
+        "favorability_scores": {
+          "LABEL_0": 0.9869465827941895,
+          "LABEL_1": 0.013053338043391705
+        },
+        "favorability_label": 0
+      },
+      "tokenization": {
+        "theme": {
+          "length": 41,
+          "sha256": "d224f94d2a683ac1994309c4b064c12a8137f4c9fd3b125904d580652c80f2e0"
+        },
+        "favorability": {
+          "length": 41,
+          "sha256": "d224f94d2a683ac1994309c4b064c12a8137f4c9fd3b125904d580652c80f2e0"
+        }
+      }
+    },
+    {
+      "id": "politics",
+      "prediction": {
+        "input_text": "Partido: MDB; Genero: F; UF: BA; Conteúdo: Estabelece reserva de vagas e recursos para candidaturas de mulheres nas eleições legislativas.",
+        "theme_category": "participacao_politica",
+        "theme_confidence": 0.9999998807907104,
+        "theme_scores": {
+          "LABEL_0": 1.3357095873800517e-08,
+          "LABEL_1": 9.321270866280429e-09,
+          "LABEL_2": 5.484805498667811e-09,
+          "LABEL_3": 8.941313467403234e-09,
+          "LABEL_4": 1.1182857306835103e-08,
+          "LABEL_5": 1.7482784997469025e-08,
+          "LABEL_6": 0.9999998807907104,
+          "LABEL_7": 1.7286916786929396e-08,
+          "LABEL_8": 5.690907300959225e-09,
+          "LABEL_9": 7.778181299045173e-08
+        },
+        "favorability_probability": 0.07693465799093246,
+        "favorability_scores": {
+          "LABEL_0": 0.9230653047561646,
+          "LABEL_1": 0.07693465799093246
+        },
+        "favorability_label": 0
+      },
+      "tokenization": {
+        "theme": {
+          "length": 39,
+          "sha256": "a8a68c832a4249a436c8944fae6ae1f80e7c68b1108397ed4495b6174425b5e3"
+        },
+        "favorability": {
+          "length": 39,
+          "sha256": "a8a68c832a4249a436c8944fae6ae1f80e7c68b1108397ed4495b6174425b5e3"
+        }
+      }
+    },
+    {
+      "id": "education_restriction",
+      "prediction": {
+        "input_text": "Partido: PL; Genero: M; UF: GO; Conteúdo: Proíbe o debate sobre gênero e orientação sexual nas escolas e determina a retirada de materiais didáticos sobre diversidade.",
+        "theme_category": "lgbtqiapn",
+        "theme_confidence": 0.9978413581848145,
+        "theme_scores": {
+          "LABEL_0": 9.650166532537696e-08,
+          "LABEL_1": 2.242075396452492e-07,
+          "LABEL_2": 5.925543291596114e-07,
+          "LABEL_3": 0.0021534038241952658,
+          "LABEL_4": 4.642463977688749e-07,
+          "LABEL_5": 0.9978413581848145,
+          "LABEL_6": 5.070885435998207e-07,
+          "LABEL_7": 2.2944830391224968e-07,
+          "LABEL_8": 2.334873983045327e-07,
+          "LABEL_9": 2.9156285563658457e-06
+        },
+        "favorability_probability": 0.9442412257194519,
+        "favorability_scores": {
+          "LABEL_0": 0.0557587593793869,
+          "LABEL_1": 0.9442412257194519
+        },
+        "favorability_label": 1
+      },
+      "tokenization": {
+        "theme": {
+          "length": 44,
+          "sha256": "47b8ea284941875b9ff68c3b20f2c223070e2e844b696c00ff47ac98da633e08"
+        },
+        "favorability": {
+          "length": 44,
+          "sha256": "47b8ea284941875b9ff68c3b20f2c223070e2e844b696c00ff47ac98da633e08"
+        }
+      }
+    },
+    {
+      "id": "reproductive_rights",
+      "prediction": {
+        "input_text": "Partido: PSOL; Genero: F; UF: SP; Conteúdo: Assegura os direitos sexuais e reprodutivos das mulheres, o acesso à contracepção e o atendimento ao aborto previsto em lei.",
+        "theme_category": "direitos_sexuais_reprodutivos",
+        "theme_confidence": 1.0,
+        "theme_scores": {
+          "LABEL_0": 1.0,
+          "LABEL_1": 6.4699081647745516e-09,
+          "LABEL_2": 7.743525820558261e-09,
+          "LABEL_3": 5.0688733210790815e-09,
+          "LABEL_4": 8.766734893583816e-09,
+          "LABEL_5": 9.547070689563952e-09,
+          "LABEL_6": 5.9294036347523615e-09,
+          "LABEL_7": 3.021784600321098e-09,
+          "LABEL_8": 9.716485394051233e-09,
+          "LABEL_9": 1.0849243281541021e-08
+        },
+        "favorability_probability": 0.014852691441774368,
+        "favorability_scores": {
+          "LABEL_0": 0.9851472973823547,
+          "LABEL_1": 0.014852691441774368
+        },
+        "favorability_label": 0
+      },
+      "tokenization": {
+        "theme": {
+          "length": 46,
+          "sha256": "9e688a1b366dfd334506deab2514f602eb3ae3412d87c02bfa34e8f3674a92ed"
+        },
+        "favorability": {
+          "length": 46,
+          "sha256": "9e688a1b366dfd334506deab2514f602eb3ae3412d87c02bfa34e8f3674a92ed"
+        }
+      }
+    },
+    {
+      "id": "empty",
+      "prediction": {
+        "input_text": "",
+        "theme_category": "violencias_de_genero",
+        "theme_confidence": 0.6335547566413879,
+        "theme_scores": {
+          "LABEL_0": 0.05617811530828476,
+          "LABEL_1": 0.004450403619557619,
+          "LABEL_2": 0.0018626509699970484,
+          "LABEL_3": 0.004758932162076235,
+          "LABEL_4": 0.002378123113885522,
+          "LABEL_5": 0.004214463755488396,
+          "LABEL_6": 0.0021055876277387142,
+          "LABEL_7": 0.005253194365650415,
+          "LABEL_8": 0.28524383902549744,
+          "LABEL_9": 0.6335547566413879
+        },
+        "favorability_probability": 0.5667080879211426,
+        "favorability_scores": {
+          "LABEL_0": 0.43329188227653503,
+          "LABEL_1": 0.5667080879211426
+        },
+        "favorability_label": 1
+      },
+      "tokenization": {
+        "theme": {
+          "length": 2,
+          "sha256": "13cd220862266a9eecc56309ebc209da9ea221ce1b5105af02817c53d5ce92ef"
+        },
+        "favorability": {
+          "length": 2,
+          "sha256": "13cd220862266a9eecc56309ebc209da9ea221ce1b5105af02817c53d5ce92ef"
+        }
+      }
+    },
+    {
+      "id": "long_input",
+      "prediction": {
+        "input_text": "Partido: PT; Genero: F; UF: SP; Conteúdo: Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. Art. 1º As políticas públicas devem garantir a igualdade de direitos das mulheres, o acesso à saúde e a proteção contra a violência. ",
+        "theme_category": "participacao_politica",
+        "theme_confidence": 0.9993962049484253,
+        "theme_scores": {
+          "LABEL_0": 4.313764634389372e-07,
+          "LABEL_1": 1.0090082014357904e-06,
+          "LABEL_2": 6.03251137931693e-08,
+          "LABEL_3": 0.0005915477522648871,
+          "LABEL_4": 2.461995904923242e-07,
+          "LABEL_5": 2.5001679659908405e-07,
+          "LABEL_6": 0.9993962049484253,
+          "LABEL_7": 1.9627525205123675e-07,
+          "LABEL_8": 7.092870646374649e-07,
+          "LABEL_9": 9.253570169676095e-06
+        },
+        "favorability_probability": 0.00689402362331748,
+        "favorability_scores": {
+          "LABEL_0": 0.993105947971344,
+          "LABEL_1": 0.00689402362331748
+        },
+        "favorability_label": 0
+      },
+      "tokenization": {
+        "theme": {
+          "length": 512,
+          "sha256": "4ad253878fc7452ffae9d09b214e742ac230fdc759b5dbdf56cec75f220d3853"
+        },
+        "favorability": {
+          "length": 512,
+          "sha256": "4ad253878fc7452ffae9d09b214e742ac230fdc759b5dbdf56cec75f220d3853"
+        }
+      }
+    }
+  ]
+}

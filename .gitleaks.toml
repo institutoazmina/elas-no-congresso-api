@@ -1,0 +1,14 @@
+title = "elas-no-congresso-api"
+
+[extend]
+useDefault = true
+
+# Public SHA-256 checksums of pinned Hugging Face artifacts, not keys.
+# Scoped to one file, one rule and one value shape, so it does not depend on
+# commit SHAs (which change on rebase/squash) and cannot hide real secrets.
+[[allowlists]]
+description = "Artifact checksums in the quiteria compatibility baseline"
+condition = "AND"
+targetRules = ["generic-api-key"]
+paths = ['''^tests/fixtures/compatibility/quiteria-baseline\.json$''']
+regexes = ['''^[a-f0-9]{64}$''']

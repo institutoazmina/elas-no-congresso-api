@@ -1,5 +1,5 @@
 import csv
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from io import StringIO
 
 import pytest
@@ -91,7 +91,10 @@ def activity_data():
         proposition=shared,
         source_event_id="test:one",
         source_kind="tramitation",
-        event_at=timezone.now(),
+        # Keep this "today" event on the same UTC and Sao Paulo calendar day.
+        # After 21:00 local, now() is already tomorrow in UTC and makes the
+        # midnight cache-expiry assertion depend on the time the suite runs.
+        event_at=timezone.make_aware(datetime.combine(today, time(12))),
         title="Movimento",
     )
     for number, overrides in [(5, {"is_approved": False}), (6, {"type_code": "REQ"})]:

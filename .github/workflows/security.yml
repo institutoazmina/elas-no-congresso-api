@@ -1,0 +1,121 @@
+name: Security
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 8 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  python-audit:
+    name: Python dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: "0.7.21"
+      - name: Export locked runtime and development dependencies
+        shell: bash
+        run: |
+          uv python install
+          uv export --locked --all-groups --no-hashes --no-emit-project --no-header --output-file requirements.txt
+          # The CPU wheel has the same upstream advisories as its public version.
+          # PyPI's advisory API does not recognize the +cpu distribution suffix.
+          sed -E 's/^(torch==[^+ ;]+)\+cpu/\1/' requirements.txt > audit-requirements.txt
+      - name: Audit Python dependencies
+        run: >-
+          uv tool run --from pip-audit==2.10.1 pip-audit
+          --requirement audit-requirements.txt --no-deps --disable-pip --strict
+          --format json --output python-audit.json
+      - name: Upload Python audit report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: python-dependency-audit
+          path: python-audit.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+  npm-audit:
+    name: Email dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/subscriptions/emails
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      # Audit the lockfile, including build dependencies, without lifecycle scripts.
+      - name: Audit email dependencies
+        run: npm audit --package-lock-only --audit-level=high --json > npm-audit.json
+      - name: Upload npm audit report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: email-dependency-audit
+          path: apps/subscriptions/emails/npm-audit.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install verified Gitleaks CLI
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --silent --show-error --location --retry 3 --max-time 120 \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz \
+            --output gitleaks.tar.gz
+          echo '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  gitleaks.tar.gz' | sha256sum --check
+          tar -xzf gitleaks.tar.gz gitleaks
+      - name: Scan Git history with redacted output
+        run: '"${{ runner.temp }}/gitleaks" git --redact --no-banner .'
+
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, actions]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+      - name: Analyze
+        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4
+        with:
+          category: /language:${{ matrix.language }}
+          output: codeql-results
+      - name: Reject high severity findings
+        run: python3 scripts/check_codeql_results.py codeql-results
