@@ -136,11 +136,11 @@ proposições desconhecidas fora da janela. O guia operacional está em
 [ingestao.md](../ingestao.md).
 
 `classification_backfill` oferece `preview`, `status`, `queue` e `retry`. Usa
-somente texto já armazenado e exclui qualquer anotação humana, revisão legada
-ou avaliação com categoria válida e classificação 0/1. Pedidos marcados
-`only_if_unevaluated` revalidam a ausência de avaliação antes/depois da inferência
-e não disparam alertas retroativos. Enfileiramento bem-sucedido não significa
-classificação concluída.
+somente texto já armazenado e inclui proposições com anotação humana ou revisão
+legada; exclui apenas avaliações com categoria válida e classificação 0/1.
+Pedidos marcados `only_if_unevaluated` revalidam a ausência da avaliação da IA
+antes/depois da inferência e não disparam alertas retroativos. Enfileiramento
+bem-sucedido não significa classificação concluída.
 
 ## Alternativas e consequências
 

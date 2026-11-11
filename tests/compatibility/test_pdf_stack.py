@@ -39,6 +39,7 @@ def test_scanned_pdf_degrades_cleanly_without_ocr(monkeypatch):
     assert fulltext._extract((FIXTURES / "legislative-scan.pdf").read_bytes()) is None
 
 
+@pytest.mark.ocr
 def test_real_portuguese_ocr_recovers_image_only_document():
     if not shutil.which("tesseract"):
         pytest.fail("Install Tesseract with Portuguese data to run compatibility tests")

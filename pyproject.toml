@@ -91,7 +91,10 @@ addopts = "-v --tb=short"
 # Locust (gevent) não roda sob pytest; use `make loadtest`.
 norecursedirs = ["tests/load", ".*", "node_modules", "staticfiles"]
 asyncio_mode = "auto"
-markers = ["ml: real CPU inference against pinned Quiteria model artifacts (requires --run-ml)"]
+markers = [
+    "ml: real CPU inference against pinned Quiteria model artifacts (requires --run-ml)",
+    "ocr: real Portuguese OCR against a scanned PDF (requires Tesseract with Portuguese data)",
+]
 
 [tool.coverage.run]
 omit = [

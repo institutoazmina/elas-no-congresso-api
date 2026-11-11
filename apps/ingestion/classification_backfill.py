@@ -8,21 +8,15 @@ from django.db.models import Count, Exists, OuterRef, Q
 from django.utils import timezone
 
 from apps.core.enums import PropositionCategory
-from apps.propositions.models import ClassificationRequest, Proposition, PropositionAnnotation
+from apps.propositions.models import ClassificationRequest, Proposition
 
 from .content import configuration_hash, register_fallback, request_analysis
 
 
 def missing_evaluations():
-    annotations = PropositionAnnotation.objects.filter(proposition_id=OuterRef("pk"))
-    return (
-        Proposition.objects.filter(~Exists(annotations))
-        .exclude(analysis__expert_id__isnull=False)
-        .exclude(Q(analysis__expert_opinion__isnull=False) & ~Q(analysis__expert_opinion=""))
-        .exclude(
-            analysis__theme_category__in=PropositionCategory.values,
-            analysis__classification__in=[0, 1],
-        )
+    return Proposition.objects.exclude(
+        analysis__theme_category__in=PropositionCategory.values,
+        analysis__classification__in=[0, 1],
     )
 
 
