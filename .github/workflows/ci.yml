@@ -131,11 +131,19 @@ jobs:
           uv python install
           uv sync --locked --dev
       - name: Install Portuguese OCR
+        id: install-ocr
+        continue-on-error: true
         timeout-minutes: 5
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-por
+      - name: Report unavailable OCR installation
+        if: steps.install-ocr.outcome == 'failure'
+        run: |
+          echo '::warning::Portuguese OCR was not installed; the OCR compatibility test was not run.'
+          echo '⚠️ Portuguese OCR compatibility was not verified because package installation failed. Retry this job when the mirror is available.' >> "$GITHUB_STEP_SUMMARY"
       - name: Verify scanned PDF extraction
+        if: steps.install-ocr.outcome == 'success'
         run: uv run pytest tests/compatibility/test_pdf_stack.py -m ocr
 
   ml-compatibility:
