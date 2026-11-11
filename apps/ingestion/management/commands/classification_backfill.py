@@ -6,7 +6,7 @@ from apps.ingestion.classification_backfill import backfill_status, prepare_miss
 
 
 class Command(BaseCommand):
-    help = "Consulta ou enfileira QuitérIA para proposições sem avaliação humana ou IA completa."
+    help = "Consulta ou enfileira QuitérIA para proposições sem avaliação da IA completa."
 
     def add_arguments(self, parser):
         parser.add_argument(

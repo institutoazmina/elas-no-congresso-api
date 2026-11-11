@@ -127,12 +127,13 @@ python manage.py classification_backfill --mode queue --limit 100
 | Modo | Efeito |
 | --- | --- |
 | `preview` / `status` | Mostram a cobertura de avaliações (equivalentes) |
-| `queue` | Enfileira pedidos `only_if_unevaluated` para proposições sem avaliação, usando texto já armazenado |
+| `queue` | Enfileira pedidos `only_if_unevaluated` para proposições sem avaliação da QuitérIA, usando texto já armazenado |
 | `retry` | Reenfileira pedidos de backfill falhos ou abandonados |
 
-`--limit 0` (padrão) significa sem limite. São excluídas proposições com
-anotação humana, revisão legada ou avaliação válida (categoria + classificação
-0/1). Enfileirar não significa classificar: acompanhe com `status`.
+`--limit 0` (padrão) significa sem limite. Anotações humanas e revisões legadas
+não dispensam a avaliação da QuitérIA: somente proposições com categoria válida
+e classificação 0/1 já preenchidas são excluídas. Enfileirar não significa
+classificar: acompanhe com `status`.
 
 ## Outros comandos
 

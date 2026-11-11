@@ -68,17 +68,23 @@ def ai(monkeypatch, settings):
     return model, queued, alerts
 
 
-def test_selection_excludes_humans_and_complete_ai_but_includes_partial_results():
-    human_review(proposal(1))
-    PropositionAnalysis.objects.create(proposition=proposal(2), expert_opinion="Revisada")
-    PropositionAnalysis.objects.create(proposition=proposal(3), expert_id=42)
+def test_selection_includes_human_reviews_and_partial_ai_but_excludes_complete_ai():
+    annotated = proposal(1)
+    human_review(annotated)
+    reviewed = proposal(2)
+    PropositionAnalysis.objects.create(proposition=reviewed, expert_opinion="Revisada")
+    expert = proposal(3)
+    PropositionAnalysis.objects.create(proposition=expert, expert_id=42)
     PropositionAnalysis.objects.create(
         proposition=proposal(4), theme_category="saude", classification=0
     )
     partial = proposal(5)
     PropositionAnalysis.objects.create(proposition=partial, theme_category="saude")
     absent = proposal(6)
-    assert set(missing_evaluations().values_list("pk", flat=True)) == {partial.pk, absent.pk}
+    assert set(missing_evaluations().values_list("pk", flat=True)) == {
+        annotated.pk, reviewed.pk, expert.pk, partial.pk, absent.pk
+    }
+    assert backfill_status()["missing_evaluation"] == 5
 
 
 def test_queue_is_idempotent_and_inference_fills_both_fields_without_alerts(
@@ -119,19 +125,20 @@ def test_selected_substitutivo_is_used_without_document_download(ai):
     assert not prop.documents.exists()
 
 
-def test_human_review_while_queued_skips_inference(ai):
+def test_human_review_while_queued_still_gets_ai_assessment(ai):
     prop = proposal()
     prepare_missing_evaluations()
     human_review(prop)
     req = ClassificationRequest.objects.get()
     content.run_analysis(req.pk)
     req.refresh_from_db()
-    assert req.status == "superseded"
-    ai[0].classify.assert_not_called()
-    assert not PropositionAnalysis.objects.filter(proposition=prop).exists()
+    assert req.status == "succeeded"
+    ai[0].classify.assert_called_once()
+    assert prop.annotations.count() == 1
+    assert prop.analysis.classification == 1
 
 
-def test_human_review_during_inference_prevents_applying_ai(ai):
+def test_human_review_during_inference_still_applies_ai(ai):
     prop = proposal()
     prepare_missing_evaluations()
     prediction = ai[0].classify.return_value
@@ -139,8 +146,24 @@ def test_human_review_during_inference_prevents_applying_ai(ai):
     req = ClassificationRequest.objects.get()
     content.run_analysis(req.pk)
     req.refresh_from_db()
-    assert req.status == "superseded"
-    assert not PropositionAnalysis.objects.filter(proposition=prop).exists()
+    assert req.status == "succeeded"
+    assert prop.annotations.count() == 1
+    assert prop.analysis.theme_category == "saude"
+
+
+def test_backfill_preserves_legacy_human_opinion_and_does_not_send_alerts(ai):
+    prop = proposal()
+    human_review(prop)
+    PropositionAnalysis.objects.create(proposition=prop, expert_id=42, expert_opinion="Revisada")
+    assert backfill_status()["ready_to_queue"] == 1
+    assert prepare_missing_evaluations()["prepared"] == 1
+    content.run_analysis(ClassificationRequest.objects.get().pk)
+    prop.refresh_from_db()
+    assert prop.analysis.expert_id == 42
+    assert prop.analysis.expert_opinion == "Revisada"
+    assert prop.analysis.classification == 1
+    assert backfill_status()["missing_evaluation"] == 0
+    ai[2].assert_not_called()
 
 
 def test_recovery_is_bounded_and_manual_retry_resets_exhausted_failure(
